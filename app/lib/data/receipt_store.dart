@@ -23,11 +23,50 @@ class ReceiptStore extends ChangeNotifier {
   static final shared = ReceiptStore();
 
   static const _key = 'receipts_v1';
+  static const _demoKey = 'demo_receipts_v1';
 
   final SharedPreferencesAsync _prefs;
   List<ReceiptRecord> _records = const [];
 
-  List<ReceiptRecord> get records => _records;
+  /// The traveler's receipts, or in the demo state the persona's ledger
+  /// (its samples plus anything saved during the demo).
+  List<ReceiptRecord> get records {
+    final key = _demoShown;
+    if (key == null) return _records;
+    return _demoLedgers[key] ?? _demoSamples;
+  }
+
+  String? _demoShown;
+  List<ReceiptRecord> _demoSamples = const [];
+
+  /// Per persona: its samples plus what was saved while it was shown.
+  /// Kept on the phone only, never sent to an account.
+  Map<String, List<ReceiptRecord>> _demoLedgers = {};
+
+  bool get showingDemo => _demoShown != null;
+
+  /// Shows persona [key]'s receipts instead of the traveler's own.
+  void showDemo(String key, List<ReceiptRecord> samples) {
+    _demoShown = key;
+    _demoSamples = _newestFirst([...samples]);
+    notifyListeners();
+  }
+
+  /// Back to the traveler's own receipts.
+  void showReal() {
+    if (_demoShown == null) return;
+    _demoShown = null;
+    _demoSamples = const [];
+    notifyListeners();
+  }
+
+  /// Forgets everything saved during demos.
+  Future<void> resetDemo() async {
+    await load();
+    _demoLedgers = {};
+    notifyListeners();
+    await _prefs.remove(_demoKey);
+  }
 
   Future<void>? _loading;
 
@@ -41,14 +80,57 @@ class ReceiptStore extends ChangeNotifier {
     } on FormatException {
       return;
     }
-    if (json is! List) return;
-    _records = _newestFirst([for (final e in json) ?ReceiptRecord.fromJson(e)]);
+    if (json is List) {
+      _records = _newestFirst([
+        for (final e in json) ?ReceiptRecord.fromJson(e),
+      ]);
+    }
+    _demoLedgers = _decodeLedgers(await _prefs.getString(_demoKey));
     notifyListeners();
+  }
+
+  static Map<String, List<ReceiptRecord>> _decodeLedgers(String? raw) {
+    if (raw == null) return {};
+    final Object? json;
+    try {
+      json = jsonDecode(raw);
+    } on FormatException {
+      return {};
+    }
+    if (json is! Map) return {};
+    return {
+      for (final e in json.entries)
+        if (e.key is String && e.value is List)
+          e.key as String: _newestFirst([
+            for (final r in e.value as List) ?ReceiptRecord.fromJson(r),
+          ]),
+    };
   }
 
   /// Adds [record], or replaces the one with the same id (a correction).
   Future<void> save(ReceiptRecord record) async {
     await load();
+    final demo = _demoShown;
+    if (demo != null) {
+      // A demo save stays in the demo ledger, never in the real records
+      // and never in the account.
+      _demoLedgers = {
+        ..._demoLedgers,
+        demo: _newestFirst([
+          record,
+          ...records.where((r) => r.id != record.id),
+        ]),
+      };
+      notifyListeners();
+      await _prefs.setString(
+        _demoKey,
+        jsonEncode({
+          for (final e in _demoLedgers.entries)
+            e.key: [for (final r in e.value) r.toJson()],
+        }),
+      );
+      return;
+    }
     _records = _newestFirst([
       record,
       ..._records.where((r) => r.id != record.id),
@@ -111,7 +193,7 @@ class ReceiptStore extends ChangeNotifier {
     }
   }
 
-  bool contains(String id) => _records.any((r) => r.id == id);
+  bool contains(String id) => records.any((r) => r.id == id);
 
   static List<ReceiptRecord> _newestFirst(List<ReceiptRecord> list) =>
       list..sort((a, b) => b.savedAt.compareTo(a.savedAt));
