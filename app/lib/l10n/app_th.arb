@@ -584,5 +584,6 @@
   "aiNewItemLine": "{engine} ระบุสินค้าจากสิ่งที่ได้ยิน · {elapsed}",
   "haggleSomethingElse": "อย่างอื่น",
   "haggleTypeItem": "เขาขายอะไร",
-  "haggleTypeItemHint": "เช่น ลาเต้วานิลลา"
+  "haggleTypeItemHint": "เช่น ลาเต้วานิลลา",
+  "calendarSample": "ปฏิทินตัวอย่าง"
 }

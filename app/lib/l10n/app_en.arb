@@ -1884,5 +1884,6 @@
   },
   "haggleSomethingElse": "Something else",
   "haggleTypeItem": "What are they selling?",
-  "haggleTypeItemHint": "e.g. Vanilla latte"
+  "haggleTypeItemHint": "e.g. Vanilla latte",
+  "calendarSample": "Sample calendar"
 }

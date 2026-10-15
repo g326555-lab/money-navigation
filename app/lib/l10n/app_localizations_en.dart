@@ -2261,4 +2261,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get haggleTypeItemHint => 'e.g. Vanilla latte';
+
+  @override
+  String get calendarSample => 'Sample calendar';
 }

@@ -3623,6 +3623,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'e.g. Vanilla latte'**
   String get haggleTypeItemHint;
+
+  /// No description provided for @calendarSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample calendar'**
+  String get calendarSample;
 }
 
 class _AppLocalizationsDelegate
