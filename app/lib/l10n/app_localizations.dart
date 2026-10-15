@@ -2625,7 +2625,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeBriefingNoNumber.
   ///
   /// In en, this message translates to:
-  /// **'No cash estimate yet'**
+  /// **'Today\'s cash estimate goes here'**
   String get homeBriefingNoNumber;
 
   /// No description provided for @homeBriefingStops.
@@ -2847,7 +2847,7 @@ abstract class AppLocalizations {
   /// No description provided for @cashBasisNone.
   ///
   /// In en, this message translates to:
-  /// **'Save a purchase to start a cash estimate'**
+  /// **'Needs a day or two of saved spending'**
   String get cashBasisNone;
 
   /// No description provided for @cashBasisPattern.

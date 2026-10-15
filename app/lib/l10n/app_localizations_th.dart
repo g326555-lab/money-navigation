@@ -1543,7 +1543,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get homeBriefingOpen => 'เปิดผู้ช่วย';
 
   @override
-  String get homeBriefingNoNumber => 'ยังไม่มียอดประมาณเงินสด';
+  String get homeBriefingNoNumber => 'ยอดประมาณเงินสดของวันนี้จะแสดงที่นี่';
 
   @override
   String homeBriefingStops(int count) {
@@ -1680,7 +1680,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get assistantArrival => 'แจ้งเตือนเมื่อถึงปลายทาง';
 
   @override
-  String get cashBasisNone => 'บันทึกการซื้อเพื่อเริ่มประมาณเงินสด';
+  String get cashBasisNone => 'ต้องมีบันทึกการใช้จ่ายสักหนึ่งถึงสองวัน';
 
   @override
   String cashBasisPattern(int days) {

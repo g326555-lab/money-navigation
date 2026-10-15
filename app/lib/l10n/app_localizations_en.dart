@@ -1589,7 +1589,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBriefingOpen => 'Open the assistant';
 
   @override
-  String get homeBriefingNoNumber => 'No cash estimate yet';
+  String get homeBriefingNoNumber => 'Today\'s cash estimate goes here';
 
   @override
   String homeBriefingStops(int count) {
@@ -1743,7 +1743,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantArrival => 'Arrival alert';
 
   @override
-  String get cashBasisNone => 'Save a purchase to start a cash estimate';
+  String get cashBasisNone => 'Needs a day or two of saved spending';
 
   @override
   String cashBasisPattern(int days) {

@@ -1362,7 +1362,7 @@
   "homeRouteTerminal": "Card terminal",
   "homeBriefingLabel": "Morning briefing",
   "homeBriefingOpen": "Open the assistant",
-  "homeBriefingNoNumber": "No cash estimate yet",
+  "homeBriefingNoNumber": "Today's cash estimate goes here",
   "homeBriefingStops": "{count, plural, =1{1 stop on your calendar today} other{{count} stops on your calendar today}}",
   "@homeBriefingStops": {
     "placeholders": {
@@ -1475,7 +1475,7 @@
   "assistantCardFromAccount": "Card fee from your account profile",
   "assistantNearby": "Near you",
   "assistantArrival": "Arrival alert",
-  "cashBasisNone": "Save a purchase to start a cash estimate",
+  "cashBasisNone": "Needs a day or two of saved spending",
   "cashBasisPattern": "{days, plural, =1{From your spending on 1 earlier day} other{From your spending on {days} earlier days}}",
   "@cashBasisPattern": {
     "placeholders": {
