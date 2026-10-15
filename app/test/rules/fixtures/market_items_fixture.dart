@@ -73,6 +73,33 @@ const MarketItem mangoStickyRiceFixture = MarketItem(
   high: 120,
 );
 
+const MarketItem padThaiFixture = MarketItem(
+  key: 'pad_thai',
+  nameEn: 'Pad thai',
+  nameTh: 'ผัดไทย',
+  keywordsTh: ['ผัดไทย'],
+  unit: PriceUnit.perPlate,
+  low: 50,
+  high: 80,
+);
+
+/// Items for the item matcher tests. Durian is deliberately absent.
+const List<MarketItem> matcherItems = [
+  mangoFixture,
+  padThaiFixture,
+  mangoStickyRiceFixture,
+  coconutFixture,
+];
+
+/// Real mishearings logged on 15 Oct 2026 on the demo phone (SM-F971B,
+/// th-TH speech recognizer). Only the aliases the lead registers are listed;
+/// "องค์", "มัน", "มันลง" (mango) and "ผัด" (pad thai) are logged but are
+/// not aliases.
+const Map<String, List<String>> loggedHeardAs = {
+  'mango': ['มันหมุน', 'น้ำมัน', 'งั้นมึง'],
+  'pad_thai': ['ทักทาย'],
+};
+
 const List<MarketItem> mangoOnly = [mangoFixture];
 
 const List<MarketItem> allFixtureItems = [

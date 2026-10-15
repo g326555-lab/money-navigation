@@ -6,91 +6,169 @@
       "key": "mango",
       "nameEn": "Mango",
       "nameTh": "มะม่วง",
-      "keywordsTh": ["มะม่วงน้ำดอกไม้", "มะม่วง"],
+      "keywordsTh": [
+        "มะม่วงน้ำดอกไม้",
+        "มะม่วง"
+      ],
       "unit": "perKg",
       "low": 80,
       "high": 110,
       "derived": "October off-season figures: TrueID retail 80, Si Mueang ripe 100, Simummuang 105 (via checkraka.app), Lotus's ripe Nam Dok Mai 99. In season (Mar-Jun) local markets are 30-60.",
       "sources": [
-        {"title": "checkraka.app mango price (Talad Thai, Simummuang, retail)", "url": "https://checkraka.app/product/mango/", "date": "2026-10-15"},
-        {"title": "Lotus's ripe Nam Dok Mai mango", "url": "https://www.lotuss.com/th/product/ripe-namdokmai-mango-4723", "date": "2026-10-15"}
+        {
+          "title": "checkraka.app mango price (Talad Thai, Simummuang, retail)",
+          "url": "https://checkraka.app/product/mango/",
+          "date": "2026-10-15"
+        },
+        {
+          "title": "Lotus's ripe Nam Dok Mai mango",
+          "url": "https://www.lotuss.com/th/product/ripe-namdokmai-mango-4723",
+          "date": "2026-10-15"
+        }
+      ],
+      "heardAsTh": [
+        "มันหมุน",
+        "น้ำมัน",
+        "งั้นมึง"
       ]
     },
     {
       "key": "mango_sticky_rice",
       "nameEn": "Mango sticky rice",
       "nameTh": "ข้าวเหนียวมะม่วง",
-      "keywordsTh": ["ข้าวเหนียวมะม่วง"],
+      "keywordsTh": [
+        "ข้าวเหนียวมะม่วง"
+      ],
       "unit": "perPlate",
       "low": 70,
       "high": 150,
       "sources": [
-        {"title": "Bangkok street food prices, Khao San Road", "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road", "date": "2026-06-18"},
-        {"title": "Bangkok night market prices cheat sheet", "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/", "date": "2026-09-10"}
+        {
+          "title": "Bangkok street food prices, Khao San Road",
+          "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road",
+          "date": "2026-06-18"
+        },
+        {
+          "title": "Bangkok night market prices cheat sheet",
+          "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/",
+          "date": "2026-09-10"
+        }
       ]
     },
     {
       "key": "coconut",
       "nameEn": "Fresh coconut",
       "nameTh": "มะพร้าว",
-      "keywordsTh": ["มะพร้าวน้ำหอม", "มะพร้าว"],
+      "keywordsTh": [
+        "มะพร้าวน้ำหอม",
+        "มะพร้าว"
+      ],
       "unit": "each",
       "low": 40,
       "high": 60,
       "sources": [
-        {"title": "Bangkok street food prices, Khao San Road", "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road", "date": "2026-06-18"},
-        {"title": "Bangkok night market prices cheat sheet", "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/", "date": "2026-09-10"}
+        {
+          "title": "Bangkok street food prices, Khao San Road",
+          "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road",
+          "date": "2026-06-18"
+        },
+        {
+          "title": "Bangkok night market prices cheat sheet",
+          "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/",
+          "date": "2026-09-10"
+        }
       ]
     },
     {
       "key": "pad_thai",
       "nameEn": "Pad thai",
       "nameTh": "ผัดไทย",
-      "keywordsTh": ["ผัดไทย"],
+      "keywordsTh": [
+        "ผัดไทย"
+      ],
       "unit": "perPlate",
       "low": 50,
       "high": 80,
       "sources": [
-        {"title": "Bangkok street food prices, Khao San Road", "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road", "date": "2026-06-18"},
-        {"title": "Bangkok night market prices cheat sheet", "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/", "date": "2026-09-10"}
+        {
+          "title": "Bangkok street food prices, Khao San Road",
+          "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road",
+          "date": "2026-06-18"
+        },
+        {
+          "title": "Bangkok night market prices cheat sheet",
+          "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/",
+          "date": "2026-09-10"
+        }
+      ],
+      "heardAsTh": [
+        "ทักทาย"
       ]
     },
     {
       "key": "massage",
       "nameEn": "Thai or foot massage, 1 hour",
       "nameTh": "นวด",
-      "keywordsTh": ["นวดเท้า", "นวดไทย", "นวด"],
+      "keywordsTh": [
+        "นวดเท้า",
+        "นวดไทย",
+        "นวด"
+      ],
       "unit": "perHour",
       "low": 250,
       "high": 400,
       "sources": [
-        {"title": "Bangkok night market prices cheat sheet", "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/", "date": "2026-09-10"},
-        {"title": "Is Bangkok expensive?", "url": "https://thailandwithtereza.com/is-bangkok-expensive/", "date": "2026-10-15"}
+        {
+          "title": "Bangkok night market prices cheat sheet",
+          "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/",
+          "date": "2026-09-10"
+        },
+        {
+          "title": "Is Bangkok expensive?",
+          "url": "https://thailandwithtereza.com/is-bangkok-expensive/",
+          "date": "2026-10-15"
+        }
       ]
     },
     {
       "key": "tuk_tuk",
       "nameEn": "Short tuk-tuk ride",
       "nameTh": "ตุ๊กตุ๊ก",
-      "keywordsTh": ["ตุ๊กตุ๊ก", "ตุ๊ก ๆ", "ตุ๊กๆ"],
+      "keywordsTh": [
+        "ตุ๊กตุ๊ก",
+        "ตุ๊ก ๆ",
+        "ตุ๊กๆ"
+      ],
       "unit": "perRide",
       "low": 100,
       "high": 200,
       "sources": [
-        {"title": "Bangkok night market prices cheat sheet", "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/", "date": "2026-09-10"}
+        {
+          "title": "Bangkok night market prices cheat sheet",
+          "url": "https://howmuchfx.app/en/blog/bangkok-night-market-prices-baht-cheat-sheet/",
+          "date": "2026-09-10"
+        }
       ]
     },
     {
       "key": "fruit_shake",
       "nameEn": "Fruit shake",
       "nameTh": "น้ำปั่น",
-      "keywordsTh": ["น้ำปั่น", "ปั่น"],
+      "keywordsTh": [
+        "น้ำปั่น",
+        "ปั่น"
+      ],
       "unit": "each",
       "low": 40,
       "high": 60,
       "sources": [
-        {"title": "Bangkok street food prices, Khao San Road", "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road", "date": "2026-06-18"}
+        {
+          "title": "Bangkok street food prices, Khao San Road",
+          "url": "https://www.khaosanroad.com/articles/bangkok-street-food-prices-khao-san-road",
+          "date": "2026-06-18"
+        }
       ]
     }
-  ]
+  ],
+  "heardAsNote": "heardAsTh lists real Thai speech-recognition mishearings logged on the demo phone (SM-F971B, 15 Oct 2026), used by the on-device item matcher. They are recognizer output, not prices."
 }
