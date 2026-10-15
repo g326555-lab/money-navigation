@@ -1,4 +1,5 @@
 import 'amount_parser.dart';
+import 'ocr_layout.dart';
 
 /// Values printed on an ATM screen that offers to convert the withdrawal
 /// into the card's home currency (dynamic currency conversion).
@@ -47,8 +48,8 @@ class AtmVerdict {
 
 /// Reads the values of an ATM conversion screen from OCR text.
 ///
-/// Works whether OCR returns each label on the same line as its values or
-/// all labels first and the THB and USD columns after. Returns null when any
+/// Expects each label on the same line as its values, as produced by
+/// `rowsFromLines`, or THB and USD columns in row order. Returns null when any
 /// required value is missing or the numbers do not add up, never a default.
 AtmScreenReading? parseAtmScreen(String ocrText) {
   final text = ocrText.replaceAll(RegExp(r'\s+'), ' ');
@@ -104,9 +105,37 @@ AtmVerdict evaluateAtm(AtmScreenReading reading) {
   );
 }
 
+/// The ATM's own wording for the no-conversion button, so the app can say
+/// exactly what to press. A button label may wrap onto a second line
+/// ("Accept without" / "currency conversion"). Returns null when none is found.
+String? declineButtonLabel(List<OcrLine> lines) {
+  final candidates = lines.where((l) {
+    final text = l.text.trim().toLowerCase();
+    return _buttonVerb.hasMatch(text) &&
+        text.contains('without') &&
+        !RegExp(r'\d').hasMatch(text);
+  }).toList()
+    ..sort((a, b) => a.top.compareTo(b.top));
+  if (candidates.isEmpty) return null;
+
+  final first = candidates.first;
+  final below = lines.where((l) =>
+      l != first &&
+      l.top >= first.top &&
+      l.top - first.bottom <= first.height * 1.5 &&
+      l.left < first.right &&
+      l.right > first.left).toList()
+    ..sort((a, b) => a.top.compareTo(b.top));
+  final parts = [first.text, if (below.isNotEmpty) below.first.text];
+  return parts.join(' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+}
+
+final _buttonVerb = RegExp(r'^(accept|decline|pay|continue)\b');
+
 const _rowLabels = ['withdrawal amount', 'access fee', 'amount charged'];
 
-final _rate = RegExp('1 ?USD ?= ?($amountPattern) ?THB');
+// Real OCR drops the "=" sign, so it is optional.
+final _rate = RegExp('1 ?USD ?=? ?($amountPattern) ?THB');
 final _markup = RegExp(r'(\d+(?:\.\d+)?) ?%');
 
 List<double> _amountsIn(String text, String currency) => RegExp(

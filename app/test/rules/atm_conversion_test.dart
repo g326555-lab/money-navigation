@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_navigation/rules/atm_conversion.dart';
+import 'package:money_navigation/rules/ocr_layout.dart';
 
 import 'fixtures/atm_ocr_fixtures.dart';
+import 'fixtures/atm_ocr_real_ios.dart';
 
 /// The exact demo values printed on the ATM prop (CLAUDE.md "Demo data").
 const demoReading = AtmScreenReading(
@@ -33,11 +35,15 @@ void main() {
       expectDemoReading(parseAtmScreen(atmOcrRowOrder));
     });
 
-    test('charged USD is 144.71, not the with-conversion withdrawal 137.17',
-        () {
-      expect(parseAtmScreen(atmOcrBlockOrder)!.chargedUsd,
-          closeTo(144.71, 1e-9));
-    });
+    test(
+      'charged USD is 144.71, not the with-conversion withdrawal 137.17',
+      () {
+        expect(
+          parseAtmScreen(atmOcrBlockOrder)!.chargedUsd,
+          closeTo(144.71, 1e-9),
+        );
+      },
+    );
 
     test('"4.220 THB" is read as 4220, not 4.22', () {
       expect(parseAtmScreen(atmOcrBlockOrder)!.chargedThb, closeTo(4220, 1e-9));
@@ -64,24 +70,36 @@ void main() {
       expect(r!.markupPercent, isNull);
       expect(r.chargedUsd, closeTo(144.71, 1e-9));
     });
-    test('missing "Amount charged" row gives null',
-        () => expect(parseAtmScreen(atmOcrMissingCharged), isNull));
-    test('missing exchange rate gives null',
-        () => expect(parseAtmScreen(atmOcrMissingRate), isNull));
-    test('missing charged USD gives null',
-        () => expect(parseAtmScreen(atmOcrMissingChargedUsd), isNull));
-    test('zero exchange rate gives null',
-        () => expect(parseAtmScreen(atmOcrZeroRate), isNull));
-    test('text that is not an ATM screen gives null',
-        () => expect(parseAtmScreen(ocrNotAnAtm), isNull));
+    test(
+      'missing "Amount charged" row gives null',
+      () => expect(parseAtmScreen(atmOcrMissingCharged), isNull),
+    );
+    test(
+      'missing exchange rate gives null',
+      () => expect(parseAtmScreen(atmOcrMissingRate), isNull),
+    );
+    test(
+      'missing charged USD gives null',
+      () => expect(parseAtmScreen(atmOcrMissingChargedUsd), isNull),
+    );
+    test(
+      'zero exchange rate gives null',
+      () => expect(parseAtmScreen(atmOcrZeroRate), isNull),
+    );
+    test(
+      'text that is not an ATM screen gives null',
+      () => expect(parseAtmScreen(ocrNotAnAtm), isNull),
+    );
     test('empty text gives null', () => expect(parseAtmScreen(''), isNull));
   });
 
   group('evaluateAtm: demo verdict (CLAUDE.md exact numbers)', () {
     final v = evaluateAtm(demoReading);
 
-    test('recommends declining the ATM conversion',
-        () => expect(v.recommended, AtmChoice.declineConversion));
+    test(
+      'recommends declining the ATM conversion',
+      () => expect(v.recommended, AtmChoice.declineConversion),
+    );
     test('extra cost of converting is 7.96 USD (2 dp)', () {
       expect(double.parse(v.extraCostUsd.toStringAsFixed(2)), 7.96);
     });
@@ -109,54 +127,98 @@ void main() {
   group('evaluateAtm: no false savings', () {
     test('charged USD equal to fair USD: no extra cost, no decline claim', () {
       // 3,086 THB / 30.86 = exactly 100.00 USD fair.
-      final v = evaluateAtm(const AtmScreenReading(
-        withdrawalThb: 2866,
-        accessFeeThb: 220,
-        thbPerUsd: 30.86,
-        chargedThb: 3086,
-        chargedUsd: 100.00,
-      ));
+      final v = evaluateAtm(
+        const AtmScreenReading(
+          withdrawalThb: 2866,
+          accessFeeThb: 220,
+          thbPerUsd: 30.86,
+          chargedThb: 3086,
+          chargedUsd: 100.00,
+        ),
+      );
       expect(v.recommended, AtmChoice.acceptConversion);
       expect(v.extraCostUsd, closeTo(0, 0.005));
       expect(v.extraCostThb, closeTo(0, 0.5));
     });
 
     test('conversion cheaper than fair: no positive extra cost claimed', () {
-      final v = evaluateAtm(const AtmScreenReading(
-        withdrawalThb: 2866,
-        accessFeeThb: 220,
-        thbPerUsd: 30.86,
-        chargedThb: 3086,
-        chargedUsd: 99.00,
-      ));
+      final v = evaluateAtm(
+        const AtmScreenReading(
+          withdrawalThb: 2866,
+          accessFeeThb: 220,
+          thbPerUsd: 30.86,
+          chargedThb: 3086,
+          chargedUsd: 99.00,
+        ),
+      );
       expect(v.recommended, AtmChoice.acceptConversion);
       expect(v.extraCostUsd, lessThanOrEqualTo(0));
     });
   });
 
   group('evaluateAtm: invalid rate is rejected', () {
-    final rejected = throwsA(anyOf(isA<ArgumentError>(), isA<AssertionError>()));
+    final rejected = throwsA(
+      anyOf(isA<ArgumentError>(), isA<AssertionError>()),
+    );
     test('zero rate', () {
       expect(
-          () => evaluateAtm(AtmScreenReading(
-                withdrawalThb: 4000,
-                accessFeeThb: 220,
-                thbPerUsd: double.parse('0'),
-                chargedThb: 4220,
-                chargedUsd: 144.71,
-              )),
-          rejected);
+        () => evaluateAtm(
+          AtmScreenReading(
+            withdrawalThb: 4000,
+            accessFeeThb: 220,
+            thbPerUsd: double.parse('0'),
+            chargedThb: 4220,
+            chargedUsd: 144.71,
+          ),
+        ),
+        rejected,
+      );
     });
     test('negative rate', () {
       expect(
-          () => evaluateAtm(AtmScreenReading(
-                withdrawalThb: 4000,
-                accessFeeThb: 220,
-                thbPerUsd: double.parse('-30.86'),
-                chargedThb: 4220,
-                chargedUsd: 144.71,
-              )),
-          rejected);
+        () => evaluateAtm(
+          AtmScreenReading(
+            withdrawalThb: 4000,
+            accessFeeThb: 220,
+            thbPerUsd: double.parse('-30.86'),
+            chargedThb: 4220,
+            chargedUsd: 144.71,
+          ),
+        ),
+        rejected,
+      );
     });
+  });
+
+  group('parseAtmScreen: real ML Kit iOS capture', () {
+    test('rows rebuilt from line boxes read every printed value', () {
+      expectDemoReading(parseAtmScreen(rowsFromLines(atmRealIosLines)));
+    });
+
+    test('rate row without "=" is accepted', () {
+      final r = parseAtmScreen('''
+Withdrawal amount 4. 000 THB 137.17 USD
+Access fee 220 THB 7.54 USD
+Exchange rate 1 USD 30.86 THB
+Exchange rate markup 5.50 %
+Amount charged 4.220 THB 144.71 USD
+''');
+      expectDemoReading(r);
+    });
+
+    test('rows from line boxes give 7.96 USD and about 246 THB', () {
+      final v = evaluateAtm(parseAtmScreen(rowsFromLines(atmRealIosLines))!);
+      expect(v.recommended, AtmChoice.declineConversion);
+      expect(double.parse(v.extraCostUsd.toStringAsFixed(2)), 7.96);
+      expect(v.extraCostThb.round(), 246);
+    });
+
+    test(
+      'column-mixed raw text gives null or the demo values, never others',
+      () {
+        final r = parseAtmScreen(atmRealIosRawText);
+        if (r != null) expectDemoReading(r);
+      },
+    );
   });
 }
