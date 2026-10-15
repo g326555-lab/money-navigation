@@ -1,4 +1,5 @@
 import 'ocr_layout.dart';
+import 'receipt_roles.dart';
 
 /// Thailand's standard VAT rate in percent. It is only used when the bill
 /// itself prints it.
@@ -39,7 +40,8 @@ class BillCheck {
     this.vatPercent,
     this.beforeVat,
     this.itemCount,
-  });
+    bool? vatOnTop,
+  }) : vatOnTop = vatOnTop ?? kind == BillKind.vatOnTop;
 
   final BillKind kind;
   final double total;
@@ -56,15 +58,18 @@ class BillCheck {
   /// How many item amounts were added up, when that was verified.
   final int? itemCount;
 
+  /// VAT was added on top (of the items, or of items plus a service
+  /// charge as on a "++" restaurant bill) rather than inside the prices.
+  final bool vatOnTop;
+
   /// The service charge was added after the subtotal, not hidden in prices.
   bool get serviceAddedOnTop => serviceCharge != null;
 
   /// The VAT amount is already inside the total (total - VAT = before tax).
-  bool get vatIncluded =>
-      vat != null && beforeVat != null && kind != BillKind.vatOnTop;
+  bool get vatIncluded => vat != null && beforeVat != null && !vatOnTop;
 
-  /// VAT was added on top of item prices that did not include it.
-  bool get vatAddedOnTop => kind == BillKind.vatOnTop;
+  /// VAT was added on top of prices that did not include it.
+  bool get vatAddedOnTop => vatOnTop;
 
   /// Nothing was added on top of what the goods cost.
   bool get nothingAdded => serviceCharge == null && !vatAddedOnTop;
@@ -107,6 +112,10 @@ BillCheck? checkBill(
 }) {
   if (lines.isEmpty) return null;
   final text = rowsFromLines(lines);
+  // Read the rows by their labels first; a receipt whose labels OCR garbled
+  // falls back to the amounts alone below.
+  final byRoles = readByRoles(text.split('\n'), vatPercent: vatPercent);
+  if (byRoles != null) return byRoles;
   // An amount tagged with another currency ("144.71 USD" on an ATM screen)
   // is not a bill figure; without this an ATM fee line balances like a
   // service charge.
@@ -490,8 +499,11 @@ final _amount = RegExp(
   r'(?<![\d.,/:#])(\d{1,3}(?:,\d{3})+|\d+)[.,](\d{2})(?![\d%])',
 );
 
-/// A currency code right after an amount, other than baht.
-final _foreignCode = RegExp(r'^ *(?!THB)[A-Z]{3}\b');
+/// A currency code right after an amount, other than baht ("144.71 USD").
+/// Only real codes: "21.59 VAT" is a tax line, not a currency.
+final _foreignCode = RegExp(
+  r'^ *(?:USD|EUR|JPY|GBP|CNY|RMB|KRW|SGD|AUD|NZD|HKD|TWD|MYR|IDR|PHP|VND|INR|CHF|CAD|SEK|NOK|DKK|AED|LAK|KHR|MMK)\b',
+);
 
 final _percent = RegExp(r'(\d{1,2}(?:\.\d{1,2})?)\s*%');
 
