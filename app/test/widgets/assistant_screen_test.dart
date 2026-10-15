@@ -232,6 +232,8 @@ void main() {
       // 1000 THB x 2.5% = 25.00 THB.
       expect(find.text('+25.00 THB'), findsOneWidget);
       expect(find.text(needCard), findsNothing);
+      // Cash is unpriced (no home bank policy), so no best way is named.
+      expect(find.text('Pay by card'), findsNothing);
       // The card row no longer says the fee is missing.
       await scrollTo(tester, find.text('Foreign transaction fee'));
       expect(find.text('Not added yet'), findsNothing);

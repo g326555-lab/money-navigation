@@ -188,6 +188,26 @@ void main() {
       expect(r.forcedByPlace, isFalse);
     });
 
+    test('no cards and no card fee: cash is the only candidate, priced', () {
+      final r = th1000(
+        withdrawalThb: 2000,
+        profile: const TravelerProfile(atmFeePolicy: AtmFeePolicy.noFee),
+        place: const PlacePayment(cards: false),
+      );
+      expect(opt(r, PayMethod.card).accepted, Acceptance.no);
+      expect(opt(r, PayMethod.cash).extraThb, 110.00);
+      expect(r.best, PayMethod.cash);
+      expect(r.sameCost, isFalse);
+      expect(r.forcedByPlace, isFalse);
+    });
+
+    test('no cards and cash unpriced: no best', () {
+      final r = th1000(place: const PlacePayment(cards: false));
+      expect(opt(r, PayMethod.cash).extraThb, isNull);
+      expect(r.best, isNull);
+      expect(r.sameCost, isFalse);
+    });
+
     test('cashOnly false alone leaves card acceptance unknown', () {
       final r = th1000(
         withdrawalThb: 2000,
@@ -207,23 +227,24 @@ void main() {
       expect(r.breakEvenWithdrawalThb, isNull);
     });
 
-    test('no card fee: card null, cash alone is best', () {
+    test('no card fee: cash priced alone is not a comparison, no best', () {
       final r = th1000(
         withdrawalThb: 2000,
         profile: const TravelerProfile(atmFeePolicy: AtmFeePolicy.noFee),
       );
       expect(opt(r, PayMethod.card).extraThb, isNull);
       expect(opt(r, PayMethod.cash).extraThb, 110.00);
-      expect(r.best, PayMethod.cash);
+      expect(r.best, isNull);
       expect(r.sameCost, isFalse);
       expect(r.breakEvenWithdrawalThb, isNull);
     });
 
-    test('withdrawal null: cash null, card alone is best', () {
+    test('withdrawal null: card priced alone is not a comparison, no best', () {
       final r = th1000();
       expect(opt(r, PayMethod.cash).extraThb, isNull);
       expect(opt(r, PayMethod.card).extraThb, 25.00);
-      expect(r.best, PayMethod.card);
+      expect(r.best, isNull);
+      expect(r.sameCost, isFalse);
       // Break-even does not need a withdrawal size.
       expect(r.breakEvenWithdrawalThb, 8800.00);
     });
@@ -240,7 +261,17 @@ void main() {
       );
       expect(opt(r, PayMethod.cash).extraThb, isNull);
       expect(r.breakEvenWithdrawalThb, isNull);
-      expect(r.best, PayMethod.card);
+      // Card 25.00 is known but cash is not: no best way is named.
+      expect(opt(r, PayMethod.card).extraThb, 25.00);
+      expect(r.best, isNull);
+      expect(r.sameCost, isFalse);
+    });
+
+    test('no country facts: card priced, cash unknown, no best', () {
+      final r = th1000(withdrawalThb: 2000, noFacts: true);
+      expect(opt(r, PayMethod.card).extraThb, 25.00);
+      expect(r.best, isNull);
+      expect(r.sameCost, isFalse);
     });
 
     test('no country facts: local ATM fee unknown, cash null', () {
@@ -454,6 +485,21 @@ void main() {
         place: const PlacePayment(cards: true, nfc: true),
       );
       expect(opt(r, PayMethod.qr).accepted, Acceptance.unknown);
+    });
+
+    test('priced QR and card with cash unpriced: no best', () {
+      final r = th1000(qrFeePercent: 1.0);
+      expect(opt(r, PayMethod.qr).extraThb, 10.00);
+      expect(opt(r, PayMethod.card).extraThb, 25.00);
+      expect(opt(r, PayMethod.cash).extraThb, isNull);
+      expect(r.best, isNull);
+      expect(r.sameCost, isFalse);
+    });
+
+    test('unpriced QR is left out and does not block a best', () {
+      final r = th1000(withdrawalThb: 2000);
+      expect(opt(r, PayMethod.qr).extraThb, isNull);
+      expect(r.best, PayMethod.card);
     });
 
     test('QR within 0.50 of the card: same cost', () {

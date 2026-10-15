@@ -134,15 +134,26 @@ PayRoute payRoute({
   if (cashOnly) {
     best = PayMethod.cash;
   } else {
-    final priced = [
+    // The ways still in play. QR stays out unless a sourced fee prices it.
+    final candidates = [
       for (final o in options)
-        if (o.accepted != Acceptance.no && o.extraThb != null) o,
+        if (o.accepted != Acceptance.no &&
+            (o.method != PayMethod.qr || o.extraThb != null))
+          o,
+    ];
+    final priced = [
+      for (final o in candidates)
+        if (o.extraThb != null) o,
     ]..sort((a, b) => a.extraThb!.compareTo(b.extraThb!));
-    if (priced.length >= 2 &&
-        priced[1].extraThb! - priced[0].extraThb! <= sameCostThb) {
-      sameCost = true;
-    } else if (priced.isNotEmpty) {
-      best = priced.first.method;
+    // "Cheapest" needs every way in play priced: one priced way next to an
+    // unpriced one is not a comparison.
+    if (priced.length == candidates.length && priced.isNotEmpty) {
+      if (priced.length >= 2 &&
+          priced[1].extraThb! - priced[0].extraThb! <= sameCostThb) {
+        sameCost = true;
+      } else {
+        best = priced.first.method;
+      }
     }
   }
 
