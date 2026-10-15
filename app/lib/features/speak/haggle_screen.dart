@@ -317,7 +317,12 @@ class _HaggleScreenState extends State<HaggleScreen>
       case HagglePhase.preparing:
       case HagglePhase.listening:
         return [
-          _ListeningHero(state: state, hearingReply: _haggle.hearingReply),
+          _ListeningHero(
+            state: state,
+            hearingReply: _haggle.hearingReply,
+            wordsAfter: _haggle.wordsAfterSentence,
+            reading: _haggle.readingSentence,
+          ),
         ];
       case HagglePhase.unavailable:
       case HagglePhase.denied:
@@ -362,6 +367,11 @@ class _HaggleScreenState extends State<HaggleScreen>
             ),
         ],
       ),
+      // Which engine heard the sentence, measured on this phone.
+      if (_haggle.heardTrace case final heardBy? when !state.typed)
+        GroupFooter(
+          l10n.aiHeardBy(heardBy.engine.displayName, heardBy.elapsedLabel),
+        ),
       ?_aiMatchLine(l10n, state),
     ];
 
@@ -816,7 +826,18 @@ class _HaggleScreenState extends State<HaggleScreen>
 /// Hero while listening: a waveform driven by the real microphone level and
 /// the Thai words as they are recognized.
 class _ListeningHero extends StatefulWidget {
-  const _ListeningHero({required this.state, this.hearingReply = false});
+  const _ListeningHero({
+    required this.state,
+    this.hearingReply = false,
+    this.wordsAfter = false,
+    this.reading = false,
+  });
+
+  /// Cloud path: no live words; they come when the seller has finished.
+  final bool wordsAfter;
+
+  /// The cloud is reading the recorded sentence.
+  final bool reading;
 
   final HaggleState state;
 
@@ -872,12 +893,27 @@ class _ListeningHeroState extends State<_ListeningHero> {
         AnimatedSwitcher(
           duration: AppMotion.of(context, AppMotion.quick),
           child: words.isEmpty
-              ? Text(
-                  l10n.speakListenHint,
-                  key: const ValueKey('hint'),
-                  style: type.title.copyWith(
-                    color: AppColors.onSurfaceTertiary,
-                  ),
+              ? Column(
+                  key: ValueKey(widget.reading ? 'reading' : 'hint'),
+                  children: [
+                    Text(
+                      widget.reading ? l10n.speakReading : l10n.speakListenHint,
+                      textAlign: TextAlign.center,
+                      style: type.title.copyWith(
+                        color: AppColors.onSurfaceTertiary,
+                      ),
+                    ),
+                    if (widget.wordsAfter && !widget.reading) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        l10n.speakWordsAfter,
+                        textAlign: TextAlign.center,
+                        style: type.bodyMd.copyWith(
+                          color: AppColors.onSurfaceTertiary,
+                        ),
+                      ),
+                    ],
+                  ],
                 )
               : Text(
                   words,

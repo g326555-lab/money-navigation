@@ -8,8 +8,11 @@ import '../../data/market_price_repository.dart';
 import '../../rules/haggle.dart';
 import '../../rules/haggle_rounds.dart';
 import '../../services/ai/ai_trace.dart';
+import '../../services/ai/cloud_functions.dart';
+import '../../services/ai/cloud_speech.dart';
 import '../../services/ai/item_matcher.dart';
 import '../../services/ai/item_resolver.dart';
+import '../../services/clip_recorder.dart';
 import '../../services/cloud_voice.dart';
 import '../../services/places_service.dart';
 import '../../services/speech_service.dart';
@@ -109,7 +112,13 @@ class HaggleController extends ChangeNotifier {
     ItemResolver? resolver,
     PlacesService? places,
     CloudVoice? voice,
-  }) : _speech = speech ?? SpeechService(),
+    ClipRecorder? recorder,
+    CloudSpeech? cloudSpeech,
+    bool? cloudFirst,
+  }) : _recorderOverride = recorder,
+       _cloudSpeech = cloudSpeech ?? CloudSpeech(),
+       _cloudFirst = cloudFirst ?? CloudFunctions.configured,
+       _speech = speech ?? SpeechService(),
        _tts = tts ?? TtsService(),
        _prices = prices ?? MarketPriceRepository(),
        _resolver = resolver ?? ItemResolver(),
@@ -117,6 +126,37 @@ class HaggleController extends ChangeNotifier {
        _voice = voice ?? CloudVoice();
 
   final ItemResolver _resolver;
+
+  /// Cloud recognition hears a seller far better than the phone (15/15
+  /// against 9/15 in quiet, 13/15 against 1/15 with market noise), so when
+  /// it is configured the sentence is recorded once and sent there; the
+  /// phone's own recognizer is the fallback, offline or when the cloud
+  /// fails. Android cannot run both on the microphone at once.
+  final bool _cloudFirst;
+  final CloudSpeech _cloudSpeech;
+  final ClipRecorder? _recorderOverride;
+  ClipRecorder? _recorderInstance;
+  ClipRecorder get _recorder =>
+      _recorderOverride ?? (_recorderInstance ??= ClipRecorder());
+
+  /// True while a clip is being recorded for the cloud.
+  bool _recording = false;
+
+  /// True while the cloud reads the recorded sentence.
+  bool _reading = false;
+
+  /// The words come only after the seller finishes (cloud path): the
+  /// listening screen says so instead of showing live words.
+  bool get wordsAfterSentence => _recording;
+  bool get readingSentence => _reading;
+
+  /// The cloud failed this screen once; the phone listens from then on.
+  bool _cloudFailed = false;
+
+  /// How the last sentence was heard, when the cloud heard it.
+  AiTrace? get heardTrace => _heardTrace;
+  AiTrace? _heardTrace;
+
   final PlacesService _places;
   final CloudVoice _voice;
 
@@ -255,6 +295,7 @@ class HaggleController extends ChangeNotifier {
     _aiMatchTrace = null;
     _aiMatchWords = null;
     _voiceTrace = null;
+    _heardTrace = null;
     _set(
       HaggleState(
         phase: HagglePhase.listening,
@@ -262,7 +303,83 @@ class HaggleController extends ChangeNotifier {
       ),
     );
     _listenStarted = DateTime.now();
-    await _startSession();
+    await _listenOnce();
+  }
+
+  /// One sentence: through the cloud when it can, else the phone.
+  Future<void> _listenOnce() async {
+    if (_cloudFirst && !_cloudFailed) {
+      await _listenCloud();
+    } else {
+      await _startSession();
+    }
+  }
+
+  List<String> get _hints => [
+    for (final s in _items) ...s.item.keywordsTh,
+    ...pricePhrasesTh,
+  ];
+
+  /// Records the seller's sentence and has the cloud read it. Nothing
+  /// recorded (silence, no permission) or a cloud failure hands over to the
+  /// phone's recognizer, which keeps listening.
+  Future<void> _listenCloud() async {
+    // Two captures on one microphone: the later one gets silence (Android),
+    // and stopping the recognizer ends the audio session (iOS).
+    if (_speech.isListening) await _speech.cancel();
+    _recording = true;
+    notifyListeners();
+    final Uint8List? clip;
+    try {
+      clip = await _recorder.record(
+        onLevel: (level) {
+          if (_state.phase == HagglePhase.listening) {
+            _set(_state.copyWith(level: level));
+          }
+        },
+      );
+    } finally {
+      _recording = false;
+    }
+    if (_disposed || _state.phase != HagglePhase.listening) return;
+    // Recording takes the audio session over on iOS; give the voice its
+    // speaker back before anything is said.
+    unawaited(_tts.restoreSpeaker());
+    _reading = clip != null;
+    notifyListeners();
+    final heard = clip == null
+        ? null
+        : await _cloudSpeech.recognize(
+            clip,
+            sampleRateHertz: ClipRecorder.sampleRate,
+            phrases: _hints,
+          );
+    _reading = false;
+    if (_disposed || _state.phase != HagglePhase.listening) return;
+    if (heard == null) {
+      if (kDebugMode) debugPrint('[haggle] cloud gave nothing, phone listens');
+      _cloudFailed = true;
+      await _startSession();
+      return;
+    }
+    final (transcripts, trace) = heard;
+    _heardTrace = trace;
+    if (kDebugMode) {
+      debugPrint('[haggle] cloud ${trace.elapsedLabel} heard=$transcripts');
+    }
+    if (_hearingReply) {
+      final words = transcripts.first;
+      _applyReply(words, classifyReply(words));
+      return;
+    }
+    // The first transcript that names an item and a price, else the best.
+    final items = [for (final s in _items) s.item];
+    final words = transcripts.firstWhere(
+      (t) => parseHeardPrice(t, items)?.item != null,
+      orElse: () => transcripts.first,
+    );
+    _alternatives = transcripts;
+    _understand(words, typed: false, phase: HagglePhase.done);
   }
 
   /// Listens to the seller's answer to our offer: yes, no, or a new price.
@@ -277,7 +394,7 @@ class HaggleController extends ChangeNotifier {
     _previousWords = base.words;
     _set(HaggleState(phase: HagglePhase.listening, canSpeak: base.canSpeak));
     _listenStarted = DateTime.now();
-    await _startSession();
+    await _listenOnce();
   }
 
   /// For a loud market: the traveler taps what the seller answered.
@@ -398,6 +515,7 @@ class HaggleController extends ChangeNotifier {
   Future<void> submitManual(SourcedItem match, double amount) async {
     _resetHaggle();
     if (_speech.isListening) await _speech.cancel();
+    if (_recording) await _recorder.stop();
     final heard = HeardPrice(
       amount: amount,
       item: match.item,
@@ -417,6 +535,11 @@ class HaggleController extends ChangeNotifier {
 
   Future<void> stopListening() async {
     _settle?.cancel();
+    // "Done" while recording: the cloud gets what was said so far.
+    if (_recording) {
+      await _recorder.stop();
+      return;
+    }
     await _speech.stop();
     _finish(byUser: true);
   }
@@ -587,6 +710,7 @@ class HaggleController extends ChangeNotifier {
     _disposed = true;
     _settle?.cancel();
     _speech.cancel();
+    _recorderInstance?.dispose();
     _tts.stop();
     _voice.dispose();
     super.dispose();

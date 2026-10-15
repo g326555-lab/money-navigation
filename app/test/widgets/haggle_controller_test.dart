@@ -85,6 +85,10 @@ class FakeTts implements TtsService {
   final bool ready;
   final spoken = <String>[];
   int stopCalls = 0;
+  int restoreCalls = 0;
+
+  @override
+  Future<void> restoreSpeaker() async => restoreCalls++;
 
   @override
   Future<bool> prepare() async => ready;
