@@ -1962,7 +1962,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String tripMapKeptAt(int count) {
-    return 'ประหยัดได้จาก $count ที่';
+    return 'ประหยัดได้จาก $count แห่ง';
   }
 
   @override
@@ -1970,7 +1970,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String tripMapPlaces(int count) {
-    return '$count ที่';
+    return '$count แห่ง';
   }
 
   @override
@@ -1989,14 +1989,14 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tripMapOffline =>
-      'แผนที่ต้องใช้อินเทอร์เน็ต แต่ทุกที่ยังอยู่ในรายการด้านล่าง';
+      'แผนที่ต้องใช้อินเทอร์เน็ต แต่ทุกแห่งยังอยู่ในรายการด้านล่าง';
 
   @override
   String get tripMapEmptyAction => 'สแกนใบเสร็จ';
 
   @override
   String tripMapMapLabel(int count) {
-    return 'แผนที่ $count ที่ ทุกที่อยู่ในรายการด้านล่างด้วย';
+    return 'แผนที่ $count แห่ง ทุกแห่งอยู่ในรายการด้านล่างด้วย';
   }
 
   @override

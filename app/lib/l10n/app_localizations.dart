@@ -2283,7 +2283,7 @@ abstract class AppLocalizations {
   /// No description provided for @authWelcomeExampleLabel.
   ///
   /// In en, this message translates to:
-  /// **'The ATM\'s conversion would have cost'**
+  /// **'The ATM\'s conversion would have added'**
   String get authWelcomeExampleLabel;
 
   /// No description provided for @authWelcomeExampleChip.

@@ -1365,7 +1365,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authWelcomeExample => 'Example';
 
   @override
-  String get authWelcomeExampleLabel => 'The ATM\'s conversion would have cost';
+  String get authWelcomeExampleLabel =>
+      'The ATM\'s conversion would have added';
 
   @override
   String get authWelcomeExampleChip => 'Kept by choosing no conversion';

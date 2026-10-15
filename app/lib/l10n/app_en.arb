@@ -1148,7 +1148,7 @@
     }
   },
   "authWelcomeExample": "Example",
-  "authWelcomeExampleLabel": "The ATM's conversion would have cost",
+  "authWelcomeExampleLabel": "The ATM's conversion would have added",
   "authWelcomeExampleChip": "Kept by choosing no conversion",
   "authWelcomeExampleSemantics": "Example. The ATM's conversion would have cost {amount} more. Choosing no conversion kept it.",
   "@authWelcomeExampleSemantics": {
