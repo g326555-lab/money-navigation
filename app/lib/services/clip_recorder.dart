@@ -69,12 +69,19 @@ class ClipRecorder {
         return null;
       }
       final stream = await _rec.startStream(
+        // Google's advice for Speech-to-Text: 16 kHz LINEAR16, no automatic
+        // gain, no noise reduction (it hurts recognition). Android records
+        // from the speech-recognition source.
         const RecordConfig(
           encoder: AudioEncoder.pcm16bits,
           sampleRate: sampleRate,
           numChannels: 1,
-          autoGain: true,
-          noiseSuppress: true,
+          autoGain: false,
+          echoCancel: false,
+          noiseSuppress: false,
+          androidConfig: AndroidRecordConfig(
+            audioSource: AndroidAudioSource.voiceRecognition,
+          ),
         ),
       );
       guard = Timer(maxDuration, () => finish(keep: true));
