@@ -6,6 +6,12 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../data/market_price_repository.dart';
 import '../../rules/haggle.dart';
+import '../../rules/haggle_rounds.dart';
+import '../../services/ai/ai_trace.dart';
+import '../../services/ai/item_matcher.dart';
+import '../../services/ai/item_resolver.dart';
+import '../../services/cloud_voice.dart';
+import '../../services/places_service.dart';
 import '../../services/speech_service.dart';
 import '../../services/tts_service.dart';
 
@@ -25,6 +31,21 @@ enum HagglePhase {
 }
 
 enum HeardProblem { nothingHeard, noPrice, unknownItem, unitMismatch }
+
+/// One reply from the seller after our offer, and what to do next.
+@immutable
+class HaggleExchange {
+  const HaggleExchange({
+    required this.words,
+    required this.reply,
+    required this.move,
+  });
+
+  /// What the seller said, as recognized, or empty when tapped by hand.
+  final String words;
+  final SellerReply reply;
+  final NextMove move;
+}
 
 /// Everything the haggling screen shows, built only from real speech text,
 /// the sourced price file and the rules.
@@ -85,9 +106,59 @@ class HaggleController extends ChangeNotifier {
     SpeechService? speech,
     TtsService? tts,
     MarketPriceRepository? prices,
+    ItemResolver? resolver,
+    PlacesService? places,
+    CloudVoice? voice,
   }) : _speech = speech ?? SpeechService(),
        _tts = tts ?? TtsService(),
-       _prices = prices ?? MarketPriceRepository();
+       _prices = prices ?? MarketPriceRepository(),
+       _resolver = resolver ?? ItemResolver(),
+       _places = places ?? PlacesService(),
+       _voice = voice ?? CloudVoice();
+
+  final ItemResolver _resolver;
+  final PlacesService _places;
+  final CloudVoice _voice;
+
+  /// The recognizer's alternatives for the current sentence.
+  List<String> _alternatives = const [];
+
+  /// On-device AI naming the item when speech recognition misheard it, for
+  /// the sentence in [aiMatchWords]. Measured on this phone.
+  ItemMatch? get aiMatch => _aiMatch;
+  AiTrace? get aiMatchTrace => _aiMatchTrace;
+  String? get aiMatchWords => _aiMatchWords;
+  ItemMatch? _aiMatch;
+  AiTrace? _aiMatchTrace;
+  String? _aiMatchWords;
+
+  /// The haggle after the first verdict: every price said and offered.
+  HaggleHistory? get history => _history;
+  HaggleHistory? _history;
+
+  /// The seller's replies so far, oldest first.
+  List<HaggleExchange> get exchanges => List.unmodifiable(_exchanges);
+  final List<HaggleExchange> _exchanges = [];
+
+  /// True while listening to the seller's reply to our offer, not to a new
+  /// price.
+  bool get hearingReply => _hearingReply;
+  bool _hearingReply = false;
+
+  /// The verdict screen to return to after a reply.
+  HaggleState? _beforeReply;
+
+  /// The sentence the on-device matcher last ran on.
+  String? _resolvingWords;
+
+  /// The busiest rated market nearby on Google Maps, when it arrived.
+  PlacesEvidence? get places => _placesEvidence;
+  PlacesEvidence? _placesEvidence;
+
+  /// How the last counter-offer was voiced: the cloud voice's measured
+  /// step, or null when the phone's own voice spoke.
+  AiTrace? get voiceTrace => _voiceTrace;
+  AiTrace? _voiceTrace;
 
   final SpeechService _speech;
   final TtsService _tts;
@@ -125,11 +196,37 @@ class HaggleController extends ChangeNotifier {
           _set(HaggleState(phase: HagglePhase.denied, canSpeak: canSpeak));
           return;
         }
-        // "No match" and "speech timeout" only mean nobody spoke yet.
-        _finish();
+        // "No match" and "speech timeout" only mean nobody spoke yet. Some
+        // devices report a refused permission only as an unknown error, so
+        // check the permission before treating it as silence.
+        if (_state.words.isNotEmpty) {
+          _finish();
+          return;
+        }
+        _speech.hasPermission.then((granted) {
+          if (_disposed) return;
+          if (granted) {
+            _finish();
+          } else {
+            _set(HaggleState(phase: HagglePhase.denied, canSpeak: canSpeak));
+          }
+        });
       },
     );
     if (ok && !await _speech.hasPermission) denied = true;
+    // Local evidence arrives on its own; the screen adds it when it lands.
+    // Asked after the microphone prompt, so two permission prompts never
+    // overlap.
+    if (_placesEvidence == null) {
+      unawaited(
+        _places.nearbyMarket().then((p) {
+          if (p == null || _disposed) return;
+          _placesEvidence = p;
+          notifyListeners();
+        }),
+      );
+    }
+
     if (!ok || denied) {
       _set(
         HaggleState(
@@ -146,10 +243,18 @@ class HaggleController extends ChangeNotifier {
       message.contains('permission') || message.contains('denied');
 
   Future<void> listen({bool? canSpeak}) async {
+    _resetHaggle();
     await _tts.stop();
+    await _voice.stop();
     // The previous session's last result can arrive after this listen
     // starts; remember its words so that late result is ignored.
     _previousWords = _state.words;
+    _alternatives = const [];
+    _resolvingWords = null;
+    _aiMatch = null;
+    _aiMatchTrace = null;
+    _aiMatchWords = null;
+    _voiceTrace = null;
     _set(
       HaggleState(
         phase: HagglePhase.listening,
@@ -158,6 +263,64 @@ class HaggleController extends ChangeNotifier {
     );
     _listenStarted = DateTime.now();
     await _startSession();
+  }
+
+  /// Listens to the seller's answer to our offer: yes, no, or a new price.
+  /// The verdict stays as it is; the answer moves the haggle on.
+  Future<void> listenForReply() async {
+    final base = _state;
+    if (!_ensureHistory(base)) return;
+    await _tts.stop();
+    await _voice.stop();
+    _hearingReply = true;
+    _beforeReply = base;
+    _previousWords = base.words;
+    _set(HaggleState(phase: HagglePhase.listening, canSpeak: base.canSpeak));
+    _listenStarted = DateTime.now();
+    await _startSession();
+  }
+
+  /// For a loud market: the traveler taps what the seller answered.
+  void replyByHand(SellerReply reply) {
+    if (!_ensureHistory(_state)) return;
+    _beforeReply ??= _state;
+    _applyReply('', reply);
+  }
+
+  void _resetHaggle() {
+    _history = null;
+    _exchanges.clear();
+    _hearingReply = false;
+    _beforeReply = null;
+  }
+
+  bool _ensureHistory(HaggleState base) {
+    final heard = base.heard;
+    final match = base.match;
+    final offer = base.verdict?.counterOffer;
+    if (heard == null || match == null || offer == null) return false;
+    _history ??= HaggleHistory(
+      item: match.item,
+      firstAsk: heard.amount,
+      firstOffer: offer,
+    );
+    return true;
+  }
+
+  void _applyReply(String words, SellerReply reply) {
+    final history = _history;
+    final base = _beforeReply;
+    if (history == null || base == null) return;
+    final move = history.respond(reply);
+    _exchanges.add(HaggleExchange(words: words, reply: reply, move: move));
+    _hearingReply = false;
+    if (kDebugMode) {
+      debugPrint(
+        '[haggle] reply words="$words" kind=${reply.kind.name} '
+        'amount=${reply.amount} move=${move.kind.name} price=${move.price}',
+      );
+    }
+    _set(base.copyWith(phase: HagglePhase.done, speaking: false));
   }
 
   /// One recognizer session. The platform ends a session after a short
@@ -170,13 +333,24 @@ class HaggleController extends ChangeNotifier {
         ...pricePhrasesTh,
       ],
       onLevel: (level) => _set(_state.copyWith(level: _normalize(level))),
-      onWords: (words, isFinal) {
+      onWords: (words, isFinal, alternatives) {
         if (kDebugMode) debugPrint('[haggle] partial="$words" final=$isFinal');
         if (_state.phase != HagglePhase.listening) return;
         // The previous sentence coming back is that session's late result.
         final stale = words.isNotEmpty && words == _previousWords;
         if (stale) return;
         if (_state.words.isEmpty && words.isNotEmpty) _speech.speechStarted();
+        if (_hearingReply) {
+          _set(_state.copyWith(words: words));
+          _settle?.cancel();
+          if (isFinal) {
+            _finish();
+          } else if (classifyReply(words).kind != ReplyKind.unclear) {
+            _settle = Timer(speechSettleAfterPrice, stopListening);
+          }
+          return;
+        }
+        _alternatives = alternatives.isEmpty ? [words] : alternatives;
         _understand(words, typed: false, phase: _state.phase);
         _settle?.cancel();
         if (isFinal) {
@@ -193,6 +367,7 @@ class HaggleController extends ChangeNotifier {
   /// The seller's price was heard but not the item: the user names it with
   /// one tap and the heard amount and unit are kept.
   void chooseItem(SourcedItem match) {
+    _resetHaggle();
     final heard = _state.heard;
     if (heard == null) return;
     final withItem = HeardPrice(
@@ -221,6 +396,7 @@ class HaggleController extends ChangeNotifier {
   /// Uses an item and price entered by hand, for when the market is too
   /// loud to hear. A visitor can't type Thai, so this skips speech text.
   Future<void> submitManual(SourcedItem match, double amount) async {
+    _resetHaggle();
     if (_speech.isListening) await _speech.cancel();
     final heard = HeardPrice(
       amount: amount,
@@ -249,7 +425,11 @@ class HaggleController extends ChangeNotifier {
     if (!_state.canSpeak || _state.speaking) return;
     _set(_state.copyWith(speaking: true));
     try {
-      await _tts.speak(sentence);
+      // The natural cloud voice first; the phone's voice when it is not
+      // configured, offline or slow.
+      final cloud = await _voice.speak(sentence);
+      _voiceTrace = cloud;
+      if (cloud == null) await _tts.speak(sentence);
     } finally {
       _set(_state.copyWith(speaking: false));
     }
@@ -275,6 +455,10 @@ class HaggleController extends ChangeNotifier {
       _restart();
       return;
     }
+    if (_hearingReply) {
+      _applyReply(_state.words, classifyReply(_state.words));
+      return;
+    }
     _understand(_state.words, typed: _state.typed, phase: HagglePhase.done);
   }
 
@@ -294,7 +478,15 @@ class HaggleController extends ChangeNotifier {
     required bool typed,
     required HagglePhase phase,
   }) {
-    final heard = parseHeardPrice(words, [for (final s in _items) s.item]);
+    var heard = parseHeardPrice(words, [for (final s in _items) s.item]);
+    // The on-device AI already named the item in this very sentence.
+    final ai = _aiMatch;
+    if (heard != null &&
+        heard.item == null &&
+        ai != null &&
+        _aiMatchWords == words) {
+      heard = HeardPrice(amount: heard.amount, item: ai.item, unit: heard.unit);
+    }
     SourcedItem? match;
     HaggleVerdict? verdict;
     HeardProblem? problem;
@@ -304,8 +496,10 @@ class HaggleController extends ChangeNotifier {
       problem = HeardProblem.noPrice;
     } else if (heard.item == null) {
       problem = HeardProblem.unknownItem;
+      if (!typed) _resolveItem(words, heard, phase);
     } else {
-      match = _items.firstWhere((s) => s.item.key == heard.item!.key);
+      final key = heard.item!.key;
+      match = _items.firstWhere((s) => s.item.key == key);
       verdict = judgePrice(heard, match.item);
       if (verdict == null) problem = HeardProblem.unitMismatch;
     }
@@ -332,6 +526,50 @@ class HaggleController extends ChangeNotifier {
     );
   }
 
+  /// Asks the on-device matcher which item the seller named, using every
+  /// transcript the recognizer considered. When it is sure enough, the
+  /// verdict appears as if the item had been heard; otherwise the screen
+  /// keeps offering the item buttons.
+  Future<void> _resolveItem(
+    String words,
+    HeardPrice heard,
+    HagglePhase phase,
+  ) async {
+    // Partial and final results repeat the same sentence; match it once.
+    if (_resolvingWords == words) return;
+    _resolvingWords = words;
+    final alternatives = _alternatives;
+    final (match, trace) = await AiTrace.measure(
+      AiEngine.onDevice,
+      () => _resolver.resolve(alternatives, _items, unit: heard.unit),
+    );
+    // A newer sentence has arrived meanwhile, or nothing matched.
+    if (_disposed || _state.words != words || match == null) return;
+    if (_state.problem != HeardProblem.unknownItem) return;
+    final sourced = _items.firstWhere((s) => s.item.key == match.item.key);
+    final withItem = HeardPrice(
+      amount: heard.amount,
+      item: match.item,
+      unit: heard.unit,
+    );
+    final verdict = judgePrice(withItem, match.item);
+    _aiMatch = match;
+    _aiMatchTrace = trace;
+    _aiMatchWords = words;
+    _set(
+      HaggleState(
+        phase: _state.phase,
+        words: words,
+        level: _state.level,
+        heard: withItem,
+        match: sourced,
+        verdict: verdict,
+        problem: verdict == null ? HeardProblem.unitMismatch : null,
+        canSpeak: _state.canSpeak,
+      ),
+    );
+  }
+
   /// speech_to_text reports dB-like levels (about -2..10 on iOS, 0..10 on
   /// Android); the waveform needs 0..1.
   static double _normalize(double level) =>
@@ -350,6 +588,7 @@ class HaggleController extends ChangeNotifier {
     _settle?.cancel();
     _speech.cancel();
     _tts.stop();
+    _voice.dispose();
     super.dispose();
   }
 }

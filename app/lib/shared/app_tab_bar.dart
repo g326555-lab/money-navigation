@@ -8,6 +8,7 @@ import '../core/elevation.dart';
 import '../core/motion.dart';
 import '../core/spacing.dart';
 import '../core/typography.dart';
+import 'surface.dart';
 
 class AppTab {
   const AppTab({
@@ -55,35 +56,45 @@ class AppTabBar extends StatelessWidget {
           AppSizes.tabBarInsetH,
           AppSizes.tabBarInsetBottom,
         ),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            boxShadow: AppElevation.e2,
-          ),
-          child: ClipRRect(
-            borderRadius: radius,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: AppSizes.tabBlur,
-                sigmaY: AppSizes.tabBlur,
-              ),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: AppColors.glassFill,
-                  borderRadius: radius,
-                  border: Border.all(
-                    color: AppColors.glassBorder,
-                    width: AppSizes.hairline,
+        child: Center(
+          heightFactor: 1,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppSizes.tabBarMaxWidth,
+            ),
+            child: Surface(
+              radius: AppSizes.tabBarHeight / 2,
+              shadows: AppElevation.e2,
+              edgeLight: EdgeLights.onGlass,
+              clip: true,
+              child: BackdropFilter(
+                filter: ImageFilter.compose(
+                  outer: const ColorFilter.matrix(AppColors.glassSaturate),
+                  inner: ImageFilter.blur(
+                    sigmaX: AppSizes.tabBlur,
+                    sigmaY: AppSizes.tabBlur,
                   ),
                 ),
-                child: SizedBox(
-                  height: AppSizes.tabBarHeight,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => _Tabs(
-                      width: constraints.maxWidth,
-                      tabs: tabs,
-                      selected: selected,
-                      onSelected: onSelected,
+                child: DecoratedBox(
+                  decoration: ShapeDecoration(
+                    color: AppColors.glassFill,
+                    shape: RoundedSuperellipseBorder(
+                      borderRadius: radius,
+                      side: const BorderSide(
+                        color: AppColors.glassBorder,
+                        width: AppSizes.hairline,
+                      ),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: AppSizes.tabBarHeight,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => _Tabs(
+                        width: constraints.maxWidth,
+                        tabs: tabs,
+                        selected: selected,
+                        onSelected: onSelected,
+                      ),
                     ),
                   ),
                 ),

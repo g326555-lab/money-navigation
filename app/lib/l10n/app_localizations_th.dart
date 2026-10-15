@@ -258,8 +258,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get speakNoVoice => 'มือถือนี้ไม่มีเสียงภาษาไทย ให้ผู้ขายดูประโยคแทน';
 
   @override
-  String counterOfferSentence(String amount) {
-    return 'ลดเหลือ $amount บาทได้ไหม';
+  String counterOfferSentence(String amount, String ending) {
+    return 'ลดเหลือ $amount บาทได้ไหม$ending';
   }
 
   @override
@@ -290,14 +290,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String speakUnitMismatchTip(String unit) {
     return 'ราคาปกติคิด$unit ลองถามราคา$unit';
   }
-
-  @override
-  String get speakUnavailable =>
-      'มือถือนี้ใช้การฟังภาษาไทยไม่ได้ พิมพ์สิ่งที่ได้ยินแทนได้';
-
-  @override
-  String get speakDenied =>
-      'Money Navigation ยังไม่ได้รับสิทธิ์ใช้ไมโครโฟน เปิดได้ในการตั้งค่า หรือพิมพ์สิ่งที่ได้ยินแทน';
 
   @override
   String get speakEnterPrice => 'ใส่ราคา';
@@ -344,5 +336,810 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String speakHeardPrice(String price) {
     return 'ได้ยินว่า $price';
+  }
+
+  @override
+  String get tabHome => 'หน้าหลัก';
+
+  @override
+  String get tabScan => 'สแกน';
+
+  @override
+  String get tabSpeak => 'ฟังราคา';
+
+  @override
+  String get tabRecords => 'บันทึก';
+
+  @override
+  String get back => 'กลับ';
+
+  @override
+  String get homeKeptLabel => 'เงินที่ประหยัดได้ในทริปนี้';
+
+  @override
+  String homeKeptApprox(String amount) {
+    return 'ประมาณ $amount';
+  }
+
+  @override
+  String ratePair(String from, String rate, String to) {
+    return '1 $from = $rate $to';
+  }
+
+  @override
+  String homeRateSource(String pair, String date) {
+    return '$pair วันที่ $date · ธนาคารกลางยุโรป ผ่าน Frankfurter';
+  }
+
+  @override
+  String homeRateCached(String pair, String date) {
+    return '$pair วันที่ $date · ธนาคารกลางยุโรป ผ่าน Frankfurter · ค่าล่าสุด ออฟไลน์อยู่';
+  }
+
+  @override
+  String get homeRateLoading => 'กำลังดึงอัตราแลกเปลี่ยนวันนี้';
+
+  @override
+  String homeRateUnavailable(String currency) {
+    return 'ต้องต่ออินเทอร์เน็ตเพื่อดูอัตรา $currency วันนี้';
+  }
+
+  @override
+  String get homeRecent => 'บันทึกล่าสุด';
+
+  @override
+  String get homeSeeAll => 'ดูทั้งหมด';
+
+  @override
+  String get homeEmptyLabel => 'ก่อนกดถอนเงิน';
+
+  @override
+  String get homeEmptyTitle => 'สแกนหน้าจอ ATM ก่อนกดปุ่มใดๆ';
+
+  @override
+  String get homeEmptyAction => 'เปิดกล้องสแกน';
+
+  @override
+  String saveKeptValue(String amount) {
+    return '+$amount';
+  }
+
+  @override
+  String get saveAtmTitle => 'ไม่โดนค่าแปลงสกุลเงินที่ ATM';
+
+  @override
+  String saveHaggleTitle(String item) {
+    return 'ต่อราคา$itemได้';
+  }
+
+  @override
+  String saveHaggleSubtitle(String paid, String when) {
+    return 'จ่าย $paid · $when';
+  }
+
+  @override
+  String get saveHaggleUnknownItem => 'ราคาตลาด';
+
+  @override
+  String get saveToTrip => 'บันทึกในทริป';
+
+  @override
+  String get savedToTrip => 'บันทึกแล้ว';
+
+  @override
+  String get recordsTitle => 'บันทึก';
+
+  @override
+  String get recordsEmpty =>
+      'ยังไม่มีบันทึก ผลที่บันทึกหลังสแกนหรือต่อราคาจะแสดงที่นี่';
+
+  @override
+  String get recordsRemove => 'ลบ';
+
+  @override
+  String get recordsFooter =>
+      'ปัดแถวไปทางซ้ายเพื่อลบ บันทึกไว้ในเครื่องนี้เท่านั้น';
+
+  @override
+  String get settingsTitle => 'ตั้งค่า';
+
+  @override
+  String get settingsCurrency => 'สกุลเงินของคุณ';
+
+  @override
+  String get settingsChange => 'เปลี่ยน';
+
+  @override
+  String get settingsCurrencyFooter =>
+      'ยอดรวมจะแสดงเป็นสกุลเงินนี้ด้วย ตามอัตรารายวันจาก Frankfurter (ธนาคารกลางยุโรป)';
+
+  @override
+  String get settingsSpeaking => 'การพูดภาษาไทยแทนคุณ';
+
+  @override
+  String get settingsEndingMale => 'ลงท้ายด้วย ครับ';
+
+  @override
+  String get settingsEndingFemale => 'ลงท้ายด้วย คะ';
+
+  @override
+  String get settingsEndingNone => 'ไม่ลงท้าย';
+
+  @override
+  String get settingsSpeakingFooter =>
+      'คนไทยลงท้ายคำขอสุภาพด้วย ครับ (ผู้ชาย) หรือ คะ (ผู้หญิง)';
+
+  @override
+  String get politeEndingMale => 'ครับ';
+
+  @override
+  String get politeEndingFemale => 'คะ';
+
+  @override
+  String get currencyOffline => 'ต่ออินเทอร์เน็ตเพื่อโหลดรายการสกุลเงิน';
+
+  @override
+  String get currencySource =>
+      'สกุลเงินที่มีอัตราอ้างอิงรายวันจากธนาคารกลางยุโรป';
+
+  @override
+  String get haggleSaveTitle => 'คุณจ่ายไปเท่าไร';
+
+  @override
+  String get haggleSaveOffer => 'ราคาที่คุณต่อ';
+
+  @override
+  String get haggleSaveAsked => 'ราคาที่เขาบอก';
+
+  @override
+  String get haggleSaveOther => 'จำนวนอื่น';
+
+  @override
+  String haggleSaveKeeps(String amount) {
+    return 'ประหยัด $amount';
+  }
+
+  @override
+  String settingsEndingExample(String ending) {
+    return '…ได้ไหม$ending';
+  }
+
+  @override
+  String haggleSaveTooHigh(String amount) {
+    return 'ใส่น้อยกว่า $amount ซึ่งเป็นราคาที่เขาบอก';
+  }
+
+  @override
+  String get speakDeniedTitle => 'ไมโครโฟนปิดอยู่';
+
+  @override
+  String get speakDeniedBody =>
+      'เปิดไมโครโฟนให้ Money Navigation ในการตั้งค่า หรือใส่ราคาเอง';
+
+  @override
+  String get speakUnavailableTitle => 'ฟังภาษาไทยไม่ได้';
+
+  @override
+  String get speakUnavailableBody =>
+      'มือถือนี้ฟังเสียงภาษาไทยไม่ได้ ใส่ราคาเองแทน';
+
+  @override
+  String get speakOpenSettings => 'เปิดการตั้งค่า';
+
+  @override
+  String speakAmountUnit(String amount, String unit) {
+    return '$amount $unit';
+  }
+
+  @override
+  String haggleSaveChoice(String label, String amount) {
+    return '$label · $amount';
+  }
+
+  @override
+  String get speakPriceInvalid => 'ใส่เป็นตัวเลข เช่น 150';
+
+  @override
+  String speakPriceTooHigh(String amount) {
+    return 'ใส่ได้ไม่เกิน $amount';
+  }
+
+  @override
+  String get haggleSaveNothingKept =>
+      'จ่ายตามราคาที่เขาบอก ไม่มีเงินที่ประหยัดได้';
+
+  @override
+  String get recordsRemoved => 'ลบออกจากทริปแล้ว';
+
+  @override
+  String get recordsUndo => 'เลิกทำ';
+
+  @override
+  String aiTrace(String engine, String elapsed) {
+    return 'ตรวจโดย $engine · $elapsed';
+  }
+
+  @override
+  String aiVoiceCached(String engine) {
+    return 'เสียงจาก $engine เก็บไว้ในเครื่องนี้';
+  }
+
+  @override
+  String aiItemMatched(
+    String engine,
+    String item,
+    String confidence,
+    String elapsed,
+  ) {
+    return '$engine จับคู่สิ่งที่ได้ยินเป็น $item มั่นใจ $confidence · $elapsed';
+  }
+
+  @override
+  String aiPlacesLine(
+    String engine,
+    String place,
+    String rating,
+    String reviews,
+    String elapsed,
+  ) {
+    return '$engine · $place $rating ($reviews รีวิว) · $elapsed';
+  }
+
+  @override
+  String get billOpen => 'ตรวจบิล';
+
+  @override
+  String get billStartTitle => 'ตรวจบิลร้านอาหาร';
+
+  @override
+  String get billStartBody =>
+      'ถ่ายรูปบิลทั้งใบ Google Cloud Vision อ่านภาษาไทย แล้วมือถือตรวจว่าตัวเลขทุกตัวรวมกันถูกต้อง และบอกว่ามีอะไรบวกเพิ่ม';
+
+  @override
+  String get billTake => 'ถ่ายรูป';
+
+  @override
+  String get billTakeAnother => 'บิลใบอื่น';
+
+  @override
+  String get billChoose => 'เลือกรูป';
+
+  @override
+  String get billReading => 'กำลังอ่านบิล';
+
+  @override
+  String billReadingBody(String engine) {
+    return '$engine กำลังอ่านข้อความภาษาไทย จากนั้นมือถือจะตรวจตัวเลข';
+  }
+
+  @override
+  String get billTotalLabel => 'ยอดรวมของบิลนี้';
+
+  @override
+  String get billServiceChip => 'บวกค่าบริการเพิ่ม';
+
+  @override
+  String get billVatOnTopChip => 'บวก VAT เพิ่ม';
+
+  @override
+  String get billVatInsideChip => 'รวม VAT แล้ว';
+
+  @override
+  String get billNothingAddedChip => 'ไม่มีการบวกเพิ่ม';
+
+  @override
+  String get billHowBuilt => 'ยอดรวมมาจากอะไร';
+
+  @override
+  String get billInsideTotal => 'รวมอยู่ในยอดแล้ว';
+
+  @override
+  String get billSubtotal => 'ยอดก่อนหัก';
+
+  @override
+  String billItems(int count) {
+    return '$count รายการ';
+  }
+
+  @override
+  String get billDiscount => 'ส่วนลด';
+
+  @override
+  String get billService => 'ค่าบริการ';
+
+  @override
+  String billServicePercent(String percent) {
+    return 'ค่าบริการ $percent %';
+  }
+
+  @override
+  String get billVat => 'VAT';
+
+  @override
+  String billVatPercent(String percent) {
+    return 'VAT $percent %';
+  }
+
+  @override
+  String get billAddedOnTop => 'บวกเพิ่ม';
+
+  @override
+  String get billAlreadyIncluded => 'รวมอยู่แล้ว ไม่ได้จ่ายเพิ่ม';
+
+  @override
+  String get billTotal => 'ยอดรวม';
+
+  @override
+  String get billBeforeVat => 'ก่อน VAT';
+
+  @override
+  String get billProof => 'ตัวเลขทุกตัวตรวจกับตัวเลขอื่นในบิลนี้แล้ว';
+
+  @override
+  String billVisionTrace(String engine, int lines, String elapsed) {
+    return 'อ่านโดย $engine · $lines บรรทัด · $elapsed';
+  }
+
+  @override
+  String get billOfflineTitle => 'ไม่มีอินเทอร์เน็ต';
+
+  @override
+  String get billOfflineBody =>
+      'การอ่านภาษาไทยต้องใช้อินเทอร์เน็ต เชื่อมต่อแล้วถ่ายใหม่';
+
+  @override
+  String get billTooLargeTitle => 'รูปใหญ่เกินไป';
+
+  @override
+  String get billTooLargeBody =>
+      'รูปใหญ่เกินกว่าจะส่ง ถ่ายใหม่จากหน้านี้ ระบบจะส่งรูปที่เล็กลง';
+
+  @override
+  String get billNoTextTitle => 'ไม่พบข้อความ';
+
+  @override
+  String get billNoTextBody => 'ถ่ายให้บิลเต็มกรอบ แสงพอ แล้วลองอีกครั้ง';
+
+  @override
+  String get billNoMatchTitle => 'ตรวจบิลนี้ไม่ได้';
+
+  @override
+  String get billNoMatchBody =>
+      'อ่านข้อความได้ แต่ตัวเลขรวมกันไม่ลงตัวพอจะยืนยัน จึงไม่แสดงตัวเลขที่เดา ลองถ่ายบิลทั้งใบให้ชัดขึ้น';
+
+  @override
+  String get billServiceTitle => 'ตัวอ่านไม่ตอบ';
+
+  @override
+  String get billServiceBody => 'ลองใหม่อีกครั้งในอีกสักครู่';
+
+  @override
+  String get authWelcomeTitle => 'รู้ก่อนจ่ายว่าควรจ่ายทางไหน';
+
+  @override
+  String get authWelcomeBody =>
+      'ส่องกล้องที่หน้าจอ ATM หรือเครื่องรูดบัตร แล้วดูว่าตัวเลือกไหนเสียเงินน้อยกว่า เข้าสู่ระบบเพื่อเก็บบันทึกการเดินทางไว้ใช้ได้ทุกเครื่อง';
+
+  @override
+  String get authContinueApple => 'ดำเนินการต่อด้วย Apple';
+
+  @override
+  String get authContinueGoogle => 'ดำเนินการต่อด้วย Google';
+
+  @override
+  String get authContinueEmail => 'ดำเนินการต่อด้วยอีเมล';
+
+  @override
+  String get authLookAround => 'ดูแอปก่อนโดยไม่ต้องมีบัญชี';
+
+  @override
+  String get authSignInTitle => 'เข้าสู่ระบบ';
+
+  @override
+  String get authCreateTitle => 'สร้างบัญชี';
+
+  @override
+  String get authEmailLabel => 'อีเมล';
+
+  @override
+  String get authPasswordLabel => 'รหัสผ่าน';
+
+  @override
+  String get authNameLabel => 'ชื่อ (ไม่บังคับ)';
+
+  @override
+  String authPasswordRule(int min) {
+    return 'อย่างน้อย $min ตัวอักษร';
+  }
+
+  @override
+  String get authSignInAction => 'เข้าสู่ระบบ';
+
+  @override
+  String get authCreateAction => 'สร้างบัญชี';
+
+  @override
+  String get authToCreate => 'ยังไม่มีบัญชี สร้างบัญชีใหม่';
+
+  @override
+  String get authToSignIn => 'มีบัญชีแล้ว เข้าสู่ระบบ';
+
+  @override
+  String get authForgot => 'ลืมรหัสผ่าน';
+
+  @override
+  String get authShowPassword => 'แสดงรหัสผ่าน';
+
+  @override
+  String get authHidePassword => 'ซ่อนรหัสผ่าน';
+
+  @override
+  String get authConfirmTitle => 'ตรวจสอบอีเมลของคุณ';
+
+  @override
+  String authConfirmBody(String email) {
+    return 'เราส่งลิงก์ไปที่ $email แล้ว กดลิงก์ แล้วกลับมาเข้าสู่ระบบ';
+  }
+
+  @override
+  String get authBackToSignIn => 'กลับไปเข้าสู่ระบบ';
+
+  @override
+  String get authResetTitle => 'ตั้งรหัสผ่านใหม่';
+
+  @override
+  String get authResetIntro =>
+      'เราจะส่งลิงก์ทางอีเมลเพื่อตั้งรหัสผ่านใหม่ เปิดลิงก์ในเครื่องนี้';
+
+  @override
+  String get authResetSend => 'ส่งลิงก์ทางอีเมล';
+
+  @override
+  String get authResetNewPassword => 'รหัสผ่านใหม่';
+
+  @override
+  String authResetSentTo(String email) {
+    return 'ส่งลิงก์ไปที่ $email แล้ว เปิดลิงก์ในเครื่องนี้เพื่อตั้งรหัสผ่านใหม่';
+  }
+
+  @override
+  String get authResetSave => 'ตั้งรหัสผ่านใหม่';
+
+  @override
+  String get authResetResend => 'ส่งอีกครั้ง';
+
+  @override
+  String get authErrEmailEmpty => 'กรอกอีเมล';
+
+  @override
+  String get authErrEmailMalformed => 'รูปแบบอีเมลไม่ถูกต้อง';
+
+  @override
+  String get authErrPasswordEmpty => 'กรอกรหัสผ่าน';
+
+  @override
+  String authErrPasswordShort(int min) {
+    return 'ใช้อย่างน้อย $min ตัวอักษร';
+  }
+
+  @override
+  String get authErrCodeInvalid => 'ลิงก์หมดอายุแล้ว ขอลิงก์ใหม่';
+
+  @override
+  String get authErrInvalidCredentials => 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+
+  @override
+  String get authErrEmailTaken => 'อีเมลนี้มีบัญชีอยู่แล้ว เข้าสู่ระบบแทน';
+
+  @override
+  String get authErrEmailNotConfirmed =>
+      'ยืนยันอีเมลก่อน ลิงก์อยู่ในกล่องจดหมาย';
+
+  @override
+  String get authErrWeakPassword => 'เลือกรหัสผ่านอื่นที่ยาวกว่านี้';
+
+  @override
+  String get authErrRateLimited => 'ลองหลายครั้งเกินไป รอสักครู่แล้วลองใหม่';
+
+  @override
+  String get authErrOffline =>
+      'ไม่มีอินเทอร์เน็ต ตรวจสอบการเชื่อมต่อแล้วลองใหม่';
+
+  @override
+  String get authErrNotConfigured =>
+      'วิธีเข้าสู่ระบบนี้ยังไม่พร้อมในเวอร์ชันนี้';
+
+  @override
+  String get authErrUnknown => 'เข้าสู่ระบบไม่สำเร็จ ลองอีกครั้ง';
+
+  @override
+  String get authSetupTitle => 'เกี่ยวกับการเดินทางของคุณ';
+
+  @override
+  String get authSetupIntro => 'เพื่อให้ทุกจำนวนเงินแสดงเป็นสกุลที่คุณคุ้นเคย';
+
+  @override
+  String get authSetupTypeHeader => 'คุณคือ';
+
+  @override
+  String get authTypeVisitor => 'มาเที่ยวประเทศไทย';
+
+  @override
+  String get authTypeVisitorSub => 'จ่ายเป็นเงินบาท';
+
+  @override
+  String get authTypeThai => 'คนไทยเที่ยวต่างประเทศ';
+
+  @override
+  String get authTypeThaiSub => 'จ่ายเป็นสกุลเงินอื่น';
+
+  @override
+  String get authSetupMoneyHeader => 'เงิน';
+
+  @override
+  String get authHomeCurrency => 'สกุลเงินที่คุณคุ้นเคย';
+
+  @override
+  String get authCardCurrency => 'บัตรของคุณเรียกเก็บเป็น';
+
+  @override
+  String get authSetupLanguageHeader => 'ภาษา';
+
+  @override
+  String get authLanguageEn => 'English';
+
+  @override
+  String get authLanguageTh => 'ไทย';
+
+  @override
+  String get authSetupFooter => 'เปลี่ยนได้ภายหลังในการตั้งค่า';
+
+  @override
+  String get authSetupStart => 'เริ่มการเดินทาง';
+
+  @override
+  String get authSetupOtherAccount => 'ใช้บัญชีอื่น';
+
+  @override
+  String get authAccountHeader => 'บัญชี';
+
+  @override
+  String get authGuestTitle => 'ยังไม่ได้เข้าสู่ระบบ';
+
+  @override
+  String get authGuestSub => 'บันทึกอยู่ในเครื่องนี้เท่านั้น';
+
+  @override
+  String get authSignOut => 'ออกจากระบบ';
+
+  @override
+  String get authDelete => 'ลบบัญชี';
+
+  @override
+  String get authDeleteTitle => 'ลบบัญชีของคุณใช่ไหม';
+
+  @override
+  String get authDeleteBody => 'โปรไฟล์และบันทึกที่เก็บไว้จะถูกลบถาวร';
+
+  @override
+  String get authDeleteConfirm => 'ลบบัญชี';
+
+  @override
+  String get authCancel => 'ยกเลิก';
+
+  @override
+  String get politeEndingFemaleStatement => 'ค่ะ';
+
+  @override
+  String get haggleNextLabel => 'ขอราคานี้ต่อ';
+
+  @override
+  String get haggleDealLabel => 'ตกลงกันได้';
+
+  @override
+  String haggleDealAmount(String amount) {
+    return '$amount บาท';
+  }
+
+  @override
+  String haggleAcceptSentence(String amount, String ending) {
+    return 'ตกลง $amount บาท$ending';
+  }
+
+  @override
+  String get haggleStopLabel => 'เขาไม่ลดแล้ว';
+
+  @override
+  String haggleStopAmount(String amount) {
+    return 'จ่าย $amount บาท หรือเดินไปร้านอื่น';
+  }
+
+  @override
+  String haggleLeaveSentence(String ending) {
+    return 'ไม่เป็นไร ขอบคุณ$ending';
+  }
+
+  @override
+  String get haggleTheyAnswered => 'เขาตอบว่าอะไร';
+
+  @override
+  String get haggleTheyAgreed => 'เขาตกลง';
+
+  @override
+  String get haggleTheySaidNo => 'เขาไม่ลด';
+
+  @override
+  String get haggleTheyOffered => 'ราคาใหม่';
+
+  @override
+  String haggleTheyOfferedPrice(String amount) {
+    return 'เขาให้ $amount';
+  }
+
+  @override
+  String get haggleUnclear => 'ไม่ชัด ถามอีกครั้ง';
+
+  @override
+  String get haggleSoFar => 'การต่อราคาครั้งนี้';
+
+  @override
+  String get haggleFirstAsk => 'เขาบอก';
+
+  @override
+  String get haggleYouOffered => 'คุณต่อ';
+
+  @override
+  String haggleYouAsk(String amount) {
+    return 'คุณขอ $amount';
+  }
+
+  @override
+  String haggleTheirLast(String amount) {
+    return 'ราคาสุดท้ายของเขา $amount';
+  }
+
+  @override
+  String get haggleTheyOfferedTitle => 'เขาบอกราคาเท่าไร';
+
+  @override
+  String get haggleUsePrice => 'ใช้ราคานี้';
+
+  @override
+  String get haggleNewPrice => 'ราคาใหม่';
+
+  @override
+  String get haggleHearAnswer => 'ฟังคำตอบ';
+
+  @override
+  String get haggleListeningAnswer => 'กำลังฟังคำตอบของเขา';
+
+  @override
+  String get authNewPasswordTitle => 'ตั้งรหัสผ่านใหม่';
+
+  @override
+  String get saveTerminalTitle => 'จ่ายด้วยสกุลเงินท้องถิ่นที่เครื่องรูดบัตร';
+
+  @override
+  String dccKeepLabel(String currency) {
+    return 'จ่ายเป็น $currency ประหยัด';
+  }
+
+  @override
+  String dccMarkupChip(String percent) {
+    return 'ไม่เสียส่วนเพิ่ม $percent';
+  }
+
+  @override
+  String dccPressKey(int key, String currency) {
+    return 'F$key · จ่ายเป็น $currency';
+  }
+
+  @override
+  String dccReason(String home, String percent) {
+    return 'ราคาเป็น $home ในเครื่องนี้บวกเพิ่มประมาณ $percent จากอัตราธนาคาร';
+  }
+
+  @override
+  String get dccBothOptions => 'ตัวเลือกทั้งสองบนเครื่อง';
+
+  @override
+  String dccOptionKey(int key) {
+    return 'F$key';
+  }
+
+  @override
+  String get dccOptionHome => 'สกุลเงินของคุณ';
+
+  @override
+  String get dccOptionLocal => 'สกุลเงินท้องถิ่น';
+
+  @override
+  String dccFairHome(String currency) {
+    return 'ราคาที่ควรเป็น $currency';
+  }
+
+  @override
+  String dccEvenTitle(int key) {
+    return 'กดปุ่มไหนก็ได้ รวมถึง F$key';
+  }
+
+  @override
+  String get dccEvenBody =>
+      'ราคาเป็นสกุลเงินของคุณไม่แพงกว่าการจ่ายเงินท้องถิ่นตามอัตราวันนี้';
+
+  @override
+  String rateDemoSource(String pair, String date) {
+    return '$pair · อัตราคงที่สำหรับสาธิต $date';
+  }
+
+  @override
+  String boardLossTitle(String code, String percent) {
+    return 'ขาย $code ที่นี่ได้น้อยกว่าอัตรากลางประมาณ $percent';
+  }
+
+  @override
+  String boardLossBody(String amount, String loss) {
+    return 'ทุก $amount คุณได้น้อยลงประมาณ $loss';
+  }
+
+  @override
+  String boardRates(String code) {
+    return '$code บนป้ายนี้';
+  }
+
+  @override
+  String get boardBuying => 'รับซื้อ';
+
+  @override
+  String boardBuyingHint(String code) {
+    return 'ที่คุณได้ต่อ 1 $code';
+  }
+
+  @override
+  String get boardSelling => 'ขาย';
+
+  @override
+  String get boardMid => 'อัตรากลาง';
+
+  @override
+  String get boardSource => 'จากตัวเลขบนป้ายนี้';
+
+  @override
+  String boardVsReference(String percent, String source) {
+    return 'ต่ำกว่า $source ประมาณ $percent';
+  }
+
+  @override
+  String get stepFindTerminalDone => 'พบเครื่องรูดบัตรที่มีสองสกุลเงิน';
+
+  @override
+  String get stepFindBoardDone => 'พบป้ายอัตราแลกเปลี่ยน';
+
+  @override
+  String stepCompareDcc(String amount) {
+    return 'จ่ายเงินท้องถิ่นประหยัดประมาณ $amount';
+  }
+
+  @override
+  String stepCompareBoard(String percent) {
+    return 'ต่ำกว่าอัตรากลางประมาณ $percent';
+  }
+
+  @override
+  String get settingsDemo => 'สาธิต';
+
+  @override
+  String get settingsDemoOn => 'ใช้อัตราคงที่สำหรับสาธิต';
+
+  @override
+  String get settingsDemoOnHint => 'อัตราจากไฟล์สาธิต ไม่ใช่อัตราวันนี้';
+
+  @override
+  String get settingsDemoFooter =>
+      'ใช้ตอนนำเสนอเท่านั้น ผลลัพธ์จะไม่เปลี่ยนบนเวที ปิดเพื่อใช้อัตราของวันนี้';
+
+  @override
+  String billCheckedTrace(String elapsed) {
+    return 'ตรวจตัวเลขในเครื่องนี้ · $elapsed';
   }
 }

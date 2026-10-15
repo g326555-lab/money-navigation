@@ -19,11 +19,21 @@ import 'scan_guide.dart';
 import 'detection_overlay.dart';
 import 'scan_controller.dart';
 import 'scan_steps_sheet.dart';
+import '../../services/ai/cloud_functions.dart';
+import 'bill_screen.dart';
+import '../../app/app_scope.dart';
+import '../../rules/demo_rates.dart';
+import '../../rules/exchange_rate.dart';
+import '../../services/rate_service.dart';
+import 'part_b_result_screen.dart';
 
 enum _CameraStatus { starting, ready, unavailable, denied }
 
 /// Camera screen: point at an ATM, take a photo (or choose one), watch the
 /// real steps, then open the verdict.
+/// Fixed rates for the demo state (CLAUDE.md "Demo data").
+const demoRatesAsset = 'assets/data/demo_rates.json';
+
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
 
@@ -33,7 +43,22 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<ScanScreen>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
-  final _scan = ScanController();
+  late final _scan = ScanController(rateFor: _rateFor);
+
+  /// Fixed demo rates, loaded once; used only in the demo state.
+  DemoRates? _demoRates;
+
+  /// THB to [quote]: the fixed demo rate in the demo state, otherwise the
+  /// live daily rate (null until it has been fetched).
+  RateQuote? _rateFor(String quote) {
+    final scope = context.getInheritedWidgetOfExactType<AppScope>();
+    if (scope == null) return null;
+    if (scope.settings.demoState) {
+      return _demoRates?.quoteFor(RateService.base, quote);
+    }
+    return scope.rates.quoteFor(quote);
+  }
+
   final _picker = ImagePicker();
   CameraController? _camera;
   _CameraStatus _cameraStatus = _CameraStatus.starting;
@@ -42,7 +67,7 @@ class _ScanScreenState extends State<ScanScreen>
   bool _picking = false;
 
   /// True while voice haggling is on top; the camera stays off meanwhile.
-  bool _haggleOpen = false;
+  bool _otherFlowOpen = false;
   bool _resultOpen = false;
   bool _failureFelt = false;
 
@@ -57,6 +82,13 @@ class _ScanScreenState extends State<ScanScreen>
     WidgetsBinding.instance.addObserver(this);
     _scan.addListener(_onScanChanged);
     _startCamera();
+    rootBundle
+        .loadString(demoRatesAsset)
+        .then((json) => _demoRates = parseDemoRates(json));
+    // Card terminals abroad and rate boards are judged against the daily rate.
+    final rates = context.getInheritedWidgetOfExactType<AppScope>()?.rates;
+    rates?.ensure('JPY');
+    rates?.ensure('USD');
   }
 
   @override
@@ -74,19 +106,29 @@ class _ScanScreenState extends State<ScanScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final camera = _camera;
     if (state == AppLifecycleState.inactive) {
+      // Also abandons a start still in flight.
+      _cameraGeneration++;
       _camera = null;
       _torch = false;
       camera?.dispose();
     } else if (state == AppLifecycleState.resumed &&
         camera == null &&
         !_picking &&
-        !_haggleOpen &&
+        !_otherFlowOpen &&
         _scan.state.photoPath == null) {
       _startCamera();
     }
   }
 
+  /// Bumped whenever the camera must stop; a start that finishes under an
+  /// older generation disposes its controller instead of showing it.
+  int _cameraGeneration = 0;
+  bool _cameraStarting = false;
+
   Future<void> _startCamera() async {
+    if (_cameraStarting || _camera != null) return;
+    _cameraStarting = true;
+    final generation = ++_cameraGeneration;
     try {
       final cameras = await availableCameras();
       final back = cameras.where(
@@ -113,8 +155,9 @@ class _ScanScreenState extends State<ScanScreen>
       }
       // A photo was picked or taken while the camera was starting.
       if (!mounted ||
+          generation != _cameraGeneration ||
           _picking ||
-          _haggleOpen ||
+          _otherFlowOpen ||
           _scan.state.photoPath != null) {
         await controller.dispose();
         return;
@@ -129,12 +172,15 @@ class _ScanScreenState extends State<ScanScreen>
             ? _CameraStatus.denied
             : _CameraStatus.unavailable,
       );
+    } finally {
+      _cameraStarting = false;
     }
   }
 
   /// Releases the camera while a photo is reviewed, so it does not stay on
   /// (battery, heat, the system camera-in-use indicator).
   void _stopCamera() {
+    _cameraGeneration++;
     final camera = _camera;
     if (camera == null) return;
     setState(() {
@@ -157,7 +203,7 @@ class _ScanScreenState extends State<ScanScreen>
       );
       _boxes.forward();
     }
-    if (state.verdict != null && !_resultOpen) {
+    if (state.hasResult && !_resultOpen) {
       _resultOpen = true;
       // The success haptic plays on the verdict screen, when the amount
       // kept settles, so the user feels the result rather than the hand-off.
@@ -171,12 +217,19 @@ class _ScanScreenState extends State<ScanScreen>
 
   Future<void> _openResult() async {
     final state = _scan.state;
-    if (!mounted || state.verdict == null) return;
+    if (!mounted || !state.hasResult) return;
     await Navigator.of(context).push(
       PageRouteBuilder<void>(
         transitionDuration: AppMotion.of(context, AppMotion.emphasized),
         reverseTransitionDuration: AppMotion.of(context, AppMotion.standard),
-        pageBuilder: (_, _, _) => AtmResultScreen(state: state),
+        pageBuilder: (context, _, _) => switch (state) {
+          ScanState(dcc: _?) => DccResultScreen(
+            state: state,
+            demo: AppScope.of(context).settings.demoState,
+          ),
+          ScanState(board: _?) => BoardResultScreen(state: state),
+          _ => AtmResultScreen(state: state),
+        },
         transitionsBuilder: (_, animation, _, child) {
           final curved = CurvedAnimation(
             parent: animation,
@@ -200,10 +253,23 @@ class _ScanScreenState extends State<ScanScreen>
   /// microphone session does not compete with it.
   Future<void> _openHaggle() async {
     _stopCamera();
-    _haggleOpen = true;
+    _otherFlowOpen = true;
     await Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (_) => const HaggleScreen()));
-    _haggleOpen = false;
+    _otherFlowOpen = false;
+    if (mounted && _camera == null && _scan.state.photoPath == null) {
+      _startCamera();
+    }
+  }
+
+  /// Opens the bill check. The camera is released while it is open, since
+  /// the bill photo is taken with the system camera.
+  Future<void> _openBill() async {
+    _stopCamera();
+    _otherFlowOpen = true;
+    await Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (_) => const BillScreen()));
+    _otherFlowOpen = false;
     if (mounted && _camera == null && _scan.state.photoPath == null) {
       _startCamera();
     }
@@ -352,6 +418,14 @@ class _ScanScreenState extends State<ScanScreen>
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                       const Spacer(),
+                      if (!hasPhoto && CloudFunctions.configured) ...[
+                        _GlassButton(
+                          icon: Icons.receipt_long_rounded,
+                          label: l10n.billOpen,
+                          onPressed: _openBill,
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                      ],
                       if (!hasPhoto) ...[
                         _GlassButton(
                           icon: Icons.mic_rounded,

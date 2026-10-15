@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../core/colors.dart';
+import '../core/elevation.dart';
 import '../core/spacing.dart';
 import '../core/typography.dart';
+import 'surface.dart';
 
 /// Section header that sits above a group, outside the card.
 class SectionHeader extends StatelessWidget {
@@ -45,21 +47,30 @@ class SectionHeader extends StatelessWidget {
 /// One white group of rows on the grey page. Rows are divided by inset
 /// hairlines, never above the first or below the last row.
 class GroupCard extends StatelessWidget {
-  const GroupCard({super.key, required this.children, this.dividerInset});
+  const GroupCard({
+    super.key,
+    required this.children,
+    this.dividerInset,
+    this.clip = false,
+  });
 
   final List<Widget> children;
 
   /// Where the hairline starts. Defaults to the text start of a plain row.
   final double? dividerInset;
 
+  /// Clip rows to the card's corners, for rows that paint edge to edge
+  /// (a swipe-to-remove background).
+  final bool clip;
+
   @override
   Widget build(BuildContext context) {
     final inset = dividerInset ?? AppSpacing.groupPaddingH;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-      ),
+    return Surface(
+      radius: AppRadius.lg,
+      color: AppColors.surface,
+      shadows: AppElevation.e0,
+      clip: clip,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.groupPaddingV),
         child: Column(
@@ -115,31 +126,41 @@ class GroupRow extends StatelessWidget {
           horizontal: AppSpacing.groupPaddingH,
           vertical: AppSpacing.rowPaddingV,
         ),
-        child: Row(
-          children: [
-            if (leading != null) ...[
-              leading!,
-              const SizedBox(width: AppSpacing.md),
-            ],
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: titleStyle ?? type.rowTitle),
-                  if (subtitle != null)
-                    Text(subtitle!, style: type.rowSubtitle),
-                ],
+        child: LayoutBuilder(
+          builder: (context, constraints) => Row(
+            children: [
+              if (leading != null) ...[
+                leading!,
+                const SizedBox(width: AppSpacing.md),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: titleStyle ?? type.rowTitle),
+                    if (subtitle != null)
+                      Text(subtitle!, style: type.rowSubtitle),
+                  ],
+                ),
               ),
-            ),
-            if (value != null) ...[
-              const SizedBox(width: AppSpacing.lg),
-              Text(
-                value!,
-                textAlign: TextAlign.end,
-                style: valueStyle ?? type.rowTitle,
-              ),
+              if (value != null) ...[
+                const SizedBox(width: AppSpacing.lg),
+                // The amount keeps its natural width at the right edge; only a
+                // very long one wraps, and the title gets the rest.
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth:
+                        constraints.maxWidth * AppSizes.rowValueMaxFraction,
+                  ),
+                  child: Text(
+                    value!,
+                    textAlign: TextAlign.end,
+                    style: valueStyle ?? type.rowTitle,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

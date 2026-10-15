@@ -5,10 +5,24 @@ import 'package:flutter/foundation.dart';
 import 'scan_guide.dart';
 
 import '../../rules/atm_conversion.dart';
+import '../../rules/exchange_board.dart';
+import '../../rules/exchange_rate.dart';
+import '../../rules/terminal_dcc.dart';
 import '../../rules/ocr_layout.dart';
 import '../../services/text_recognition_service.dart';
 
-enum ScanStepId { readText, findAtm, readValues, compare }
+enum ScanStepId {
+  readText,
+  findAtm,
+  readValues,
+  compare,
+
+  /// Part B: a card terminal offering two currencies (F1 / F2).
+  findTerminal,
+
+  /// Part B: a money changer's buying and selling board.
+  findBoard,
+}
 
 enum ScanStepState { running, done, failed }
 
@@ -35,6 +49,9 @@ class ScanState {
     this.verdict,
     this.declineLabel,
     this.failure,
+    this.dcc,
+    this.board,
+    this.boardReference,
   });
 
   final String? photoPath;
@@ -48,7 +65,16 @@ class ScanState {
   final String? declineLabel;
   final ScanFailure? failure;
 
-  bool get isWorking => photoPath != null && verdict == null && failure == null;
+  /// Part B verdicts, from the same photo when it was not an ATM.
+  final DccVerdict? dcc;
+  final BoardRate? board;
+
+  /// The live rate the board was checked against, when there was one.
+  final RateQuote? boardReference;
+
+  bool get hasResult => verdict != null || dcc != null || board != null;
+
+  bool get isWorking => photoPath != null && !hasResult && failure == null;
 
   ScanState copyWith({
     ui.Size? photoSize,
@@ -59,6 +85,9 @@ class ScanState {
     AtmVerdict? verdict,
     String? declineLabel,
     ScanFailure? failure,
+    DccVerdict? dcc,
+    BoardRate? board,
+    RateQuote? boardReference,
   }) => ScanState(
     photoPath: photoPath,
     scannedAt: scannedAt,
@@ -70,6 +99,9 @@ class ScanState {
     verdict: verdict ?? this.verdict,
     declineLabel: declineLabel ?? this.declineLabel,
     failure: failure ?? this.failure,
+    dcc: dcc ?? this.dcc,
+    board: board ?? this.board,
+    boardReference: boardReference ?? this.boardReference,
   );
 }
 
@@ -77,8 +109,12 @@ class ScanState {
 /// values, compare totals. Each step is published as soon as it really
 /// finishes; nothing is scripted.
 class ScanController extends ChangeNotifier {
-  ScanController({TextRecognitionService? recognition})
+  ScanController({TextRecognitionService? recognition, this.rateFor})
     : _recognition = recognition ?? TextRecognitionService();
+
+  /// The rate from THB to a currency, for card terminals and rate boards:
+  /// the fixed demo rate in the demo state, otherwise the live daily rate.
+  final RateQuote? Function(String quote)? rateFor;
 
   final TextRecognitionService _recognition;
   ScanState _state = const ScanState();
@@ -147,22 +183,21 @@ class ScanController extends ChangeNotifier {
         lower.contains('amount charged') ||
         (lower.contains('without conversion') &&
             lower.contains('with conversion'));
+    if (!looksLikeAtm) {
+      _scanPartB(rows, size: size, read: read, lines: lines);
+      return;
+    }
     _set(
       _state.copyWith(
         photoSize: size,
         readElapsed: read.elapsed,
         lines: lines,
-        steps: [
-          const ScanStep(ScanStepId.readText, ScanStepState.done),
-          ScanStep(
-            ScanStepId.findAtm,
-            looksLikeAtm ? ScanStepState.done : ScanStepState.failed,
-          ),
+        steps: const [
+          ScanStep(ScanStepId.readText, ScanStepState.done),
+          ScanStep(ScanStepId.findAtm, ScanStepState.done),
         ],
-        failure: looksLikeAtm ? null : ScanFailure.notAtm,
       ),
     );
-    if (!looksLikeAtm) return;
 
     final reading = parseAtmScreen(rows);
     if (reading == null) {
@@ -197,6 +232,65 @@ class ScanController extends ChangeNotifier {
         steps: steps,
         verdict: verdict,
         declineLabel: declineButtonLabel(lines),
+      ),
+    );
+  }
+
+  /// Not an ATM: a card terminal asking which currency to pay in, or a money
+  /// changer's board. Only what the photo proves is shown.
+  void _scanPartB(
+    String rows, {
+    required ui.Size? size,
+    required TextReadResult read,
+    required List<OcrLine> lines,
+  }) {
+    final base = _state.copyWith(
+      photoSize: size,
+      readElapsed: read.elapsed,
+      lines: lines,
+    );
+    final jpy = rateFor?.call('JPY');
+    final dcc = jpy == null ? null : judgeTerminal(rows, rate: jpy);
+    if (dcc != null) {
+      _set(
+        base.copyWith(
+          dcc: dcc,
+          steps: const [
+            ScanStep(ScanStepId.readText, ScanStepState.done),
+            ScanStep(ScanStepId.findTerminal, ScanStepState.done),
+            ScanStep(ScanStepId.compare, ScanStepState.done),
+          ],
+        ),
+      );
+      return;
+    }
+    final board = readExchangeBoard(rows, code: 'USD');
+    final usd = rateFor?.call('USD');
+    // A live rate rules out misread boards ("3503 3610").
+    final plausible =
+        board != null &&
+        (usd == null || boardRatePlausible(board, usd, home: 'THB'));
+    if (plausible) {
+      _set(
+        base.copyWith(
+          board: board,
+          boardReference: usd,
+          steps: const [
+            ScanStep(ScanStepId.readText, ScanStepState.done),
+            ScanStep(ScanStepId.findBoard, ScanStepState.done),
+            ScanStep(ScanStepId.compare, ScanStepState.done),
+          ],
+        ),
+      );
+      return;
+    }
+    _set(
+      base.copyWith(
+        steps: const [
+          ScanStep(ScanStepId.readText, ScanStepState.done),
+          ScanStep(ScanStepId.findAtm, ScanStepState.failed),
+        ],
+        failure: ScanFailure.notAtm,
       ),
     );
   }

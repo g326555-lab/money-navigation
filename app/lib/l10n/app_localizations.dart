@@ -536,11 +536,11 @@ abstract class AppLocalizations {
   /// **'No Thai voice on this phone. Show the sentence to the seller instead.'**
   String get speakNoVoice;
 
-  /// Spoken to a Thai seller; always Thai in every locale.
+  /// Said aloud to the seller in Thai in every locale. ending is the polite particle the traveler chose, or empty.
   ///
   /// In en, this message translates to:
-  /// **'ลดเหลือ {amount} บาทได้ไหม'**
-  String counterOfferSentence(String amount);
+  /// **'ลดเหลือ {amount} บาทได้ไหม{ending}'**
+  String counterOfferSentence(String amount, String ending);
 
   /// No description provided for @speakNothingHeard.
   ///
@@ -590,18 +590,6 @@ abstract class AppLocalizations {
   /// **'The usual price is {unit}. Ask the seller for the price {unit}.'**
   String speakUnitMismatchTip(String unit);
 
-  /// No description provided for @speakUnavailable.
-  ///
-  /// In en, this message translates to:
-  /// **'Thai speech recognition isn\'t available on this phone. You can type what you heard.'**
-  String get speakUnavailable;
-
-  /// No description provided for @speakDenied.
-  ///
-  /// In en, this message translates to:
-  /// **'Microphone access is off for Money Navigation. Turn it on in Settings, or type what you heard.'**
-  String get speakDenied;
-
   /// No description provided for @speakEnterPrice.
   ///
   /// In en, this message translates to:
@@ -611,7 +599,7 @@ abstract class AppLocalizations {
   /// No description provided for @speakEnterTitle.
   ///
   /// In en, this message translates to:
-  /// **'What is the seller asking'**
+  /// **'What is the seller asking?'**
   String get speakEnterTitle;
 
   /// No description provided for @speakPickItem.
@@ -671,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @speakWhichItem.
   ///
   /// In en, this message translates to:
-  /// **'What are they selling'**
+  /// **'What are they selling?'**
   String get speakWhichItem;
 
   /// No description provided for @speakHeardPrice.
@@ -679,6 +667,1367 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We heard {price}.'**
   String speakHeardPrice(String price);
+
+  /// No description provided for @tabHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get tabHome;
+
+  /// No description provided for @tabScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get tabScan;
+
+  /// No description provided for @tabSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak'**
+  String get tabSpeak;
+
+  /// No description provided for @tabRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get tabRecords;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @homeKeptLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept on this trip'**
+  String get homeKeptLabel;
+
+  /// No description provided for @homeKeptApprox.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount}'**
+  String homeKeptApprox(String amount);
+
+  /// No description provided for @ratePair.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} = {rate} {to}'**
+  String ratePair(String from, String rate, String to);
+
+  /// No description provided for @homeRateSource.
+  ///
+  /// In en, this message translates to:
+  /// **'{pair} on {date} · European Central Bank via Frankfurter'**
+  String homeRateSource(String pair, String date);
+
+  /// No description provided for @homeRateCached.
+  ///
+  /// In en, this message translates to:
+  /// **'{pair} on {date} · European Central Bank via Frankfurter · last known, offline'**
+  String homeRateCached(String pair, String date);
+
+  /// No description provided for @homeRateLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting today\'s rate'**
+  String get homeRateLoading;
+
+  /// No description provided for @homeRateUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s {currency} rate needs a connection'**
+  String homeRateUnavailable(String currency);
+
+  /// No description provided for @homeRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent saves'**
+  String get homeRecent;
+
+  /// No description provided for @homeSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get homeSeeAll;
+
+  /// No description provided for @homeEmptyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you withdraw'**
+  String get homeEmptyLabel;
+
+  /// No description provided for @homeEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the ATM screen before you press anything'**
+  String get homeEmptyTitle;
+
+  /// No description provided for @homeEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the scanner'**
+  String get homeEmptyAction;
+
+  /// No description provided for @saveKeptValue.
+  ///
+  /// In en, this message translates to:
+  /// **'+{amount}'**
+  String saveKeptValue(String amount);
+
+  /// No description provided for @saveAtmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM conversion avoided'**
+  String get saveAtmTitle;
+
+  /// No description provided for @saveHaggleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{item} haggled down'**
+  String saveHaggleTitle(String item);
+
+  /// No description provided for @saveHaggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {paid} · {when}'**
+  String saveHaggleSubtitle(String paid, String when);
+
+  /// No description provided for @saveHaggleUnknownItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Market price'**
+  String get saveHaggleUnknownItem;
+
+  /// No description provided for @saveToTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to trip'**
+  String get saveToTrip;
+
+  /// No description provided for @savedToTrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to trip'**
+  String get savedToTrip;
+
+  /// No description provided for @recordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get recordsTitle;
+
+  /// No description provided for @recordsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved yet. Results you save after a scan or a haggle are listed here.'**
+  String get recordsEmpty;
+
+  /// No description provided for @recordsRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get recordsRemove;
+
+  /// No description provided for @recordsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe a row left to remove it. Saved only on this phone.'**
+  String get recordsFooter;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Home currency'**
+  String get settingsCurrency;
+
+  /// No description provided for @settingsChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get settingsChange;
+
+  /// No description provided for @settingsCurrencyFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals also show in this currency at the daily rate from Frankfurter (European Central Bank).'**
+  String get settingsCurrencyFooter;
+
+  /// No description provided for @settingsSpeaking.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking Thai for you'**
+  String get settingsSpeaking;
+
+  /// No description provided for @settingsEndingMale.
+  ///
+  /// In en, this message translates to:
+  /// **'End with khrap'**
+  String get settingsEndingMale;
+
+  /// No description provided for @settingsEndingFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'End with kha'**
+  String get settingsEndingFemale;
+
+  /// No description provided for @settingsEndingNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No ending'**
+  String get settingsEndingNone;
+
+  /// No description provided for @settingsSpeakingFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Thai speakers end a polite request with khrap (men) or kha (women).'**
+  String get settingsSpeakingFooter;
+
+  /// No description provided for @politeEndingMale.
+  ///
+  /// In en, this message translates to:
+  /// **'ครับ'**
+  String get politeEndingMale;
+
+  /// No description provided for @politeEndingFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'คะ'**
+  String get politeEndingFemale;
+
+  /// No description provided for @currencyOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to the internet to load the list of currencies.'**
+  String get currencyOffline;
+
+  /// No description provided for @currencySource.
+  ///
+  /// In en, this message translates to:
+  /// **'Currencies with a daily reference rate from the European Central Bank.'**
+  String get currencySource;
+
+  /// No description provided for @haggleSaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What did you pay?'**
+  String get haggleSaveTitle;
+
+  /// No description provided for @haggleSaveOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your offer'**
+  String get haggleSaveOffer;
+
+  /// No description provided for @haggleSaveAsked.
+  ///
+  /// In en, this message translates to:
+  /// **'Their price'**
+  String get haggleSaveAsked;
+
+  /// No description provided for @haggleSaveOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another amount'**
+  String get haggleSaveOther;
+
+  /// No description provided for @haggleSaveKeeps.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeps {amount}'**
+  String haggleSaveKeeps(String amount);
+
+  /// No description provided for @settingsEndingExample.
+  ///
+  /// In en, this message translates to:
+  /// **'…ได้ไหม{ending}'**
+  String settingsEndingExample(String ending);
+
+  /// No description provided for @haggleSaveTooHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter less than {amount}, the price they asked'**
+  String haggleSaveTooHigh(String amount);
+
+  /// No description provided for @speakDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone is off'**
+  String get speakDeniedTitle;
+
+  /// No description provided for @speakDeniedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on the microphone for Money Navigation in Settings, or enter the price yourself.'**
+  String get speakDeniedBody;
+
+  /// No description provided for @speakUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thai listening isn\'t available'**
+  String get speakUnavailableTitle;
+
+  /// No description provided for @speakUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone can\'t recognise Thai speech. Enter the price yourself instead.'**
+  String get speakUnavailableBody;
+
+  /// No description provided for @speakOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get speakOpenSettings;
+
+  /// No description provided for @speakAmountUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} {unit}'**
+  String speakAmountUnit(String amount, String unit);
+
+  /// No description provided for @haggleSaveChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} · {amount}'**
+  String haggleSaveChoice(String label, String amount);
+
+  /// No description provided for @speakPriceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number, like 150'**
+  String get speakPriceInvalid;
+
+  /// No description provided for @speakPriceTooHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices up to {amount}'**
+  String speakPriceTooHigh(String amount);
+
+  /// No description provided for @haggleSaveNothingKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Paying their price keeps nothing to save'**
+  String get haggleSaveNothingKept;
+
+  /// No description provided for @recordsRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from this trip'**
+  String get recordsRemoved;
+
+  /// No description provided for @recordsUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get recordsUndo;
+
+  /// No description provided for @aiTrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked by {engine} · {elapsed}'**
+  String aiTrace(String engine, String elapsed);
+
+  /// No description provided for @aiVoiceCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice from {engine}, saved on this phone'**
+  String aiVoiceCached(String engine);
+
+  /// No description provided for @aiItemMatched.
+  ///
+  /// In en, this message translates to:
+  /// **'{engine} matched what was heard to {item}, {confidence} sure · {elapsed}'**
+  String aiItemMatched(
+    String engine,
+    String item,
+    String confidence,
+    String elapsed,
+  );
+
+  /// No description provided for @aiPlacesLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{engine} · {place} {rating} ({reviews} reviews) · {elapsed}'**
+  String aiPlacesLine(
+    String engine,
+    String place,
+    String rating,
+    String reviews,
+    String elapsed,
+  );
+
+  /// No description provided for @billOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Check a bill'**
+  String get billOpen;
+
+  /// No description provided for @billStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check a Thai bill'**
+  String get billStartTitle;
+
+  /// No description provided for @billStartBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo of the whole bill. Google Cloud Vision reads the Thai, then your phone checks that every figure adds up and shows what was added on top.'**
+  String get billStartBody;
+
+  /// No description provided for @billTake.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get billTake;
+
+  /// No description provided for @billTakeAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Another bill'**
+  String get billTakeAnother;
+
+  /// No description provided for @billChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose photo'**
+  String get billChoose;
+
+  /// No description provided for @billReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the bill'**
+  String get billReading;
+
+  /// No description provided for @billReadingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{engine} is reading the Thai text. Your phone checks the figures next.'**
+  String billReadingBody(String engine);
+
+  /// No description provided for @billTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total on this bill'**
+  String get billTotalLabel;
+
+  /// No description provided for @billServiceChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Service charge added on top'**
+  String get billServiceChip;
+
+  /// No description provided for @billVatOnTopChip.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT added on top'**
+  String get billVatOnTopChip;
+
+  /// No description provided for @billVatInsideChip.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT already included'**
+  String get billVatInsideChip;
+
+  /// No description provided for @billNothingAddedChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing added on top'**
+  String get billNothingAddedChip;
+
+  /// No description provided for @billHowBuilt.
+  ///
+  /// In en, this message translates to:
+  /// **'How the total was built'**
+  String get billHowBuilt;
+
+  /// No description provided for @billInsideTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Already inside the total'**
+  String get billInsideTotal;
+
+  /// No description provided for @billSubtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get billSubtotal;
+
+  /// No description provided for @billItems.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String billItems(int count);
+
+  /// No description provided for @billDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get billDiscount;
+
+  /// No description provided for @billService.
+  ///
+  /// In en, this message translates to:
+  /// **'Service charge'**
+  String get billService;
+
+  /// No description provided for @billServicePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Service charge {percent} %'**
+  String billServicePercent(String percent);
+
+  /// No description provided for @billVat.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT'**
+  String get billVat;
+
+  /// No description provided for @billVatPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'VAT {percent} %'**
+  String billVatPercent(String percent);
+
+  /// No description provided for @billAddedOnTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Added on top'**
+  String get billAddedOnTop;
+
+  /// No description provided for @billAlreadyIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Already included, not extra'**
+  String get billAlreadyIncluded;
+
+  /// No description provided for @billTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get billTotal;
+
+  /// No description provided for @billBeforeVat.
+  ///
+  /// In en, this message translates to:
+  /// **'Before VAT'**
+  String get billBeforeVat;
+
+  /// No description provided for @billProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Every figure was checked against the others on this bill.'**
+  String get billProof;
+
+  /// No description provided for @billVisionTrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Read by {engine} · {lines} lines · {elapsed}'**
+  String billVisionTrace(String engine, int lines, String elapsed);
+
+  /// No description provided for @billOfflineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection'**
+  String get billOfflineTitle;
+
+  /// No description provided for @billOfflineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Thai needs the internet. Connect and take the photo again.'**
+  String get billOfflineBody;
+
+  /// No description provided for @billTooLargeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo is too large'**
+  String get billTooLargeTitle;
+
+  /// No description provided for @billTooLargeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This photo is too big to send. Take it again from this screen, it sends a smaller copy.'**
+  String get billTooLargeBody;
+
+  /// No description provided for @billNoTextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No text found'**
+  String get billNoTextTitle;
+
+  /// No description provided for @billNoTextBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill the frame with the bill, in good light, and try again.'**
+  String get billNoTextBody;
+
+  /// No description provided for @billNoMatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify this bill'**
+  String get billNoMatchTitle;
+
+  /// No description provided for @billNoMatchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The text was read, but its figures don\'t add up in a way we can prove. Nothing is shown rather than a guess. Try a sharper photo of the whole bill.'**
+  String get billNoMatchBody;
+
+  /// No description provided for @billServiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The reader didn\'t answer'**
+  String get billServiceTitle;
+
+  /// No description provided for @billServiceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again in a moment.'**
+  String get billServiceBody;
+
+  /// No description provided for @authWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See which way to pay'**
+  String get authWelcomeTitle;
+
+  /// No description provided for @authWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at an ATM or a card terminal and see which choice keeps your money. Sign in to keep your trip records on any phone.'**
+  String get authWelcomeBody;
+
+  /// No description provided for @authContinueApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get authContinueApple;
+
+  /// No description provided for @authContinueGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get authContinueGoogle;
+
+  /// No description provided for @authContinueEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with email'**
+  String get authContinueEmail;
+
+  /// No description provided for @authLookAround.
+  ///
+  /// In en, this message translates to:
+  /// **'Look around without an account'**
+  String get authLookAround;
+
+  /// No description provided for @authSignInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get authSignInTitle;
+
+  /// No description provided for @authCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account'**
+  String get authCreateTitle;
+
+  /// No description provided for @authEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get authEmailLabel;
+
+  /// No description provided for @authPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authPasswordLabel;
+
+  /// No description provided for @authNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, if you like'**
+  String get authNameLabel;
+
+  /// No description provided for @authPasswordRule.
+  ///
+  /// In en, this message translates to:
+  /// **'At least {min} characters'**
+  String authPasswordRule(int min);
+
+  /// No description provided for @authSignInAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get authSignInAction;
+
+  /// No description provided for @authCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get authCreateAction;
+
+  /// No description provided for @authToCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'New here? Create an account'**
+  String get authToCreate;
+
+  /// No description provided for @authToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Have an account? Sign in'**
+  String get authToSignIn;
+
+  /// No description provided for @authForgot.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password'**
+  String get authForgot;
+
+  /// No description provided for @authShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get authShowPassword;
+
+  /// No description provided for @authHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get authHidePassword;
+
+  /// No description provided for @authConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get authConfirmTitle;
+
+  /// No description provided for @authConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a link to {email}. Tap it, then come back and sign in.'**
+  String authConfirmBody(String email);
+
+  /// No description provided for @authBackToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get authBackToSignIn;
+
+  /// No description provided for @authResetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get authResetTitle;
+
+  /// No description provided for @authResetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll email you a link to set a new password. Open it on this phone.'**
+  String get authResetIntro;
+
+  /// No description provided for @authResetSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Email me a link'**
+  String get authResetSend;
+
+  /// No description provided for @authResetNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get authResetNewPassword;
+
+  /// No description provided for @authResetSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Link sent to {email}. Open it on this phone to set a new password.'**
+  String authResetSentTo(String email);
+
+  /// No description provided for @authResetSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Set new password'**
+  String get authResetSave;
+
+  /// No description provided for @authResetResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send it again'**
+  String get authResetResend;
+
+  /// No description provided for @authErrEmailEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get authErrEmailEmpty;
+
+  /// No description provided for @authErrEmailMalformed.
+  ///
+  /// In en, this message translates to:
+  /// **'That email doesn\'t look right'**
+  String get authErrEmailMalformed;
+
+  /// No description provided for @authErrPasswordEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a password'**
+  String get authErrPasswordEmpty;
+
+  /// No description provided for @authErrPasswordShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least {min} characters'**
+  String authErrPasswordShort(int min);
+
+  /// No description provided for @authErrCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That link has expired. Ask for a new one.'**
+  String get authErrCodeInvalid;
+
+  /// No description provided for @authErrInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or password is wrong'**
+  String get authErrInvalidCredentials;
+
+  /// No description provided for @authErrEmailTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This email already has an account. Sign in instead.'**
+  String get authErrEmailTaken;
+
+  /// No description provided for @authErrEmailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your email first. The link is in your inbox.'**
+  String get authErrEmailNotConfirmed;
+
+  /// No description provided for @authErrWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a different, longer password'**
+  String get authErrWeakPassword;
+
+  /// No description provided for @authErrRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries. Wait a minute, then try again.'**
+  String get authErrRateLimited;
+
+  /// No description provided for @authErrOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Check your connection and try again.'**
+  String get authErrOffline;
+
+  /// No description provided for @authErrNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'This way of signing in isn\'t ready in this version.'**
+  String get authErrNotConfigured;
+
+  /// No description provided for @authErrUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sign in. Try again.'**
+  String get authErrUnknown;
+
+  /// No description provided for @authSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About your trip'**
+  String get authSetupTitle;
+
+  /// No description provided for @authSetupIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'So every amount shows in money you know'**
+  String get authSetupIntro;
+
+  /// No description provided for @authSetupTypeHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'You are'**
+  String get authSetupTypeHeader;
+
+  /// No description provided for @authTypeVisitor.
+  ///
+  /// In en, this message translates to:
+  /// **'Visiting Thailand'**
+  String get authTypeVisitor;
+
+  /// No description provided for @authTypeVisitorSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Paying in baht'**
+  String get authTypeVisitorSub;
+
+  /// No description provided for @authTypeThai.
+  ///
+  /// In en, this message translates to:
+  /// **'Thai, travelling abroad'**
+  String get authTypeThai;
+
+  /// No description provided for @authTypeThaiSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Paying in other currencies'**
+  String get authTypeThaiSub;
+
+  /// No description provided for @authSetupMoneyHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get authSetupMoneyHeader;
+
+  /// No description provided for @authHomeCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'You think in'**
+  String get authHomeCurrency;
+
+  /// No description provided for @authCardCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Your card bills in'**
+  String get authCardCurrency;
+
+  /// No description provided for @authSetupLanguageHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get authSetupLanguageHeader;
+
+  /// No description provided for @authLanguageEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get authLanguageEn;
+
+  /// No description provided for @authLanguageTh.
+  ///
+  /// In en, this message translates to:
+  /// **'ไทย'**
+  String get authLanguageTh;
+
+  /// No description provided for @authSetupFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change these later in Settings.'**
+  String get authSetupFooter;
+
+  /// No description provided for @authSetupStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start my trip'**
+  String get authSetupStart;
+
+  /// No description provided for @authSetupOtherAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different account'**
+  String get authSetupOtherAccount;
+
+  /// No description provided for @authAccountHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get authAccountHeader;
+
+  /// No description provided for @authGuestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in'**
+  String get authGuestTitle;
+
+  /// No description provided for @authGuestSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Records stay on this phone only'**
+  String get authGuestSub;
+
+  /// No description provided for @authSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get authSignOut;
+
+  /// No description provided for @authDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get authDelete;
+
+  /// No description provided for @authDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get authDeleteTitle;
+
+  /// No description provided for @authDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile and saved records will be removed for good.'**
+  String get authDeleteBody;
+
+  /// No description provided for @authDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get authDeleteConfirm;
+
+  /// No description provided for @authCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get authCancel;
+
+  /// No description provided for @politeEndingFemaleStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'ค่ะ'**
+  String get politeEndingFemaleStatement;
+
+  /// No description provided for @haggleNextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for this next'**
+  String get haggleNextLabel;
+
+  /// No description provided for @haggleDealLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Deal'**
+  String get haggleDealLabel;
+
+  /// No description provided for @haggleDealAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} THB'**
+  String haggleDealAmount(String amount);
+
+  /// No description provided for @haggleAcceptSentence.
+  ///
+  /// In en, this message translates to:
+  /// **'ตกลง {amount} บาท{ending}'**
+  String haggleAcceptSentence(String amount, String ending);
+
+  /// No description provided for @haggleStopLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'They won\'t go lower'**
+  String get haggleStopLabel;
+
+  /// No description provided for @haggleStopAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {amount} THB or walk away'**
+  String haggleStopAmount(String amount);
+
+  /// No description provided for @haggleLeaveSentence.
+  ///
+  /// In en, this message translates to:
+  /// **'ไม่เป็นไร ขอบคุณ{ending}'**
+  String haggleLeaveSentence(String ending);
+
+  /// No description provided for @haggleTheyAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'What did they say?'**
+  String get haggleTheyAnswered;
+
+  /// No description provided for @haggleTheyAgreed.
+  ///
+  /// In en, this message translates to:
+  /// **'They agreed'**
+  String get haggleTheyAgreed;
+
+  /// No description provided for @haggleTheySaidNo.
+  ///
+  /// In en, this message translates to:
+  /// **'They said no'**
+  String get haggleTheySaidNo;
+
+  /// No description provided for @haggleTheyOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'New price'**
+  String get haggleTheyOffered;
+
+  /// No description provided for @haggleTheyOfferedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'They offered {amount}'**
+  String haggleTheyOfferedPrice(String amount);
+
+  /// No description provided for @haggleUnclear.
+  ///
+  /// In en, this message translates to:
+  /// **'Not clear, ask again'**
+  String get haggleUnclear;
+
+  /// No description provided for @haggleSoFar.
+  ///
+  /// In en, this message translates to:
+  /// **'This haggle so far'**
+  String get haggleSoFar;
+
+  /// No description provided for @haggleFirstAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'They asked'**
+  String get haggleFirstAsk;
+
+  /// No description provided for @haggleYouOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'You offered'**
+  String get haggleYouOffered;
+
+  /// No description provided for @haggleYouAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'You ask {amount}'**
+  String haggleYouAsk(String amount);
+
+  /// No description provided for @haggleTheirLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Their last {amount}'**
+  String haggleTheirLast(String amount);
+
+  /// No description provided for @haggleTheyOfferedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What price did they say?'**
+  String get haggleTheyOfferedTitle;
+
+  /// No description provided for @haggleUsePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this price'**
+  String get haggleUsePrice;
+
+  /// No description provided for @haggleNewPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'New price'**
+  String get haggleNewPrice;
+
+  /// No description provided for @haggleHearAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Hear their answer'**
+  String get haggleHearAnswer;
+
+  /// No description provided for @haggleListeningAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening for their answer'**
+  String get haggleListeningAnswer;
+
+  /// No description provided for @authNewPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a new password'**
+  String get authNewPasswordTitle;
+
+  /// No description provided for @saveTerminalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in local currency at a card terminal'**
+  String get saveTerminalTitle;
+
+  /// No description provided for @dccKeepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay in {currency} and keep'**
+  String dccKeepLabel(String currency);
+
+  /// No description provided for @dccMarkupChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} markup avoided'**
+  String dccMarkupChip(String percent);
+
+  /// No description provided for @dccPressKey.
+  ///
+  /// In en, this message translates to:
+  /// **'F{key} · pay in {currency}'**
+  String dccPressKey(int key, String currency);
+
+  /// No description provided for @dccReason.
+  ///
+  /// In en, this message translates to:
+  /// **'The {home} price on this terminal adds about {percent} on top of the bank rate.'**
+  String dccReason(String home, String percent);
+
+  /// No description provided for @dccBothOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Both options on the terminal'**
+  String get dccBothOptions;
+
+  /// No description provided for @dccOptionKey.
+  ///
+  /// In en, this message translates to:
+  /// **'F{key}'**
+  String dccOptionKey(int key);
+
+  /// No description provided for @dccOptionHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Your home currency'**
+  String get dccOptionHome;
+
+  /// No description provided for @dccOptionLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local currency'**
+  String get dccOptionLocal;
+
+  /// No description provided for @dccFairHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair price in {currency}'**
+  String dccFairHome(String currency);
+
+  /// No description provided for @dccEvenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Either key is fine here, F{key} included'**
+  String dccEvenTitle(int key);
+
+  /// No description provided for @dccEvenBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The home-currency price is not dearer than paying locally at today\'s rate.'**
+  String get dccEvenBody;
+
+  /// No description provided for @rateDemoSource.
+  ///
+  /// In en, this message translates to:
+  /// **'{pair} · fixed demo rate, {date}'**
+  String rateDemoSource(String pair, String date);
+
+  /// No description provided for @boardLossTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Selling {code} here gets about {percent} less than the middle rate'**
+  String boardLossTitle(String code, String percent);
+
+  /// No description provided for @boardLossBody.
+  ///
+  /// In en, this message translates to:
+  /// **'On {amount} that is about {loss} less in your hand.'**
+  String boardLossBody(String amount, String loss);
+
+  /// No description provided for @boardRates.
+  ///
+  /// In en, this message translates to:
+  /// **'{code} on this board'**
+  String boardRates(String code);
+
+  /// No description provided for @boardBuying.
+  ///
+  /// In en, this message translates to:
+  /// **'They buy at'**
+  String get boardBuying;
+
+  /// No description provided for @boardBuyingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What you get for each {code}'**
+  String boardBuyingHint(String code);
+
+  /// No description provided for @boardSelling.
+  ///
+  /// In en, this message translates to:
+  /// **'They sell at'**
+  String get boardSelling;
+
+  /// No description provided for @boardMid.
+  ///
+  /// In en, this message translates to:
+  /// **'Middle rate'**
+  String get boardMid;
+
+  /// No description provided for @boardSource.
+  ///
+  /// In en, this message translates to:
+  /// **'From the numbers on this board'**
+  String get boardSource;
+
+  /// No description provided for @boardVsReference.
+  ///
+  /// In en, this message translates to:
+  /// **'About {percent} below {source}'**
+  String boardVsReference(String percent, String source);
+
+  /// No description provided for @stepFindTerminalDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Card terminal with two currencies found'**
+  String get stepFindTerminalDone;
+
+  /// No description provided for @stepFindBoardDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rate board found'**
+  String get stepFindBoardDone;
+
+  /// No description provided for @stepCompareDcc.
+  ///
+  /// In en, this message translates to:
+  /// **'Paying locally keeps about {amount}'**
+  String stepCompareDcc(String amount);
+
+  /// No description provided for @stepCompareBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'About {percent} below the middle rate'**
+  String stepCompareBoard(String percent);
+
+  /// No description provided for @settingsDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo'**
+  String get settingsDemo;
+
+  /// No description provided for @settingsDemoOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fixed demo rates'**
+  String get settingsDemoOn;
+
+  /// No description provided for @settingsDemoOnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates from the demo file, not today\'s'**
+  String get settingsDemoOnHint;
+
+  /// No description provided for @settingsDemoFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'For presenting only: results stay the same on stage. Turn it off to use today\'s rates.'**
+  String get settingsDemoFooter;
+
+  /// No description provided for @billCheckedTrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Figures checked on this phone · {elapsed}'**
+  String billCheckedTrace(String elapsed);
 }
 
 class _AppLocalizationsDelegate

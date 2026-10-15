@@ -4,6 +4,8 @@ name: Money Navigation
 description: A travel money assistant that stops visitors to Thailand from losing money at ATMs, card terminals, exchange booths and street prices.
 colors:
   primary: "#19D873"
+  primary-top: "#2EE383"
+  primary-bottom: "#14CC6A"
   on-primary: "#04220F"
   primary-text: "#00A85A"
   primary-on-dark: "#19E07A"
@@ -18,6 +20,11 @@ colors:
   handle: "#D1D6DB"
   glass-fill: "#FFFFFFB8"
   shadow: "#111418"
+  shadow-green: "#0A4D2C"
+  surface-dark-top: "#1E232A"
+  success-center: "#6FF0AC"
+  aura-light: "#5BE89A"
+  aura-deep: "#12C366"
   surface-dark: "#111418"
   on-surface: "#111418"
   on-surface-secondary: "#4E5968"
@@ -172,7 +179,9 @@ There are four screen templates. Camera screens are dark, with labels placed dir
 
 Green means money kept and the action to take. Use `primary` as a fill with `on-primary` text, and `primary-text` when green text sits on white. Red means overpaying: `error` for markers, `error-text` for text, `error-container` for tinted chips. Everything else is gray and white. Never use color alone to carry meaning; pair it with a word.
 
-Gradients are allowed in five places only: the success screen background (a lighter green center), the home hero card (`primary-container` to `primary-container-end`), the glossy icon tiles (light to dark of the same hue, top to bottom), the coin, and the camera scrim (top of camera screens only, `shadow` from 45 % to 0 % over 120, so the status bar stays legible over a bright preview).
+Gradients are allowed in these places only: the success screen's drifting light field (three soft green radial lights, `success-center`, `aura-light`, `aura-deep`), the home hero card (`primary-container` to `primary-container-end`), the glossy icon tiles (light to dark of the same hue, top to bottom), dark cards and dark buttons (`surface-dark-top` #1E232A to `surface-dark`), green buttons (`primary-top` #2EE383 to `primary-bottom` #14CC6A), the coin, and the camera scrim (top of camera screens only, `shadow` from 45 % to 0 % over 120, so the status bar stays legible over a bright preview). A fill gradient never changes lightness by more than about 6 % from top to bottom: it reads as light from above, not as decoration.
+
+Tone (owner, 15 Oct): travelers use this app and it is not a bank, so it may stand out and feel delightful. Delight comes from physical, honest motion (a coin that floats, a total that rolls), never from pressure or gambling patterns: no spin wheels, countdowns, confetti storms, fly-off money cards or neon glow.
 
 ## Typography
 
@@ -186,19 +195,26 @@ Screen margin 16. Every screen has three zones in this order: hero zone, content
 
 ## Elevation & Depth
 
-Depth comes from surface levels, plus exactly two shadow tokens.
+Depth comes from surface levels and layered shadows, all lit by one light source above. Higher elements cast longer, softer and fainter shadows. Shadows on colour are tinted with that colour (`shadow-green` #0A4D2C on the green field), never black on colour.
 
 | Level | Color | Use |
 | --- | --- | --- |
 | L0 page | background #F2F4F6 | Every everyday screen. |
-| L1 group | surface #FFFFFF, radius 20 | Every set of rows. Flat, no border, no shadow. |
+| L1 group | surface #FFFFFF, radius 20, E0 | Every set of rows. Rests just above the page. |
 | L1 well | surface-sunken #F9FAFB, radius 12 | Only a numeric breakdown inside a group. Replaces cards in cards. |
 | L2 floating | surface or glass | Tab bar, sticky action dock, bottom sheet. |
 | Emphasis | surface-dark #111418 | The one dark card per screen. |
 
-Shadow color is `shadow` #111418.
-- E1, hero card and dark card only: (0,1) blur 2 at 4 %, plus (0,4) blur 12 at 5 %.
-- E2, floating chrome only (tab bar, dock, sheet; sheets use y -8): (0,2) blur 6 at 6 %, plus (0,10) blur 30 at 12 %.
+Shadow tokens (`lib/core/elevation.dart`), as (x,y) blur spread alpha:
+- E0, group cards: (0,1) 3 at 3 %; (0,6) 20 −4 at 5 %.
+- E1, raised objects (hero card, dark card, icon tiles; tiles tint it with their own hue): (0,1) 2 at 6 %; (0,4) 10 at 6 %; (0,12) 24 −6 at 8 %.
+- E1-green, the white Press card on the success field: (0,2) 6 at 10 %; (0,6) 14 at 10 %; (0,16) 40 −8 at 14 %, all `shadow-green`.
+- E2, floating chrome (tab bar, dock, sheet; sheets cast upwards): (0,1) 2 at 6 %; (0,8) 24 at 8 %; (0,24) 48 −12 at 10 %.
+- Pressed: a raised element keeps only its first (contact) layer while pressed, as if pushed into the page.
+
+Light edges: dark surfaces carry a 1 px white 10 % line along the top that fades out by 40 % of the height; icon tiles and the hero card 30 %; glass 55 %. Colored glow (zero offset, saturated tint, alpha above 15 %) is never used.
+
+Corners are continuous-curvature superellipses (`RoundedSuperellipseBorder`, `ClipRSuperellipse`) at every radius, never plain rounded rectangles; nested shapes follow the concentric rule (inner radius = outer radius − inset, at least 8).
 
 Rows inside a group are divided by a 0.5 `divider` hairline that starts at the text start (inset 20, or 72 with a 40 icon) and runs to the card edge; never above the first or below the last row. Glass (translucent blur) is used only for the floating tab bar, the sticky action dock and controls on camera screens.
 
@@ -208,7 +224,7 @@ Hero zone sits directly on the page, no card: label 15/500 on-surface-secondary,
 
 ## Shapes
 
-Bottom sheets 28, hero and dark cards 24, cards 20, buttons 16, small tiles 12 to 14, chips and the tab bar fully round. No other radii.
+Bottom sheets 28, hero and dark cards 24, cards 20, buttons 16, small tiles 12 to 14, chips and the tab bar fully round. No other radii. All corners are drawn as superellipses (see Elevation & Depth).
 
 ## Components
 
@@ -222,8 +238,14 @@ Bottom sheets 28, hero and dark cards 24, cards 20, buttons 16, small tiles 12 t
 - Tab bar: floating glass pill, 16 from the side edges and 8 above the bottom safe area, height 64, radius 32, glass-fill over blur sigma 24, 0.5 border of shadow at 6 %, E2. Five equal tabs (Home, Scan, Speak, Assistant, Records); icons 24, outline when inactive and filled when active; labels 11/600; inactive on-surface-tertiary, active on-surface. The active tab sits on a 56-tall pill of shadow at 7 % that slides between tabs (motion standard, enter curve), never green. Selection click haptic on change. Content scrolls under it with bottom padding 64 + safe area + 24. Hidden in full-screen flows (camera, verdict, success).
 - Action dock: a pinned primary button sits in a dock of background at 90 % over blur sigma 20 with a 0.5 divider hairline on top. Never stacked above a tab bar.
 - Camera screen: controls are dark glass (`shadow` at 40 %, white hairline at 20 %, blur 20). With no camera available, a white "Choose photo" pill takes the shutter's place (the one inverted primary button, on black only). Shutter inner disc sinks to 0.86 while pressed.
+- Press: cards and buttons sink to 0.97 in 90 ms and spring back (stiffness 420, damping ratio 0.82) from wherever they were; their shadow tightens to the contact layer while pressed.
+- Haptics mark outcomes, not every tap: tab change and small toggles selectionClick; verdict with money kept successNotification; haggling "High" warningNotification; errors heavy or errorNotification; a total growing on Home selectionClick.
+- Living coin: floats ±3 over a soft contact shadow (3.2 s cycle), tilts toward a touching finger and springs back. A handful of coins (6) pop once from behind it when money is kept, all gone within 900 ms; never on errors or warnings.
+- Odometer: totals roll digit by digit, rightmost first (480 ms, 30 ms stagger). "Save to trip" goes Home, where a coin flies on an arc into the hero card, the total rolls up and bumps to 1.10 once.
+- Glass: blur plus a saturation lift (1.6) so content beneath reads as light through glass.
 - Motion tokens added during craft: `settle` (easeOutBack) for landing badges and the hero number, `boxStagger` 0.12 between detection boxes, `heroSettleFrom` 0.96. The hero number counts up to the real verdict value; with reduce motion it shows the final value at once.
 - Bottom sheet: radius 28, E2 with y -8, 36 x 4 grabber in `handle`, overlapping a full-bleed camera.
+- Success field: the green field's light drifts slowly (14 s, ±6 %); static with reduce motion.
 - Coin: a 3D Thai-style bimetal coin, silver outer ring and gold center with the baht sign (`app/assets/images/coin.png`, Hyunjun's render, background removed). At most one hero object per screen. Used on success screens; the ATM verdict with money kept is a success screen (green field, coin, centered number, one white Press card, details on a page-colored sheet that scrolls up).
 
 ## Do's and Don'ts

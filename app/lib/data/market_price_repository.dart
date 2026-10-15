@@ -32,7 +32,7 @@ class SourcedItem {
 class MarketPriceRepository {
   static const assetPath = 'assets/data/market_prices.json';
 
-  List<SourcedItem>? _cache;
+  static List<SourcedItem>? _cache;
 
   Future<List<SourcedItem>> load() async {
     final cached = _cache;

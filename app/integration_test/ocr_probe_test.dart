@@ -22,8 +22,9 @@ void main() {
 
     final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
     final stopwatch = Stopwatch()..start();
-    final result =
-        await recognizer.processImage(InputImage.fromFilePath(imagePath));
+    final result = await recognizer.processImage(
+      InputImage.fromFilePath(imagePath),
+    );
     stopwatch.stop();
     await recognizer.close();
 
@@ -35,16 +36,20 @@ void main() {
       for (final line in block.lines) {
         final b = line.boundingBox;
         // ignore: avoid_print
-        print('LINE ${b.left.round()},${b.top.round()},${b.right.round()},'
-            '${b.bottom.round()} | ${line.text}');
+        print(
+          'LINE ${b.left.round()},${b.top.round()},${b.right.round()},'
+          '${b.bottom.round()} | ${line.text}',
+        );
       }
     }
     final reading = parseAtmScreen(result.text);
     // ignore: avoid_print
-    print(reading == null
-        ? 'PARSE=null'
-        : 'PARSE=${reading.withdrawalThb}/${reading.accessFeeThb}/'
-            '${reading.thbPerUsd}/${reading.markupPercent}/'
-            '${reading.chargedThb}/${reading.chargedUsd}');
+    print(
+      reading == null
+          ? 'PARSE=null'
+          : 'PARSE=${reading.withdrawalThb}/${reading.accessFeeThb}/'
+                '${reading.thbPerUsd}/${reading.markupPercent}/'
+                '${reading.chargedThb}/${reading.chargedUsd}',
+    );
   });
 }

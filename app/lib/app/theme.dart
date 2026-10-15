@@ -38,7 +38,7 @@ ThemeData buildAppTheme() {
     bodySmall: AppTypography.english.caption,
   );
 
-  final buttonShape = RoundedRectangleBorder(
+  final buttonShape = RoundedSuperellipseBorder(
     borderRadius: BorderRadius.circular(AppRadius.md),
   );
 
@@ -80,10 +80,36 @@ ThemeData buildAppTheme() {
         textStyle: AppTypography.english.bodyLg,
       ),
     ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: AppColors.surfaceDark,
+      contentTextStyle: AppTypography.english.label.copyWith(
+        color: AppColors.onSurfaceDark,
+      ),
+      actionTextColor: AppColors.primaryOnDark,
+      elevation: 0,
+      insetPadding: const EdgeInsets.fromLTRB(
+        AppSpacing.screenMargin,
+        0,
+        AppSpacing.screenMargin,
+        // The Scaffold already lifts a floating bar above the tab bar.
+        AppSpacing.md,
+      ),
+      shape: RoundedSuperellipseBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+    ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: AppColors.surface,
       elevation: 0,
-      shape: RoundedRectangleBorder(
+      showDragHandle: true,
+      constraints: BoxConstraints(maxWidth: AppSizes.contentMaxWidth),
+      dragHandleColor: AppColors.handle,
+      dragHandleSize: Size(
+        AppSizes.sheetHandleWidth,
+        AppSizes.sheetHandleHeight,
+      ),
+      shape: RoundedSuperellipseBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppRadius.sheet),
         ),

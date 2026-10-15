@@ -8,6 +8,7 @@ import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/atm_conversion.dart';
+import '../../shared/app_button.dart';
 import 'scan_controller.dart';
 
 /// White sheet listing the real steps of a scan as they finish.
@@ -25,12 +26,14 @@ class ScanStepsSheet extends StatelessWidget {
     final failure = state.failure;
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: AppColors.surface,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(AppRadius.sheet),
+        shape: const RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppRadius.sheet),
+          ),
         ),
-        boxShadow: AppElevation.e2Sheet,
+        shadows: AppElevation.e2Sheet,
       ),
       padding: EdgeInsets.fromLTRB(
         AppSpacing.sheetPadding,
@@ -73,7 +76,7 @@ class ScanStepsSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
-            FilledButton(onPressed: onRetry, child: Text(l10n.scanTryAgain)),
+            AppButton(label: l10n.scanTryAgain, onPressed: onRetry),
           ],
         ],
       ),
@@ -105,7 +108,21 @@ class ScanStepsSheet extends StatelessWidget {
         return markup == null
             ? values
             : l10n.stepValuesMarkup(values, AppFormat.percent(markup));
+      case ScanStepId.findTerminal:
+        return l10n.stepFindTerminalDone;
+      case ScanStepId.findBoard:
+        return l10n.stepFindBoardDone;
       case ScanStepId.compare:
+        if (state.dcc case final d?) {
+          return l10n.stepCompareDcc(
+            AppFormat.roundedAmount(d.extraHome, d.rate.base),
+          );
+        }
+        if (state.board case final b?) {
+          return l10n.stepCompareBoard(
+            AppFormat.roundedPercent(b.sellLossPercent),
+          );
+        }
         final v = state.verdict;
         if (v == null) return l10n.stepCompare;
         return v.extraCostThb.round() > 0

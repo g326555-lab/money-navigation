@@ -34,6 +34,28 @@ abstract final class AppFormat {
   static String rate(double value, {String locale = 'en'}) =>
       _number(value, 2, locale);
 
+  /// One decimal, for estimates shown with "about": "1.5%".
+  static String roundedPercent(double value, {String locale = 'en'}) =>
+      '${_number(value, 1, locale)}%';
+
   static String percent(double value, {String locale = 'en'}) =>
       '${_number(value, 2, locale)}%';
+
+  /// An estimate in [currency], rounded to that currency's usual minor units
+  /// (whole won and yen, cents for dollars and euros).
+  static String estimate(
+    double value,
+    String currency, {
+    String locale = 'en',
+  }) {
+    final digits =
+        NumberFormat.simpleCurrency(name: currency).decimalDigits ?? 2;
+    return '${_number(value, digits, locale)}$_unitGap$currency';
+  }
+
+  /// A rate with enough significant digits to be useful, e.g. 41.62 or 0.0298.
+  static String rateValue(double value, {String locale = 'en'}) {
+    final digits = value >= 10 ? 2 : (value >= 1 ? 3 : 4);
+    return _number(value, digits, locale);
+  }
 }

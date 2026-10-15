@@ -184,11 +184,14 @@
   "speakSayIt": "Say it in Thai",
   "speakSpeaking": "Speaking",
   "speakNoVoice": "No Thai voice on this phone. Show the sentence to the seller instead.",
-  "counterOfferSentence": "ลดเหลือ {amount} บาทได้ไหม",
+  "counterOfferSentence": "ลดเหลือ {amount} บาทได้ไหม{ending}",
   "@counterOfferSentence": {
-    "description": "Spoken to a Thai seller; always Thai in every locale.",
+    "description": "Said aloud to the seller in Thai in every locale. ending is the polite particle the traveler chose, or empty.",
     "placeholders": {
       "amount": {
+        "type": "String"
+      },
+      "ending": {
         "type": "String"
       }
     }
@@ -215,10 +218,8 @@
       }
     }
   },
-  "speakUnavailable": "Thai speech recognition isn't available on this phone. You can type what you heard.",
-  "speakDenied": "Microphone access is off for Money Navigation. Turn it on in Settings, or type what you heard.",
   "speakEnterPrice": "Enter price",
-  "speakEnterTitle": "What is the seller asking",
+  "speakEnterTitle": "What is the seller asking?",
   "speakPickItem": "Item",
   "speakPriceLabel": "Price in THB",
   "speakEntered": "You entered",
@@ -258,11 +259,658 @@
     }
   },
   "listSeparator": ", ",
-  "speakWhichItem": "What are they selling",
+  "speakWhichItem": "What are they selling?",
   "speakHeardPrice": "We heard {price}.",
   "@speakHeardPrice": {
     "placeholders": {
       "price": {
+        "type": "String"
+      }
+    }
+  },
+  "tabHome": "Home",
+  "tabScan": "Scan",
+  "tabSpeak": "Speak",
+  "tabRecords": "Records",
+  "back": "Back",
+  "homeKeptLabel": "Kept on this trip",
+  "homeKeptApprox": "About {amount}",
+  "@homeKeptApprox": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ratePair": "1 {from} = {rate} {to}",
+  "@ratePair": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "homeRateSource": "{pair} on {date} · European Central Bank via Frankfurter",
+  "@homeRateSource": {
+    "placeholders": {
+      "pair": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeRateCached": "{pair} on {date} · European Central Bank via Frankfurter · last known, offline",
+  "@homeRateCached": {
+    "placeholders": {
+      "pair": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeRateLoading": "Getting today's rate",
+  "homeRateUnavailable": "Today's {currency} rate needs a connection",
+  "@homeRateUnavailable": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "homeRecent": "Recent saves",
+  "homeSeeAll": "See all",
+  "homeEmptyLabel": "Before you withdraw",
+  "homeEmptyTitle": "Scan the ATM screen before you press anything",
+  "homeEmptyAction": "Open the scanner",
+  "saveKeptValue": "+{amount}",
+  "@saveKeptValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "saveAtmTitle": "ATM conversion avoided",
+  "saveHaggleTitle": "{item} haggled down",
+  "@saveHaggleTitle": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "saveHaggleSubtitle": "Paid {paid} · {when}",
+  "@saveHaggleSubtitle": {
+    "placeholders": {
+      "paid": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "saveHaggleUnknownItem": "Market price",
+  "saveToTrip": "Save to trip",
+  "savedToTrip": "Saved to trip",
+  "recordsTitle": "Records",
+  "recordsEmpty": "Nothing saved yet. Results you save after a scan or a haggle are listed here.",
+  "recordsRemove": "Remove",
+  "recordsFooter": "Swipe a row left to remove it. Saved only on this phone.",
+  "settingsTitle": "Settings",
+  "settingsCurrency": "Home currency",
+  "settingsChange": "Change",
+  "settingsCurrencyFooter": "Totals also show in this currency at the daily rate from Frankfurter (European Central Bank).",
+  "settingsSpeaking": "Speaking Thai for you",
+  "settingsEndingMale": "End with khrap",
+  "settingsEndingFemale": "End with kha",
+  "settingsEndingNone": "No ending",
+  "settingsSpeakingFooter": "Thai speakers end a polite request with khrap (men) or kha (women).",
+  "politeEndingMale": "ครับ",
+  "politeEndingFemale": "คะ",
+  "currencyOffline": "Connect to the internet to load the list of currencies.",
+  "currencySource": "Currencies with a daily reference rate from the European Central Bank.",
+  "haggleSaveTitle": "What did you pay?",
+  "haggleSaveOffer": "Your offer",
+  "haggleSaveAsked": "Their price",
+  "haggleSaveOther": "Another amount",
+  "haggleSaveKeeps": "Keeps {amount}",
+  "@haggleSaveKeeps": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsEndingExample": "…ได้ไหม{ending}",
+  "@settingsEndingExample": {
+    "placeholders": {
+      "ending": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleSaveTooHigh": "Enter less than {amount}, the price they asked",
+  "@haggleSaveTooHigh": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "speakDeniedTitle": "Microphone is off",
+  "speakDeniedBody": "Turn on the microphone for Money Navigation in Settings, or enter the price yourself.",
+  "speakUnavailableTitle": "Thai listening isn't available",
+  "speakUnavailableBody": "This phone can't recognise Thai speech. Enter the price yourself instead.",
+  "speakOpenSettings": "Open Settings",
+  "speakAmountUnit": "{amount} {unit}",
+  "@speakAmountUnit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleSaveChoice": "{label} · {amount}",
+  "@haggleSaveChoice": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "speakPriceInvalid": "Enter a number, like 150",
+  "speakPriceTooHigh": "Prices up to {amount}",
+  "@speakPriceTooHigh": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleSaveNothingKept": "Paying their price keeps nothing to save",
+  "recordsRemoved": "Removed from this trip",
+  "recordsUndo": "Undo",
+  "aiTrace": "Checked by {engine} · {elapsed}",
+  "@aiTrace": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
+  },
+  "aiVoiceCached": "Voice from {engine}, saved on this phone",
+  "@aiVoiceCached": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      }
+    }
+  },
+  "aiItemMatched": "{engine} matched what was heard to {item}, {confidence} sure · {elapsed}",
+  "@aiItemMatched": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "item": {
+        "type": "String"
+      },
+      "confidence": {
+        "type": "String"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
+  },
+  "aiPlacesLine": "{engine} · {place} {rating} ({reviews} reviews) · {elapsed}",
+  "@aiPlacesLine": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "place": {
+        "type": "String"
+      },
+      "rating": {
+        "type": "String"
+      },
+      "reviews": {
+        "type": "String"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
+  },
+  "billOpen": "Check a bill",
+  "billStartTitle": "Check a Thai bill",
+  "billStartBody": "Take a photo of the whole bill. Google Cloud Vision reads the Thai, then your phone checks that every figure adds up and shows what was added on top.",
+  "billTake": "Take photo",
+  "billTakeAnother": "Another bill",
+  "billChoose": "Choose photo",
+  "billReading": "Reading the bill",
+  "billReadingBody": "{engine} is reading the Thai text. Your phone checks the figures next.",
+  "@billReadingBody": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      }
+    }
+  },
+  "billTotalLabel": "Total on this bill",
+  "billServiceChip": "Service charge added on top",
+  "billVatOnTopChip": "VAT added on top",
+  "billVatInsideChip": "VAT already included",
+  "billNothingAddedChip": "Nothing added on top",
+  "billHowBuilt": "How the total was built",
+  "billInsideTotal": "Already inside the total",
+  "billSubtotal": "Subtotal",
+  "billItems": "{count} items",
+  "@billItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billDiscount": "Discount",
+  "billService": "Service charge",
+  "billServicePercent": "Service charge {percent} %",
+  "@billServicePercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "billVat": "VAT",
+  "billVatPercent": "VAT {percent} %",
+  "@billVatPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "billAddedOnTop": "Added on top",
+  "billAlreadyIncluded": "Already included, not extra",
+  "billTotal": "Total",
+  "billBeforeVat": "Before VAT",
+  "billProof": "Every figure was checked against the others on this bill.",
+  "billVisionTrace": "Read by {engine} · {lines} lines · {elapsed}",
+  "@billVisionTrace": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "lines": {
+        "type": "int"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
+  },
+  "billOfflineTitle": "No connection",
+  "billOfflineBody": "Reading Thai needs the internet. Connect and take the photo again.",
+  "billTooLargeTitle": "That photo is too large",
+  "billTooLargeBody": "This photo is too big to send. Take it again from this screen, it sends a smaller copy.",
+  "billNoTextTitle": "No text found",
+  "billNoTextBody": "Fill the frame with the bill, in good light, and try again.",
+  "billNoMatchTitle": "Couldn't verify this bill",
+  "billNoMatchBody": "The text was read, but its figures don't add up in a way we can prove. Nothing is shown rather than a guess. Try a sharper photo of the whole bill.",
+  "billServiceTitle": "The reader didn't answer",
+  "billServiceBody": "Try again in a moment.",
+  "authWelcomeTitle": "See which way to pay",
+  "authWelcomeBody": "Point the camera at an ATM or a card terminal and see which choice keeps your money. Sign in to keep your trip records on any phone.",
+  "authContinueApple": "Continue with Apple",
+  "authContinueGoogle": "Continue with Google",
+  "authContinueEmail": "Continue with email",
+  "authLookAround": "Look around without an account",
+  "authSignInTitle": "Sign in",
+  "authCreateTitle": "Create an account",
+  "authEmailLabel": "Email",
+  "authPasswordLabel": "Password",
+  "authNameLabel": "Name, if you like",
+  "authPasswordRule": "At least {min} characters",
+  "@authPasswordRule": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "authSignInAction": "Sign in",
+  "authCreateAction": "Create account",
+  "authToCreate": "New here? Create an account",
+  "authToSignIn": "Have an account? Sign in",
+  "authForgot": "Forgot password",
+  "authShowPassword": "Show password",
+  "authHidePassword": "Hide password",
+  "authConfirmTitle": "Check your email",
+  "authConfirmBody": "We sent a link to {email}. Tap it, then come back and sign in.",
+  "@authConfirmBody": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "authBackToSignIn": "Back to sign in",
+  "authResetTitle": "Reset password",
+  "authResetIntro": "We'll email you a link to set a new password. Open it on this phone.",
+  "authResetSend": "Email me a link",
+  "authResetNewPassword": "New password",
+  "authResetSentTo": "Link sent to {email}. Open it on this phone to set a new password.",
+  "@authResetSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "authResetSave": "Set new password",
+  "authResetResend": "Send it again",
+  "authErrEmailEmpty": "Enter your email",
+  "authErrEmailMalformed": "That email doesn't look right",
+  "authErrPasswordEmpty": "Enter a password",
+  "authErrPasswordShort": "Use at least {min} characters",
+  "@authErrPasswordShort": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "authErrCodeInvalid": "That link has expired. Ask for a new one.",
+  "authErrInvalidCredentials": "Email or password is wrong",
+  "authErrEmailTaken": "This email already has an account. Sign in instead.",
+  "authErrEmailNotConfirmed": "Confirm your email first. The link is in your inbox.",
+  "authErrWeakPassword": "Choose a different, longer password",
+  "authErrRateLimited": "Too many tries. Wait a minute, then try again.",
+  "authErrOffline": "You're offline. Check your connection and try again.",
+  "authErrNotConfigured": "This way of signing in isn't ready in this version.",
+  "authErrUnknown": "Couldn't sign in. Try again.",
+  "authSetupTitle": "About your trip",
+  "authSetupIntro": "So every amount shows in money you know",
+  "authSetupTypeHeader": "You are",
+  "authTypeVisitor": "Visiting Thailand",
+  "authTypeVisitorSub": "Paying in baht",
+  "authTypeThai": "Thai, travelling abroad",
+  "authTypeThaiSub": "Paying in other currencies",
+  "authSetupMoneyHeader": "Money",
+  "authHomeCurrency": "You think in",
+  "authCardCurrency": "Your card bills in",
+  "authSetupLanguageHeader": "Language",
+  "authLanguageEn": "English",
+  "authLanguageTh": "ไทย",
+  "authSetupFooter": "You can change these later in Settings.",
+  "authSetupStart": "Start my trip",
+  "authSetupOtherAccount": "Use a different account",
+  "authAccountHeader": "Account",
+  "authGuestTitle": "Not signed in",
+  "authGuestSub": "Records stay on this phone only",
+  "authSignOut": "Sign out",
+  "authDelete": "Delete account",
+  "authDeleteTitle": "Delete your account?",
+  "authDeleteBody": "Your profile and saved records will be removed for good.",
+  "authDeleteConfirm": "Delete account",
+  "authCancel": "Cancel",
+  "politeEndingFemaleStatement": "ค่ะ",
+  "haggleNextLabel": "Ask for this next",
+  "haggleDealLabel": "Deal",
+  "haggleDealAmount": "{amount} THB",
+  "@haggleDealAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleAcceptSentence": "ตกลง {amount} บาท{ending}",
+  "@haggleAcceptSentence": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "ending": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleStopLabel": "They won't go lower",
+  "haggleStopAmount": "Pay {amount} THB or walk away",
+  "@haggleStopAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleLeaveSentence": "ไม่เป็นไร ขอบคุณ{ending}",
+  "@haggleLeaveSentence": {
+    "placeholders": {
+      "ending": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleTheyAnswered": "What did they say?",
+  "haggleTheyAgreed": "They agreed",
+  "haggleTheySaidNo": "They said no",
+  "haggleTheyOffered": "New price",
+  "haggleTheyOfferedPrice": "They offered {amount}",
+  "@haggleTheyOfferedPrice": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleUnclear": "Not clear, ask again",
+  "haggleSoFar": "This haggle so far",
+  "haggleFirstAsk": "They asked",
+  "haggleYouOffered": "You offered",
+  "haggleYouAsk": "You ask {amount}",
+  "@haggleYouAsk": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleTheirLast": "Their last {amount}",
+  "@haggleTheirLast": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleTheyOfferedTitle": "What price did they say?",
+  "haggleUsePrice": "Use this price",
+  "haggleNewPrice": "New price",
+  "haggleHearAnswer": "Hear their answer",
+  "haggleListeningAnswer": "Listening for their answer",
+  "authNewPasswordTitle": "Set a new password",
+  "saveTerminalTitle": "Paid in local currency at a card terminal",
+  "dccKeepLabel": "Pay in {currency} and keep",
+  "@dccKeepLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "dccMarkupChip": "{percent} markup avoided",
+  "@dccMarkupChip": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "dccPressKey": "F{key} · pay in {currency}",
+  "@dccPressKey": {
+    "placeholders": {
+      "key": {
+        "type": "int"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "dccReason": "The {home} price on this terminal adds about {percent} on top of the bank rate.",
+  "@dccReason": {
+    "placeholders": {
+      "home": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "dccBothOptions": "Both options on the terminal",
+  "dccOptionKey": "F{key}",
+  "@dccOptionKey": {
+    "placeholders": {
+      "key": {
+        "type": "int"
+      }
+    }
+  },
+  "dccOptionHome": "Your home currency",
+  "dccOptionLocal": "Local currency",
+  "dccFairHome": "Fair price in {currency}",
+  "@dccFairHome": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "dccEvenTitle": "Either key is fine here, F{key} included",
+  "@dccEvenTitle": {
+    "placeholders": {
+      "key": {
+        "type": "int"
+      }
+    }
+  },
+  "dccEvenBody": "The home-currency price is not dearer than paying locally at today's rate.",
+  "rateDemoSource": "{pair} · fixed demo rate, {date}",
+  "@rateDemoSource": {
+    "placeholders": {
+      "pair": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "boardLossTitle": "Selling {code} here gets about {percent} less than the middle rate",
+  "@boardLossTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "boardLossBody": "On {amount} that is about {loss} less in your hand.",
+  "@boardLossBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "loss": {
+        "type": "String"
+      }
+    }
+  },
+  "boardRates": "{code} on this board",
+  "@boardRates": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "boardBuying": "They buy at",
+  "boardBuyingHint": "What you get for each {code}",
+  "@boardBuyingHint": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "boardSelling": "They sell at",
+  "boardMid": "Middle rate",
+  "boardSource": "From the numbers on this board",
+  "boardVsReference": "About {percent} below {source}",
+  "@boardVsReference": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "stepFindTerminalDone": "Card terminal with two currencies found",
+  "stepFindBoardDone": "Exchange rate board found",
+  "stepCompareDcc": "Paying locally keeps about {amount}",
+  "@stepCompareDcc": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "stepCompareBoard": "About {percent} below the middle rate",
+  "@stepCompareBoard": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsDemo": "Demo",
+  "settingsDemoOn": "Use fixed demo rates",
+  "settingsDemoOnHint": "Rates from the demo file, not today's",
+  "settingsDemoFooter": "For presenting only: results stay the same on stage. Turn it off to use today's rates.",
+  "billCheckedTrace": "Figures checked on this phone · {elapsed}",
+  "@billCheckedTrace": {
+    "placeholders": {
+      "elapsed": {
         "type": "String"
       }
     }

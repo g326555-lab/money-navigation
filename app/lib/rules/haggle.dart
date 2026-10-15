@@ -3,6 +3,11 @@ import 'thai_number.dart';
 /// Currency of the market prices in the data file.
 const marketCurrency = 'THB';
 
+/// Highest price the manual entry accepts; above it a typo is likelier than
+/// a real market price. Also bounds the digits a person can type.
+const maxPriceThb = 999999.0;
+const maxPriceChars = 9;
+
 enum PriceUnit { each, perKg, perPlate, perHour, perRide }
 
 /// An item with its usual price range. Real ranges come from the sourced

@@ -35,16 +35,25 @@ class SpeechService {
   /// Whether microphone and speech recognition access are granted.
   Future<bool> get hasPermission => _speech.hasPermission;
 
-  /// Listens to a seller. [onWords] gets partial and final text; [final]
-  /// is true once the recognizer has settled on the sentence.
+  /// Listens to a seller. [onWords] gets partial and final text, plus every
+  /// transcript the recognizer considered (best first), which the on-device
+  /// item matcher uses; [isFinal] is true once the sentence has settled.
   Future<void> listen({
-    required void Function(String words, bool isFinal) onWords,
+    required void Function(
+      String words,
+      bool isFinal,
+      List<String> alternatives,
+    )
+    onWords,
     required void Function(double level) onLevel,
     required List<String> phrases,
   }) async {
     await _speech.listen(
-      onResult: (SpeechRecognitionResult r) =>
-          onWords(r.recognizedWords, r.finalResult),
+      onResult: (SpeechRecognitionResult r) => onWords(
+        r.recognizedWords,
+        r.finalResult,
+        [for (final a in r.alternates) a.recognizedWords],
+      ),
       onSoundLevelChange: onLevel,
       listenOptions: SpeechListenOptions(
         localeId: _thaiLocale,
