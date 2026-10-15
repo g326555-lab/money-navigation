@@ -5,7 +5,16 @@
 import { corsHeaders, fetchWithTimeout, json } from "../_shared/http.ts";
 import { vertexAccessToken } from "../_shared/google_auth.ts";
 
-const MODELS = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash"];
+// Measured 15 Oct on the free Developer key: gemini-3.8-flash and
+// 3.7-flash answer 503 "high demand", so they are not tried. 3.5-flash-lite
+// and 3.5-flash answer in 1.0-1.6 s with thinking set to minimal; with
+// default thinking, 3.5-flash spent 74 of 80 output tokens thinking and
+// returned an empty sentence.
+const MODELS = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.1-flash-lite"];
+
+// Short, fixed tasks: no long reasoning wanted, and thinking tokens count
+// against the output limit.
+const FAST = { thinkingConfig: { thinkingLevel: "minimal" } };
 // The free Developer key often answers 503 or hangs, and every caller treats
 // Gemini as optional. The app waits 3 s, so the function gives up at 2.2 s
 // to leave room for the network and still deliver an answer that arrives.
@@ -31,7 +40,7 @@ function buildRequest(task: Task, input: Record<string, unknown>) {
             { inlineData: { mimeType: "image/jpeg", data: String(input.imageBase64 ?? "") } },
           ],
         }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0 },
+        generationConfig: { responseMimeType: "application/json", temperature: 0, ...FAST },
       };
     case "resolve_item":
       return {
@@ -46,7 +55,7 @@ function buildRequest(task: Task, input: Record<string, unknown>) {
               "key must be one of the known item keys or null if none fits. Never invent a key.",
           }],
         }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0 },
+        generationConfig: { responseMimeType: "application/json", temperature: 0, ...FAST },
       };
     case "explain":
       return {
@@ -56,10 +65,11 @@ function buildRequest(task: Task, input: Record<string, unknown>) {
             text:
               "Explain this verdict to a traveler in one short, plain English sentence " +
               "(max 22 words, no exclamation marks, no emoji). Use only the facts given. " +
+              "All amounts are Thai baht (THB); never use another currency sign. " +
               `Facts: ${JSON.stringify(input.facts ?? {})}`,
           }],
         }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 80 },
+        generationConfig: { temperature: 0.2, maxOutputTokens: 200, ...FAST },
       };
   }
 }
@@ -121,7 +131,13 @@ Deno.serve(async (req) => {
             errors.push(`${path}/${model}: ${res.status}`);
             continue;
           }
-          const text = data?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("") ?? "";
+          const candidate = data?.candidates?.[0];
+          const text = candidate?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("").trim() ?? "";
+          // A cut-off or empty answer is a failure, not a result.
+          if (!text || candidate?.finishReason !== "STOP") {
+            errors.push(`${path}/${model}: ${candidate?.finishReason ?? "no candidate"}`);
+            continue;
+          }
           return json({ text, model, path, ms: Date.now() - started });
         } catch (e) {
           errors.push(`${path}/${model}: ${e instanceof Error ? e.message : String(e)}`);
