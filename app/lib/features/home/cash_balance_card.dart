@@ -472,7 +472,14 @@ class _CashWalletSheetState extends State<_CashWalletSheet> {
                     ],
                   ),
                 ),
-                if (widget.movements.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.xl),
+                AppButton(
+                  label: l10n.cashWalletSave,
+                  onPressed: hasValue ? _save : null,
+                ),
+                // While the keyboard is up the field and Save stay in view;
+                // the recent movements come back when it closes.
+                if (widget.movements.isNotEmpty && inset == 0) ...[
                   const SizedBox(height: AppSpacing.lg),
                   Surface(
                     radius: AppRadius.md,
@@ -526,11 +533,6 @@ class _CashWalletSheetState extends State<_CashWalletSheet> {
                     ),
                   ),
                 ],
-                const SizedBox(height: AppSpacing.xl),
-                AppButton(
-                  label: l10n.cashWalletSave,
-                  onPressed: hasValue ? _save : null,
-                ),
               ],
             ),
           ),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -590,15 +592,28 @@ class _AtmMapScreenState extends State<AtmMapScreen> {
   }
 }
 
-/// Walking directions to [atm] in Google Maps (the app when installed).
-Future<void> openAtmDirections(NearbyAtm atm) => launchUrl(
-  Uri.https('www.google.com', '/maps/dir/', {
-    'api': '1',
-    'destination': '${atm.lat},${atm.lng}',
-    'travelmode': 'walking',
-  }),
-  mode: LaunchMode.externalApplication,
-);
+/// Walking directions to [atm]. On Android the Google Maps app starts
+/// walking navigation straight away (its web link keeps the last travel
+/// mode, often driving); elsewhere, or without the app, the web link with
+/// the walking mode.
+Future<void> openAtmDirections(NearbyAtm atm) async {
+  if (Platform.isAndroid) {
+    final app = Uri.parse('google.navigation:q=${atm.lat},${atm.lng}&mode=w');
+    try {
+      if (await launchUrl(app, mode: LaunchMode.externalApplication)) return;
+    } on PlatformException {
+      // No Maps app: the web link below.
+    }
+  }
+  await launchUrl(
+    Uri.https('www.google.com', '/maps/dir/', {
+      'api': '1',
+      'destination': '${atm.lat},${atm.lng}',
+      'travelmode': 'walking',
+    }),
+    mode: LaunchMode.externalApplication,
+  );
+}
 
 class _DirectionsButton extends StatelessWidget {
   const _DirectionsButton({required this.atm});

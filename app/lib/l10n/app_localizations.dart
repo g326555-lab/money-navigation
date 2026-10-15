@@ -4182,12 +4182,6 @@ abstract class AppLocalizations {
   /// **'Paid by card, or saved without a payment method'**
   String get recordCashNoneBody;
 
-  /// No description provided for @recordCashNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Cash on hand now: {amount}'**
-  String recordCashNow(String amount);
-
   /// No description provided for @recordOpenInMaps.
   ///
   /// In en, this message translates to:

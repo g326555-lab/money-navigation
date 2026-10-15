@@ -120,6 +120,9 @@ class ReceiptRecordDetail extends StatelessWidget {
             if (record.vatThb != null)
               GroupRow(
                 title: l10n.billVat,
+                subtitle: record.vatOnTop
+                    ? l10n.billVatOnTopChip
+                    : l10n.billVatInsideChip,
                 value: AppFormat.cents(record.vatThb!, marketCurrency),
               ),
             GroupRow(

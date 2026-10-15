@@ -55,7 +55,6 @@ void main() {
     await pumpFrames(tester);
     expect(find.text('Added to cash on hand'), findsOneWidget);
     expect(find.text('+${thb('4,000')}'), findsOneWidget);
-    expect(find.text('Cash on hand now: ${thb('4,000')}'), findsOneWidget);
   });
 
   testWidgets('a haggle record shows asked, paid and what cash paid', (

@@ -2559,11 +2559,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Paid by card, or saved without a payment method';
 
   @override
-  String recordCashNow(String amount) {
-    return 'Cash on hand now: $amount';
-  }
-
-  @override
   String get recordOpenInMaps => 'Open in Google Maps';
 
   @override

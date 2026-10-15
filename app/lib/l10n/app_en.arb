@@ -2018,14 +2018,6 @@
   "recordCashSpent": "Paid from cash on hand",
   "recordCashNone": "Cash on hand did not change",
   "recordCashNoneBody": "Paid by card, or saved without a payment method",
-  "recordCashNow": "Cash on hand now: {amount}",
-  "@recordCashNow": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "recordOpenInMaps": "Open in Google Maps",
   "recordNoFigures": "This record was saved before the screen's figures were kept.",
   "recordSellerPrices": "Seller's prices",

@@ -9,7 +9,6 @@ import '../../core/formatters.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
-import '../../rules/cash_wallet.dart';
 import '../../rules/nearby_atms.dart' show isMapPosition;
 import '../../shared/app_button.dart';
 import '../../shared/content_width.dart';
@@ -163,8 +162,6 @@ class RecordCashSection extends StatelessWidget {
           for (final m in wallet.movements)
             if (m.sourceId == sourceId) m,
         ];
-        final currency = linked.firstOrNull?.currency;
-        final now = currency == null ? null : wallet.balance(currency);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -204,12 +201,6 @@ class RecordCashSection extends StatelessWidget {
                   ),
               ],
             ),
-            if (now != null)
-              GroupFooter(
-                l10n.recordCashNow(
-                  AppFormat.roundedAmount(displayedCashBalance(now), currency!),
-                ),
-              ),
           ],
         );
       },

@@ -173,14 +173,12 @@ class _AssistantScreenState extends State<AssistantScreen> {
               ),
               SectionHeader(
                 l10n.assistantNearby,
-                trailing: Semantics(
-                  button: true,
-                  label: l10n.nearbyMapLabel,
-                  child: IconButton(
-                    tooltip: l10n.nearbyMapLabel,
-                    onPressed: _openAtmMap,
-                    icon: const Icon(Icons.map_outlined),
-                    color: AppColors.primaryText,
+                trailing: Pressable(
+                  onPressed: _openAtmMap,
+                  semanticLabel: l10n.nearbyMapLabel,
+                  child: Text(
+                    l10n.nearbyMapLabel,
+                    style: type.link.copyWith(color: AppColors.primaryText),
                   ),
                 ),
               ),

@@ -2461,11 +2461,6 @@ class AppLocalizationsTh extends AppLocalizations {
       'จ่ายด้วยบัตร หรือบันทึกโดยไม่ได้ระบุวิธีจ่าย';
 
   @override
-  String recordCashNow(String amount) {
-    return 'เงินสดที่มีตอนนี้: $amount';
-  }
-
-  @override
   String get recordOpenInMaps => 'เปิดใน Google Maps';
 
   @override

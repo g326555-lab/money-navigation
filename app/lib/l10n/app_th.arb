@@ -753,14 +753,6 @@
   "recordCashSpent": "จ่ายจากเงินสดที่มี",
   "recordCashNone": "เงินสดที่มีไม่เปลี่ยน",
   "recordCashNoneBody": "จ่ายด้วยบัตร หรือบันทึกโดยไม่ได้ระบุวิธีจ่าย",
-  "recordCashNow": "เงินสดที่มีตอนนี้: {amount}",
-  "@recordCashNow": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
   "recordOpenInMaps": "เปิดใน Google Maps",
   "recordNoFigures": "รายการนี้บันทึกไว้ก่อนที่แอปจะเก็บตัวเลขจากหน้าจอ",
   "recordSellerPrices": "ราคาที่ผู้ขายบอก",
