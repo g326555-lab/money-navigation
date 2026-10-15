@@ -11,20 +11,40 @@ class NearbyPlace {
     required this.name,
     required this.rating,
     required this.ratingCount,
+    this.lat,
+    this.lng,
   });
 
   final String name;
   final double rating;
   final int ratingCount;
+
+  /// The place's own location, when the lookup returns it.
+  final double? lat;
+  final double? lng;
 }
 
 /// The busiest rated market near the traveler, with the measured Google Maps
 /// step. Shown under the usual price as local evidence.
 class PlacesEvidence {
-  const PlacesEvidence({required this.place, required this.trace});
+  const PlacesEvidence({
+    required this.place,
+    required this.trace,
+    required this.phoneLat,
+    required this.phoneLng,
+  });
 
   final NearbyPlace place;
   final AiTrace trace;
+
+  /// Where the phone was for the lookup.
+  final double phoneLat;
+  final double phoneLng;
+
+  /// Best location for a saved record: the market itself when known,
+  /// otherwise where the phone was.
+  double get lat => place.lat ?? phoneLat;
+  double get lng => place.lng ?? phoneLng;
 }
 
 /// Looks up rated markets around the phone through the `places-market`
@@ -51,7 +71,12 @@ class PlacesService {
             p.fold<int>(0, (sum, x) => sum + x.ratingCount),
       );
       if (places.isEmpty) return null;
-      return PlacesEvidence(place: places.first, trace: trace);
+      return PlacesEvidence(
+        place: places.first,
+        trace: trace,
+        phoneLat: position.latitude,
+        phoneLng: position.longitude,
+      );
     } on CloudFunctionError {
       return null;
     } on Exception {
@@ -76,6 +101,8 @@ class PlacesService {
             name: e['name'] as String,
             rating: (e['rating'] as num).toDouble(),
             ratingCount: (e['ratingCount'] as num).toInt(),
+            lat: e['lat'] is num ? (e['lat'] as num).toDouble() : null,
+            lng: e['lng'] is num ? (e['lng'] as num).toDouble() : null,
           ),
     ];
   }
