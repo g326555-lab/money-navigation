@@ -112,11 +112,12 @@ List<OcrLine> _rows(List<String> rows) => [
 
 void _expectRealBill(BillCheck? r) {
   expect(r, isNotNull);
-  expect(r!.subtotal, closeTo(225.00, 1e-9));
+  expect(r!.kind, BillKind.serviceCharge);
+  expect(r.subtotal!, closeTo(225.00, 1e-9));
   expect(r.discount, isNotNull);
   expect(r.discount!, closeTo(13.00, 1e-9));
-  expect(r.serviceCharge, closeTo(21.00, 1e-9));
-  expect(r.servicePercent, closeTo(10, 1e-9));
+  expect(r.serviceCharge!, closeTo(21.00, 1e-9));
+  expect(r.servicePercent!, closeTo(10, 1e-9));
   expect(r.total, closeTo(233.00, 1e-9));
   expect(r.vat, isNotNull);
   expect(r.vat!, closeTo(15.24, 1e-9));
@@ -125,7 +126,10 @@ void _expectRealBill(BillCheck? r) {
   expect(r.beforeVat, isNotNull);
   expect(r.beforeVat!, closeTo(217.76, 1e-9));
   expect(r.vatIncluded, isTrue);
+  expect(r.vatAddedOnTop, isFalse);
   expect(r.serviceAddedOnTop, isTrue);
+  expect(r.nothingAdded, isFalse);
+  expect(r.itemCount, isNull);
 }
 
 void main() {
@@ -181,6 +185,9 @@ void main() {
       );
     });
 
+    // Total 262 also fits VAT-inside (17.14 / 244.86) and 244.86 + 17.14 sums
+    // to it, but a printed service percent that fails to verify is ambiguous,
+    // so neither vatIncluded nor itemsOnly may claim this bill.
     test('service charge that is not 10% of (subtotal - discount) gives null '
         'even though subtotal - discount + service == total and VAT fits', () {
       // 225 - 13 + 50 = 262; 262 * 7 / 107 = 17.14; 262 - 17.14 = 244.86.
@@ -246,10 +253,11 @@ void main() {
           ]),
         );
         expect(r, isNotNull);
-        expect(r!.subtotal, closeTo(200.00, 1e-9));
+        expect(r!.kind, BillKind.serviceCharge);
+        expect(r.subtotal!, closeTo(200.00, 1e-9));
         expect(r.discount, isNull);
-        expect(r.serviceCharge, closeTo(20.00, 1e-9));
-        expect(r.servicePercent, closeTo(10, 1e-9));
+        expect(r.serviceCharge!, closeTo(20.00, 1e-9));
+        expect(r.servicePercent!, closeTo(10, 1e-9));
         expect(r.total, closeTo(220.00, 1e-9));
         expect(r.vat!, closeTo(14.39, 1e-9));
         expect(r.vatPercent!, closeTo(7, 1e-9));
@@ -266,10 +274,11 @@ void main() {
       () {
         final r = checkBillFromVision(_fixtureWithout({'ภาษี 7%', '15.24'}));
         expect(r, isNotNull);
-        expect(r!.subtotal, closeTo(225.00, 1e-9));
+        expect(r!.kind, BillKind.serviceCharge);
+        expect(r.subtotal!, closeTo(225.00, 1e-9));
         expect(r.discount!, closeTo(13.00, 1e-9));
-        expect(r.serviceCharge, closeTo(21.00, 1e-9));
-        expect(r.servicePercent, closeTo(10, 1e-9));
+        expect(r.serviceCharge!, closeTo(21.00, 1e-9));
+        expect(r.servicePercent!, closeTo(10, 1e-9));
         expect(r.total, closeTo(233.00, 1e-9));
         expect(r.vat, isNull);
         expect(r.vatPercent, isNull);
@@ -288,8 +297,9 @@ void main() {
         ]),
       );
       expect(r, isNotNull);
-      expect(r!.subtotal, closeTo(200.00, 1e-9));
-      expect(r.serviceCharge, closeTo(20.00, 1e-9));
+      expect(r!.kind, BillKind.serviceCharge);
+      expect(r.subtotal!, closeTo(200.00, 1e-9));
+      expect(r.serviceCharge!, closeTo(20.00, 1e-9));
       expect(r.total, closeTo(220.00, 1e-9));
       expect(r.vat, isNull);
       expect(r.vatPercent, isNull);
@@ -314,10 +324,11 @@ void main() {
         ]),
       );
       expect(r, isNotNull);
-      expect(r!.subtotal, closeTo(1225.00, 1e-9));
+      expect(r!.kind, BillKind.serviceCharge);
+      expect(r.subtotal!, closeTo(1225.00, 1e-9));
       expect(r.discount, isNull);
-      expect(r.serviceCharge, closeTo(122.50, 1e-9));
-      expect(r.servicePercent, closeTo(10, 1e-9));
+      expect(r.serviceCharge!, closeTo(122.50, 1e-9));
+      expect(r.servicePercent!, closeTo(10, 1e-9));
       expect(r.total, closeTo(1347.50, 1e-9));
       expect(r.vat!, closeTo(88.15, 1e-9));
       expect(r.beforeVat!, closeTo(1259.35, 1e-9));
@@ -382,37 +393,48 @@ void main() {
         ]),
       );
       expect(r, isNotNull);
-      expect(r!.subtotal, closeTo(1845.00, 1e-9));
+      expect(r!.kind, BillKind.serviceCharge);
+      expect(r.subtotal!, closeTo(1845.00, 1e-9));
       expect(r.discount, isNull);
-      expect(r.serviceCharge, closeTo(184.50, 1e-9));
-      expect(r.servicePercent, closeTo(10, 1e-9));
+      expect(r.serviceCharge!, closeTo(184.50, 1e-9));
+      expect(r.servicePercent!, closeTo(10, 1e-9));
       expect(r.total, closeTo(2029.50, 1e-9));
       expect(r.vat!, closeTo(132.77, 1e-9));
       expect(r.beforeVat!, closeTo(1896.73, 1e-9));
       expect(r.vatIncluded, isTrue);
     });
 
-    test(
-      'a receipt with a percent discount but no service charge gives null',
-      () {
-        expect(
-          checkBill(
-            _rows([
-              'Item 320.00',
-              'Item 285.00',
-              'Member discount 10% 60.00',
-              'Total 545.00',
-              'VAT 7% 35.65',
-              'Before VAT 509.35',
-              'Cash 600.00',
-              'Change 55.00',
-            ]),
-          ),
-          isNull,
-        );
-      },
-    );
+    test('a percent discount is never read as a service charge: the receipt '
+        'is vatIncluded (545.00, VAT 35.65, before 509.35), nothing added', () {
+      // 545 * 7 / 107 = 35.65; 545 - 35.65 = 509.35. Cash 600 is not the total.
+      final r = checkBill(
+        _rows([
+          'Item 320.00',
+          'Item 285.00',
+          'Member discount 10% 60.00',
+          'Total 545.00',
+          'VAT 7% 35.65',
+          'Before VAT 509.35',
+          'Cash 600.00',
+          'Change 55.00',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.vatIncluded);
+      expect(r.serviceCharge, isNull);
+      expect(r.servicePercent, isNull);
+      expect(r.serviceAddedOnTop, isFalse);
+      expect(r.total, closeTo(545.00, 1e-9));
+      expect(r.vat!, closeTo(35.65, 1e-9));
+      expect(r.beforeVat!, closeTo(509.35, 1e-9));
+      expect(r.vatIncluded, isTrue);
+      expect(r.vatAddedOnTop, isFalse);
+      expect(r.nothingAdded, isTrue);
+    });
 
+    // 201 + 21 = 222 would also pass the itemsOnly sum, but a printed service
+    // percent that fails to verify is ambiguous: it must not become
+    // "nothing added".
     test('service 21.00 on subtotal 201.00 is not rounding of 20.10: null', () {
       expect(
         checkBill(
@@ -439,6 +461,296 @@ void main() {
       sw.stop();
       _expectRealBill(r);
       expect(sw.elapsedMilliseconds, lessThan(50));
+    });
+  });
+
+  group('Kind: VAT added on top (rule 2)', () {
+    test('Food 300.00 / Subtotal 300.00 / VAT 7% 21.00 / Total 321.00', () {
+      final r = checkBill(
+        _rows([
+          'Food 300.00',
+          'Subtotal 300.00',
+          'VAT 7% 21.00',
+          'Total 321.00',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.vatOnTop);
+      expect(r.subtotal!, closeTo(300.00, 1e-9));
+      expect(r.vat!, closeTo(21.00, 1e-9));
+      expect(r.vatPercent!, closeTo(7, 1e-9));
+      expect(r.beforeVat!, closeTo(300.00, 1e-9));
+      expect(r.total, closeTo(321.00, 1e-9));
+      expect(r.serviceCharge, isNull);
+      expect(r.servicePercent, isNull);
+      expect(r.vatAddedOnTop, isTrue);
+      expect(r.vatIncluded, isFalse);
+      expect(r.serviceAddedOnTop, isFalse);
+      expect(r.nothingAdded, isFalse);
+    });
+
+    test('restaurant without discount: 3 dishes, Subtotal 1,250.00 + VAT 7% '
+        '87.50 = 1,337.50, cash and change after', () {
+      final r = checkBill(
+        _bill([
+          ('Tom yum goong', '450.00'),
+          ('Green curry', '380.00'),
+          ('Grilled fish', '420.00'),
+          ('Subtotal', '1,250.00'),
+          ('VAT 7%', '87.50'),
+          ('Total', '1,337.50'),
+          ('Cash', '1,500.00'),
+          ('Change', '162.50'),
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.vatOnTop);
+      expect(r.subtotal!, closeTo(1250.00, 1e-9));
+      expect(r.discount, isNull);
+      expect(r.vat!, closeTo(87.50, 1e-9));
+      expect(r.beforeVat!, closeTo(1250.00, 1e-9));
+      expect(r.total, closeTo(1337.50, 1e-9));
+      expect(r.vatAddedOnTop, isTrue);
+      expect(r.vatIncluded, isFalse);
+      expect(r.nothingAdded, isFalse);
+    });
+
+    test('satang-exact VAT on top: 233.50 * 7% = 16.345 -> 16.35 (or 16.34), '
+        'total 249.85', () {
+      final r = checkBill(
+        _rows([
+          'Khao soi 150.00',
+          'Mango sticky rice 83.50',
+          'Subtotal 233.50',
+          'VAT 7% 16.35',
+          'Total 249.85',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.vatOnTop);
+      expect(r.subtotal!, closeTo(233.50, 1e-9));
+      expect(r.vat!, closeTo(16.35, 1e-9));
+      expect(r.total, closeTo(249.85, 1e-9));
+      expect(r.itemCount, 2);
+    });
+  });
+
+  group('Kind: VAT included in the total (rule 3)', () {
+    test('7-Eleven style: items 45 + 62 = Total 107.00, Vatable 100.00, '
+        'VAT 7% 7.00, cash 200 / change 93', () {
+      final r = checkBill(
+        _rows([
+          'Item 45.00',
+          'Item 62.00',
+          'Total 107.00',
+          'Vatable 100.00',
+          'VAT 7% 7.00',
+          'Cash 200.00',
+          'Change 93.00',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.vatIncluded);
+      expect(r.total, closeTo(107.00, 1e-9));
+      expect(r.vat!, closeTo(7.00, 1e-9));
+      expect(r.vatPercent!, closeTo(7, 1e-9));
+      expect(r.beforeVat!, closeTo(100.00, 1e-9));
+      expect(r.itemCount, 2);
+      expect(r.subtotal!, closeTo(107.00, 1e-9));
+      expect(r.serviceCharge, isNull);
+      expect(r.vatIncluded, isTrue);
+      expect(r.vatAddedOnTop, isFalse);
+      expect(r.serviceAddedOnTop, isFalse);
+      expect(r.nothingAdded, isTrue);
+    });
+
+    test('Vatable line printed before the total: 45 / 62 / Vatable 100.00 / '
+        'VAT 7% 7.00 / Total 107.00', () {
+      final r = checkBill(
+        _rows([
+          'Item 45.00',
+          'Item 62.00',
+          'Vatable 100.00',
+          'VAT 7% 7.00',
+          'Total 107.00',
+          'Cash 200.00',
+          'Change 93.00',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.vatIncluded);
+      expect(r.total, closeTo(107.00, 1e-9));
+      expect(r.vat!, closeTo(7.00, 1e-9));
+      expect(r.beforeVat!, closeTo(100.00, 1e-9));
+      expect(r.vatIncluded, isTrue);
+      expect(r.nothingAdded, isTrue);
+      // Cash 200 and change 93 are never the total.
+      expect(r.total, isNot(closeTo(200.00, 1e-9)));
+    });
+
+    test('items that do not sum to the total leave itemCount null but VAT '
+        'still verifies: Total 85.00, VAT 5.56, Vatable 79.44', () {
+      // 85 * 7 / 107 = 5.5607 -> 5.56; 85 - 5.56 = 79.44.
+      final r = checkBill(
+        _rows([
+          'Item 40.00',
+          'Item 30.00',
+          'Total 85.00',
+          'Vatable 79.44',
+          'VAT 7% 5.56',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.vatIncluded);
+      expect(r.total, closeTo(85.00, 1e-9));
+      expect(r.vat!, closeTo(5.56, 1e-9));
+      expect(r.beforeVat!, closeTo(79.44, 1e-9));
+      expect(r.itemCount, isNull);
+    });
+
+    test('a wrong VAT amount (Total 107.00 / VAT 7% 8.00 / Vatable 99.00) '
+        'gives null: the printed tax lines do not add up, so nothing is '
+        'verified', () {
+      final r = checkBill(
+        _rows([
+          'Item 45.00',
+          'Item 62.00',
+          'Total 107.00',
+          'VAT 7% 8.00',
+          'Vatable 99.00',
+        ]),
+      );
+      expect(r, isNull);
+    });
+  });
+
+  group('Kind: items only (rule 4)', () {
+    test('Pad thai 60.00 / Iced tea 25.00 / Total 85.00 / Cash 100.00 / '
+        'Change 15.00', () {
+      final r = checkBill(
+        _rows([
+          'Pad thai 60.00',
+          'Iced tea 25.00',
+          'Total 85.00',
+          'Cash 100.00',
+          'Change 15.00',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.itemsOnly);
+      expect(r.total, closeTo(85.00, 1e-9));
+      expect(r.subtotal!, closeTo(85.00, 1e-9));
+      expect(r.itemCount, 2);
+      expect(r.discount, isNull);
+      expect(r.serviceCharge, isNull);
+      expect(r.vat, isNull);
+      expect(r.vatPercent, isNull);
+      expect(r.beforeVat, isNull);
+      expect(r.serviceAddedOnTop, isFalse);
+      expect(r.vatIncluded, isFalse);
+      expect(r.vatAddedOnTop, isFalse);
+      expect(r.nothingAdded, isTrue);
+    });
+
+    test('cash 100.00 is not taken as the total even though 85 + 15 = 100', () {
+      final r = checkBill(
+        _bill([
+          ('Pad thai', '60.00'),
+          ('Iced tea', '25.00'),
+          ('Total', '85.00'),
+          ('Cash', '100.00'),
+          ('Change', '15.00'),
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.itemsOnly);
+      expect(r.total, closeTo(85.00, 1e-9));
+      expect(r.total, isNot(closeTo(100.00, 1e-9)));
+      expect(r.itemCount, 2);
+    });
+
+    test(
+      'single item printed again as the total: Latte 85.00 / Total 85.00',
+      () {
+        final r = checkBill(_rows(['Latte 85.00', 'Total 85.00']));
+        expect(r, isNotNull);
+        expect(r!.kind, BillKind.itemsOnly);
+        expect(r.total, closeTo(85.00, 1e-9));
+        expect(r.subtotal!, closeTo(85.00, 1e-9));
+        expect(r.itemCount, 1);
+        expect(r.vat, isNull);
+        expect(r.nothingAdded, isTrue);
+      },
+    );
+
+    test('four items with thousands separators: 1,200 + 350 + 89.50 + 60.50 '
+        '= 1,700.00, cash 2,000 / change 300', () {
+      final r = checkBill(
+        _rows([
+          'Massage 2h 1,200.00',
+          'Herbal ball 350.00',
+          'Water 89.50',
+          'Towel 60.50',
+          'Total 1,700.00',
+          'Cash 2,000.00',
+          'Change 300.00',
+        ]),
+      );
+      expect(r, isNotNull);
+      expect(r!.kind, BillKind.itemsOnly);
+      expect(r.total, closeTo(1700.00, 1e-9));
+      expect(r.subtotal!, closeTo(1700.00, 1e-9));
+      expect(r.itemCount, 4);
+    });
+  });
+
+  group('Receipts that do not add up give null (rule 5)', () {
+    test('Item 60.00 / Item 25.00 / Total 95.00 gives null', () {
+      expect(
+        checkBill(_rows(['Item 60.00', 'Item 25.00', 'Total 95.00'])),
+        isNull,
+      );
+    });
+
+    test('non-adding receipt with cash and change after gives null', () {
+      expect(
+        checkBill(
+          _rows([
+            'Item 60.00',
+            'Item 25.00',
+            'Total 95.00',
+            'Cash 100.00',
+            'Change 5.00',
+          ]),
+        ),
+        isNull,
+      );
+    });
+
+    test('a lone amount with no repeat gives null', () {
+      expect(checkBill(_rows(['Total 85.00'])), isNull);
+    });
+
+    test('random text without amounts gives null', () {
+      expect(
+        checkBill(
+          _rows(['Welcome to Bangkok', 'Have a nice day', 'Thank you']),
+        ),
+        isNull,
+      );
+    });
+
+    test('USD amounts that add up (20.00 + 5.00 = 25.00 USD) give null', () {
+      expect(
+        checkBill(
+          _bill([
+            ('Item', '20.00 USD'),
+            ('Item', '5.00 USD'),
+            ('Total', '25.00 USD'),
+          ]),
+        ),
+        isNull,
+      );
     });
   });
 }
