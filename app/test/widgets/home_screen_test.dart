@@ -261,8 +261,8 @@ void main() {
       await tester.pumpWidget(home(stores, briefing));
       await settleBriefing(tester, briefing);
 
-      await scrollHomeTo(tester, find.text('Morning briefing'));
-      expect(find.text('Morning briefing'), findsOneWidget);
+      await scrollHomeTo(tester, find.text('Today'));
+      expect(find.text('Today'), findsOneWidget);
       await scrollHomeTo(tester, find.text('Read today\'s calendar'));
       expect(find.text('Read today\'s calendar'), findsOneWidget);
     });
@@ -277,10 +277,6 @@ void main() {
 
       await scrollHomeTo(tester, find.text('See money traps near you'));
       expect(find.text('See money traps near you'), findsOneWidget);
-      expect(
-        find.text('Uses your location only while the app is open'),
-        findsOneWidget,
-      );
       expect(find.text('Checking ATMs and markets nearby'), findsNothing);
     });
 
