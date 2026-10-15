@@ -1790,5 +1790,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "speakWordsAfter": "Their words appear when they finish",
+  "speakReading": "Reading what they said"
 }

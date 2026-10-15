@@ -2152,4 +2152,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String aiHeardBy(String engine, String elapsed) {
     return 'Heard by $engine · $elapsed';
   }
+
+  @override
+  String get speakWordsAfter => 'Their words appear when they finish';
+
+  @override
+  String get speakReading => 'Reading what they said';
 }

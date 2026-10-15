@@ -2037,4 +2037,10 @@ class AppLocalizationsTh extends AppLocalizations {
   String aiHeardBy(String engine, String elapsed) {
     return 'ฟังโดย $engine · $elapsed';
   }
+
+  @override
+  String get speakWordsAfter => 'คำพูดจะขึ้นเมื่อผู้ขายพูดจบ';
+
+  @override
+  String get speakReading => 'กำลังอ่านสิ่งที่ผู้ขายพูด';
 }

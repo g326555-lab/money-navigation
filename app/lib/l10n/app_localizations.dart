@@ -3437,6 +3437,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Heard by {engine} · {elapsed}'**
   String aiHeardBy(String engine, String elapsed);
+
+  /// No description provided for @speakWordsAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Their words appear when they finish'**
+  String get speakWordsAfter;
+
+  /// No description provided for @speakReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading what they said'**
+  String get speakReading;
 }
 
 class _AppLocalizationsDelegate

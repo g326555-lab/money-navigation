@@ -553,5 +553,7 @@
   "payCompareNeedBank": "ใส่ค่าธรรมเนียมที่ธนาคารของคุณคิดเมื่อถอนที่ ATM ต่างประเทศ เพื่อเทียบกับเงินสด",
   "payCompareWithdrawalAssumed": "คิดเงินสดโดยถือว่าถอนเท่ากับยอดนี้พอดี",
   "payCompareWithdrawalPlan": "คิดเงินสดโดยถือว่าถอนครั้งเดียวราว {amount} ตามยอดประมาณวันนี้",
-  "aiHeardBy": "ฟังโดย {engine} · {elapsed}"
+  "aiHeardBy": "ฟังโดย {engine} · {elapsed}",
+  "speakWordsAfter": "คำพูดจะขึ้นเมื่อผู้ขายพูดจบ",
+  "speakReading": "กำลังอ่านสิ่งที่ผู้ขายพูด"
 }
