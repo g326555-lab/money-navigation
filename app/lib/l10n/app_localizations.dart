@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanHint.
   ///
   /// In en, this message translates to:
-  /// **'Point at the ATM screen'**
+  /// **'Fit the ATM screen inside the frame'**
   String get scanHint;
 
   /// No description provided for @scanShutter.
@@ -367,6 +367,318 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan another'**
   String get atmScanAnother;
+
+  /// No description provided for @speakOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Hear a price'**
+  String get speakOpen;
+
+  /// No description provided for @speakListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening'**
+  String get speakListening;
+
+  /// No description provided for @speakListenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your phone toward the seller'**
+  String get speakListenHint;
+
+  /// No description provided for @speakStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Done listening'**
+  String get speakStop;
+
+  /// No description provided for @speakListenAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen again'**
+  String get speakListenAgain;
+
+  /// No description provided for @speakTypeSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Check this price'**
+  String get speakTypeSubmit;
+
+  /// No description provided for @speakHeard.
+  ///
+  /// In en, this message translates to:
+  /// **'They said'**
+  String get speakHeard;
+
+  /// No description provided for @speakMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'{item}, {amount} {unit}'**
+  String speakMeaning(String item, String amount, String unit);
+
+  /// No description provided for @unitPerKg.
+  ///
+  /// In en, this message translates to:
+  /// **'per kilo'**
+  String get unitPerKg;
+
+  /// No description provided for @unitEach.
+  ///
+  /// In en, this message translates to:
+  /// **'each'**
+  String get unitEach;
+
+  /// No description provided for @unitPerPlate.
+  ///
+  /// In en, this message translates to:
+  /// **'per plate'**
+  String get unitPerPlate;
+
+  /// No description provided for @unitPerHour.
+  ///
+  /// In en, this message translates to:
+  /// **'per hour'**
+  String get unitPerHour;
+
+  /// No description provided for @unitPerRide.
+  ///
+  /// In en, this message translates to:
+  /// **'per ride'**
+  String get unitPerRide;
+
+  /// No description provided for @verdictHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get verdictHigh;
+
+  /// No description provided for @verdictFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get verdictFair;
+
+  /// No description provided for @verdictLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get verdictLow;
+
+  /// No description provided for @speakOverBy.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} above the usual price'**
+  String speakOverBy(String amount);
+
+  /// No description provided for @speakFairBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is within the usual price.'**
+  String get speakFairBody;
+
+  /// No description provided for @speakLowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is below the usual price.'**
+  String get speakLowBody;
+
+  /// No description provided for @speakUsualPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual price'**
+  String get speakUsualPrice;
+
+  /// No description provided for @speakUsualRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{low}–{high} THB {unit}'**
+  String speakUsualRange(String low, String high, String unit);
+
+  /// No description provided for @speakAsked.
+  ///
+  /// In en, this message translates to:
+  /// **'Asked'**
+  String get speakAsked;
+
+  /// No description provided for @speakSources.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 source} other{{count} sources}} · {month}'**
+  String speakSources(int count, String month);
+
+  /// No description provided for @speakCounterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for'**
+  String get speakCounterLabel;
+
+  /// No description provided for @speakCounterAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} THB'**
+  String speakCounterAmount(String amount);
+
+  /// No description provided for @speakSayIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Say it in Thai'**
+  String get speakSayIt;
+
+  /// No description provided for @speakSpeaking.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking'**
+  String get speakSpeaking;
+
+  /// No description provided for @speakNoVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'No Thai voice on this phone. Show the sentence to the seller instead.'**
+  String get speakNoVoice;
+
+  /// Spoken to a Thai seller; always Thai in every locale.
+  ///
+  /// In en, this message translates to:
+  /// **'ลดเหลือ {amount} บาทได้ไหม'**
+  String counterOfferSentence(String amount);
+
+  /// No description provided for @speakNothingHeard.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was heard'**
+  String get speakNothingHeard;
+
+  /// No description provided for @speakNothingHeardTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move closer to the seller and try again, or type what you heard.'**
+  String get speakNothingHeardTip;
+
+  /// No description provided for @speakNoPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'No price in what was heard'**
+  String get speakNoPrice;
+
+  /// No description provided for @speakNoPriceTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the seller the price again, then listen.'**
+  String get speakNoPriceTip;
+
+  /// No description provided for @speakUnknownItem.
+  ///
+  /// In en, this message translates to:
+  /// **'No usual price for this yet'**
+  String get speakUnknownItem;
+
+  /// No description provided for @speakUnknownItemTip.
+  ///
+  /// In en, this message translates to:
+  /// **'The price was {amount}. We only compare items we have sources for.'**
+  String speakUnknownItemTip(String amount);
+
+  /// No description provided for @speakUnitMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The price is for a different amount'**
+  String get speakUnitMismatch;
+
+  /// No description provided for @speakUnitMismatchTip.
+  ///
+  /// In en, this message translates to:
+  /// **'The usual price is {unit}. Ask the seller for the price {unit}.'**
+  String speakUnitMismatchTip(String unit);
+
+  /// No description provided for @speakUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Thai speech recognition isn\'t available on this phone. You can type what you heard.'**
+  String get speakUnavailable;
+
+  /// No description provided for @speakDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access is off for Money Navigation. Turn it on in Settings, or type what you heard.'**
+  String get speakDenied;
+
+  /// No description provided for @speakEnterPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter price'**
+  String get speakEnterPrice;
+
+  /// No description provided for @speakEnterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the seller asking'**
+  String get speakEnterTitle;
+
+  /// No description provided for @speakPickItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get speakPickItem;
+
+  /// No description provided for @speakPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price in THB'**
+  String get speakPriceLabel;
+
+  /// No description provided for @speakEntered.
+  ///
+  /// In en, this message translates to:
+  /// **'You entered'**
+  String get speakEntered;
+
+  /// No description provided for @speakPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting ready'**
+  String get speakPreparing;
+
+  /// No description provided for @speakUsualRangeRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual range'**
+  String get speakUsualRangeRow;
+
+  /// No description provided for @speakHeroLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{item} · {unit}'**
+  String speakHeroLabel(String item, String unit);
+
+  /// No description provided for @speakSourcesLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{hosts} · {sources}'**
+  String speakSourcesLine(String hosts, String sources);
+
+  /// No description provided for @speakMonthRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{from}–{to}'**
+  String speakMonthRange(String from, String to);
+
+  /// No description provided for @listSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **', '**
+  String get listSeparator;
+
+  /// No description provided for @speakWhichItem.
+  ///
+  /// In en, this message translates to:
+  /// **'What are they selling'**
+  String get speakWhichItem;
+
+  /// No description provided for @speakHeardPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'We heard {price}.'**
+  String speakHeardPrice(String price);
 }
 
 class _AppLocalizationsDelegate

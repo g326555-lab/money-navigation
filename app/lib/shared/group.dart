@@ -92,6 +92,7 @@ class GroupRow extends StatelessWidget {
     this.subtitle,
     this.value,
     this.valueStyle,
+    this.titleStyle,
     this.leading,
   });
 
@@ -99,6 +100,9 @@ class GroupRow extends StatelessWidget {
   final String? subtitle;
   final String? value;
   final TextStyle? valueStyle;
+
+  /// Overrides the title style, e.g. Thai text on an English screen.
+  final TextStyle? titleStyle;
   final Widget? leading;
 
   @override
@@ -121,7 +125,7 @@ class GroupRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: type.rowTitle),
+                  Text(title, style: titleStyle ?? type.rowTitle),
                   if (subtitle != null)
                     Text(subtitle!, style: type.rowSubtitle),
                 ],

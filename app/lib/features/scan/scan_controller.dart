@@ -2,6 +2,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 
+import 'scan_guide.dart';
+
 import '../../rules/atm_conversion.dart';
 import '../../rules/ocr_layout.dart';
 import '../../services/text_recognition_service.dart';
@@ -89,7 +91,9 @@ class ScanController extends ChangeNotifier {
     _set(const ScanState());
   }
 
-  Future<void> scanPhoto(String path) async {
+  /// Scans a photo. [region] is set for camera shots, so text outside the
+  /// frame the user aimed with is ignored; picked photos use all text.
+  Future<void> scanPhoto(String path, {ScanRegion? region}) async {
     final run = ++_run;
     _set(
       ScanState(
@@ -115,7 +119,27 @@ class ScanController extends ChangeNotifier {
       return;
     }
 
-    final rows = rowsFromLines(read.lines);
+    final keep = [
+      for (var i = 0; i < read.lines.length; i++)
+        region == null || size == null || region.contains(read.lines[i], size),
+    ];
+    final lines = [
+      for (var i = 0; i < read.lines.length; i++)
+        if (keep[i]) read.lines[i],
+    ];
+    // Rows are rebuilt from the straightened lines, so a tilted photo still
+    // lines each label up with its values.
+    final rows = rowsFromLines(
+      straightenLines([
+        for (var i = 0; i < read.quads.length; i++)
+          if (keep[i]) read.quads[i],
+      ]),
+    );
+    if (kDebugMode) {
+      // What OCR actually read, to diagnose misses on a real device.
+      debugPrint('[scan] ${read.lines.length} lines, ${lines.length} in frame');
+      debugPrint('[scan] rows:\n$rows');
+    }
     final lower = rows.toLowerCase();
     // "conversion" alone also appears on card terminal stickers, so require
     // the ATM total row or the paired with/without conversion choice.
@@ -127,7 +151,7 @@ class ScanController extends ChangeNotifier {
       _state.copyWith(
         photoSize: size,
         readElapsed: read.elapsed,
-        lines: read.lines,
+        lines: lines,
         steps: [
           const ScanStep(ScanStepId.readText, ScanStepState.done),
           ScanStep(
@@ -172,7 +196,7 @@ class ScanController extends ChangeNotifier {
       _state.copyWith(
         steps: steps,
         verdict: verdict,
-        declineLabel: declineButtonLabel(read.lines),
+        declineLabel: declineButtonLabel(lines),
       ),
     );
   }

@@ -224,7 +224,7 @@ Bottom sheets 28, hero and dark cards 24, cards 20, buttons 16, small tiles 12 t
 - Camera screen: controls are dark glass (`shadow` at 40 %, white hairline at 20 %, blur 20). With no camera available, a white "Choose photo" pill takes the shutter's place (the one inverted primary button, on black only). Shutter inner disc sinks to 0.86 while pressed.
 - Motion tokens added during craft: `settle` (easeOutBack) for landing badges and the hero number, `boxStagger` 0.12 between detection boxes, `heroSettleFrom` 0.96. The hero number counts up to the real verdict value; with reduce motion it shows the final value at once.
 - Bottom sheet: radius 28, E2 with y -8, 36 x 4 grabber in `handle`, overlapping a full-bleed camera.
-- Coin: a 3D Thai-style bimetal coin, silver outer ring and gold center with the baht sign. At most one hero object per screen.
+- Coin: a 3D Thai-style bimetal coin, silver outer ring and gold center with the baht sign (`app/assets/images/coin.png`, Hyunjun's render, background removed). At most one hero object per screen. Used on success screens; the ATM verdict with money kept is a success screen (green field, coin, centered number, one white Press card, details on a page-colored sheet that scrolls up).
 
 ## Do's and Don'ts
 

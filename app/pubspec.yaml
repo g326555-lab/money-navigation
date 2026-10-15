@@ -68,6 +68,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/data/
+    - assets/images/
   fonts:
     - family: Google Sans Flex
       fonts:

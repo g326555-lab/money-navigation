@@ -28,6 +28,9 @@ abstract final class AppMotion {
   /// Scale the hero amount counts up at before it settles to full size.
   static const heroSettleFrom = 0.96;
 
+  /// The coin grows in from this scale as the amount lands.
+  static const coinStartScale = 0.6;
+
   /// Delay between detection boxes drawing in, as a fraction of the whole
   /// draw-in, so the eye follows them top to bottom.
   static const boxStagger = 0.12;

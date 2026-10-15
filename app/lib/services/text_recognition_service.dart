@@ -4,9 +4,17 @@ import '../rules/ocr_layout.dart';
 
 /// Result of reading one photo on the device.
 class TextReadResult {
-  const TextReadResult({required this.lines, required this.elapsed});
+  const TextReadResult({
+    required this.lines,
+    required this.quads,
+    required this.elapsed,
+  });
 
+  /// Upright boxes in photo pixels, for drawing on the photo.
   final List<OcrLine> lines;
+
+  /// The same lines as corner points, in the same order, for straightening.
+  final List<OcrQuad> quads;
   final Duration elapsed;
 }
 
@@ -35,7 +43,22 @@ class TextRecognitionService {
             bottom: line.boundingBox.bottom,
           ),
     ];
-    return TextReadResult(lines: lines, elapsed: stopwatch.elapsed);
+    final quads = [
+      for (final block in result.blocks)
+        for (final line in block.lines)
+          OcrQuad(
+            text: line.text,
+            corners: [
+              for (final p in line.cornerPoints)
+                (p.x.toDouble(), p.y.toDouble()),
+            ],
+          ),
+    ];
+    return TextReadResult(
+      lines: lines,
+      quads: quads,
+      elapsed: stopwatch.elapsed,
+    );
   }
 
   Future<void> close() => _recognizer.close();

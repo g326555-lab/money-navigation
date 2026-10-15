@@ -28,6 +28,11 @@ abstract final class AppColors {
   static const errorText = Color(0xFFD1173A);
   static const errorContainer = Color(0xFFFFE9EC);
 
+  // Success field (DESIGN.md: a lighter green center).
+  static const successCenter = Color(0xFF6FF0AC);
+  static const onSuccess = Color(0xFF04220F);
+  static const onSuccessSecondary = Color(0xFF1B5E3A);
+
   // Depth and floating chrome (DESIGN.md "Elevation & Depth").
   static const shadow = Color(0xFF111418);
   static const glassFill = Color(0xB8FFFFFF);
@@ -37,6 +42,7 @@ abstract final class AppColors {
 
   // Camera screens (DESIGN.md: glass only for camera controls).
   static const cameraBackground = Color(0xFF000000);
+  static const cameraOutsideGuide = Color(0x73000000);
   static const cameraScrimTop = Color(0x73111418);
   static const cameraScrimEnd = Color(0x00111418);
   // Dark glass: legible over both bright and dark camera scenes.

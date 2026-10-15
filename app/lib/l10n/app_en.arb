@@ -4,7 +4,7 @@
   "@appName": {
     "description": "App name shown in the system and top of Home."
   },
-  "scanHint": "Point at the ATM screen",
+  "scanHint": "Fit the ATM screen inside the frame",
   "scanShutter": "Take photo",
   "scanChoosePhoto": "Choose photo",
   "scanClose": "Close",
@@ -105,5 +105,166 @@
   },
   "atmIfConvert": "If you convert",
   "atmIfNotConvert": "If you don't",
-  "atmScanAnother": "Scan another"
+  "atmScanAnother": "Scan another",
+  "speakOpen": "Hear a price",
+  "speakListening": "Listening",
+  "speakListenHint": "Hold your phone toward the seller",
+  "speakStop": "Done listening",
+  "speakListenAgain": "Listen again",
+  "speakTypeSubmit": "Check this price",
+  "speakHeard": "They said",
+  "speakMeaning": "{item}, {amount} {unit}",
+  "@speakMeaning": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "unitPerKg": "per kilo",
+  "unitEach": "each",
+  "unitPerPlate": "per plate",
+  "unitPerHour": "per hour",
+  "unitPerRide": "per ride",
+  "verdictHigh": "High",
+  "verdictFair": "Fair",
+  "verdictLow": "Low",
+  "speakOverBy": "{amount} above the usual price",
+  "@speakOverBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "speakFairBody": "This is within the usual price.",
+  "speakLowBody": "This is below the usual price.",
+  "speakUsualPrice": "Usual price",
+  "speakUsualRange": "{low}–{high} THB {unit}",
+  "@speakUsualRange": {
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "speakAsked": "Asked",
+  "speakSources": "{count, plural, =1{1 source} other{{count} sources}} · {month}",
+  "@speakSources": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "speakCounterLabel": "Ask for",
+  "speakCounterAmount": "{amount} THB",
+  "@speakCounterAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "speakSayIt": "Say it in Thai",
+  "speakSpeaking": "Speaking",
+  "speakNoVoice": "No Thai voice on this phone. Show the sentence to the seller instead.",
+  "counterOfferSentence": "ลดเหลือ {amount} บาทได้ไหม",
+  "@counterOfferSentence": {
+    "description": "Spoken to a Thai seller; always Thai in every locale.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "speakNothingHeard": "Nothing was heard",
+  "speakNothingHeardTip": "Move closer to the seller and try again, or type what you heard.",
+  "speakNoPrice": "No price in what was heard",
+  "speakNoPriceTip": "Ask the seller the price again, then listen.",
+  "speakUnknownItem": "No usual price for this yet",
+  "speakUnknownItemTip": "The price was {amount}. We only compare items we have sources for.",
+  "@speakUnknownItemTip": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "speakUnitMismatch": "The price is for a different amount",
+  "speakUnitMismatchTip": "The usual price is {unit}. Ask the seller for the price {unit}.",
+  "@speakUnitMismatchTip": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "speakUnavailable": "Thai speech recognition isn't available on this phone. You can type what you heard.",
+  "speakDenied": "Microphone access is off for Money Navigation. Turn it on in Settings, or type what you heard.",
+  "speakEnterPrice": "Enter price",
+  "speakEnterTitle": "What is the seller asking",
+  "speakPickItem": "Item",
+  "speakPriceLabel": "Price in THB",
+  "speakEntered": "You entered",
+  "speakPreparing": "Getting ready",
+  "speakUsualRangeRow": "Usual range",
+  "speakHeroLabel": "{item} · {unit}",
+  "@speakHeroLabel": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "speakSourcesLine": "{hosts} · {sources}",
+  "@speakSourcesLine": {
+    "placeholders": {
+      "hosts": {
+        "type": "String"
+      },
+      "sources": {
+        "type": "String"
+      }
+    }
+  },
+  "speakMonthRange": "{from}–{to}",
+  "@speakMonthRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "listSeparator": ", ",
+  "speakWhichItem": "What are they selling",
+  "speakHeardPrice": "We heard {price}.",
+  "@speakHeardPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  }
 }

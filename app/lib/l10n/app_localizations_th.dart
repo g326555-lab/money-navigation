@@ -13,7 +13,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get appName => 'Money Navigation';
 
   @override
-  String get scanHint => 'เล็งไปที่หน้าจอตู้ ATM';
+  String get scanHint => 'วางหน้าจอตู้ ATM ให้อยู่ในกรอบ';
 
   @override
   String get scanShutter => 'ถ่ายรูป';
@@ -162,4 +162,187 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get atmScanAnother => 'สแกนอีกครั้ง';
+
+  @override
+  String get speakOpen => 'ฟังราคา';
+
+  @override
+  String get speakListening => 'กำลังฟัง';
+
+  @override
+  String get speakListenHint => 'ยื่นมือถือไปทางผู้ขาย';
+
+  @override
+  String get speakStop => 'ฟังเสร็จแล้ว';
+
+  @override
+  String get speakListenAgain => 'ฟังอีกครั้ง';
+
+  @override
+  String get speakTypeSubmit => 'ตรวจราคานี้';
+
+  @override
+  String get speakHeard => 'ผู้ขายพูดว่า';
+
+  @override
+  String speakMeaning(String item, String amount, String unit) {
+    return '$item $amount $unit';
+  }
+
+  @override
+  String get unitPerKg => 'ต่อกิโล';
+
+  @override
+  String get unitEach => 'ต่อชิ้น';
+
+  @override
+  String get unitPerPlate => 'ต่อจาน';
+
+  @override
+  String get unitPerHour => 'ต่อชั่วโมง';
+
+  @override
+  String get unitPerRide => 'ต่อเที่ยว';
+
+  @override
+  String get verdictHigh => 'แพง';
+
+  @override
+  String get verdictFair => 'ราคาปกติ';
+
+  @override
+  String get verdictLow => 'ถูก';
+
+  @override
+  String speakOverBy(String amount) {
+    return 'แพงกว่าราคาปกติ $amount';
+  }
+
+  @override
+  String get speakFairBody => 'อยู่ในช่วงราคาปกติ';
+
+  @override
+  String get speakLowBody => 'ถูกกว่าราคาปกติ';
+
+  @override
+  String get speakUsualPrice => 'ราคาปกติ';
+
+  @override
+  String speakUsualRange(String low, String high, String unit) {
+    return '$low–$high บาท $unit';
+  }
+
+  @override
+  String get speakAsked => 'ราคาที่ขอ';
+
+  @override
+  String speakSources(int count, String month) {
+    return '$count แหล่ง · $month';
+  }
+
+  @override
+  String get speakCounterLabel => 'ขอเป็น';
+
+  @override
+  String speakCounterAmount(String amount) {
+    return '$amount บาท';
+  }
+
+  @override
+  String get speakSayIt => 'พูดเป็นภาษาไทย';
+
+  @override
+  String get speakSpeaking => 'กำลังพูด';
+
+  @override
+  String get speakNoVoice => 'มือถือนี้ไม่มีเสียงภาษาไทย ให้ผู้ขายดูประโยคแทน';
+
+  @override
+  String counterOfferSentence(String amount) {
+    return 'ลดเหลือ $amount บาทได้ไหม';
+  }
+
+  @override
+  String get speakNothingHeard => 'ไม่ได้ยินอะไร';
+
+  @override
+  String get speakNothingHeardTip =>
+      'เข้าไปใกล้ผู้ขายแล้วลองอีกครั้ง หรือพิมพ์สิ่งที่ได้ยิน';
+
+  @override
+  String get speakNoPrice => 'ไม่ได้ยินราคา';
+
+  @override
+  String get speakNoPriceTip => 'ถามราคาผู้ขายอีกครั้งแล้วกดฟัง';
+
+  @override
+  String get speakUnknownItem => 'ยังไม่มีราคาปกติของสินค้านี้';
+
+  @override
+  String speakUnknownItemTip(String amount) {
+    return 'ราคาคือ $amount เราเทียบเฉพาะสินค้าที่มีแหล่งข้อมูล';
+  }
+
+  @override
+  String get speakUnitMismatch => 'ราคานี้เป็นหน่วยอื่น';
+
+  @override
+  String speakUnitMismatchTip(String unit) {
+    return 'ราคาปกติคิด$unit ลองถามราคา$unit';
+  }
+
+  @override
+  String get speakUnavailable =>
+      'มือถือนี้ใช้การฟังภาษาไทยไม่ได้ พิมพ์สิ่งที่ได้ยินแทนได้';
+
+  @override
+  String get speakDenied =>
+      'Money Navigation ยังไม่ได้รับสิทธิ์ใช้ไมโครโฟน เปิดได้ในการตั้งค่า หรือพิมพ์สิ่งที่ได้ยินแทน';
+
+  @override
+  String get speakEnterPrice => 'ใส่ราคา';
+
+  @override
+  String get speakEnterTitle => 'ผู้ขายขอเท่าไร';
+
+  @override
+  String get speakPickItem => 'สินค้า';
+
+  @override
+  String get speakPriceLabel => 'ราคา (บาท)';
+
+  @override
+  String get speakEntered => 'คุณใส่ว่า';
+
+  @override
+  String get speakPreparing => 'กำลังเตรียม';
+
+  @override
+  String get speakUsualRangeRow => 'ช่วงราคาปกติ';
+
+  @override
+  String speakHeroLabel(String item, String unit) {
+    return '$item · $unit';
+  }
+
+  @override
+  String speakSourcesLine(String hosts, String sources) {
+    return '$hosts · $sources';
+  }
+
+  @override
+  String speakMonthRange(String from, String to) {
+    return '$from–$to';
+  }
+
+  @override
+  String get listSeparator => ', ';
+
+  @override
+  String get speakWhichItem => 'ผู้ขายขายอะไร';
+
+  @override
+  String speakHeardPrice(String price) {
+    return 'ได้ยินว่า $price';
+  }
 }

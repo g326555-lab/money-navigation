@@ -137,6 +137,8 @@ test/rules/       unit tests for every calculation
 - Exchange board: USD buying 35.03, selling 36.10. Mid 35.565, so selling dollars here gets about 1.5 % less than mid.
 - Restaurant bill (Thai text): subtotal 225.00, discount 13.00, service charge 10 % = 21.00, total 233.00, of which VAT 7 % = 15.24 is already included (217.76 before tax). Point out that service charge was added on top and VAT is inside the total.
 
+- Market haggling (scene 2): seller says "มะม่วงกิโลละ 150" (also spoken as "ร้อยห้าสิบ" or the market short form "ร้อยห้า"). Usual October range 80–110 THB per kilo from `app/assets/data/market_prices.json` (sources: checkraka.app, lotuss.com; researched 15 Oct). Verdict High, 40 THB over, counter-offer 110 THB, Thai sentence "ลดเหลือ 110 บาทได้ไหม". The earlier 60–80 figure had no 2025–2026 source and was dropped.
+
 Write these as unit tests in `test/rules/` before wiring the UI.
 
 ## Calculation rules

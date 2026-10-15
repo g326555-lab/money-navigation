@@ -13,7 +13,9 @@ import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/pressable.dart';
+import '../speak/haggle_screen.dart';
 import 'atm_result_screen.dart';
+import 'scan_guide.dart';
 import 'detection_overlay.dart';
 import 'scan_controller.dart';
 import 'scan_steps_sheet.dart';
@@ -38,6 +40,9 @@ class _ScanScreenState extends State<ScanScreen>
   bool _torch = false;
   bool _capturing = false;
   bool _picking = false;
+
+  /// True while voice haggling is on top; the camera stays off meanwhile.
+  bool _haggleOpen = false;
   bool _resultOpen = false;
   bool _failureFelt = false;
 
@@ -75,6 +80,7 @@ class _ScanScreenState extends State<ScanScreen>
     } else if (state == AppLifecycleState.resumed &&
         camera == null &&
         !_picking &&
+        !_haggleOpen &&
         _scan.state.photoPath == null) {
       _startCamera();
     }
@@ -97,8 +103,19 @@ class _ScanScreenState extends State<ScanScreen>
       );
       await controller.initialize();
       await controller.setFlashMode(FlashMode.off);
+      // Focus and expose for the framed screen, not the bright surroundings.
+      final center = Offset(0.5, AppSizes.scanGuideCenterY);
+      try {
+        await controller.setFocusPoint(center);
+        await controller.setExposurePoint(center);
+      } on CameraException {
+        // Some cameras have no point focus; continuous auto focus remains.
+      }
       // A photo was picked or taken while the camera was starting.
-      if (!mounted || _picking || _scan.state.photoPath != null) {
+      if (!mounted ||
+          _picking ||
+          _haggleOpen ||
+          _scan.state.photoPath != null) {
         await controller.dispose();
         return;
       }
@@ -179,6 +196,19 @@ class _ScanScreenState extends State<ScanScreen>
     _retry();
   }
 
+  /// Opens voice haggling; the camera is released while it is open so the
+  /// microphone session does not compete with it.
+  Future<void> _openHaggle() async {
+    _stopCamera();
+    _haggleOpen = true;
+    await Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (_) => const HaggleScreen()));
+    _haggleOpen = false;
+    if (mounted && _camera == null && _scan.state.photoPath == null) {
+      _startCamera();
+    }
+  }
+
   void _retry() {
     _resultOpen = false;
     _failureFelt = false;
@@ -193,9 +223,13 @@ class _ScanScreenState extends State<ScanScreen>
     setState(() => _capturing = true);
     HapticFeedback.selectionClick();
     try {
+      final view = MediaQuery.sizeOf(context);
       final file = await camera.takePicture();
       _stopCamera();
-      await _scan.scanPhoto(file.path);
+      await _scan.scanPhoto(
+        file.path,
+        region: ScanRegion(view: view, guide: scanGuideRect(view)),
+      );
     } on CameraException {
       _setCameraStatus(_CameraStatus.unavailable);
     } finally {
@@ -278,8 +312,10 @@ class _ScanScreenState extends State<ScanScreen>
                   ),
                 ),
               )
-            else
+            else ...[
               _CameraView(controller: _camera, status: _cameraStatus),
+              if (_camera != null) const ScanGuide(),
+            ],
             // Keeps the light status bar and top controls legible over a
             // bright preview (DESIGN.md camera scrim).
             const Positioned(
@@ -316,6 +352,14 @@ class _ScanScreenState extends State<ScanScreen>
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                       const Spacer(),
+                      if (!hasPhoto) ...[
+                        _GlassButton(
+                          icon: Icons.mic_rounded,
+                          label: l10n.speakOpen,
+                          onPressed: _openHaggle,
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                      ],
                       if (!hasPhoto && _camera != null)
                         _GlassButton(
                           icon: _torch

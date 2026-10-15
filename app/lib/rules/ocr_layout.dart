@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 /// One line of recognized text with its bounding box in image pixels.
 ///
 /// A plain value type so layout logic stays free of plugin and Flutter types.
@@ -64,4 +66,52 @@ double _overlapRatio(OcrLine a, OcrLine b) {
   final smaller = a.height < b.height ? a.height : b.height;
   if (overlap <= 0 || smaller <= 0) return 0;
   return overlap / smaller;
+}
+
+/// A recognized line as its four corner points, in the line's own reading
+/// order: top-left, top-right, bottom-right, bottom-left.
+class OcrQuad {
+  const OcrQuad({required this.text, required this.corners});
+
+  final String text;
+  final List<(double, double)> corners;
+}
+
+/// Undoes the tilt of a photo taken at an angle. The tilt is the median of
+/// every line's top-edge angle, so one odd line cannot skew it; all corners
+/// are rotated back by it and each line becomes an upright box again.
+List<OcrLine> straightenLines(List<OcrQuad> quads) {
+  final valid = quads.where((q) => q.corners.length >= 4).toList();
+  if (valid.isEmpty) return const [];
+  final angles = [
+    for (final q in valid)
+      math.atan2(
+        q.corners[1].$2 - q.corners[0].$2,
+        q.corners[1].$1 - q.corners[0].$1,
+      ),
+  ]..sort();
+  final mid = angles.length ~/ 2;
+  final tilt = angles.length.isOdd
+      ? angles[mid]
+      : (angles[mid - 1] + angles[mid]) / 2;
+  final cos = math.cos(-tilt);
+  final sin = math.sin(-tilt);
+  return [
+    for (final q in valid)
+      () {
+        final xs = <double>[];
+        final ys = <double>[];
+        for (final (x, y) in q.corners.take(4)) {
+          xs.add(x * cos - y * sin);
+          ys.add(x * sin + y * cos);
+        }
+        return OcrLine(
+          text: q.text,
+          left: xs.reduce(math.min),
+          top: ys.reduce(math.min),
+          right: xs.reduce(math.max),
+          bottom: ys.reduce(math.max),
+        );
+      }(),
+  ];
 }

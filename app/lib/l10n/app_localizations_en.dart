@@ -13,7 +13,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Money Navigation';
 
   @override
-  String get scanHint => 'Point at the ATM screen';
+  String get scanHint => 'Fit the ATM screen inside the frame';
 
   @override
   String get scanShutter => 'Take photo';
@@ -164,4 +164,194 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get atmScanAnother => 'Scan another';
+
+  @override
+  String get speakOpen => 'Hear a price';
+
+  @override
+  String get speakListening => 'Listening';
+
+  @override
+  String get speakListenHint => 'Hold your phone toward the seller';
+
+  @override
+  String get speakStop => 'Done listening';
+
+  @override
+  String get speakListenAgain => 'Listen again';
+
+  @override
+  String get speakTypeSubmit => 'Check this price';
+
+  @override
+  String get speakHeard => 'They said';
+
+  @override
+  String speakMeaning(String item, String amount, String unit) {
+    return '$item, $amount $unit';
+  }
+
+  @override
+  String get unitPerKg => 'per kilo';
+
+  @override
+  String get unitEach => 'each';
+
+  @override
+  String get unitPerPlate => 'per plate';
+
+  @override
+  String get unitPerHour => 'per hour';
+
+  @override
+  String get unitPerRide => 'per ride';
+
+  @override
+  String get verdictHigh => 'High';
+
+  @override
+  String get verdictFair => 'Fair';
+
+  @override
+  String get verdictLow => 'Low';
+
+  @override
+  String speakOverBy(String amount) {
+    return '$amount above the usual price';
+  }
+
+  @override
+  String get speakFairBody => 'This is within the usual price.';
+
+  @override
+  String get speakLowBody => 'This is below the usual price.';
+
+  @override
+  String get speakUsualPrice => 'Usual price';
+
+  @override
+  String speakUsualRange(String low, String high, String unit) {
+    return '$low–$high THB $unit';
+  }
+
+  @override
+  String get speakAsked => 'Asked';
+
+  @override
+  String speakSources(int count, String month) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources',
+      one: '1 source',
+    );
+    return '$_temp0 · $month';
+  }
+
+  @override
+  String get speakCounterLabel => 'Ask for';
+
+  @override
+  String speakCounterAmount(String amount) {
+    return '$amount THB';
+  }
+
+  @override
+  String get speakSayIt => 'Say it in Thai';
+
+  @override
+  String get speakSpeaking => 'Speaking';
+
+  @override
+  String get speakNoVoice =>
+      'No Thai voice on this phone. Show the sentence to the seller instead.';
+
+  @override
+  String counterOfferSentence(String amount) {
+    return 'ลดเหลือ $amount บาทได้ไหม';
+  }
+
+  @override
+  String get speakNothingHeard => 'Nothing was heard';
+
+  @override
+  String get speakNothingHeardTip =>
+      'Move closer to the seller and try again, or type what you heard.';
+
+  @override
+  String get speakNoPrice => 'No price in what was heard';
+
+  @override
+  String get speakNoPriceTip => 'Ask the seller the price again, then listen.';
+
+  @override
+  String get speakUnknownItem => 'No usual price for this yet';
+
+  @override
+  String speakUnknownItemTip(String amount) {
+    return 'The price was $amount. We only compare items we have sources for.';
+  }
+
+  @override
+  String get speakUnitMismatch => 'The price is for a different amount';
+
+  @override
+  String speakUnitMismatchTip(String unit) {
+    return 'The usual price is $unit. Ask the seller for the price $unit.';
+  }
+
+  @override
+  String get speakUnavailable =>
+      'Thai speech recognition isn\'t available on this phone. You can type what you heard.';
+
+  @override
+  String get speakDenied =>
+      'Microphone access is off for Money Navigation. Turn it on in Settings, or type what you heard.';
+
+  @override
+  String get speakEnterPrice => 'Enter price';
+
+  @override
+  String get speakEnterTitle => 'What is the seller asking';
+
+  @override
+  String get speakPickItem => 'Item';
+
+  @override
+  String get speakPriceLabel => 'Price in THB';
+
+  @override
+  String get speakEntered => 'You entered';
+
+  @override
+  String get speakPreparing => 'Getting ready';
+
+  @override
+  String get speakUsualRangeRow => 'Usual range';
+
+  @override
+  String speakHeroLabel(String item, String unit) {
+    return '$item · $unit';
+  }
+
+  @override
+  String speakSourcesLine(String hosts, String sources) {
+    return '$hosts · $sources';
+  }
+
+  @override
+  String speakMonthRange(String from, String to) {
+    return '$from–$to';
+  }
+
+  @override
+  String get listSeparator => ', ';
+
+  @override
+  String get speakWhichItem => 'What are they selling';
+
+  @override
+  String speakHeardPrice(String price) {
+    return 'We heard $price.';
+  }
 }

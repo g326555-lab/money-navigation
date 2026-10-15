@@ -52,6 +52,26 @@ abstract final class AppSizes {
   static const double stepGlyph = 16;
   static const double shutter = 76;
   static const double cameraScrimHeight = 120;
+  static const double heroCoin = 132;
+  static const double heroCoinCompact = 88;
+
+  /// Screens this short or shorter (the Fold cover, 737) use compact heroes.
+  static const double compactHeight = 760;
+
+  /// Scan frame: landscape like an ATM screen, centered a little above the
+  /// middle so the controls below never cover it.
+  static const double scanGuideAspect = 0.72;
+  static const double scanGuideCenterY = 0.42;
+  static const double scanGuideCorner = 32;
+  static const double scanGuideStroke = 4;
+  static const double priceScaleTrack = 8;
+  static const double priceScaleMarker = 22;
+  static const double priceScaleMarkerRing = 4;
+  static const double waveformHeight = 40;
+  static const double waveformBar = 3;
+  static const double waveformGap = 3;
+  static const double waveformMinBar = 0.08;
+  static const int waveformSamples = 80;
 
   /// Height kept free for the scan steps sheet (four steps), so the photo
   /// above it keeps a fixed size while steps arrive.
