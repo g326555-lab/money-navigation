@@ -2264,4 +2264,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendarSample => 'Sample calendar';
+
+  @override
+  String get haggleCheckingPrices => 'Checking prices online…';
+
+  @override
+  String haggleWebRange(String low, String high, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'About $low–$high THB on $count web pages',
+      one: 'About $low–$high THB on 1 web page',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String haggleWebQuote(String quote, String site, String date) {
+    return '“$quote” · $site · $date';
+  }
+
+  @override
+  String haggleReadOn(String date) {
+    return 'read $date';
+  }
 }

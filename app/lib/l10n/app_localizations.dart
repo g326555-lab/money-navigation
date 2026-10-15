@@ -3629,6 +3629,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sample calendar'**
   String get calendarSample;
+
+  /// No description provided for @haggleCheckingPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking prices online…'**
+  String get haggleCheckingPrices;
+
+  /// No description provided for @haggleWebRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{About {low}–{high} THB on 1 web page} other{About {low}–{high} THB on {count} web pages}}'**
+  String haggleWebRange(String low, String high, int count);
+
+  /// No description provided for @haggleWebQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'“{quote}” · {site} · {date}'**
+  String haggleWebQuote(String quote, String site, String date);
+
+  /// No description provided for @haggleReadOn.
+  ///
+  /// In en, this message translates to:
+  /// **'read {date}'**
+  String haggleReadOn(String date);
 }
 
 class _AppLocalizationsDelegate

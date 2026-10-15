@@ -2149,4 +2149,22 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get calendarSample => 'ปฏิทินตัวอย่าง';
+
+  @override
+  String get haggleCheckingPrices => 'กำลังเช็กราคาออนไลน์…';
+
+  @override
+  String haggleWebRange(String low, String high, int count) {
+    return 'ราว $low–$high บาท จาก $count หน้าเว็บ';
+  }
+
+  @override
+  String haggleWebQuote(String quote, String site, String date) {
+    return '“$quote” · $site · $date';
+  }
+
+  @override
+  String haggleReadOn(String date) {
+    return 'อ่านเมื่อ $date';
+  }
 }

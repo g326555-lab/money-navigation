@@ -1885,5 +1885,42 @@
   "haggleSomethingElse": "Something else",
   "haggleTypeItem": "What are they selling?",
   "haggleTypeItemHint": "e.g. Vanilla latte",
-  "calendarSample": "Sample calendar"
+  "calendarSample": "Sample calendar",
+  "haggleCheckingPrices": "Checking prices online…",
+  "haggleWebRange": "{count, plural, =1{About {low}–{high} THB on 1 web page} other{About {low}–{high} THB on {count} web pages}}",
+  "@haggleWebRange": {
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "haggleWebQuote": "“{quote}” · {site} · {date}",
+  "@haggleWebQuote": {
+    "placeholders": {
+      "quote": {
+        "type": "String"
+      },
+      "site": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleReadOn": "read {date}",
+  "@haggleReadOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

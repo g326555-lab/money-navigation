@@ -585,5 +585,9 @@
   "haggleSomethingElse": "อย่างอื่น",
   "haggleTypeItem": "เขาขายอะไร",
   "haggleTypeItemHint": "เช่น ลาเต้วานิลลา",
-  "calendarSample": "ปฏิทินตัวอย่าง"
+  "calendarSample": "ปฏิทินตัวอย่าง",
+  "haggleCheckingPrices": "กำลังเช็กราคาออนไลน์…",
+  "haggleWebRange": "ราว {low}–{high} บาท จาก {count} หน้าเว็บ",
+  "haggleWebQuote": "“{quote}” · {site} · {date}",
+  "haggleReadOn": "อ่านเมื่อ {date}"
 }
