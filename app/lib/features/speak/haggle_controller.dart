@@ -148,6 +148,10 @@ class HaggleController extends ChangeNotifier {
   /// The words come only after the seller finishes (cloud path): the
   /// listening screen says so instead of showing live words.
   bool get wordsAfterSentence => _recording;
+
+  /// The microphone is delivering audio for the clip.
+  bool get micReady => _micOpen;
+  bool _micOpen = false;
   bool get readingSentence => _reading;
 
   /// The cloud failed this screen once; the phone listens from then on.
@@ -327,21 +331,47 @@ class HaggleController extends ChangeNotifier {
     // Two captures on one microphone: the later one gets silence (Android),
     // and stopping the recognizer ends the audio session (iOS).
     if (_speech.isListening) await _speech.cancel();
-    _recording = true;
-    notifyListeners();
-    final Uint8List? clip;
-    try {
-      clip = await _recorder.record(
-        onLevel: (level) {
-          if (_state.phase == HagglePhase.listening) {
-            _set(_state.copyWith(level: level));
-          }
-        },
-      );
-    } finally {
-      _recording = false;
+    Uint8List? clip;
+    while (true) {
+      _recording = true;
+      _micOpen = false;
+      notifyListeners();
+      try {
+        clip = await _recorder.record(
+          // "Listening" only once the microphone really delivers audio, or
+          // the seller's first word is lost.
+          onStarted: () {
+            _micOpen = true;
+            notifyListeners();
+          },
+          onLevel: (level) {
+            if (_state.phase == HagglePhase.listening) {
+              _set(_state.copyWith(level: level));
+            }
+          },
+        );
+      } finally {
+        _recording = false;
+        _micOpen = false;
+      }
+      if (_disposed || _state.phase != HagglePhase.listening) return;
+      // Nobody spoke yet: the seller is thinking. Keep listening the same
+      // way, as the phone's recognizer does, up to the same limit.
+      final started = _listenStarted;
+      final silence =
+          clip == null && _recorder.lastOutcome == ClipOutcome.silence;
+      if (!silence) break;
+      if (started != null &&
+          DateTime.now().difference(started) >= speechKeepListening) {
+        unawaited(_tts.restoreSpeaker());
+        if (_hearingReply) {
+          _applyReply('', classifyReply(''));
+        } else {
+          _understand('', typed: false, phase: HagglePhase.done);
+        }
+        return;
+      }
     }
-    if (_disposed || _state.phase != HagglePhase.listening) return;
     // Recording takes the audio session over on iOS; give the voice its
     // speaker back before anything is said.
     unawaited(_tts.restoreSpeaker());

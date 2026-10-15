@@ -322,6 +322,8 @@ class _HaggleScreenState extends State<HaggleScreen>
             hearingReply: _haggle.hearingReply,
             wordsAfter: _haggle.wordsAfterSentence,
             reading: _haggle.readingSentence,
+            // Not "Listening" until the microphone really is.
+            preparing: _haggle.wordsAfterSentence && !_haggle.micReady,
           ),
         ];
       case HagglePhase.unavailable:
@@ -831,7 +833,11 @@ class _ListeningHero extends StatefulWidget {
     this.hearingReply = false,
     this.wordsAfter = false,
     this.reading = false,
+    this.preparing = false,
   });
+
+  /// The microphone is still opening.
+  final bool preparing;
 
   /// Cloud path: no live words; they come when the seller has finished.
   final bool wordsAfter;
@@ -874,7 +880,7 @@ class _ListeningHeroState extends State<_ListeningHero> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.state.phase == HagglePhase.preparing
+          widget.state.phase == HagglePhase.preparing || widget.preparing
               ? l10n.speakPreparing
               : widget.hearingReply
               ? l10n.haggleListeningAnswer

@@ -16,9 +16,23 @@ import 'haggle_controller_test.dart'
 /// Records nothing; returns [clip] at once, or waits until [stop] when
 /// [hold] is true.
 class FakeRecorder implements ClipRecorder {
-  FakeRecorder({this.clip, this.hold = false, this.levels = const [0.5]});
+  FakeRecorder({
+    this.clip,
+    this.hold = false,
+    this.levels = const [0.5],
+    this.outcomes = const [],
+  });
 
   Uint8List? clip;
+
+  /// Outcome per record call, the last repeated; default from [clip].
+  final List<ClipOutcome> outcomes;
+  ClipOutcome _outcome = ClipOutcome.failed;
+  bool? micReadyDuringRecord;
+  bool Function()? probeMicReady;
+
+  @override
+  ClipOutcome get lastOutcome => _outcome;
   final bool hold;
   final List<double> levels;
   int recordCalls = 0;
@@ -34,8 +48,16 @@ class FakeRecorder implements ClipRecorder {
   Future<Uint8List?> record({
     required void Function(double level) onLevel,
     void Function()? onSpeech,
+    void Function()? onStarted,
   }) async {
     recordCalls++;
+    onStarted?.call();
+    micReadyDuringRecord = probeMicReady?.call();
+    final i = recordCalls - 1;
+    _outcome = outcomes.isEmpty
+        ? (clip == null ? ClipOutcome.failed : ClipOutcome.speech)
+        : outcomes[i < outcomes.length ? i : outcomes.length - 1];
+    if (_outcome == ClipOutcome.silence) return null;
     for (final l in levels) {
       seenLevels.add(l);
       onLevel(l);
@@ -333,6 +355,39 @@ void main() {
     await settle();
     expect(tts.prepareCalls, 1);
     expect(tts.restoreCalls, 2);
+    c.dispose();
+  });
+
+  test('silence records again; the cloud still hears it', () async {
+    final rec = FakeRecorder(
+      clip: clip,
+      outcomes: const [
+        ClipOutcome.silence,
+        ClipOutcome.silence,
+        ClipOutcome.speech,
+      ],
+    );
+    final c = build(withRecorder: rec);
+    rec.probeMicReady = () => c.micReady;
+    await c.start();
+    await settle();
+
+    expect(rec.recordCalls, 3);
+    expect(rec.micReadyDuringRecord, isTrue);
+    expect(c.micReady, isFalse);
+    expectMango150(c.state);
+    expect(speech.listenCalls, 0);
+    c.dispose();
+  });
+
+  test('a failed recorder hands over to the phone', () async {
+    final rec = FakeRecorder(outcomes: const [ClipOutcome.failed]);
+    final c = build(withRecorder: rec);
+    await c.start();
+    await settle();
+
+    expect(rec.recordCalls, 1);
+    expect(speech.listenCalls, greaterThan(0));
     c.dispose();
   });
 
