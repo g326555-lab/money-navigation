@@ -53,12 +53,16 @@ class ClipRecorder {
 
   Future<bool> hasPermission() => _rec.hasPermission();
 
-  /// Records one sentence. [onLevel] gets 0..1 levels for the waveform and
-  /// [onSpeech] fires once when speech starts. Returns the PCM bytes, or
+  /// Records one sentence. [onLevel] gets 0..1 levels for the waveform,
+  /// [onStarted] fires when the first audio arrives (the microphone is
+  /// really open: say "Listening" only then, or the first word is lost),
+  /// and [onSpeech] fires once when speech starts. Everything from the
+  /// first audio on is kept, including the quiet lead-in. Returns the PCM bytes, or
   /// null when nobody spoke, permission is missing or recording failed.
   Future<Uint8List?> record({
     required void Function(double level) onLevel,
     void Function()? onSpeech,
+    void Function()? onStarted,
   }) async {
     if (_done != null) return null;
     final done = _done = Completer<Uint8List?>();
@@ -112,8 +116,13 @@ class ClipRecorder {
         ),
       );
       guard = Timer(maxDuration, () => finish(keep: true));
+      var first = true;
       sub = stream.listen(
         (chunk) {
+          if (first) {
+            first = false;
+            onStarted?.call();
+          }
           bytes.add(chunk);
           final db = _dbfs(chunk);
           onLevel(((db - floorDbfs) / -floorDbfs).clamp(0.0, 1.0));
