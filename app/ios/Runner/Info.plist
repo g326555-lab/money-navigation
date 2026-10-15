@@ -16,6 +16,19 @@
 	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.hyunjunkim.moneynavigation.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.hyunjunkim.moneynavigation</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
