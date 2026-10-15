@@ -19,11 +19,17 @@ class BriefingCard extends StatelessWidget {
     required this.plan,
     required this.calendarConnected,
     this.sample = false,
+    required this.day,
+    this.tripDay,
     required this.onConnect,
     required this.onOpen,
   });
 
   final DayCashPlan? plan;
+
+  /// The day whose stops are shown, and "Day n of m" inside a trip.
+  final DateTime day;
+  final String? tripDay;
   final bool calendarConnected;
 
   /// The stops come from the demo's sample calendar.
@@ -71,7 +77,7 @@ class BriefingCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  DateFormat.MMMEd(locale).format(DateTime.now()),
+                  [?tripDay, DateFormat.MMMEd(locale).format(day)].join(' · '),
                   style: type.label.copyWith(
                     color: AppColors.onSurfaceTertiary,
                   ),

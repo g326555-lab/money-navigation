@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_navigation/rules/day_cash.dart';
@@ -136,6 +137,44 @@ void main() {
         'B1',
         'B2',
       ]);
+    });
+  });
+
+  group('demo trip dates', () {
+    final file = File('assets/data/demo_personas.json').readAsStringSync();
+    final now = DateTime(2026, 10, 16, 11);
+
+    test('the visitor is on day 4 of a 5-day trip', () {
+      final p = demoTripPeriod(file, 'visitorBangkok', now)!;
+      expect(p.start, DateTime(2026, 10, 13));
+      expect(p.end, DateTime(2026, 10, 17));
+      expect(p.dayNumber(now), 4);
+    });
+
+    test('the Tokyo traveler is on day 3 of 5', () {
+      final p = demoTripPeriod(file, 'thaiTokyo', now)!;
+      expect(p.length, 5);
+      expect(p.dayNumber(now), 3);
+    });
+
+    test('a missing or broken trip entry gives no dates', () {
+      expect(demoTripPeriod(file, 'nobody', now), isNull);
+      expect(
+        demoTripPeriod(
+          jsonEncode({
+            'personas': [
+              {
+                'key': 'x',
+                'trip': {'startDaysAgo': -1, 'endDaysAhead': 2},
+              },
+            ],
+          }),
+          'x',
+          now,
+        ),
+        isNull,
+      );
+      expect(demoTripPeriod('not json', 'x', now), isNull);
     });
   });
 }

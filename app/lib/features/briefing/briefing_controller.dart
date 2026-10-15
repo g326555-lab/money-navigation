@@ -9,6 +9,8 @@ import '../../rules/facts_cache.dart';
 import '../../rules/nearby_traps.dart';
 import '../../rules/pay_facts.dart';
 import '../../rules/personal_context.dart';
+import '../../rules/trip_period.dart';
+import '../../data/trip_period_store.dart';
 import '../../services/ai/personal_memory.dart';
 import '../assistant/card_profile_store.dart';
 import 'calendar_source.dart';
@@ -32,14 +34,17 @@ class BriefingController extends ChangeNotifier {
     CountryLocator? countries,
     CardProfileStore? card,
     FactsRepository? live,
+    TripPeriodStore? trip,
     this._bundle,
   }) : calendar = calendar ?? CalendarSource(),
+       trip = trip ?? TripPeriodStore(),
        places = places ?? PlacesClient(),
        location = location ?? PhoneLocation(),
        countries = countries ?? CountryLocator(),
        card = card ?? CardProfileStore(),
        live = live ?? FactsRepository() {
     this.live.addListener(notifyListeners);
+    this.trip.addListener(notifyListeners);
   }
 
   /// One briefing for the whole app.
@@ -50,6 +55,34 @@ class BriefingController extends ChangeNotifier {
   final PhoneLocation location;
   final CountryLocator countries;
   final CardProfileStore card;
+
+  /// The trip dates the traveler entered.
+  final TripPeriodStore trip;
+
+  /// The day whose stops are shown; null follows [defaultTripDay].
+  DateTime? _day;
+
+  /// The trip in view: the demo traveler's in the demo state.
+  TripPeriod? tripPeriod({bool demo = false}) =>
+      demo ? _demoPeriod : trip.period;
+
+  /// The day whose calendar stops are shown.
+  DateTime dayShown({bool demo = false}) =>
+      _day ?? defaultTripDay(tripPeriod(demo: demo), DateTime.now());
+
+  /// Shows [day]'s stops (a day of the trip).
+  Future<void> showDay(DateTime day) async {
+    _day = DateTime(day.year, day.month, day.day);
+    notifyListeners();
+    await _loadEvents(force: true);
+  }
+
+  /// Saves the trip dates and shows the trip's current day.
+  Future<void> setTripPeriod(TripPeriod? period) async {
+    _day = null;
+    await trip.set(period);
+    await _loadEvents(force: true);
+  }
 
   /// Facts the server re-checked today, laid over the bundled file.
   final FactsRepository live;
@@ -89,7 +122,12 @@ class BriefingController extends ChangeNotifier {
   Future<void> start() async {
     if (_started) return;
     _started = true;
-    await Future.wait([_loadFacts(), card.load(), calendar.checkAccess()]);
+    await Future.wait([
+      _loadFacts(),
+      card.load(),
+      trip.load(),
+      calendar.checkAccess(),
+    ]);
     unawaited(live.load());
     notifyListeners();
     unawaited(_loadAccountCard());
@@ -142,15 +180,20 @@ class BriefingController extends ChangeNotifier {
     ]);
   }
 
-  Future<void> connectCalendar() async {
-    if (_demoActive) return;
+  /// Asks for calendar access; true when it was granted.
+  Future<bool> connectCalendar() async {
+    if (_demoActive) return false;
     final granted = await calendar.requestAccess();
     notifyListeners();
     if (granted) await _loadEvents();
+    return granted;
   }
 
-  Future<void> _loadEvents() async {
-    if (_demoActive) return;
+  Future<void> _loadEvents({bool force = false}) async {
+    if (_demoActive) {
+      if (force) notifyListeners();
+      return;
+    }
     final today = DateTime.now();
     _loadedDay = DateTime(today.year, today.month, today.day);
     if (calendar.access != CalendarAccess.granted) {
@@ -161,7 +204,10 @@ class BriefingController extends ChangeNotifier {
     _eventsLoading = true;
     notifyListeners();
     final now = DateTime.now();
-    final raw = await calendar.eventsOn(now);
+    final day = dayShown();
+    final raw = await calendar.eventsOn(day);
+    // A later choice of day replaced this read.
+    if (day != dayShown()) return;
     _loadedDay = DateTime(now.year, now.month, now.day);
     // Show the stops at once, then add what Google Maps knows per place.
     _events = raw;
@@ -211,6 +257,7 @@ class BriefingController extends ChangeNotifier {
   String? _demoKey;
   List<DayEvent> _demoEvents = const [];
   List<NearbyPlaceFact> _demoNearby = const [];
+  TripPeriod? _demoPeriod;
   ({double lat, double lng})? _demoOrigin;
   String? _demoCountry;
   NearbyState _demoNearbyState = NearbyState.idle;
@@ -225,6 +272,7 @@ class BriefingController extends ChangeNotifier {
   void markDemo(bool on) {
     if (on == _demoActive) return;
     _demoActive = on;
+    _day = null;
     // Back from the demo: load the real state once.
     if (!on) Future.microtask(refresh);
   }
@@ -242,6 +290,8 @@ class BriefingController extends ChangeNotifier {
     bool stale() => generation != _demoGeneration;
     _demoEvents = const [];
     _demoNearby = const [];
+    _demoPeriod = null;
+    _day = null;
     _demoOrigin = null;
     _demoCountry = null;
     _demoNearbyState = NearbyState.idle;
@@ -253,6 +303,7 @@ class BriefingController extends ChangeNotifier {
           demoCalendarEvents(text, personaKey, DateTime.now()) ?? const [];
       if (stale()) return;
       _demoEvents = raw;
+      _demoPeriod = demoTripPeriod(text, personaKey, DateTime.now());
       _demoNearbyState = NearbyState.loading;
       notifyListeners();
       // No real position: the lookup is not biased towards the phone.
@@ -295,9 +346,17 @@ class BriefingController extends ChangeNotifier {
   DayCashPlan? cashPlan(List<PastPurchase> history, {bool demo = false}) =>
       dayCash(
         history: history,
-        events: demo ? _demoEvents : _events,
+        // The sample calendar only has today's events.
+        events: demo
+            ? (_isToday(dayShown(demo: true)) ? _demoEvents : const [])
+            : _events,
         now: DateTime.now(),
       );
+
+  static bool _isToday(DateTime day) {
+    final now = DateTime.now();
+    return day == DateTime(now.year, now.month, now.day);
+  }
 
   /// What the last nearby search found: around the phone, or around the
   /// demo traveler's first stop in the demo state.

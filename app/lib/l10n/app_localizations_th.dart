@@ -2499,4 +2499,66 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get exchangeRecordFailed => 'เพิ่มเข้ายอดเงินสดไม่สำเร็จ ลองอีกครั้ง';
+
+  @override
+  String get tripDatesAsk => 'ทริปของคุณวันไหนถึงวันไหน';
+
+  @override
+  String get tripDatesAskBody =>
+      'ใส่วันแรกและวันสุดท้าย แอปจะอ่านปฏิทินเฉพาะวันในทริป ทีละวัน';
+
+  @override
+  String get tripDatesPickerTitle => 'วันเดินทาง';
+
+  @override
+  String get tripDatesSave => 'บันทึกวัน';
+
+  @override
+  String tripDayOf(int day, int total) {
+    return 'วันที่ $day จาก $total';
+  }
+
+  @override
+  String tripDatesRange(String range) {
+    return 'ทริป $range';
+  }
+
+  @override
+  String get tripDatesChange => 'เปลี่ยนวัน';
+
+  @override
+  String tripDatesTooLong(int max) {
+    return 'ทริปหนึ่งยาวได้ไม่เกิน $max วัน';
+  }
+
+  @override
+  String get tripDatesSample => 'วันเดินทางตัวอย่าง';
+
+  @override
+  String tripStopsOn(String day) {
+    return 'จุดแวะวันที่ $day';
+  }
+
+  @override
+  String get calendarNoStopsOn => 'วันนั้นในปฏิทินไม่มีจุดแวะที่มีสถานที่';
+
+  @override
+  String get calendarSampleOnlyToday => 'ปฏิทินตัวอย่างมีจุดแวะเฉพาะวันนี้';
+
+  @override
+  String haggleNewItemConfirm(String item) {
+    return 'เขาพูดว่า $item ใช่ไหม';
+  }
+
+  @override
+  String haggleNewItemConfirmBody(String amount, String unit) {
+    return '$amount $unit AI ตั้งชื่อนี้จากคำของผู้ขาย ยังไม่มีในรายการราคา';
+  }
+
+  @override
+  String get haggleGuessing => 'กำลังดูว่าเขาขายอะไร';
+
+  @override
+  String get haggleGuessFailed =>
+      'ครั้งนี้ AI บอกชื่อไม่ได้ เลือกด้านล่างหรือพิมพ์เอง';
 }

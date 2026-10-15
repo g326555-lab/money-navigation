@@ -2035,5 +2035,69 @@
   },
   "exchangeRefresh": "Refresh rates",
   "exchangeEnterAmount": "Enter an amount to compare nearby counters",
-  "exchangeRecordFailed": "Couldn't add this to Cash on hand. Try again."
+  "exchangeRecordFailed": "Couldn't add this to Cash on hand. Try again.",
+  "tripDatesAsk": "When is your trip?",
+  "tripDatesAskBody": "Add the first and last day. Your calendar is read for those days only, one day at a time.",
+  "tripDatesPickerTitle": "Trip dates",
+  "tripDatesSave": "Save dates",
+  "tripDayOf": "Day {day} of {total}",
+  "@tripDayOf": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tripDatesRange": "Trip {range}",
+  "@tripDatesRange": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "tripDatesChange": "Change dates",
+  "tripDatesTooLong": "A trip can be up to {max} days.",
+  "@tripDatesTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "tripDatesSample": "Sample trip dates",
+  "tripStopsOn": "Stops on {day}",
+  "@tripStopsOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "calendarNoStopsOn": "No stops with a place on your calendar this day",
+  "calendarSampleOnlyToday": "The sample calendar has stops for today only",
+  "haggleNewItemConfirm": "Did they say {item}?",
+  "@haggleNewItemConfirm": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleNewItemConfirmBody": "{amount} {unit}. The AI named this from the seller's words; it is not on the price list.",
+  "@haggleNewItemConfirmBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleGuessing": "Working out what they are selling",
+  "haggleGuessFailed": "The AI could not name it this time. Pick it below or type it."
 }

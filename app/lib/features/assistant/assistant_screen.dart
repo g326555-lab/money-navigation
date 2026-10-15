@@ -27,6 +27,7 @@ import '../briefing/briefing_controller.dart';
 import '../briefing/briefing_rows.dart';
 import '../briefing/calendar_source.dart';
 import '../briefing/trip_context.dart';
+import '../briefing/trip_dates.dart';
 import 'card_facts_sheet.dart';
 import 'facts_section.dart';
 import '../home/cash_balance_card.dart';
@@ -145,7 +146,8 @@ class _AssistantScreenState extends State<AssistantScreen> {
                 prominent: true,
               ),
               const SizedBox(height: AppSpacing.zoneGap),
-              SectionHeader(l10n.assistantStops),
+              SectionHeader(_stopsTitle(l10n, demo: scope.settings.demoState)),
+              ?_tripStrip(demo: scope.settings.demoState),
               _stops(l10n, plan, selected, demo: scope.settings.demoState),
               // The demo's stops come from its sample calendar, never the
               // phone's.
@@ -212,7 +214,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
             subtitle: l10n.calendarPrivacy,
             onPressed: access == CalendarAccess.denied
                 ? AppSettings.openAppSettings
-                : _briefing.connectCalendar,
+                : _connectCalendar,
           ),
         ],
       );
@@ -225,7 +227,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
             leading: const IconTile.blue(icon: Icons.event_available_rounded),
             title: _briefing.eventsLoading
                 ? l10n.calendarReading
-                : l10n.calendarNoStops,
+                : _noStops(l10n, demo: demo),
             subtitle: l10n.calendarPrivacy,
           ),
         ],
@@ -435,6 +437,60 @@ class _AssistantScreenState extends State<AssistantScreen> {
           GroupFooter(l10n.arrivalDemoFooter),
         ],
       ],
+    );
+  }
+
+  /// Calendar access first, then the trip's dates when none are set.
+  Future<void> _connectCalendar() async {
+    final granted = await _briefing.connectCalendar();
+    if (!granted || !mounted || _briefing.trip.period != null) return;
+    await askTripDates(context, _briefing);
+  }
+
+  bool _showingToday({required bool demo}) {
+    final now = DateTime.now();
+    return _briefing.dayShown(demo: demo) ==
+        DateTime(now.year, now.month, now.day);
+  }
+
+  String _stopsTitle(AppLocalizations l10n, {required bool demo}) =>
+      _showingToday(demo: demo)
+      ? l10n.assistantStops
+      : l10n.tripStopsOn(
+          DateFormat.MMMEd(Localizations.localeOf(context).toLanguageTag())
+              .format(_briefing.dayShown(demo: demo)),
+        );
+
+  String _noStops(AppLocalizations l10n, {required bool demo}) {
+    if (_showingToday(demo: demo)) return l10n.calendarNoStops;
+    return demo ? l10n.calendarSampleOnlyToday : l10n.calendarNoStopsOn;
+  }
+
+  /// The trip's days to pick from, or the question that sets them. Shown
+  /// once the calendar can be read (always in the demo).
+  Widget? _tripStrip({required bool demo}) {
+    if (!demo && _briefing.calendar.access != CalendarAccess.granted) {
+      return null;
+    }
+    final period = _briefing.tripPeriod(demo: demo);
+    if (period == null) {
+      if (demo) return null;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.groupGap),
+        child: TripDatesPrompt(
+          onPressed: () => askTripDates(context, _briefing),
+        ),
+      );
+    }
+    return TripDayStrip(
+      period: period,
+      day: _briefing.dayShown(demo: demo),
+      sample: demo,
+      onDay: (d) {
+        _selected = null;
+        _briefing.showDay(d);
+      },
+      onChange: demo ? null : () => askTripDates(context, _briefing),
     );
   }
 

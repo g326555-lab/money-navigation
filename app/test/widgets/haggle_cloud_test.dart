@@ -459,6 +459,51 @@ void main() {
     expect(c.itemGuessTrace, same(guessTrace));
     expect(c.state.heard?.amount, 120);
     expect(c.state.verdict, isNull);
+    // Asked before it is used; no takes it away again.
+    expect(c.newItemConfirmed, isFalse);
+    c.confirmNewItem(true);
+    expect(c.newItemConfirmed, isTrue);
+    c.dispose();
+  });
+
+  test('"no" to the named item goes back to choosing it', () async {
+    final c = build(
+      answers: const [
+        ['ร่มกันแดดคันละ 120'],
+      ],
+      guesser: FakeGuesser(
+        (_) => const ItemGuess(
+          newItem: NewItem(
+            nameTh: 'ร่มกันแดด',
+            nameEn: 'Sun umbrella',
+            unit: PriceUnit.each,
+            category: ItemCategory.goods,
+          ),
+          confidence: 0.95,
+          trace: guessTrace,
+        ),
+      ),
+    );
+    await c.start();
+    await settle();
+    c.confirmNewItem(false);
+    expect(c.newItem, isNull);
+    expect(c.state.problem, HeardProblem.unknownItem);
+    c.dispose();
+  });
+
+  test('when the AI cannot name the item, the screen is told', () async {
+    final c = build(
+      answers: const [
+        ['ร่มกันแดดคันละ 120'],
+      ],
+      guesser: FakeGuesser((_) => null),
+    );
+    await c.start();
+    await settle();
+    expect(c.guessingItem, isFalse);
+    expect(c.guessFailed, isTrue);
+    expect(c.newItem, isNull);
     c.dispose();
   });
 

@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'day_cash.dart';
+import 'trip_period.dart';
 
 const demoCalendarAsset = 'assets/data/demo_personas.json';
 
@@ -57,4 +58,29 @@ DayEvent? _event(Map e, DateTime now) {
     location: location.trim(),
     start: DateTime(now.year, now.month, now.day, hour, minute),
   );
+}
+
+/// The trip dates of [personaKey] around [now], from its 'trip' entry
+/// (startDaysAgo, endDaysAhead). Null when the file or the entry is not
+/// valid; never filled in.
+TripPeriod? demoTripPeriod(String json, String personaKey, DateTime now) {
+  final Object? decoded;
+  try {
+    decoded = jsonDecode(json);
+  } on FormatException {
+    return null;
+  }
+  if (decoded is! Map || decoded['personas'] is! List) return null;
+  for (final p in decoded['personas'] as List) {
+    if (p is! Map || p['key'] != personaKey) continue;
+    final trip = p['trip'];
+    if (trip is! Map) return null;
+    final ago = trip['startDaysAgo'], ahead = trip['endDaysAhead'];
+    if (ago is! int || ahead is! int || ago < 0 || ahead < 0) return null;
+    return tripPeriodOrNull(
+      DateTime(now.year, now.month, now.day - ago),
+      DateTime(now.year, now.month, now.day + ahead),
+    );
+  }
+  return null;
 }

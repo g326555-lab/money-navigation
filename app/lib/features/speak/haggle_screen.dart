@@ -396,6 +396,51 @@ class _HaggleScreenState extends State<HaggleScreen>
     ];
 
     // An item outside the list without a sourced range yet.
+    // Named by the AI from the seller's words: asked before anything is
+    // judged with it, even when a web range already came back.
+    if (heard != null && _haggle.newItem != null && !_haggle.newItemConfirmed) {
+      final item = _haggle.newItem!;
+      {
+        // Named by the AI from the seller's words: ask before using it.
+        final thai = Localizations.localeOf(context).languageCode == 'th';
+        final name = thai || item.nameEn == item.nameTh
+            ? item.nameTh
+            : '${item.nameEn} · ${item.nameTh}';
+        return [
+          _Message(
+            title: l10n.haggleNewItemConfirm(name),
+            body: l10n.haggleNewItemConfirmBody(
+              AppFormat.roundedAmount(heard.amount, marketCurrency),
+              _unitLabel(l10n, heard.unit ?? item.unit),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          Row(
+            children: [
+              Expanded(
+                child: AppButton.secondary(
+                  label: l10n.haggleNo,
+                  onPressed: () => _haggle.confirmNewItem(false),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: AppButton.green(
+                  label: l10n.haggleYes,
+                  onPressed: () => _haggle.confirmNewItem(true),
+                ),
+              ),
+            ],
+          ),
+          if (_haggle.itemGuessTrace case final t?)
+            GroupFooter(
+              l10n.aiNewItemLine(t.engine.displayName, t.elapsedLabel),
+            ),
+          ...saidSection,
+        ];
+      }
+    }
+
     if (heard != null && _haggle.newItem != null && state.match == null) {
       return _newItemContent(l10n, state, heard, _haggle.newItem!, saidSection);
     }
@@ -416,6 +461,35 @@ class _HaggleScreenState extends State<HaggleScreen>
               : l10n.haggleDidTheyMean(suggestion.item.nameEn),
           body: l10n.speakHeardPrice(_meaning(l10n, heard, null)),
         ),
+        if (_haggle.guessingItem) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              const SizedBox.square(
+                dimension: AppSizes.pillIcon,
+                child: CircularProgressIndicator(
+                  strokeWidth: AppSizes.hairline * 2,
+                  color: AppColors.primaryText,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  l10n.haggleGuessing,
+                  style: AppTypography.of(context).label
+                      .copyWith(color: AppColors.onSurfaceSecondary),
+                ),
+              ),
+            ],
+          ),
+        ] else if (_haggle.guessFailed && suggestion == null) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            l10n.haggleGuessFailed,
+            style: AppTypography.of(context).label
+                .copyWith(color: AppColors.onSurfaceSecondary),
+          ),
+        ],
         const SizedBox(height: AppSpacing.xl),
         if (suggestion != null) ...[
           Row(
@@ -444,18 +518,26 @@ class _HaggleScreenState extends State<HaggleScreen>
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: [
+              // Not on our list: the traveler names it. First once the AI
+              // could not, since the list then likely lacks it.
+              if (_haggle.guessFailed)
+                _ItemChip(
+                  label: l10n.haggleSomethingElse,
+                  selected: true,
+                  onPressed: () => _typeItem(heard.amount),
+                ),
               for (final s in options.isEmpty ? _haggle.items : options)
                 _ItemChip(
                   label: s.item.nameEn,
                   selected: false,
                   onPressed: () => _haggle.chooseItem(s),
                 ),
-              // Not on our list: the traveler names it.
-              _ItemChip(
-                label: l10n.haggleSomethingElse,
-                selected: false,
-                onPressed: () => _typeItem(heard.amount),
-              ),
+              if (!_haggle.guessFailed)
+                _ItemChip(
+                  label: l10n.haggleSomethingElse,
+                  selected: false,
+                  onPressed: () => _typeItem(heard.amount),
+                ),
             ],
           ),
         ...saidSection,

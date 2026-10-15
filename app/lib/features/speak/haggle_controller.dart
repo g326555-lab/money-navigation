@@ -146,6 +146,33 @@ class HaggleController extends ChangeNotifier {
   NewItem? get newItem => _newItem;
   NewItem? _newItem;
 
+  /// An item the AI named from the seller's words waits for a yes before
+  /// the haggle goes on with it; a typed item needs none.
+  bool get newItemConfirmed => _newItemConfirmed;
+  bool _newItemConfirmed = false;
+
+  /// The AI is naming an item that is not on the list.
+  bool get guessingItem => _guessingItem;
+  bool _guessingItem = false;
+
+  /// The AI could not name the item (no answer, too slow, or unsure).
+  bool get guessFailed => _guessFailed;
+  bool _guessFailed = false;
+
+  /// "Did they say …?" for an item outside the list: yes keeps it, no
+  /// goes back to choosing or typing the item.
+  void confirmNewItem(bool yes) {
+    if (_newItem == null) return;
+    if (yes) {
+      _newItemConfirmed = true;
+    } else {
+      _newItem = null;
+      _reference = null;
+      _checkingPrices = false;
+    }
+    notifyListeners();
+  }
+
   /// A usual price for an item outside our list, looked up on the web
   /// (wholesale pages are filtered out by the service).
   final PriceReferenceService _priceReference;
@@ -471,6 +498,9 @@ class HaggleController extends ChangeNotifier {
   void _clearGuess() {
     _suggestion = null;
     _newItem = null;
+    _newItemConfirmed = false;
+    _guessingItem = false;
+    _guessFailed = false;
     _guessTrace = null;
     _reference = null;
     _checkingPrices = false;
@@ -555,6 +585,8 @@ class HaggleController extends ChangeNotifier {
       unit: unit,
       category: ItemCategory.other,
     );
+    // The traveler typed it: nothing to confirm.
+    _newItemConfirmed = true;
     _set(
       HaggleState(
         phase: HagglePhase.done,
@@ -867,19 +899,33 @@ class HaggleController extends ChangeNotifier {
     HeardPrice heard,
     List<String> alternatives,
   ) async {
+    _guessingItem = true;
+    _guessFailed = false;
+    notifyListeners();
     final guess = await _guesser.resolve(
       alternatives.isEmpty ? [words] : alternatives,
       [for (final s in _items) s.item],
       unit: heard.unit,
     );
-    if (_disposed || guess == null || _state.words != words) return;
-    if (_state.problem != HeardProblem.unknownItem) return;
+    if (_disposed || _state.words != words) return;
+    _guessingItem = false;
+    if (guess == null) {
+      // Say so, rather than leaving the list as if nothing was tried.
+      _guessFailed = _state.problem == HeardProblem.unknownItem;
+      notifyListeners();
+      return;
+    }
+    if (_state.problem != HeardProblem.unknownItem) {
+      notifyListeners();
+      return;
+    }
     _guessTrace = guess.trace;
     final known = guess.known;
     if (known != null) {
       _suggestion = _items.firstWhere((s) => s.item.key == known.key);
     } else {
       _newItem = guess.newItem;
+      _newItemConfirmed = false;
     }
     notifyListeners();
     if (_newItem case final item?) unawaited(_lookUpPrice(item));

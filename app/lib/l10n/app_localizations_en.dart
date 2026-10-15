@@ -2599,4 +2599,68 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get exchangeRecordFailed =>
       'Couldn\'t add this to Cash on hand. Try again.';
+
+  @override
+  String get tripDatesAsk => 'When is your trip?';
+
+  @override
+  String get tripDatesAskBody =>
+      'Add the first and last day. Your calendar is read for those days only, one day at a time.';
+
+  @override
+  String get tripDatesPickerTitle => 'Trip dates';
+
+  @override
+  String get tripDatesSave => 'Save dates';
+
+  @override
+  String tripDayOf(int day, int total) {
+    return 'Day $day of $total';
+  }
+
+  @override
+  String tripDatesRange(String range) {
+    return 'Trip $range';
+  }
+
+  @override
+  String get tripDatesChange => 'Change dates';
+
+  @override
+  String tripDatesTooLong(int max) {
+    return 'A trip can be up to $max days.';
+  }
+
+  @override
+  String get tripDatesSample => 'Sample trip dates';
+
+  @override
+  String tripStopsOn(String day) {
+    return 'Stops on $day';
+  }
+
+  @override
+  String get calendarNoStopsOn =>
+      'No stops with a place on your calendar this day';
+
+  @override
+  String get calendarSampleOnlyToday =>
+      'The sample calendar has stops for today only';
+
+  @override
+  String haggleNewItemConfirm(String item) {
+    return 'Did they say $item?';
+  }
+
+  @override
+  String haggleNewItemConfirmBody(String amount, String unit) {
+    return '$amount $unit. The AI named this from the seller\'s words; it is not on the price list.';
+  }
+
+  @override
+  String get haggleGuessing => 'Working out what they are selling';
+
+  @override
+  String get haggleGuessFailed =>
+      'The AI could not name it this time. Pick it below or type it.';
 }

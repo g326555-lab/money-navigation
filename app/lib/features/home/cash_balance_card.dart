@@ -198,7 +198,7 @@ class CashBalanceCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _CardAction(
-                        icon: Icons.atm_rounded,
+                        icon: Icons.local_atm_rounded,
                         label: l10n.atmMapTitle,
                         onPressed: onFindNearby,
                       ),
@@ -389,152 +389,175 @@ class _CashWalletSheetState extends State<_CashWalletSheet> {
         ),
         child: SafeArea(
           top: false,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: HomeMetrics.grabberWidth,
-                    height: HomeMetrics.grabberHeight,
-                    decoration: const ShapeDecoration(
-                      shape: StadiumBorder(),
-                      color: AppColors.handle,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Text(l10n.cashWalletTitle, style: type.title),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  l10n.cashWalletCurrent(
-                    AppFormat.roundedAmount(balance ?? 0, widget.currency),
-                  ),
-                  style: type.rowSubtitle,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: [
-                    for (final option in modes)
-                      _ModeChoice(
-                        label: option.label,
-                        selected: _mode == option.mode,
-                        onPressed: () => setState(() {
-                          _mode = option.mode;
-                          _amount.text = option.mode == _WalletMode.balance
-                              ? (widget.balance == null
-                                    ? ''
-                                    : AppFormat.roundedNumber(widget.balance!))
-                              : '';
-                        }),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Text(fieldLabel, style: type.sectionHeader),
-                const SizedBox(height: AppSpacing.sm),
-                Surface(
-                  radius: AppRadius.md,
-                  color: AppColors.surfaceSunken,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                  ),
-                  child: Row(
+          // The button sits under the scrolling part, so it stays above
+          // the keyboard however short the space left is.
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _amount,
-                          autofocus: true,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
+                      Center(
+                        child: Container(
+                          width: HomeMetrics.grabberWidth,
+                          height: HomeMetrics.grabberHeight,
+                          decoration: const ShapeDecoration(
+                            shape: StadiumBorder(),
+                            color: AppColors.handle,
                           ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9.,]'),
-                            ),
-                          ],
-                          style: type.title.copyWith(
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                          ),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                          onChanged: (_) => setState(() {}),
-                          onSubmitted: (_) {
-                            if (hasValue) _save();
-                          },
                         ),
                       ),
-                      Text(widget.currency, style: type.bodyLg),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                AppButton(
-                  label: l10n.cashWalletSave,
-                  onPressed: hasValue ? _save : null,
-                ),
-                // While the keyboard is up the field and Save stay in view;
-                // the recent movements come back when it closes.
-                if (widget.movements.isNotEmpty && inset == 0) ...[
-                  const SizedBox(height: AppSpacing.lg),
-                  Surface(
-                    radius: AppRadius.md,
-                    color: AppColors.surfaceSunken,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                      vertical: AppSpacing.sm,
-                    ),
-                    child: Column(
-                      children: [
-                        for (final m in widget.movements.take(4))
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: AppSpacing.xs,
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(l10n.cashWalletTitle, style: type.title),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        l10n.cashWalletCurrent(
+                          AppFormat.roundedAmount(
+                            balance ?? 0,
+                            widget.currency,
+                          ),
+                        ),
+                        style: type.rowSubtitle,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: [
+                          for (final option in modes)
+                            _ModeChoice(
+                              label: option.label,
+                              selected: _mode == option.mode,
+                              onPressed: () => setState(() {
+                                _mode = option.mode;
+                                _amount.text =
+                                    option.mode == _WalletMode.balance
+                                    ? (widget.balance == null
+                                          ? ''
+                                          : AppFormat.roundedNumber(
+                                              widget.balance!,
+                                            ))
+                                    : '';
+                              }),
                             ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    m.description ?? l10n.cashWalletTitle,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: type.caption.copyWith(
-                                      color: AppColors.onSurfaceSecondary,
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(fieldLabel, style: type.sectionHeader),
+                      const SizedBox(height: AppSpacing.sm),
+                      Surface(
+                        radius: AppRadius.md,
+                        color: AppColors.surfaceSunken,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _amount,
+                                autofocus: true,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
                                     ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.,]'),
                                   ),
+                                ],
+                                style: type.title.copyWith(
+                                  fontFeatures: const [
+                                    FontFeature.tabularFigures(),
+                                  ],
                                 ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  DateFormat.MMMd(locale)
-                                      .add_Hm()
-                                      .format(m.at.toLocal()),
-                                  style: type.footer,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
                                 ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  '${m.signedAmount >= 0 ? '+' : '−'}${AppFormat.roundedAmount(m.signedAmount.abs(), m.currency)}',
-                                  style: type.label.copyWith(
-                                    color: m.signedAmount >= 0
-                                        ? AppColors.primaryText
-                                        : AppColors.onSurface,
-                                    fontFeatures: const [
-                                      FontFeature.tabularFigures(),
+                                onChanged: (_) => setState(() {}),
+                                onSubmitted: (_) {
+                                  if (hasValue) _save();
+                                },
+                              ),
+                            ),
+                            Text(widget.currency, style: type.bodyLg),
+                          ],
+                        ),
+                      ),
+                      // While the keyboard is up the field and the button stay in
+                      // view; the recent movements come back when it closes.
+                      if (widget.movements.isNotEmpty && inset == 0) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        Surface(
+                          radius: AppRadius.md,
+                          color: AppColors.surfaceSunken,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.lg,
+                            vertical: AppSpacing.sm,
+                          ),
+                          child: Column(
+                            children: [
+                              for (final m in widget.movements.take(4))
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: AppSpacing.xs,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          m.description ?? l10n.cashWalletTitle,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: type.caption.copyWith(
+                                            color: AppColors.onSurfaceSecondary,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSpacing.sm),
+                                      Text(
+                                        DateFormat.MMMd(locale)
+                                            .add_Hm()
+                                            .format(m.at.toLocal()),
+                                        style: type.footer,
+                                      ),
+                                      const SizedBox(width: AppSpacing.sm),
+                                      Text(
+                                        '${m.signedAmount >= 0 ? '+' : '−'}${AppFormat.roundedAmount(m.signedAmount.abs(), m.currency)}',
+                                        style: type.label.copyWith(
+                                          color: m.signedAmount >= 0
+                                              ? AppColors.primaryText
+                                              : AppColors.onSurface,
+                                          fontFeatures: const [
+                                            FontFeature.tabularFigures(),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
+                            ],
                           ),
+                        ),
                       ],
-                    ),
+                    ],
                   ),
-                ],
-              ],
-            ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppButton(
+                label: switch (_mode) {
+                  _WalletMode.balance => l10n.cashWalletSave,
+                  _WalletMode.add => l10n.cashWalletAddCash,
+                  _WalletMode.spend => l10n.cashWalletSpendCash,
+                },
+                onPressed: hasValue ? _save : null,
+              ),
+            ],
           ),
         ),
       ),

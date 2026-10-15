@@ -1,11 +1,15 @@
 {
-  "_comment": "Demo state only. The two prepared states of the demo switch and their sample records. Every record here is a sample: it is marked as one on screen, never mixed with a traveler's own records, never sent to an account and never read outside the demo state. Dates are relative (daysAgo + local time) so the trip always reads as the last three days. Savings are computed by the app's rules, not stored: haggles from asked and paid, ATM results from the screen figures with the same rule as the ATM scan. Receipt figures must add up (checked when the file is read) or the file is refused. The visitor's trip follows the plan four itinerary guides agree on (Nomadic Matt 2026, Going Awesome Places 2026, ThePlanetD 2023, TourScanner 2024; see NOTES.md): arrival and ATM at Suvarnabhumi, a Sukhumvit Soi 12 base, Grand Palace and Wat Pho then Khao San Road, then Or Tor Kor Market (open daily; Chatuchak next door opens only at weekends) and MBK. Coordinates are OpenStreetMap positions. Haggle prices sit inside the usual ranges of market_prices.json. Each persona's 'calendar' holds sample events for today (time, title, a place Google Maps can find) for the morning briefing; they are samples too and only read in the demo state. Chatuchak is not on today's visitor plan because the demo day is a weekday and it opens at weekends. Cash: each sample says how it was paid ('paidWith': cash or card). The sample cash balance is computed from these records by the same ledger rules as a traveler's own (ATM withdrawal adds the amount taken out, cash-paid haggles and receipts subtract what was paid, card payments leave cash alone); 'cashMovements' lists only cash activity that has no record of its own, such as a currency exchange.",
+  "_comment": "Demo state only. The two prepared states of the demo switch and their sample records. Every record here is a sample: it is marked as one on screen, never mixed with a traveler's own records, never sent to an account and never read outside the demo state. Dates are relative (daysAgo + local time) so the trip always reads as the last three days. Savings are computed by the app's rules, not stored: haggles from asked and paid, ATM results from the screen figures with the same rule as the ATM scan. Receipt figures must add up (checked when the file is read) or the file is refused. The visitor's trip follows the plan four itinerary guides agree on (Nomadic Matt 2026, Going Awesome Places 2026, ThePlanetD 2023, TourScanner 2024; see NOTES.md): arrival and ATM at Suvarnabhumi, a Sukhumvit Soi 12 base, Grand Palace and Wat Pho then Khao San Road, then Or Tor Kor Market (open daily; Chatuchak next door opens only at weekends) and MBK. Coordinates are OpenStreetMap positions. Haggle prices sit inside the usual ranges of market_prices.json. Each persona's 'calendar' holds sample events for today (time, title, a place Google Maps can find) for the morning briefing; they are samples too and only read in the demo state. Chatuchak is not on today's visitor plan because the demo day is a weekday and it opens at weekends. Cash: each sample says how it was paid ('paidWith': cash or card). The sample cash balance is computed from these records by the same ledger rules as a traveler's own (ATM withdrawal adds the amount taken out, cash-paid haggles and receipts subtract what was paid, card payments leave cash alone); 'cashMovements' lists only cash activity that has no record of its own, such as a currency exchange. Each persona's 'trip' gives its trip dates relative to today (first day startDaysAgo, last day endDaysAhead), shown as 'Day n of m'; its sample calendar only has events today.",
   "personas": [
     {
       "key": "visitorBangkok",
       "language": "en",
       "homeCurrency": "USD",
       "localCurrency": "THB",
+      "trip": {
+        "startDaysAgo": 3,
+        "endDaysAhead": 1
+      },
       "samples": [
         {
           "kind": "atmConversion",
@@ -183,6 +187,10 @@
       "language": "th",
       "homeCurrency": "THB",
       "localCurrency": "JPY",
+      "trip": {
+        "startDaysAgo": 2,
+        "endDaysAhead": 2
+      },
       "samples": [
         {
           "kind": "terminalDcc",

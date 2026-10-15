@@ -355,6 +355,10 @@ void main() {
       expect(find.text('Sample calendar'), findsOneWidget);
       expect(find.text('Terminal 21 Asok'), findsOneWidget);
       expect(find.text('Jim Thompson House Museum'), findsOneWidget);
+      // The sample trip: day 4 of 5, one chip per day.
+      expect(find.textContaining('Day 4 of 5'), findsOneWidget);
+      expect(find.text('Sample trip dates'), findsNothing);
+      expect(find.textContaining('Sample trip dates'), findsOneWidget);
       expect(find.text('Read today\'s calendar'), findsNothing);
     });
 

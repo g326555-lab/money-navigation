@@ -4259,6 +4259,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t add this to Cash on hand. Try again.'**
   String get exchangeRecordFailed;
+
+  /// No description provided for @tripDatesAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'When is your trip?'**
+  String get tripDatesAsk;
+
+  /// No description provided for @tripDatesAskBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the first and last day. Your calendar is read for those days only, one day at a time.'**
+  String get tripDatesAskBody;
+
+  /// No description provided for @tripDatesPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip dates'**
+  String get tripDatesPickerTitle;
+
+  /// No description provided for @tripDatesSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save dates'**
+  String get tripDatesSave;
+
+  /// No description provided for @tripDayOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {total}'**
+  String tripDayOf(int day, int total);
+
+  /// No description provided for @tripDatesRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip {range}'**
+  String tripDatesRange(String range);
+
+  /// No description provided for @tripDatesChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change dates'**
+  String get tripDatesChange;
+
+  /// No description provided for @tripDatesTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'A trip can be up to {max} days.'**
+  String tripDatesTooLong(int max);
+
+  /// No description provided for @tripDatesSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample trip dates'**
+  String get tripDatesSample;
+
+  /// No description provided for @tripStopsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Stops on {day}'**
+  String tripStopsOn(String day);
+
+  /// No description provided for @calendarNoStopsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'No stops with a place on your calendar this day'**
+  String get calendarNoStopsOn;
+
+  /// No description provided for @calendarSampleOnlyToday.
+  ///
+  /// In en, this message translates to:
+  /// **'The sample calendar has stops for today only'**
+  String get calendarSampleOnlyToday;
+
+  /// No description provided for @haggleNewItemConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Did they say {item}?'**
+  String haggleNewItemConfirm(String item);
+
+  /// No description provided for @haggleNewItemConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} {unit}. The AI named this from the seller\'s words; it is not on the price list.'**
+  String haggleNewItemConfirmBody(String amount, String unit);
+
+  /// No description provided for @haggleGuessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Working out what they are selling'**
+  String get haggleGuessing;
+
+  /// No description provided for @haggleGuessFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI could not name it this time. Pick it below or type it.'**
+  String get haggleGuessFailed;
 }
 
 class _AppLocalizationsDelegate

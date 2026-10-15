@@ -770,5 +770,69 @@
   },
   "exchangeRefresh": "โหลดอัตราใหม่",
   "exchangeEnterAmount": "กรอกจำนวนเงินเพื่อเปรียบเทียบร้านใกล้คุณ",
-  "exchangeRecordFailed": "เพิ่มเข้ายอดเงินสดไม่สำเร็จ ลองอีกครั้ง"
+  "exchangeRecordFailed": "เพิ่มเข้ายอดเงินสดไม่สำเร็จ ลองอีกครั้ง",
+  "tripDatesAsk": "ทริปของคุณวันไหนถึงวันไหน",
+  "tripDatesAskBody": "ใส่วันแรกและวันสุดท้าย แอปจะอ่านปฏิทินเฉพาะวันในทริป ทีละวัน",
+  "tripDatesPickerTitle": "วันเดินทาง",
+  "tripDatesSave": "บันทึกวัน",
+  "tripDayOf": "วันที่ {day} จาก {total}",
+  "@tripDayOf": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tripDatesRange": "ทริป {range}",
+  "@tripDatesRange": {
+    "placeholders": {
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "tripDatesChange": "เปลี่ยนวัน",
+  "tripDatesTooLong": "ทริปหนึ่งยาวได้ไม่เกิน {max} วัน",
+  "@tripDatesTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "tripDatesSample": "วันเดินทางตัวอย่าง",
+  "tripStopsOn": "จุดแวะวันที่ {day}",
+  "@tripStopsOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "calendarNoStopsOn": "วันนั้นในปฏิทินไม่มีจุดแวะที่มีสถานที่",
+  "calendarSampleOnlyToday": "ปฏิทินตัวอย่างมีจุดแวะเฉพาะวันนี้",
+  "haggleNewItemConfirm": "เขาพูดว่า {item} ใช่ไหม",
+  "@haggleNewItemConfirm": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleNewItemConfirmBody": "{amount} {unit} AI ตั้งชื่อนี้จากคำของผู้ขาย ยังไม่มีในรายการราคา",
+  "@haggleNewItemConfirmBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleGuessing": "กำลังดูว่าเขาขายอะไร",
+  "haggleGuessFailed": "ครั้งนี้ AI บอกชื่อไม่ได้ เลือกด้านล่างหรือพิมพ์เอง"
 }

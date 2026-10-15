@@ -34,6 +34,7 @@ import '../briefing/arrival_alerts.dart';
 import '../briefing/briefing_controller.dart';
 import '../briefing/calendar_source.dart';
 import '../briefing/trip_context.dart';
+import '../briefing/trip_dates.dart';
 import 'briefing_card.dart';
 import 'cash_balance_card.dart';
 import 'home_metrics.dart';
@@ -148,6 +149,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   );
 
   /// Alerts once when the phone's location shows a new country.
+  /// Calendar access first, then the trip's dates when none are set.
+  Future<void> _connectCalendar() async {
+    final granted = await _briefing.connectCalendar();
+    if (!granted || !mounted || _briefing.trip.period != null) return;
+    await askTripDates(context, _briefing);
+  }
+
+  String? _tripDay(AppLocalizations l10n, {required bool demo}) {
+    final period = _briefing.tripPeriod(demo: demo);
+    final n = period?.dayNumber(_briefing.dayShown(demo: demo));
+    return n == null ? null : l10n.tripDayOf(n, period!.length);
+  }
+
   Future<void> _openAtmMap({String? select}) => Navigator.of(context).push(
     MaterialPageRoute<void>(
       builder: (_) => AtmMapScreen(briefing: _briefing, selectName: select),
@@ -356,7 +370,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         scope.settings.demoState ||
                         _briefing.calendar.access == CalendarAccess.granted,
                     sample: scope.settings.demoState,
-                    onConnect: _briefing.connectCalendar,
+                    day: _briefing.dayShown(demo: scope.settings.demoState),
+                    tripDay: _tripDay(l10n, demo: scope.settings.demoState),
+                    onConnect: _connectCalendar,
                     onOpen: widget.onOpenAssistant,
                   ),
                 NearbyCard(
