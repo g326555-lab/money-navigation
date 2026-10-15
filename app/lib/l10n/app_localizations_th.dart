@@ -1331,14 +1331,15 @@ class AppLocalizationsTh extends AppLocalizations {
   String get authWelcomeExample => 'ตัวอย่าง';
 
   @override
-  String get authWelcomeExampleLabel => 'ตู้ ATM เสนอให้แปลงสกุลเงิน';
+  String get authWelcomeExampleLabel =>
+      'การแปลงสกุลเงินของตู้ ATM จะทำให้เสียเพิ่ม';
 
   @override
-  String get authWelcomeExampleChip => 'ประหยัดได้เพราะไม่รับการแปลงสกุลเงิน';
+  String get authWelcomeExampleChip => 'ประหยัดได้เพราะเลือกไม่แปลงสกุลเงิน';
 
   @override
   String authWelcomeExampleSemantics(String amount) {
-    return 'ตัวอย่าง ตู้ ATM เสนอให้แปลงสกุลเงิน การไม่รับช่วยประหยัด $amount';
+    return 'ตัวอย่าง การแปลงสกุลเงินของตู้ ATM จะทำให้เสียเพิ่ม $amount การเลือกไม่แปลงช่วยประหยัดเงินส่วนนี้';
   }
 
   @override
@@ -1458,4 +1459,65 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get haggleLeaveMeaning => 'ไม่เป็นไร ขอบคุณ';
+
+  @override
+  String get billShop => 'ร้าน';
+
+  @override
+  String get billShopUnknown => 'อ่านไม่ได้';
+
+  @override
+  String get billYourRecord => 'บันทึกของคุณ';
+
+  @override
+  String get billSave => 'บันทึกไว้';
+
+  @override
+  String get billSaved => 'บันทึกแล้ว';
+
+  @override
+  String get billEdit => 'แก้ไข';
+
+  @override
+  String get billEnterIt => 'ใส่เอง';
+
+  @override
+  String get billEditTitle => 'บิลนี้ตามที่คุณเห็น';
+
+  @override
+  String get billServiceNone => 'ไม่มีค่าบริการ';
+
+  @override
+  String get billServiceIncludedChoice => 'รวมค่าบริการแล้ว';
+
+  @override
+  String get billServicePercentLabel => 'ค่าบริการ';
+
+  @override
+  String get billUseCorrection => 'ใช้ตัวเลขนี้';
+
+  @override
+  String get billCorrectedNote =>
+      'นี่คือตัวเลขที่คุณแก้ บันทึกเป็นของคุณ ไม่ใช่ผลที่แอปตรวจ';
+
+  @override
+  String billMemoryVisits(int visits, String total) {
+    return 'คุณเคยบันทึกบิลที่ร้านนี้ $visits ใบ ครั้งล่าสุด $total';
+  }
+
+  @override
+  String billMemoryNote(String note, int count) {
+    return 'โน้ตของคุณจากบิล $count ใบก่อนหน้า: $note';
+  }
+
+  @override
+  String get billNoteServiceIncluded => 'รวมค่าบริการแล้ว';
+
+  @override
+  String billNoteServiceAdded(String percent) {
+    return 'บวกค่าบริการ $percent %';
+  }
+
+  @override
+  String get billNoteNoService => 'ไม่มีค่าบริการ';
 }

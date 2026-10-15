@@ -1365,14 +1365,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authWelcomeExample => 'Example';
 
   @override
-  String get authWelcomeExampleLabel => 'ATM offered to convert';
+  String get authWelcomeExampleLabel => 'The ATM\'s conversion would have cost';
 
   @override
-  String get authWelcomeExampleChip => 'Kept by declining the conversion';
+  String get authWelcomeExampleChip => 'Kept by choosing no conversion';
 
   @override
   String authWelcomeExampleSemantics(String amount) {
-    return 'Example. An ATM offered to convert. Declining kept $amount.';
+    return 'Example. The ATM\'s conversion would have cost $amount more. Choosing no conversion kept it.';
   }
 
   @override
@@ -1492,4 +1492,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get haggleLeaveMeaning => 'No thanks, maybe another time.';
+
+  @override
+  String get billShop => 'Shop';
+
+  @override
+  String get billShopUnknown => 'Not read';
+
+  @override
+  String get billYourRecord => 'Your record';
+
+  @override
+  String get billSave => 'Save to my records';
+
+  @override
+  String get billSaved => 'Saved';
+
+  @override
+  String get billEdit => 'Edit';
+
+  @override
+  String get billEnterIt => 'Enter it yourself';
+
+  @override
+  String get billEditTitle => 'Your version of this bill';
+
+  @override
+  String get billServiceNone => 'No service charge';
+
+  @override
+  String get billServiceIncludedChoice => 'Service included';
+
+  @override
+  String get billServicePercentLabel => 'Service charge';
+
+  @override
+  String get billUseCorrection => 'Use these figures';
+
+  @override
+  String get billCorrectedNote =>
+      'Your correction. It is saved as yours, not as checked by the app.';
+
+  @override
+  String billMemoryVisits(int visits, String total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      visits,
+      locale: localeName,
+      other: 'You saved $visits bills here before. Last time $total',
+      one: 'You saved 1 bill here before. Last time $total',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String billMemoryNote(String note, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Your note from $count earlier bills: $note',
+      one: 'Your note from 1 earlier bill: $note',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get billNoteServiceIncluded => 'service was included';
+
+  @override
+  String billNoteServiceAdded(String percent) {
+    return 'service $percent % was added';
+  }
+
+  @override
+  String get billNoteNoService => 'no service charge';
 }

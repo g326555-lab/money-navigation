@@ -9,13 +9,19 @@ import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/bill_check.dart';
-import '../../rules/haggle.dart' show marketCurrency;
+import '../../rules/haggle.dart'
+    show marketCurrency, maxPriceChars, maxPriceThb;
 import '../../services/ai/ai_trace.dart';
 import '../../services/ai/bill_reader.dart';
 import '../../shared/action_dock.dart';
 import '../../shared/content_width.dart';
 import '../../shared/group.dart';
 import '../../shared/pill.dart';
+import '../../data/receipt_store.dart';
+import '../../rules/receipt_record.dart';
+import '../../shared/app_button.dart';
+import '../../shared/surface.dart';
+import '../../shared/pressable.dart';
 
 /// Checks a Thai restaurant bill: Google Cloud Vision reads the Thai text,
 /// then the phone proves the figures add up and says what was added on top
@@ -43,6 +49,11 @@ class _BillScreenState extends State<BillScreen> {
   final _picker = ImagePicker();
   _Phase _phase = _Phase.start;
   BillReading? _reading;
+
+  /// What would be saved: the proven bill, or the traveler's correction.
+  ReceiptRecord? _record;
+  bool _saved = false;
+  final _receipts = ReceiptStore.shared;
 
   /// Once a bill has been read, the camera button offers another one, and
   /// keeps that label while the next photo is read.
@@ -80,11 +91,105 @@ class _BillScreenState extends State<BillScreen> {
     reading.check == null
         ? HapticFeedback.heavyImpact()
         : HapticFeedback.successNotification();
+    await _receipts.load();
+    if (!mounted) return;
+    final check = reading.check;
+    final now = DateTime.now();
     setState(() {
       _phase = _Phase.done;
       _reading = reading;
       _readOnce = true;
+      _saved = false;
+      _record = check == null
+          ? null
+          : ReceiptRecord.fromCheck(
+              check,
+              id: 'bill-${now.microsecondsSinceEpoch}',
+              savedAt: now,
+              merchantName: reading.merchantName,
+              category: categorize(merchantName: reading.merchantName),
+            );
     });
+  }
+
+  Future<void> _save() async {
+    final record = _record;
+    if (record == null || _saved) return;
+    await _receipts.save(record);
+    HapticFeedback.mediumImpact();
+    if (mounted) setState(() => _saved = true);
+  }
+
+  /// The traveler fixes what was read, or enters a bill the phone could not
+  /// prove. The result is kept as their correction, never as verified.
+  Future<void> _edit() async {
+    final now = DateTime.now();
+    final base =
+        _record ??
+        ReceiptRecord(
+          id: 'bill-${now.microsecondsSinceEpoch}',
+          savedAt: now,
+          totalThb: 0,
+          verified: false,
+          merchantName: _reading?.merchantName,
+          category: categorize(merchantName: _reading?.merchantName),
+        );
+    final edited = await showModalBottomSheet<ReceiptRecord>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => _ReceiptEditSheet(record: base),
+    );
+    if (edited == null || !mounted) return;
+    setState(() {
+      _record = edited;
+      _saved = false;
+    });
+  }
+
+  /// Lines from the traveler's own saved bills at this shop; none when
+  /// there is no history.
+  List<Widget> _memory(AppLocalizations l10n, ReceiptRecord record) {
+    final now = DateTime.now();
+    final history = [
+      for (final r in _receipts.records)
+        if (r.id != record.id) r,
+    ];
+    final memory = merchantMemory(record, history, now);
+    final hint = formatHint(record, history, now);
+    String money(double v) => AppFormat.cents(v, marketCurrency);
+    return [
+      if (memory != null)
+        GroupFooter(
+          l10n.billMemoryVisits(memory.visits, money(memory.lastTotalThb)),
+        ),
+      if (hint != null)
+        GroupFooter(
+          l10n.billMemoryNote(
+            hint.serviceIncluded
+                ? l10n.billNoteServiceIncluded
+                : hint.servicePercent != null
+                ? l10n.billNoteServiceAdded(
+                    AppFormat.roundedNumber(hint.servicePercent!),
+                  )
+                : l10n.billNoteNoService,
+            hint.fromRecords,
+          ),
+        ),
+    ];
+  }
+
+  Widget _recordActions(AppLocalizations l10n, ReceiptRecord? record) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xl),
+      child: DockPair(
+        secondaryLabel: record == null ? l10n.billEnterIt : l10n.billEdit,
+        onSecondary: _edit,
+        primaryLabel: _saved ? l10n.billSaved : l10n.billSave,
+        onPrimary: record == null || _saved || record.totalThb <= 0
+            ? null
+            : _save,
+      ),
+    );
   }
 
   @override
@@ -224,8 +329,31 @@ class _BillScreenState extends State<BillScreen> {
       ),
       for (final trace in reading?.traces ?? const <AiTrace>[])
         GroupFooter(_traceLine(l10n, trace)),
+      // The text was read but could not be proven: the traveler may enter
+      // the bill themselves, kept as their own record.
+      if (reading?.failure == BillFailure.doesNotAddUp) ...[
+        if (_record case final r?) ..._correctionRows(l10n, r),
+        _recordActions(l10n, _record),
+      ],
     ];
   }
+
+  List<Widget> _correctionRows(AppLocalizations l10n, ReceiptRecord r) => [
+    SectionHeader(l10n.billYourRecord),
+    GroupCard(
+      children: [
+        GroupRow(
+          title: l10n.billShop,
+          value: r.merchantName ?? l10n.billShopUnknown,
+        ),
+        GroupRow(
+          title: l10n.billTotal,
+          value: AppFormat.cents(r.totalThb, marketCurrency),
+        ),
+      ],
+    ),
+    GroupFooter(l10n.billCorrectedNote),
+  ];
 
   List<Widget> _result(AppLocalizations l10n, BillReading reading) {
     final type = AppTypography.of(context);
@@ -332,6 +460,25 @@ class _BillScreenState extends State<BillScreen> {
       ],
       GroupFooter(l10n.billProof),
       for (final trace in reading.traces) GroupFooter(_traceLine(l10n, trace)),
+      if (_record case final r?) ...[
+        SectionHeader(l10n.billYourRecord),
+        GroupCard(
+          children: [
+            GroupRow(
+              title: l10n.billShop,
+              value: r.merchantName ?? l10n.billShopUnknown,
+            ),
+            if (r.userCorrected)
+              GroupRow(
+                title: l10n.billTotal,
+                value: AppFormat.cents(r.totalThb, marketCurrency),
+              ),
+          ],
+        ),
+        if (r.userCorrected) GroupFooter(l10n.billCorrectedNote),
+        ..._memory(l10n, r),
+      ],
+      _recordActions(l10n, _record),
     ];
   }
 
@@ -355,3 +502,218 @@ class _BillScreenState extends State<BillScreen> {
 /// well under the text reader's size limit.
 const double billPhotoMaxWidth = 2000;
 const int billPhotoQuality = 85;
+
+/// The traveler's own version of a bill: shop name, total, and how service
+/// and VAT were charged.
+class _ReceiptEditSheet extends StatefulWidget {
+  const _ReceiptEditSheet({required this.record});
+
+  final ReceiptRecord record;
+
+  @override
+  State<_ReceiptEditSheet> createState() => _ReceiptEditSheetState();
+}
+
+enum _Service { none, added, included }
+
+class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
+  late final _name = TextEditingController(
+    text: widget.record.merchantName ?? '',
+  );
+  late final _total = TextEditingController(
+    text: widget.record.totalThb > 0
+        ? AppFormat.rate(widget.record.totalThb)
+        : '',
+  );
+  late final _percent = TextEditingController(
+    text: widget.record.servicePercent == null
+        ? ''
+        : AppFormat.roundedNumber(widget.record.servicePercent!),
+  );
+  late _Service _service = widget.record.serviceIncluded
+      ? _Service.included
+      : widget.record.servicePercent != null || widget.record.serviceThb != null
+      ? _Service.added
+      : _Service.none;
+  late bool _vatOnTop = widget.record.vatOnTop;
+
+  @override
+  void initState() {
+    super.initState();
+    for (final c in [_name, _total, _percent]) {
+      c.addListener(() => setState(() {}));
+    }
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _total.dispose();
+    _percent.dispose();
+    super.dispose();
+  }
+
+  double? _number(TextEditingController c) =>
+      double.tryParse(c.text.replaceAll(',', ''));
+
+  bool get _valid {
+    final total = _number(_total);
+    if (total == null || total <= 0 || total > maxPriceThb) return false;
+    if (_service == _Service.added) {
+      final p = _number(_percent);
+      return p != null && p > 0 && p < 100;
+    }
+    return true;
+  }
+
+  void _done() {
+    if (!_valid) return;
+    final name = _name.text.trim();
+    final edited = widget.record.corrected(
+      totalThb: _number(_total),
+      servicePercent: _service == _Service.added ? _number(_percent) : null,
+      serviceIncluded: _service == _Service.included,
+      vatOnTop: _vatOnTop,
+    );
+    Navigator.of(context).pop(
+      ReceiptRecord.fromJson({
+        ...edited.toJson(),
+        'merchantName': name.isEmpty ? null : name,
+        if (_service != _Service.added) 'servicePercent': null,
+      }),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final type = AppTypography.of(context);
+    final insets = MediaQuery.viewInsetsOf(context).bottom;
+    Widget field(
+      TextEditingController c,
+      String label, {
+      bool number = false,
+      String? suffix,
+    }) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: type.sectionHeader),
+        const SizedBox(height: AppSpacing.sm),
+        Surface(
+          radius: AppRadius.sm,
+          color: AppColors.surfaceSunken,
+          child: TextField(
+            controller: c,
+            keyboardType: number
+                ? const TextInputType.numberWithOptions(decimal: true)
+                : TextInputType.text,
+            inputFormatters: number
+                ? [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                    LengthLimitingTextInputFormatter(maxPriceChars),
+                  ]
+                : null,
+            style: number ? type.title : type.bodyLg,
+            decoration: InputDecoration(
+              suffixText: suffix,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+      ],
+    );
+    Widget choice(String label, bool selected, VoidCallback onTap) => Pressable(
+      onPressed: onTap,
+      semanticLabel: label,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: AppSizes.minTouchTarget),
+        child: Center(
+          widthFactor: 1,
+          child: Pill(
+            label: label,
+            fill: selected ? AppColors.surfaceDark : AppColors.surfaceDim,
+            textColor: selected ? AppColors.onSurfaceDark : AppColors.onSurface,
+          ),
+        ),
+      ),
+    );
+    return SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.sheetPadding,
+          0,
+          AppSpacing.sheetPadding,
+          AppSpacing.sheetPadding + insets,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.billEditTitle, style: type.title),
+            const SizedBox(height: AppSpacing.xl),
+            field(_name, l10n.billShop),
+            field(_total, l10n.billTotal, number: true, suffix: marketCurrency),
+            Text(l10n.billService, style: type.sectionHeader),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                choice(
+                  l10n.billServiceNone,
+                  _service == _Service.none,
+                  () => setState(() => _service = _Service.none),
+                ),
+                choice(
+                  l10n.billAddedOnTop,
+                  _service == _Service.added,
+                  () => setState(() => _service = _Service.added),
+                ),
+                choice(
+                  l10n.billServiceIncludedChoice,
+                  _service == _Service.included,
+                  () => setState(() => _service = _Service.included),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            if (_service == _Service.added)
+              field(
+                _percent,
+                l10n.billServicePercentLabel,
+                number: true,
+                suffix: '%',
+              ),
+            Text(l10n.billVat, style: type.sectionHeader),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              children: [
+                choice(
+                  l10n.billVatInsideChip,
+                  !_vatOnTop,
+                  () => setState(() => _vatOnTop = false),
+                ),
+                choice(
+                  l10n.billVatOnTopChip,
+                  _vatOnTop,
+                  () => setState(() => _vatOnTop = true),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            AppButton(
+              label: l10n.billUseCorrection,
+              onPressed: _valid ? _done : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

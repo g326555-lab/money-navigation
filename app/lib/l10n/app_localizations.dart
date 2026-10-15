@@ -2283,19 +2283,19 @@ abstract class AppLocalizations {
   /// No description provided for @authWelcomeExampleLabel.
   ///
   /// In en, this message translates to:
-  /// **'ATM offered to convert'**
+  /// **'The ATM\'s conversion would have cost'**
   String get authWelcomeExampleLabel;
 
   /// No description provided for @authWelcomeExampleChip.
   ///
   /// In en, this message translates to:
-  /// **'Kept by declining the conversion'**
+  /// **'Kept by choosing no conversion'**
   String get authWelcomeExampleChip;
 
   /// No description provided for @authWelcomeExampleSemantics.
   ///
   /// In en, this message translates to:
-  /// **'Example. An ATM offered to convert. Declining kept {amount}.'**
+  /// **'Example. The ATM\'s conversion would have cost {amount} more. Choosing no conversion kept it.'**
   String authWelcomeExampleSemantics(String amount);
 
   /// No description provided for @settingsAbout.
@@ -2471,6 +2471,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No thanks, maybe another time.'**
   String get haggleLeaveMeaning;
+
+  /// No description provided for @billShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get billShop;
+
+  /// No description provided for @billShopUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Not read'**
+  String get billShopUnknown;
+
+  /// No description provided for @billYourRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Your record'**
+  String get billYourRecord;
+
+  /// No description provided for @billSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to my records'**
+  String get billSave;
+
+  /// No description provided for @billSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get billSaved;
+
+  /// No description provided for @billEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get billEdit;
+
+  /// No description provided for @billEnterIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter it yourself'**
+  String get billEnterIt;
+
+  /// No description provided for @billEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your version of this bill'**
+  String get billEditTitle;
+
+  /// No description provided for @billServiceNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No service charge'**
+  String get billServiceNone;
+
+  /// No description provided for @billServiceIncludedChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Service included'**
+  String get billServiceIncludedChoice;
+
+  /// No description provided for @billServicePercentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Service charge'**
+  String get billServicePercentLabel;
+
+  /// No description provided for @billUseCorrection.
+  ///
+  /// In en, this message translates to:
+  /// **'Use these figures'**
+  String get billUseCorrection;
+
+  /// No description provided for @billCorrectedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your correction. It is saved as yours, not as checked by the app.'**
+  String get billCorrectedNote;
+
+  /// No description provided for @billMemoryVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'{visits, plural, =1{You saved 1 bill here before. Last time {total}} other{You saved {visits} bills here before. Last time {total}}}'**
+  String billMemoryVisits(int visits, String total);
+
+  /// No description provided for @billMemoryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Your note from 1 earlier bill: {note}} other{Your note from {count} earlier bills: {note}}}'**
+  String billMemoryNote(String note, int count);
+
+  /// No description provided for @billNoteServiceIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'service was included'**
+  String get billNoteServiceIncluded;
+
+  /// No description provided for @billNoteServiceAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'service {percent} % was added'**
+  String billNoteServiceAdded(String percent);
+
+  /// No description provided for @billNoteNoService.
+  ///
+  /// In en, this message translates to:
+  /// **'no service charge'**
+  String get billNoteNoService;
 }
 
 class _AppLocalizationsDelegate

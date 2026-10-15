@@ -1148,9 +1148,9 @@
     }
   },
   "authWelcomeExample": "Example",
-  "authWelcomeExampleLabel": "ATM offered to convert",
-  "authWelcomeExampleChip": "Kept by declining the conversion",
-  "authWelcomeExampleSemantics": "Example. An ATM offered to convert. Declining kept {amount}.",
+  "authWelcomeExampleLabel": "The ATM's conversion would have cost",
+  "authWelcomeExampleChip": "Kept by choosing no conversion",
+  "authWelcomeExampleSemantics": "Example. The ATM's conversion would have cost {amount} more. Choosing no conversion kept it.",
   "@authWelcomeExampleSemantics": {
     "placeholders": {
       "amount": {
@@ -1309,5 +1309,50 @@
       }
     }
   },
-  "haggleLeaveMeaning": "No thanks, maybe another time."
+  "haggleLeaveMeaning": "No thanks, maybe another time.",
+  "billShop": "Shop",
+  "billShopUnknown": "Not read",
+  "billYourRecord": "Your record",
+  "billSave": "Save to my records",
+  "billSaved": "Saved",
+  "billEdit": "Edit",
+  "billEnterIt": "Enter it yourself",
+  "billEditTitle": "Your version of this bill",
+  "billServiceNone": "No service charge",
+  "billServiceIncludedChoice": "Service included",
+  "billServicePercentLabel": "Service charge",
+  "billUseCorrection": "Use these figures",
+  "billCorrectedNote": "Your correction. It is saved as yours, not as checked by the app.",
+  "billMemoryVisits": "{visits, plural, =1{You saved 1 bill here before. Last time {total}} other{You saved {visits} bills here before. Last time {total}}}",
+  "@billMemoryVisits": {
+    "placeholders": {
+      "visits": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "billMemoryNote": "{count, plural, =1{Your note from 1 earlier bill: {note}} other{Your note from {count} earlier bills: {note}}}",
+  "@billMemoryNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billNoteServiceIncluded": "service was included",
+  "billNoteServiceAdded": "service {percent} % was added",
+  "@billNoteServiceAdded": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "billNoteNoService": "no service charge"
 }
