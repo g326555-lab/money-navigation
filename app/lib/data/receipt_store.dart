@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -86,6 +87,7 @@ class ReceiptStore extends ChangeNotifier {
       ]);
     }
     _demoLedgers = _decodeLedgers(await _prefs.getString(_demoKey));
+    _unsent.addAll(await _prefs.getStringList(_unsentKey) ?? const []);
     notifyListeners();
   }
 
@@ -138,11 +140,23 @@ class ReceiptStore extends ChangeNotifier {
     notifyListeners();
     await _persist();
     _unsent.add(record.id);
-    await _tryRemote((r) async {
-      await r.upsert(record);
-      _unsent.remove(record.id);
-    });
+    await _persistUnsent();
+    // The account copy follows without holding up the caller.
+    unawaited(
+      _tryRemote((r) async {
+        await r.upsert(record);
+        _unsent.remove(record.id);
+        await _persistUnsent();
+      }),
+    );
   }
+
+  static const _unsentKey = 'receipts_unsent_v1';
+
+  /// Ids not yet in the account, kept across restarts so a sign-out never
+  /// drops a receipt that was saved offline.
+  Future<void> _persistUnsent() =>
+      _prefs.setStringList(_unsentKey, _unsent.toList());
 
   Future<void> _persist() => _prefs.setString(
     _key,
@@ -162,6 +176,7 @@ class ReceiptStore extends ChangeNotifier {
         await r.upsert(record);
       }
       _unsent.clear();
+      await _persistUnsent();
       final account = await r.load();
       if (!identical(_remote, r)) return;
       _records = _newestFirst([...account]);

@@ -1334,7 +1334,7 @@
       }
     }
   },
-  "billMemoryNote": "{count, plural, =1{You noted here last time: {note}} other{You noted here in {count} earlier bills: {note}}}",
+  "billMemoryNote": "{count, plural, =1{Last time here you noted {note}} other{In {count} earlier bills here you noted {note}}}",
   "@billMemoryNote": {
     "placeholders": {
       "note": {
@@ -1654,7 +1654,7 @@
   "arrivalChannel": "Arrival alerts",
   "countryJapan": "Japan",
   "countryThailand": "Thailand",
-  "billMemoryNoteBranch": "{count, plural, =1{You noted at another branch: {note}} other{You noted at other branches in {count} bills: {note}}}",
+  "billMemoryNoteBranch": "{count, plural, =1{At another branch you noted {note}} other{At other branches you noted {note} in {count} bills}}",
   "@billMemoryNoteBranch": {
     "placeholders": {
       "note": {
@@ -1665,7 +1665,7 @@
       }
     }
   },
-  "billBrandMemory": "{count, plural, =1{Another branch of this shop: {habit} (1 receipt)} other{Other branches of this shop: {habit} ({count} receipts)}}",
+  "billBrandMemory": "{count, plural, =1{Another branch of this shop had {habit} (1 receipt)} other{Other branches of this shop had {habit} ({count} receipts)}}",
   "@billBrandMemory": {
     "placeholders": {
       "habit": {
@@ -1744,6 +1744,14 @@
   "@tripMapNear": {
     "placeholders": {
       "place": {
+        "type": "String"
+      }
+    }
+  },
+  "billTotalInvalid": "Enter a total above 0 and up to {max}",
+  "@billTotalInvalid": {
+    "placeholders": {
+      "max": {
         "type": "String"
       }
     }

@@ -1507,7 +1507,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String billMemoryNote(String note, int count) {
-    return 'โน้ตของคุณที่ร้านนี้ ($count ใบก่อน): $note';
+    return 'ครั้งก่อนที่ร้านนี้คุณจดว่า $note ($count ใบ)';
   }
 
   @override
@@ -1911,12 +1911,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String billMemoryNoteBranch(String note, int count) {
-    return 'โน้ตของคุณที่สาขาอื่น ($count ใบ): $note';
+    return 'ที่สาขาอื่นคุณจดว่า $note ($count ใบ)';
   }
 
   @override
   String billBrandMemory(String habit, int count) {
-    return 'สาขาอื่นของร้านนี้: $habit ($count ใบเสร็จ)';
+    return 'สาขาอื่นของร้านนี้ $habit ($count ใบเสร็จ)';
   }
 
   @override
@@ -2002,5 +2002,10 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String tripMapNear(String place) {
     return 'ใกล้ $place';
+  }
+
+  @override
+  String billTotalInvalid(String max) {
+    return 'ใส่ยอดรวมมากกว่า 0 และไม่เกิน $max';
   }
 }

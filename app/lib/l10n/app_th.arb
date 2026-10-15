@@ -407,7 +407,7 @@
   "billUseCorrection": "ใช้ตัวเลขนี้",
   "billCorrectedNote": "นี่คือตัวเลขที่คุณแก้ บันทึกเป็นของคุณ ไม่ใช่ผลที่แอปตรวจ",
   "billMemoryVisits": "คุณเคยบันทึกบิลที่ร้านนี้ {visits} ใบ ครั้งล่าสุด {total}",
-  "billMemoryNote": "โน้ตของคุณที่ร้านนี้ ({count} ใบก่อน): {note}",
+  "billMemoryNote": "ครั้งก่อนที่ร้านนี้คุณจดว่า {note} ({count} ใบ)",
   "billNoteServiceIncluded": "รวมค่าบริการแล้ว",
   "billNoteServiceAdded": "บวกค่าบริการ {percent} %",
   "billNoteNoService": "ไม่มีค่าบริการ",
@@ -520,8 +520,8 @@
   "arrivalChannel": "แจ้งเตือนเมื่อถึงปลายทาง",
   "countryJapan": "ญี่ปุ่น",
   "countryThailand": "ไทย",
-  "billMemoryNoteBranch": "โน้ตของคุณที่สาขาอื่น ({count} ใบ): {note}",
-  "billBrandMemory": "สาขาอื่นของร้านนี้: {habit} ({count} ใบเสร็จ)",
+  "billMemoryNoteBranch": "ที่สาขาอื่นคุณจดว่า {note} ({count} ใบ)",
+  "billBrandMemory": "สาขาอื่นของร้านนี้ {habit} ({count} ใบเสร็จ)",
   "billBrandServiceAdded": "บวกค่าบริการ",
   "tripMapTitle": "แผนที่ทริป",
   "tripMapEmpty": "ใบเสร็จและการต่อราคาที่บันทึกพร้อมสถานที่จะแสดงที่นี่",
@@ -544,5 +544,6 @@
   "tripMapEmptyAction": "สแกนใบเสร็จ",
   "tripMapMapLabel": "แผนที่ {count} แห่ง ทุกแห่งอยู่ในรายการด้านล่างด้วย",
   "tripMapShowOnMap": "แสดงบนแผนที่",
-  "tripMapNear": "ใกล้ {place}"
+  "tripMapNear": "ใกล้ {place}",
+  "billTotalInvalid": "ใส่ยอดรวมมากกว่า 0 และไม่เกิน {max}"
 }

@@ -2559,7 +2559,7 @@ abstract class AppLocalizations {
   /// No description provided for @billMemoryNote.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{You noted here last time: {note}} other{You noted here in {count} earlier bills: {note}}}'**
+  /// **'{count, plural, =1{Last time here you noted {note}} other{In {count} earlier bills here you noted {note}}}'**
   String billMemoryNote(String note, int count);
 
   /// No description provided for @billNoteServiceIncluded.
@@ -3237,13 +3237,13 @@ abstract class AppLocalizations {
   /// No description provided for @billMemoryNoteBranch.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{You noted at another branch: {note}} other{You noted at other branches in {count} bills: {note}}}'**
+  /// **'{count, plural, =1{At another branch you noted {note}} other{At other branches you noted {note} in {count} bills}}'**
   String billMemoryNoteBranch(String note, int count);
 
   /// No description provided for @billBrandMemory.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Another branch of this shop: {habit} (1 receipt)} other{Other branches of this shop: {habit} ({count} receipts)}}'**
+  /// **'{count, plural, =1{Another branch of this shop had {habit} (1 receipt)} other{Other branches of this shop had {habit} ({count} receipts)}}'**
   String billBrandMemory(String habit, int count);
 
   /// No description provided for @billBrandServiceAdded.
@@ -3383,6 +3383,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Near {place}'**
   String tripMapNear(String place);
+
+  /// No description provided for @billTotalInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a total above 0 and up to {max}'**
+  String billTotalInvalid(String max);
 }
 
 class _AppLocalizationsDelegate

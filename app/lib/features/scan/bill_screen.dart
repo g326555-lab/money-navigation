@@ -9,8 +9,7 @@ import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/bill_check.dart';
-import '../../rules/haggle.dart'
-    show marketCurrency, maxPriceChars, maxPriceThb;
+import '../../rules/haggle.dart' show marketCurrency, maxPriceThb;
 import '../../services/ai/ai_trace.dart';
 import '../../services/ai/bill_reader.dart';
 import '../../shared/action_dock.dart';
@@ -87,7 +86,12 @@ class _BillScreenState extends State<BillScreen> {
       _phase = _Phase.reading;
       _reading = null;
     });
+    // Where the bill is being paid: fetched alongside the reading, so the
+    // record knows its shop's place from the start (same shop vs another
+    // branch) and lands on the trip map. Null when location is off.
+    final placeFuture = LocationService.current();
     final reading = await _reader.read(await file.readAsBytes());
+    final here = await placeFuture;
     if (!mounted) return;
     reading.check == null
         ? HapticFeedback.heavyImpact()
@@ -108,28 +112,23 @@ class _BillScreenState extends State<BillScreen> {
               id: 'bill-${now.microsecondsSinceEpoch}',
               savedAt: now,
               merchantName: reading.merchantName,
+              lat: here?.latitude,
+              lng: here?.longitude,
               category: categorize(merchantName: reading.merchantName),
             );
+      _here = here == null ? null : (here.latitude, here.longitude);
     });
   }
+
+  /// Where the phone was when the bill was read.
+  (double, double)? _here;
 
   Future<void> _save() async {
     final record = _record;
     if (record == null || _saved) return;
-    // Where the bill was paid, so it has a place on the trip map; saved
-    // without one when location is off.
-    final here = await LocationService.current();
-    final located = here == null || record.lat != null
-        ? record
-        : ReceiptRecord.fromJson({
-                ...record.toJson(),
-                'lat': here.latitude,
-                'lng': here.longitude,
-              }) ??
-              record;
-    if (!mounted) return;
-    _record = located;
-    await _receipts.save(located);
+    // The phone copy is written at once; the account copy follows in the
+    // background, so "Saved" never waits on the network.
+    await _receipts.save(record);
     HapticFeedback.mediumImpact();
     if (mounted) setState(() => _saved = true);
   }
@@ -146,11 +145,14 @@ class _BillScreenState extends State<BillScreen> {
           totalThb: 0,
           verified: false,
           merchantName: _reading?.merchantName,
+          lat: _here?.$1,
+          lng: _here?.$2,
           category: categorize(merchantName: _reading?.merchantName),
         );
     final edited = await showModalBottomSheet<ReceiptRecord>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (_) => _ReceiptEditSheet(record: base),
     );
     if (edited == null || !mounted) return;
@@ -581,12 +583,24 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
     super.dispose();
   }
 
-  double? _number(TextEditingController c) =>
-      double.tryParse(c.text.replaceAll(',', ''));
+  /// "125,50" is a decimal comma; "1,250" and "1,250.50" group thousands.
+  double? _number(TextEditingController c) {
+    final t = c.text.trim();
+    if (_decimalComma.hasMatch(t)) {
+      return double.tryParse(t.replaceAll(',', '.'));
+    }
+    return double.tryParse(t.replaceAll(',', ''));
+  }
+
+  static final _decimalComma = RegExp(r'^\d+,\d{1,2}$');
+
+  bool get _totalValid {
+    final total = _number(_total);
+    return total != null && total > 0 && total <= maxPriceThb;
+  }
 
   bool get _valid {
-    final total = _number(_total);
-    if (total == null || total <= 0 || total > maxPriceThb) return false;
+    if (!_totalValid) return false;
     if (_service == _Service.added) {
       final p = _number(_percent);
       return p != null && p > 0 && p < 100;
@@ -594,8 +608,27 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
     return true;
   }
 
+  bool get _changed {
+    final r = widget.record;
+    final service = r.serviceIncluded
+        ? _Service.included
+        : r.servicePercent != null || r.serviceThb != null
+        ? _Service.added
+        : _Service.none;
+    return _name.text.trim() != (r.merchantName ?? '') ||
+        _number(_total) != r.totalThb ||
+        _service != service ||
+        (_service == _Service.added && _number(_percent) != r.servicePercent) ||
+        _vatOnTop != r.vatOnTop;
+  }
+
   void _done() {
     if (!_valid) return;
+    // Nothing changed: keep the proven record as it was.
+    if (!_changed) {
+      Navigator.of(context).pop();
+      return;
+    }
     final name = _name.text.trim();
     final edited = widget.record.corrected(
       totalThb: _number(_total),
@@ -640,7 +673,7 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
             inputFormatters: number
                 ? [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-                    LengthLimitingTextInputFormatter(maxPriceChars),
+                    LengthLimitingTextInputFormatter(billAmountChars),
                   ]
                 : null,
             style: number ? type.title : type.bodyLg,
@@ -657,17 +690,23 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
         const SizedBox(height: AppSpacing.lg),
       ],
     );
-    Widget choice(String label, bool selected, VoidCallback onTap) => Pressable(
-      onPressed: onTap,
-      semanticLabel: label,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: AppSizes.minTouchTarget),
-        child: Center(
-          widthFactor: 1,
-          child: Pill(
-            label: label,
-            fill: selected ? AppColors.surfaceDark : AppColors.surfaceDim,
-            textColor: selected ? AppColors.onSurfaceDark : AppColors.onSurface,
+    Widget choice(String label, bool selected, VoidCallback onTap) => Semantics(
+      selected: selected,
+      inMutuallyExclusiveGroup: true,
+      child: Pressable(
+        onPressed: onTap,
+        semanticLabel: label,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppSizes.minTouchTarget),
+          child: Center(
+            widthFactor: 1,
+            child: Pill(
+              label: label,
+              fill: selected ? AppColors.surfaceDark : AppColors.surfaceDim,
+              textColor: selected
+                  ? AppColors.onSurfaceDark
+                  : AppColors.onSurface,
+            ),
           ),
         ),
       ),
@@ -688,6 +727,15 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
             const SizedBox(height: AppSpacing.xl),
             field(_name, l10n.billShop),
             field(_total, l10n.billTotal, number: true, suffix: marketCurrency),
+            if (_total.text.isNotEmpty && !_totalValid) ...[
+              Text(
+                l10n.billTotalInvalid(
+                  AppFormat.roundedAmount(maxPriceThb, marketCurrency),
+                ),
+                style: type.caption.copyWith(color: AppColors.errorText),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+            ],
             Text(l10n.billService, style: type.sectionHeader),
             const SizedBox(height: AppSpacing.sm),
             Wrap(
@@ -747,3 +795,6 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
     );
   }
 }
+
+/// Room for a grouped amount like "123,456.78".
+const billAmountChars = 12;

@@ -1550,8 +1550,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'You noted here in $count earlier bills: $note',
-      one: 'You noted here last time: $note',
+      other: 'In $count earlier bills here you noted $note',
+      one: 'Last time here you noted $note',
     );
     return '$_temp0';
   }
@@ -1999,8 +1999,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'You noted at other branches in $count bills: $note',
-      one: 'You noted at another branch: $note',
+      other: 'At other branches you noted $note in $count bills',
+      one: 'At another branch you noted $note',
     );
     return '$_temp0';
   }
@@ -2010,8 +2010,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Other branches of this shop: $habit ($count receipts)',
-      one: 'Another branch of this shop: $habit (1 receipt)',
+      other: 'Other branches of this shop had $habit ($count receipts)',
+      one: 'Another branch of this shop had $habit (1 receipt)',
     );
     return '$_temp0';
   }
@@ -2117,5 +2117,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String tripMapNear(String place) {
     return 'Near $place';
+  }
+
+  @override
+  String billTotalInvalid(String max) {
+    return 'Enter a total above 0 and up to $max';
   }
 }
