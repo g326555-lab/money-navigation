@@ -524,7 +524,7 @@
   "billBrandMemory": "สาขาอื่นของร้านนี้: {habit} ({count} ใบเสร็จ)",
   "billBrandServiceAdded": "บวกค่าบริการ",
   "tripMapTitle": "แผนที่ทริป",
-  "tripMapEmpty": "ยังไม่มีสถานที่ ใบเสร็จและการต่อราคาที่บันทึกพร้อมตำแหน่งจะแสดงที่นี่",
+  "tripMapEmpty": "ใบเสร็จและการต่อราคาที่บันทึกพร้อมสถานที่จะแสดงที่นี่",
   "tripMapOsm": "ผู้ร่วมสร้าง OpenStreetMap",
   "tripMapKeptDay": "ประหยัด {amount}",
   "tripMapKept": "ประหยัด {amount}",
@@ -533,5 +533,16 @@
   "tripMapKindReceipt": "ใบเสร็จ",
   "tripMapKindHaggle": "ต่อราคา",
   "tripMapKindAtm": "ATM",
-  "tripMapKindTerminal": "เครื่องรูดบัตร"
+  "tripMapKindTerminal": "เครื่องรูดบัตร",
+  "tripMapKeptAt": "ประหยัดได้จาก {count} ที่",
+  "tripMapOnMap": "บนแผนที่",
+  "tripMapPlaces": "{count} ที่",
+  "tripMapToday": "วันนี้",
+  "tripMapYesterday": "เมื่อวาน",
+  "tripMapPaid": "จ่าย {amount}",
+  "tripMapClose": "ปิด",
+  "tripMapOffline": "แผนที่ต้องใช้อินเทอร์เน็ต แต่ทุกที่ยังอยู่ในรายการด้านล่าง",
+  "tripMapEmptyAction": "สแกนใบเสร็จ",
+  "tripMapMapLabel": "แผนที่ {count} ที่ ทุกที่อยู่ในรายการด้านล่างด้วย",
+  "tripMapShowOnMap": "แสดงบนแผนที่"
 }

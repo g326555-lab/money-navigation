@@ -1927,7 +1927,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tripMapEmpty =>
-      'ยังไม่มีสถานที่ ใบเสร็จและการต่อราคาที่บันทึกพร้อมตำแหน่งจะแสดงที่นี่';
+      'ใบเสร็จและการต่อราคาที่บันทึกพร้อมสถานที่จะแสดงที่นี่';
 
   @override
   String get tripMapOsm => 'ผู้ร่วมสร้าง OpenStreetMap';
@@ -1959,4 +1959,46 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tripMapKindTerminal => 'เครื่องรูดบัตร';
+
+  @override
+  String tripMapKeptAt(int count) {
+    return 'ประหยัดได้จาก $count ที่';
+  }
+
+  @override
+  String get tripMapOnMap => 'บนแผนที่';
+
+  @override
+  String tripMapPlaces(int count) {
+    return '$count ที่';
+  }
+
+  @override
+  String get tripMapToday => 'วันนี้';
+
+  @override
+  String get tripMapYesterday => 'เมื่อวาน';
+
+  @override
+  String tripMapPaid(String amount) {
+    return 'จ่าย $amount';
+  }
+
+  @override
+  String get tripMapClose => 'ปิด';
+
+  @override
+  String get tripMapOffline =>
+      'แผนที่ต้องใช้อินเทอร์เน็ต แต่ทุกที่ยังอยู่ในรายการด้านล่าง';
+
+  @override
+  String get tripMapEmptyAction => 'สแกนใบเสร็จ';
+
+  @override
+  String tripMapMapLabel(int count) {
+    return 'แผนที่ $count ที่ ทุกที่อยู่ในรายการด้านล่างด้วย';
+  }
+
+  @override
+  String get tripMapShowOnMap => 'แสดงบนแผนที่';
 }

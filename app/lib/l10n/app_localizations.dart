@@ -1558,7 +1558,7 @@ abstract class AppLocalizations {
   /// No description provided for @authSetupIntro.
   ///
   /// In en, this message translates to:
-  /// **'So every amount shows in money you know'**
+  /// **'So every amount shows in money you know.'**
   String get authSetupIntro;
 
   /// No description provided for @authSetupTypeHeader.
@@ -3261,7 +3261,7 @@ abstract class AppLocalizations {
   /// No description provided for @tripMapEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No places yet. Receipts and haggles saved with a location appear here.'**
+  /// **'Receipts and haggles you save with a place show up here.'**
   String get tripMapEmpty;
 
   /// No description provided for @tripMapOsm.
@@ -3317,6 +3317,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Card terminal'**
   String get tripMapKindTerminal;
+
+  /// No description provided for @tripMapKeptAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept at {count, plural, =1{1 place} other{{count} places}}'**
+  String tripMapKeptAt(int count);
+
+  /// No description provided for @tripMapOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'On the map'**
+  String get tripMapOnMap;
+
+  /// No description provided for @tripMapPlaces.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 place} other{{count} places}}'**
+  String tripMapPlaces(int count);
+
+  /// No description provided for @tripMapToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get tripMapToday;
+
+  /// No description provided for @tripMapYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get tripMapYesterday;
+
+  /// No description provided for @tripMapPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {amount}'**
+  String tripMapPaid(String amount);
+
+  /// No description provided for @tripMapClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get tripMapClose;
+
+  /// No description provided for @tripMapOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'The map needs a connection. Every place is still listed below.'**
+  String get tripMapOffline;
+
+  /// No description provided for @tripMapEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a receipt'**
+  String get tripMapEmptyAction;
+
+  /// No description provided for @tripMapMapLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Map with {count, plural, =1{1 place} other{{count} places}}. Each one is also in the list below.'**
+  String tripMapMapLabel(int count);
+
+  /// No description provided for @tripMapShowOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows it on the map'**
+  String get tripMapShowOnMap;
 }
 
 class _AppLocalizationsDelegate

@@ -875,7 +875,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSetupTitle => 'About your trip';
 
   @override
-  String get authSetupIntro => 'So every amount shows in money you know';
+  String get authSetupIntro => 'So every amount shows in money you know.';
 
   @override
   String get authSetupTypeHeader => 'You are';
@@ -2023,7 +2023,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tripMapEmpty =>
-      'No places yet. Receipts and haggles saved with a location appear here.';
+      'Receipts and haggles you save with a place show up here.';
 
   @override
   String get tripMapOsm => 'OpenStreetMap contributors';
@@ -2055,4 +2055,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tripMapKindTerminal => 'Card terminal';
+
+  @override
+  String tripMapKeptAt(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count places',
+      one: '1 place',
+    );
+    return 'Kept at $_temp0';
+  }
+
+  @override
+  String get tripMapOnMap => 'On the map';
+
+  @override
+  String tripMapPlaces(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count places',
+      one: '1 place',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tripMapToday => 'Today';
+
+  @override
+  String get tripMapYesterday => 'Yesterday';
+
+  @override
+  String tripMapPaid(String amount) {
+    return 'Paid $amount';
+  }
+
+  @override
+  String get tripMapClose => 'Close';
+
+  @override
+  String get tripMapOffline =>
+      'The map needs a connection. Every place is still listed below.';
+
+  @override
+  String get tripMapEmptyAction => 'Scan a receipt';
+
+  @override
+  String tripMapMapLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count places',
+      one: '1 place',
+    );
+    return 'Map with $_temp0. Each one is also in the list below.';
+  }
+
+  @override
+  String get tripMapShowOnMap => 'Shows it on the map';
 }

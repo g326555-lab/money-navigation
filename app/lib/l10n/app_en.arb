@@ -654,7 +654,7 @@
   "authErrNotConfigured": "This way of signing in isn't ready in this version.",
   "authErrUnknown": "Couldn't sign in. Try again.",
   "authSetupTitle": "About your trip",
-  "authSetupIntro": "So every amount shows in money you know",
+  "authSetupIntro": "So every amount shows in money you know.",
   "authSetupTypeHeader": "You are",
   "authTypeVisitor": "Visiting Thailand",
   "authTypeVisitorSub": "Paying in baht",
@@ -1678,7 +1678,7 @@
   },
   "billBrandServiceAdded": "service charge added",
   "tripMapTitle": "Trip map",
-  "tripMapEmpty": "No places yet. Receipts and haggles saved with a location appear here.",
+  "tripMapEmpty": "Receipts and haggles you save with a place show up here.",
   "tripMapOsm": "OpenStreetMap contributors",
   "tripMapKeptDay": "Kept {amount}",
   "@tripMapKeptDay": {
@@ -1701,5 +1701,44 @@
   "tripMapKindReceipt": "Receipt",
   "tripMapKindHaggle": "Haggle",
   "tripMapKindAtm": "ATM",
-  "tripMapKindTerminal": "Card terminal"
+  "tripMapKindTerminal": "Card terminal",
+  "tripMapKeptAt": "Kept at {count, plural, =1{1 place} other{{count} places}}",
+  "@tripMapKeptAt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tripMapOnMap": "On the map",
+  "tripMapPlaces": "{count, plural, =1{1 place} other{{count} places}}",
+  "@tripMapPlaces": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tripMapToday": "Today",
+  "tripMapYesterday": "Yesterday",
+  "tripMapPaid": "Paid {amount}",
+  "@tripMapPaid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripMapClose": "Close",
+  "tripMapOffline": "The map needs a connection. Every place is still listed below.",
+  "tripMapEmptyAction": "Scan a receipt",
+  "tripMapMapLabel": "Map with {count, plural, =1{1 place} other{{count} places}}. Each one is also in the list below.",
+  "@tripMapMapLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tripMapShowOnMap": "Shows it on the map"
 }
