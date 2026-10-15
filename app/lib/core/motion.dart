@@ -22,9 +22,26 @@ abstract final class AppMotion {
   /// Pressed state of tappable chrome.
   static const pressedScale = 0.94;
 
+  /// Pressed state of the shutter's inner disc (the ring stays still).
+  static const shutterPressedScale = 0.86;
+
+  /// Scale the hero amount counts up at before it settles to full size.
+  static const heroSettleFrom = 0.96;
+
+  /// Delay between detection boxes drawing in, as a fraction of the whole
+  /// draw-in, so the eye follows them top to bottom.
+  static const boxStagger = 0.12;
+
+  /// Longest the whole set of detection boxes may take to draw in.
+  static const boxesMax = Duration(milliseconds: 500);
+
   static const enter = Curves.easeOutCubic;
   static const exit = Curves.easeInCubic;
   static const move = Curves.easeInOutCubic;
+
+  /// Arrival with a slight overshoot: a check landing, a number settling,
+  /// a detection box snapping onto the text. Used only for those moments.
+  static const settle = Curves.easeOutBack;
 
   /// Returns [Duration.zero] when the system "reduce motion" setting is on.
   static Duration of(BuildContext context, Duration duration) =>

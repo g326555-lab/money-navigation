@@ -10,7 +10,7 @@
   "scanClose": "Close",
   "scanFlashOn": "Turn on light",
   "scanFlashOff": "Turn off light",
-  "scanCameraUnavailable": "The camera isn't available. You can still choose a photo.",
+  "scanCameraUnavailable": "The camera isn't available right now.",
   "scanCameraDenied": "Camera access is off for Money Navigation. Turn it on in Settings, or choose a photo.",
   "stepReadText": "Reading the photo",
   "stepReadTextDone": "Read on your phone in {ms} ms",
@@ -23,7 +23,7 @@
   },
   "stepFindAtm": "Looking for an ATM conversion offer",
   "stepFindAtmDone": "ATM conversion offer found",
-  "stepValues": "Withdrawal {withdrawal} · fee {fee} · 1 USD = {rate} THB",
+  "stepValues": "Withdrawal {withdrawal} · fee {fee} · 1 USD = {rate} THB",
   "@stepValues": {
     "placeholders": {
       "withdrawal": {
@@ -37,7 +37,7 @@
       }
     }
   },
-  "stepValuesMarkup": "{values} · mark-up {markup}",
+  "stepValuesMarkup": "{values} · mark-up {markup}",
   "@stepValuesMarkup": {
     "placeholders": {
       "values": {
@@ -95,7 +95,7 @@
   "atmRowFee": "ATM access fee",
   "atmRowRate": "Rate shown",
   "atmRowMarkup": "Mark-up shown",
-  "atmRateValue": "1 USD = {rate} THB",
+  "atmRateValue": "1 USD = {rate} THB",
   "@atmRateValue": {
     "placeholders": {
       "rate": {

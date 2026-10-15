@@ -51,11 +51,13 @@ abstract final class AppSizes {
   static const double progressStroke = 2;
   static const double stepGlyph = 16;
   static const double shutter = 76;
+  static const double cameraScrimHeight = 120;
 
   /// Height kept free for the scan steps sheet (four steps), so the photo
   /// above it keeps a fixed size while steps arrive.
   static const double scanSheetReserve = 300;
   static const double cameraControl = 48;
+  static const double cameraIcon = 24;
   static const double sheetHandleWidth = 36;
   static const double sheetHandleHeight = 4;
   static const double stepIcon = 24;

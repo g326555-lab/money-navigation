@@ -39,6 +39,7 @@ class _ScanScreenState extends State<ScanScreen>
   bool _capturing = false;
   bool _picking = false;
   bool _resultOpen = false;
+  bool _failureFelt = false;
 
   late final AnimationController _boxes = AnimationController(
     vsync: this,
@@ -133,14 +134,19 @@ class _ScanScreenState extends State<ScanScreen>
   void _onScanChanged() {
     final state = _scan.state;
     if (state.lines.isNotEmpty && _boxes.value == 0) {
-      _boxes.duration = AppMotion.of(context, AppMotion.emphasized);
+      _boxes.duration = AppMotion.of(
+        context,
+        DetectionOverlay.durationFor(DetectionOverlay.valueCount(state.lines)),
+      );
       _boxes.forward();
     }
     if (state.verdict != null && !_resultOpen) {
       _resultOpen = true;
-      HapticFeedback.mediumImpact();
+      // The success haptic plays on the verdict screen, when the amount
+      // kept settles, so the user feels the result rather than the hand-off.
       Timer(AppMotion.of(context, AppMotion.resultHold), _openResult);
-    } else if (state.failure != null) {
+    } else if (state.failure != null && !_failureFelt) {
+      _failureFelt = true;
       HapticFeedback.heavyImpact();
     }
     setState(() {});
@@ -151,7 +157,7 @@ class _ScanScreenState extends State<ScanScreen>
     if (!mounted || state.verdict == null) return;
     await Navigator.of(context).push(
       PageRouteBuilder<void>(
-        transitionDuration: AppMotion.of(context, AppMotion.standard),
+        transitionDuration: AppMotion.of(context, AppMotion.emphasized),
         reverseTransitionDuration: AppMotion.of(context, AppMotion.standard),
         pageBuilder: (_, _, _) => AtmResultScreen(state: state),
         transitionsBuilder: (_, animation, _, child) {
@@ -175,6 +181,7 @@ class _ScanScreenState extends State<ScanScreen>
 
   void _retry() {
     _resultOpen = false;
+    _failureFelt = false;
     _boxes.value = 0;
     _scan.reset();
     if (_camera == null) _startCamera();
@@ -263,7 +270,7 @@ class _ScanScreenState extends State<ScanScreen>
                             builder: (_, _) => DetectionOverlay(
                               lines: state.lines,
                               imageSize: state.photoSize!,
-                              progress: AppMotion.enter.transform(_boxes.value),
+                              progress: _boxes.value,
                             ),
                           ),
                       ],
@@ -273,6 +280,28 @@ class _ScanScreenState extends State<ScanScreen>
               )
             else
               _CameraView(controller: _camera, status: _cameraStatus),
+            // Keeps the light status bar and top controls legible over a
+            // bright preview (DESIGN.md camera scrim).
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: AppSizes.cameraScrimHeight,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.cameraScrimTop,
+                        AppColors.cameraScrimEnd,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Align(
               alignment: Alignment.topCenter,
               child: SafeArea(
@@ -323,6 +352,9 @@ class _ScanScreenState extends State<ScanScreen>
                         key: const ValueKey('controls'),
                         hint: _hint(l10n),
                         canShoot: _camera != null && !_capturing,
+                        cameraOff:
+                            _cameraStatus == _CameraStatus.unavailable ||
+                            _cameraStatus == _CameraStatus.denied,
                         onShoot: _takePhoto,
                         onChoose: _choosePhoto,
                       ),
@@ -373,12 +405,17 @@ class _CaptureControls extends StatelessWidget {
     super.key,
     required this.hint,
     required this.canShoot,
+    required this.cameraOff,
     required this.onShoot,
     required this.onChoose,
   });
 
   final String hint;
   final bool canShoot;
+
+  /// No camera (simulator, no permission): choosing a photo becomes the one
+  /// action, in the shutter's place, instead of a dead shutter.
+  final bool cameraOff;
   final VoidCallback onShoot;
   final VoidCallback onChoose;
 
@@ -398,51 +435,57 @@ class _CaptureControls extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Dark glass behind the hint keeps it legible over a bright scene.
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadius.full),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: AppSizes.glassBlur,
-                  sigmaY: AppSizes.glassBlur,
+            _CameraGlass(
+              shape: const StadiumBorder(
+                side: BorderSide(
+                  color: AppColors.cameraGlassBorder,
+                  width: AppSizes.hairline,
                 ),
-                child: ColoredBox(
-                  color: AppColors.cameraGlass,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                      vertical: AppSpacing.sm,
-                    ),
-                    child: Text(
-                      hint,
-                      textAlign: TextAlign.center,
-                      style: AppTypography.of(context).label
-                          .copyWith(color: AppColors.onSurfaceDark),
-                    ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
+                child: AnimatedSize(
+                  duration: AppMotion.of(context, AppMotion.standard),
+                  curve: AppMotion.move,
+                  child: Text(
+                    hint,
+                    textAlign: TextAlign.center,
+                    style: AppTypography.of(context).label
+                        .copyWith(color: AppColors.onSurfaceDark),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
-            Row(
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: _GlassButton(
-                      icon: Icons.photo_library_outlined,
-                      label: l10n.scanChoosePhoto,
-                      onPressed: onChoose,
+            if (cameraOff)
+              _ChoosePhotoButton(
+                label: l10n.scanChoosePhoto,
+                onPressed: onChoose,
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: _GlassButton(
+                        icon: Icons.photo_library_rounded,
+                        label: l10n.scanChoosePhoto,
+                        onPressed: onChoose,
+                      ),
                     ),
                   ),
-                ),
-                _Shutter(
-                  enabled: canShoot,
-                  label: l10n.scanShutter,
-                  onPressed: onShoot,
-                ),
-                const Expanded(child: SizedBox()),
-              ],
-            ),
+                  _Shutter(
+                    enabled: canShoot,
+                    label: l10n.scanShutter,
+                    onPressed: onShoot,
+                  ),
+                  const Expanded(child: SizedBox()),
+                ],
+              ),
           ],
         ),
       ),
@@ -450,7 +493,38 @@ class _CaptureControls extends StatelessWidget {
   }
 }
 
-class _Shutter extends StatelessWidget {
+/// Clips its child to [shape] and lays dark glass under it, with a light
+/// hairline so the edge stays visible on pure black.
+class _CameraGlass extends StatelessWidget {
+  const _CameraGlass({required this.shape, required this.child});
+
+  final ShapeBorder shape;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipPath(
+      clipper: ShapeBorderClipper(shape: shape),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: AppSizes.glassBlur,
+          sigmaY: AppSizes.glassBlur,
+        ),
+        child: DecoratedBox(
+          decoration: ShapeDecoration(
+            color: AppColors.cameraGlass,
+            shape: shape,
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// Shutter: a white ring with a disc that sinks while pressed and springs
+/// back on release, and shrinks while the photo is being taken.
+class _Shutter extends StatefulWidget {
   const _Shutter({
     required this.enabled,
     required this.label,
@@ -462,20 +536,37 @@ class _Shutter extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
+  State<_Shutter> createState() => _ShutterState();
+}
+
+class _ShutterState extends State<_Shutter> {
+  bool _down = false;
+
+  void _setDown(bool value) {
+    if (_down != value) setState(() => _down = value);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final enabled = widget.enabled;
     return Semantics(
       button: true,
-      label: label,
+      label: widget.label,
       enabled: enabled,
+      excludeSemantics: true,
       child: GestureDetector(
-        onTap: enabled ? onPressed : null,
+        behavior: HitTestBehavior.opaque,
+        onTapDown: enabled ? (_) => _setDown(true) : null,
+        onTapUp: (_) => _setDown(false),
+        onTapCancel: () => _setDown(false),
+        onTap: enabled ? widget.onPressed : null,
         child: AnimatedOpacity(
           duration: AppMotion.of(context, AppMotion.quick),
           opacity: enabled ? 1 : 0.4,
           child: Container(
             width: AppSizes.shutter,
             height: AppSizes.shutter,
-            padding: const EdgeInsets.all(AppSpacing.xs),
+            padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
@@ -483,13 +574,58 @@ class _Shutter extends StatelessWidget {
                 width: AppSpacing.xs,
               ),
             ),
-            child: const DecoratedBox(
-              decoration: BoxDecoration(
-                color: AppColors.onSurfaceDark,
-                shape: BoxShape.circle,
+            child: AnimatedScale(
+              scale: _down ? AppMotion.shutterPressedScale : 1,
+              duration: AppMotion.of(
+                context,
+                _down ? AppMotion.quick : AppMotion.standard,
+              ),
+              curve: _down ? AppMotion.move : AppMotion.settle,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.onSurfaceDark,
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The one action when there is no camera: a white pill in the shutter's
+/// place, the brightest thing on the black screen.
+class _ChoosePhotoButton extends StatelessWidget {
+  const _ChoosePhotoButton({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = AppTypography.of(context);
+    return Pressable(
+      onPressed: onPressed,
+      child: Container(
+        height: AppSizes.buttonHeight,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+        decoration: const ShapeDecoration(
+          color: AppColors.onSurfaceDark,
+          shape: StadiumBorder(),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.photo_library_rounded,
+              size: AppSizes.cameraIcon,
+              color: AppColors.onSurface,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(label, style: type.bodyLg),
+          ],
         ),
       ),
     );
@@ -514,17 +650,22 @@ class _GlassButton extends StatelessWidget {
       child: Pressable(
         semanticLabel: label,
         onPressed: onPressed,
-        child: ClipOval(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: AppSizes.glassBlur,
-              sigmaY: AppSizes.glassBlur,
+        child: _CameraGlass(
+          shape: const CircleBorder(
+            side: BorderSide(
+              color: AppColors.cameraGlassBorder,
+              width: AppSizes.hairline,
             ),
-            child: ColoredBox(
-              color: AppColors.cameraGlass,
-              child: SizedBox.square(
-                dimension: AppSizes.cameraControl,
-                child: Icon(icon, color: AppColors.onSurfaceDark),
+          ),
+          child: SizedBox.square(
+            dimension: AppSizes.cameraControl,
+            child: AnimatedSwitcher(
+              duration: AppMotion.of(context, AppMotion.quick),
+              child: Icon(
+                icon,
+                key: ValueKey(icon),
+                size: AppSizes.cameraIcon,
+                color: AppColors.onSurfaceDark,
               ),
             ),
           ),

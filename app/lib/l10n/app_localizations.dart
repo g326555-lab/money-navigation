@@ -143,7 +143,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanCameraUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'The camera isn\'t available. You can still choose a photo.'**
+  /// **'The camera isn\'t available right now.'**
   String get scanCameraUnavailable;
 
   /// No description provided for @scanCameraDenied.
@@ -179,13 +179,13 @@ abstract class AppLocalizations {
   /// No description provided for @stepValues.
   ///
   /// In en, this message translates to:
-  /// **'Withdrawal {withdrawal} · fee {fee} · 1 USD = {rate} THB'**
+  /// **'Withdrawal {withdrawal} · fee {fee} · 1 USD = {rate} THB'**
   String stepValues(String withdrawal, String fee, String rate);
 
   /// No description provided for @stepValuesMarkup.
   ///
   /// In en, this message translates to:
-  /// **'{values} · mark-up {markup}'**
+  /// **'{values} · mark-up {markup}'**
   String stepValuesMarkup(String values, String markup);
 
   /// No description provided for @stepCompare.
@@ -347,7 +347,7 @@ abstract class AppLocalizations {
   /// No description provided for @atmRateValue.
   ///
   /// In en, this message translates to:
-  /// **'1 USD = {rate} THB'**
+  /// **'1 USD = {rate} THB'**
   String atmRateValue(String rate);
 
   /// No description provided for @atmIfConvert.

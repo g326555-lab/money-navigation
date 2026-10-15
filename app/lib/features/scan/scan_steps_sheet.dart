@@ -60,9 +60,17 @@ class ScanStepsSheet extends StatelessWidget {
               text: _stepText(l10n, step),
             ),
           if (failure != null) ...[
-            Text(
-              _tip(l10n, failure),
-              style: type.bodyMd.copyWith(color: AppColors.onSurfaceSecondary),
+            // Aligned with the step text, under the step that failed.
+            Padding(
+              padding: const EdgeInsets.only(
+                left: AppSizes.stepIcon + AppSpacing.md,
+              ),
+              child: Text(
+                _tip(l10n, failure),
+                style: type.bodyMd.copyWith(
+                  color: AppColors.onSurfaceSecondary,
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.xxl),
             FilledButton(onPressed: onRetry, child: Text(l10n.scanTryAgain)),
@@ -205,33 +213,135 @@ class _StepIcon extends StatelessWidget {
           padding: EdgeInsets.all(AppSpacing.xs),
           child: CircularProgressIndicator(
             strokeWidth: AppSizes.progressStroke,
+            strokeCap: StrokeCap.round,
             color: AppColors.onSurfaceMuted,
           ),
         );
       case ScanStepState.done:
-        return const DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.check_rounded,
-            size: AppSizes.stepGlyph,
-            color: AppColors.onPrimary,
-          ),
+        return const _StepBadge(
+          fill: AppColors.primary,
+          ink: AppColors.onPrimary,
+          glyph: _Glyph.check,
         );
       case ScanStepState.failed:
-        return const DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.errorContainer,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.priority_high_rounded,
-            size: AppSizes.stepGlyph,
-            color: AppColors.errorText,
-          ),
+        return const _StepBadge(
+          fill: AppColors.errorContainer,
+          ink: AppColors.errorText,
+          glyph: _Glyph.mark,
         );
     }
   }
+}
+
+enum _Glyph { check, mark }
+
+/// A finished step's badge: the disc lands with a slight overshoot, then
+/// its glyph draws itself, so each check reads as "this just finished".
+class _StepBadge extends StatefulWidget {
+  const _StepBadge({
+    required this.fill,
+    required this.ink,
+    required this.glyph,
+  });
+
+  final Color fill;
+  final Color ink;
+  final _Glyph glyph;
+
+  @override
+  State<_StepBadge> createState() => _StepBadgeState();
+}
+
+class _StepBadgeState extends State<_StepBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: AppMotion.standard,
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _c.duration = AppMotion.of(context, AppMotion.standard);
+    if (_c.value == 0 && !_c.isAnimating) _c.forward();
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Disc in the first 60 %, glyph stroke from 35 % to the end.
+    final disc = CurvedAnimation(
+      parent: _c,
+      curve: const Interval(0, 0.6, curve: AppMotion.settle),
+    );
+    final stroke = CurvedAnimation(
+      parent: _c,
+      curve: const Interval(0.35, 1, curve: AppMotion.enter),
+    );
+    return ScaleTransition(
+      scale: disc,
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: widget.fill, shape: BoxShape.circle),
+        child: AnimatedBuilder(
+          animation: stroke,
+          builder: (_, _) => CustomPaint(
+            size: const Size.square(AppSizes.stepIcon),
+            painter: _GlyphPainter(widget.glyph, widget.ink, stroke.value),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlyphPainter extends CustomPainter {
+  _GlyphPainter(this.glyph, this.color, this.progress);
+
+  final _Glyph glyph;
+  final Color color;
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+    final w = size.width;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = AppSizes.progressStroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    // Drawn on a 24 grid so the glyph matches the 24 icon set's proportions.
+    final u = w / AppSizes.stepIcon;
+    final path = switch (glyph) {
+      _Glyph.check =>
+        Path()
+          ..moveTo(7.5 * u, 12.5 * u)
+          ..lineTo(10.5 * u, 15.5 * u)
+          ..lineTo(16.5 * u, 9 * u),
+      _Glyph.mark =>
+        Path()
+          ..moveTo(12 * u, 7.5 * u)
+          ..lineTo(12 * u, 13 * u),
+    };
+    for (final metric in path.computeMetrics()) {
+      canvas.drawPath(metric.extractPath(0, metric.length * progress), paint);
+    }
+    if (glyph == _Glyph.mark && progress >= 1) {
+      canvas.drawCircle(
+        Offset(12 * u, 16.5 * u),
+        AppSizes.progressStroke * 0.6,
+        paint..style = PaintingStyle.fill,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GlyphPainter old) =>
+      old.progress != progress || old.color != color || old.glyph != glyph;
 }

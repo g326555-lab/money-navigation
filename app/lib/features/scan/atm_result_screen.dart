@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../core/colors.dart';
 import '../../core/elevation.dart';
 import '../../core/formatters.dart';
+import '../../core/motion.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
@@ -72,9 +73,7 @@ class AtmResultScreen extends StatelessWidget {
                         if (keeps) ...[
                           _Hero(
                             label: l10n.atmKeepLabel,
-                            number: AppFormat.roundedNumber(
-                              verdict.extraCostThb,
-                            ),
+                            amount: verdict.extraCostThb,
                             unit: atmLocalCurrency,
                             chip: AppFormat.cents(
                               verdict.extraCostUsd,
@@ -187,34 +186,120 @@ class AtmResultScreen extends StatelessWidget {
 
 /// Hero zone: sits on the page, no card. One label, the largest number on
 /// the screen, one chip.
-class _Hero extends StatelessWidget {
+///
+/// The amount counts up from zero to the real verdict value while the page
+/// rises and settles with a slight overshoot in scale, then a haptic
+/// confirms it. The final
+/// figure reserves its width from the start, so the unit never shifts.
+class _Hero extends StatefulWidget {
   const _Hero({
     required this.label,
-    required this.number,
+    required this.amount,
     required this.unit,
     required this.chip,
   });
 
   final String label;
-  final String number;
+  final double amount;
   final String unit;
   final String chip;
 
   @override
+  State<_Hero> createState() => _HeroState();
+}
+
+class _HeroState extends State<_Hero> with SingleTickerProviderStateMixin {
+  late final AnimationController _count = AnimationController(
+    vsync: this,
+    duration: AppMotion.emphasized,
+  )..addStatusListener(_onStatus);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_count.value > 0 || _count.isAnimating) return;
+    final duration = AppMotion.of(context, AppMotion.emphasized);
+    if (duration == Duration.zero) {
+      _count.value = 1;
+      HapticFeedback.mediumImpact();
+      return;
+    }
+    _count.duration = duration;
+    // Counts while the screen rises, so the amount is already climbing when
+    // the page lands and never sits at zero; it settles as the page does.
+    // The first frame is skipped so the count's first step is not lost to
+    // route setup.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _count.forward();
+    });
+  }
+
+  void _onStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed) HapticFeedback.mediumImpact();
+  }
+
+  @override
+  void dispose() {
+    _count.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final type = AppTypography.of(context);
+    final finalText = AppFormat.roundedNumber(widget.amount);
+    final count = CurvedAnimation(parent: _count, curve: AppMotion.enter);
+    final pop = CurvedAnimation(
+      parent: _count,
+      curve: const Interval(0.6, 1, curve: AppMotion.settle),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: type.heroLabel),
+        Text(widget.label, style: type.heroLabel),
         const SizedBox(height: AppSpacing.sm),
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(text: number, style: type.displayXl),
-              const TextSpan(text: ' '),
-              TextSpan(text: unit, style: type.title),
-            ],
+        Semantics(
+          label: '$finalText ${widget.unit}',
+          excludeSemantics: true,
+          child: Text.rich(
+            TextSpan(
+              children: [
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: AnimatedBuilder(
+                    animation: _count,
+                    builder: (_, _) => Transform.scale(
+                      // Grows a little past full size and settles back.
+                      scale:
+                          AppMotion.heroSettleFrom +
+                          (1 - AppMotion.heroSettleFrom) * pop.value,
+                      alignment: Alignment.bottomLeft,
+                      child: Stack(
+                        // Counting digits sit against the unit, so no gap
+                        // opens before "THB" while the width is reserved.
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          // Reserves the final width.
+                          Opacity(
+                            opacity: 0,
+                            child: Text(finalText, style: type.displayXl),
+                          ),
+                          Text(
+                            AppFormat.roundedNumber(
+                              widget.amount * count.value,
+                            ),
+                            style: type.displayXl,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const TextSpan(text: ' '),
+                TextSpan(text: widget.unit, style: type.title),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -229,7 +314,7 @@ class _Hero extends StatelessWidget {
               vertical: AppSpacing.chipPadding,
             ),
             child: Text(
-              chip,
+              widget.chip,
               style: type.label.copyWith(color: AppColors.onPrimaryContainer),
             ),
           ),
@@ -273,6 +358,12 @@ class _PressCard extends StatelessWidget {
           Text(
             action,
             style: type.title.copyWith(color: AppColors.onSurfaceDark),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          const Divider(
+            height: AppSizes.hairline,
+            thickness: AppSizes.hairline,
+            color: AppColors.dividerOnDark,
           ),
           const SizedBox(height: AppSpacing.md),
           Text(

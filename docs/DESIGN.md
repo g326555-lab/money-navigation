@@ -172,7 +172,7 @@ There are four screen templates. Camera screens are dark, with labels placed dir
 
 Green means money kept and the action to take. Use `primary` as a fill with `on-primary` text, and `primary-text` when green text sits on white. Red means overpaying: `error` for markers, `error-text` for text, `error-container` for tinted chips. Everything else is gray and white. Never use color alone to carry meaning; pair it with a word.
 
-Gradients are allowed in four places only: the success screen background (a lighter green center), the home hero card (`primary-container` to `primary-container-end`), the glossy icon tiles (light to dark of the same hue, top to bottom), and the coin.
+Gradients are allowed in five places only: the success screen background (a lighter green center), the home hero card (`primary-container` to `primary-container-end`), the glossy icon tiles (light to dark of the same hue, top to bottom), the coin, and the camera scrim (top of camera screens only, `shadow` from 45 % to 0 % over 120, so the status bar stays legible over a bright preview).
 
 ## Typography
 
@@ -221,6 +221,8 @@ Bottom sheets 28, hero and dark cards 24, cards 20, buttons 16, small tiles 12 t
 - Price scale: a light gray track with a green segment for the usual range and a red round marker for the asked price.
 - Tab bar: floating glass pill, 16 from the side edges and 8 above the bottom safe area, height 64, radius 32, glass-fill over blur sigma 24, 0.5 border of shadow at 6 %, E2. Five equal tabs (Home, Scan, Speak, Assistant, Records); icons 24, outline when inactive and filled when active; labels 11/600; inactive on-surface-tertiary, active on-surface. The active tab sits on a 56-tall pill of shadow at 7 % that slides between tabs (motion standard, enter curve), never green. Selection click haptic on change. Content scrolls under it with bottom padding 64 + safe area + 24. Hidden in full-screen flows (camera, verdict, success).
 - Action dock: a pinned primary button sits in a dock of background at 90 % over blur sigma 20 with a 0.5 divider hairline on top. Never stacked above a tab bar.
+- Camera screen: controls are dark glass (`shadow` at 40 %, white hairline at 20 %, blur 20). With no camera available, a white "Choose photo" pill takes the shutter's place (the one inverted primary button, on black only). Shutter inner disc sinks to 0.86 while pressed.
+- Motion tokens added during craft: `settle` (easeOutBack) for landing badges and the hero number, `boxStagger` 0.12 between detection boxes, `heroSettleFrom` 0.96. The hero number counts up to the real verdict value; with reduce motion it shows the final value at once.
 - Bottom sheet: radius 28, E2 with y -8, 36 x 4 grabber in `handle`, overlapping a full-bleed camera.
 - Coin: a 3D Thai-style bimetal coin, silver outer ring and gold center with the baht sign. At most one hero object per screen.
 

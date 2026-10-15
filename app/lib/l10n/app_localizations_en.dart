@@ -31,8 +31,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanFlashOff => 'Turn off light';
 
   @override
-  String get scanCameraUnavailable =>
-      'The camera isn\'t available. You can still choose a photo.';
+  String get scanCameraUnavailable => 'The camera isn\'t available right now.';
 
   @override
   String get scanCameraDenied =>
@@ -54,12 +53,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String stepValues(String withdrawal, String fee, String rate) {
-    return 'Withdrawal $withdrawal · fee $fee · 1 USD = $rate THB';
+    return 'Withdrawal $withdrawal · fee $fee · 1 USD = $rate THB';
   }
 
   @override
   String stepValuesMarkup(String values, String markup) {
-    return '$values · mark-up $markup';
+    return '$values · mark-up $markup';
   }
 
   @override
@@ -154,7 +153,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String atmRateValue(String rate) {
-    return '1 USD = $rate THB';
+    return '1 USD = $rate THB';
   }
 
   @override

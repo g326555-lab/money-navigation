@@ -37,8 +37,14 @@ abstract final class AppColors {
 
   // Camera screens (DESIGN.md: glass only for camera controls).
   static const cameraBackground = Color(0xFF000000);
+  static const cameraScrimTop = Color(0x73111418);
+  static const cameraScrimEnd = Color(0x00111418);
   // Dark glass: legible over both bright and dark camera scenes.
   static const cameraGlass = Color(0x66111418);
+  // Hairline around camera glass, so controls keep an edge on pure black.
+  static const cameraGlassBorder = Color(0x33FFFFFF);
+  // Hairline inside the dark card, separating the action from the reason.
+  static const dividerOnDark = Color(0x1FFFFFFF);
   static const detectionFill = Color(0x2619D873);
 
   static const iconBlue = Color(0xFF2463F0);
