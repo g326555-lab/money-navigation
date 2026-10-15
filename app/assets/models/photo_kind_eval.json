@@ -1,0 +1,49 @@
+{
+ "labels": [
+  "atm",
+  "card_terminal",
+  "other",
+  "price_tag",
+  "receipt_menu"
+ ],
+ "confusion": {
+  "atm": {
+   "atm": 18,
+   "card_terminal": 0,
+   "other": 2,
+   "price_tag": 1,
+   "receipt_menu": 1
+  },
+  "card_terminal": {
+   "atm": 3,
+   "card_terminal": 16,
+   "other": 0,
+   "price_tag": 1,
+   "receipt_menu": 1
+  },
+  "other": {
+   "atm": 0,
+   "card_terminal": 0,
+   "other": 17,
+   "price_tag": 3,
+   "receipt_menu": 1
+  },
+  "price_tag": {
+   "atm": 1,
+   "card_terminal": 0,
+   "other": 0,
+   "price_tag": 22,
+   "receipt_menu": 1
+  },
+  "receipt_menu": {
+   "atm": 0,
+   "card_terminal": 0,
+   "other": 0,
+   "price_tag": 1,
+   "receipt_menu": 21
+  }
+ },
+ "accuracy": 0.8545454545454545,
+ "held_out": 110,
+ "mac_ms_median": 4.998979498850531
+}

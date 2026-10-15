@@ -1,0 +1,5 @@
+atm
+card_terminal
+other
+price_tag
+receipt_menu
