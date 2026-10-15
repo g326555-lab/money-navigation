@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../rules/bill_check.dart';
+import '../../rules/ocr_layout.dart';
+import '../../rules/receipt_record.dart';
 import 'ai_trace.dart';
 import 'cloud_functions.dart';
 
@@ -66,12 +68,33 @@ class BillReader {
       () => checkBillFromVision(vision),
     );
     final traces = [visionTrace, checkTrace];
+    final merchant = merchantFromRows(_rows(lines));
     if (check == null) {
-      return BillReading.failed(BillFailure.doesNotAddUp, traces: traces);
+      return BillReading.failed(
+        BillFailure.doesNotAddUp,
+        traces: traces,
+        merchantName: merchant,
+      );
     }
-    return BillReading(check: check, traces: traces);
+    return BillReading(check: check, traces: traces, merchantName: merchant);
   }
 }
+
+/// The receipt's rows as printed, from Vision lines with corners.
+List<String> _rows(List<dynamic> lines) => rowsFromLines(
+  straightenLines([
+    for (final l in lines)
+      if (l is Map && l['text'] is String && l['corners'] is List)
+        OcrQuad(
+          text: l['text'] as String,
+          corners: [
+            for (final c in l['corners'] as List)
+              if (c is List && c.length >= 2 && c[0] is num && c[1] is num)
+                ((c[0] as num).toDouble(), (c[1] as num).toDouble()),
+          ],
+        ),
+  ]),
+).split('\n');
 
 enum BillFailure {
   /// No connection.
@@ -94,11 +117,21 @@ enum BillFailure {
 }
 
 class BillReading {
-  const BillReading({required BillCheck this.check, required this.traces})
-    : failure = null;
+  const BillReading({
+    required BillCheck this.check,
+    required this.traces,
+    this.merchantName,
+  }) : failure = null;
 
-  const BillReading.failed(BillFailure this.failure, {this.traces = const []})
-    : check = null;
+  const BillReading.failed(
+    BillFailure this.failure, {
+    this.traces = const [],
+    this.merchantName,
+  }) : check = null;
+
+  /// The shop name printed at the top, when one was read
+  /// ([merchantFromRows]); null otherwise.
+  final String? merchantName;
 
   final BillCheck? check;
   final BillFailure? failure;
