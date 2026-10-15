@@ -5,6 +5,19 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:record/record.dart';
 
+/// How the last [ClipRecorder.record] ended.
+enum ClipOutcome {
+  /// Speech was heard; the clip holds it.
+  speech,
+
+  /// Nobody spoke within [ClipRecorder.waitForSpeech]: try again, the
+  /// recorder works.
+  silence,
+
+  /// No permission or the recorder failed: use something else.
+  failed,
+}
+
 /// Records what the seller says as one short clip (16 kHz mono 16-bit PCM,
 /// the format Google Cloud Speech-to-Text takes as LINEAR16), for when the
 /// phone is online. It waits for speech, then stops on its own after a
@@ -33,6 +46,11 @@ class ClipRecorder {
   final AudioRecorder _rec;
   Completer<Uint8List?>? _done;
 
+  /// Why the last recording ended; a null clip is either silence (record
+  /// again) or a failure (fall back).
+  ClipOutcome get lastOutcome => _outcome;
+  ClipOutcome _outcome = ClipOutcome.failed;
+
   Future<bool> hasPermission() => _rec.hasPermission();
 
   /// Records one sentence. [onLevel] gets 0..1 levels for the waveform and
@@ -49,6 +67,7 @@ class ClipRecorder {
     DateTime? speechAt;
     DateTime? quietSince;
     StreamSubscription<Uint8List>? sub;
+    var broke = false;
     Timer? guard;
 
     Future<void> finish({required bool keep}) async {
@@ -60,11 +79,19 @@ class ClipRecorder {
       } on Object {
         // Already stopped.
       }
-      done.complete(keep && speechAt != null ? bytes.takeBytes() : null);
+      final clip = keep && speechAt != null ? bytes.takeBytes() : null;
+      _outcome = clip != null
+          ? ClipOutcome.speech
+          : broke
+          ? ClipOutcome.failed
+          : ClipOutcome.silence;
+      done.complete(clip);
     }
 
     try {
       if (!await _rec.hasPermission()) {
+        _outcome = ClipOutcome.failed;
+        _done = null;
         done.complete(null);
         return null;
       }
@@ -106,11 +133,15 @@ class ClipRecorder {
             finish(keep: false);
           }
         },
-        onError: (Object e) => finish(keep: false),
+        onError: (Object e) {
+          broke = true;
+          finish(keep: false);
+        },
         onDone: () => finish(keep: true),
       );
     } on Object catch (e) {
       if (kDebugMode) debugPrint('[clip] failed: $e');
+      _outcome = ClipOutcome.failed;
       if (!done.isCompleted) done.complete(null);
     }
     final result = await done.future;
