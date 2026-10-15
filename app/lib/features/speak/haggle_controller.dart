@@ -10,6 +10,8 @@ import '../../rules/haggle_rounds.dart';
 import '../../services/ai/ai_trace.dart';
 import '../../services/ai/cloud_functions.dart';
 import '../../services/ai/cloud_speech.dart';
+import '../../services/ai/gemini_item.dart';
+import '../../rules/new_item.dart';
 import '../../services/ai/item_matcher.dart';
 import '../../services/ai/item_resolver.dart';
 import '../../services/clip_recorder.dart';
@@ -115,7 +117,9 @@ class HaggleController extends ChangeNotifier {
     ClipRecorder? recorder,
     CloudSpeech? cloudSpeech,
     bool? cloudFirst,
+    GeminiItemResolver? itemGuesser,
   }) : _recorderOverride = recorder,
+       _guesser = itemGuesser ?? GeminiItemResolver(),
        _cloudSpeech = cloudSpeech ?? CloudSpeech(),
        _cloudFirst = cloudFirst ?? CloudFunctions.configured,
        _speech = speech ?? SpeechService(),
@@ -126,6 +130,22 @@ class HaggleController extends ChangeNotifier {
        _voice = voice ?? CloudVoice();
 
   final ItemResolver _resolver;
+
+  /// Gemini names an item the on-device matcher did not know: one of ours
+  /// ("Did they mean …?") or a new one, in the seller's own words.
+  final GeminiItemResolver _guesser;
+
+  /// A known item Gemini thinks was meant; the traveler confirms it.
+  SourcedItem? get suggestion => _suggestion;
+  SourcedItem? _suggestion;
+
+  /// An item outside our price list, named from what was heard or typed.
+  NewItem? get newItem => _newItem;
+  NewItem? _newItem;
+
+  /// How the item was named (Gemini), when it was.
+  AiTrace? get itemGuessTrace => _guessTrace;
+  AiTrace? _guessTrace;
 
   /// Cloud recognition hears a seller far better than the phone (15/15
   /// against 9/15 in quiet, 13/15 against 1/15 with market noise), so when
@@ -300,6 +320,7 @@ class HaggleController extends ChangeNotifier {
     _aiMatchWords = null;
     _voiceTrace = null;
     _heardTrace = null;
+    _clearGuess();
     _set(
       HaggleState(
         phase: HagglePhase.listening,
@@ -434,6 +455,46 @@ class HaggleController extends ChangeNotifier {
     _applyReply('', reply);
   }
 
+  void _clearGuess() {
+    _suggestion = null;
+    _newItem = null;
+    _guessTrace = null;
+  }
+
+  /// "Did they mean …?" answered: yes takes the suggested item.
+  void acceptSuggestion(bool yes) {
+    final s = _suggestion;
+    _suggestion = null;
+    if (yes && s != null) {
+      chooseItem(s);
+    } else {
+      notifyListeners();
+    }
+  }
+
+  /// An item typed by the traveler that is not on our list.
+  void useTypedItem(String name, double amount) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty || amount <= 0) return;
+    _resetHaggle();
+    _clearGuess();
+    _newItem = NewItem(
+      nameTh: trimmed,
+      nameEn: trimmed,
+      unit: PriceUnit.each,
+      category: ItemCategory.other,
+    );
+    _set(
+      HaggleState(
+        phase: HagglePhase.done,
+        heard: HeardPrice(amount: amount, unit: PriceUnit.each),
+        problem: HeardProblem.unknownItem,
+        canSpeak: _state.canSpeak,
+        typed: true,
+      ),
+    );
+  }
+
   void _resetHaggle() {
     _history = null;
     _exchanges.clear();
@@ -515,6 +576,7 @@ class HaggleController extends ChangeNotifier {
   /// one tap and the heard amount and unit are kept.
   void chooseItem(SourcedItem match) {
     _resetHaggle();
+    _clearGuess();
     final heard = _state.heard;
     if (heard == null) return;
     final withItem = HeardPrice(
@@ -544,6 +606,7 @@ class HaggleController extends ChangeNotifier {
   /// loud to hear. A visitor can't type Thai, so this skips speech text.
   Future<void> submitManual(SourcedItem match, double amount) async {
     _resetHaggle();
+    _clearGuess();
     if (_speech.isListening) await _speech.cancel();
     if (_recording) await _recorder.stop();
     final heard = HeardPrice(
@@ -696,8 +759,12 @@ class HaggleController extends ChangeNotifier {
       AiEngine.onDevice,
       () => _resolver.resolve(alternatives, _items, unit: heard.unit),
     );
-    // A newer sentence has arrived meanwhile, or nothing matched.
-    if (_disposed || _state.words != words || match == null) return;
+    if (_disposed || _state.words != words) return;
+    if (match == null) {
+      // Not one of ours on the phone: Gemini, with every transcript.
+      await _guessItem(words, heard, alternatives);
+      return;
+    }
     if (_state.problem != HeardProblem.unknownItem) return;
     final sourced = _items.firstWhere((s) => s.item.key == match.item.key);
     final withItem = HeardPrice(
@@ -721,6 +788,28 @@ class HaggleController extends ChangeNotifier {
         canSpeak: _state.canSpeak,
       ),
     );
+  }
+
+  Future<void> _guessItem(
+    String words,
+    HeardPrice heard,
+    List<String> alternatives,
+  ) async {
+    final guess = await _guesser.resolve(
+      alternatives.isEmpty ? [words] : alternatives,
+      [for (final s in _items) s.item],
+      unit: heard.unit,
+    );
+    if (_disposed || guess == null || _state.words != words) return;
+    if (_state.problem != HeardProblem.unknownItem) return;
+    _guessTrace = guess.trace;
+    final known = guess.known;
+    if (known != null) {
+      _suggestion = _items.firstWhere((s) => s.item.key == known.key);
+    } else {
+      _newItem = guess.newItem;
+    }
+    notifyListeners();
   }
 
   /// speech_to_text reports dB-like levels (about -2..10 on iOS, 0..10 on

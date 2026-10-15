@@ -18,6 +18,7 @@ import '../../data/market_price_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/haggle.dart';
 import '../../rules/haggle_rounds.dart';
+import '../../rules/new_item.dart';
 import '../../rules/personal_context.dart';
 import '../../rules/trip_ledger.dart';
 import '../../services/ai/ai_trace.dart';
@@ -152,8 +153,8 @@ class _HaggleScreenState extends State<HaggleScreen>
   Future<void> _saveToTrip() async {
     final state = _haggle.state;
     final heard = state.heard;
-    final match = state.match;
-    if (heard == null || match == null) return;
+    final itemKey = state.match?.item.key ?? _haggle.newItem?.key;
+    if (heard == null || itemKey == null) return;
     final trip = AppScope.of(context).trip;
     final navigator = Navigator.of(context);
     final paid = await showModalBottomSheet<double>(
@@ -163,7 +164,7 @@ class _HaggleScreenState extends State<HaggleScreen>
         asked: heard.amount,
         // The agreed price, or the seller's last one, once they answered.
         offer: _haggle.exchanges.isEmpty
-            ? state.verdict?.counterOffer
+            ? (state.verdict?.counterOffer ?? _newItemCounter(state)?.offerThb)
             : _haggle.exchanges.last.move.price,
       ),
     );
@@ -171,7 +172,7 @@ class _HaggleScreenState extends State<HaggleScreen>
     final save = saveFromHaggle(
       id: 'haggle-${DateTime.now().microsecondsSinceEpoch}',
       savedAt: DateTime.now(),
-      itemKey: match.item.key,
+      itemKey: itemKey,
       askedThb: heard.amount,
       paidThb: paid,
       placeName: _haggle.places?.place.name,
@@ -191,11 +192,11 @@ class _HaggleScreenState extends State<HaggleScreen>
     final l10n = AppLocalizations.of(context);
     final state = _haggle.state;
     final listening = state.phase == HagglePhase.listening;
+    final newItem = _haggle.newItem;
     final canSave =
         state.phase == HagglePhase.done &&
-        state.verdict != null &&
         state.heard != null &&
-        state.match != null;
+        ((state.verdict != null && state.match != null) || newItem != null);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
@@ -377,6 +378,10 @@ class _HaggleScreenState extends State<HaggleScreen>
       ?_aiMatchLine(l10n, state),
     ];
 
+    if (heard != null && _haggle.newItem != null) {
+      return _newItemContent(l10n, state, heard, _haggle.newItem!, saidSection);
+    }
+
     if (heard != null && state.problem == HeardProblem.unknownItem) {
       // The price came through but not the item: offer the items sold in
       // the heard unit, so one tap finishes the check.
@@ -385,24 +390,56 @@ class _HaggleScreenState extends State<HaggleScreen>
         for (final s in _haggle.items)
           if (unit == null || s.item.unit == unit) s,
       ];
+      final suggestion = _haggle.suggestion;
       return [
         _Message(
-          title: l10n.speakWhichItem,
+          title: suggestion == null
+              ? l10n.speakWhichItem
+              : l10n.haggleDidTheyMean(suggestion.item.nameEn),
           body: l10n.speakHeardPrice(_meaning(l10n, heard, null)),
         ),
         const SizedBox(height: AppSpacing.xl),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            for (final s in options.isEmpty ? _haggle.items : options)
-              _ItemChip(
-                label: s.item.nameEn,
-                selected: false,
-                onPressed: () => _haggle.chooseItem(s),
+        if (suggestion != null) ...[
+          Row(
+            children: [
+              Expanded(
+                child: AppButton.secondary(
+                  label: l10n.haggleNo,
+                  onPressed: () => _haggle.acceptSuggestion(false),
+                ),
               ),
-          ],
-        ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: AppButton.green(
+                  label: l10n.haggleYes,
+                  onPressed: () => _haggle.acceptSuggestion(true),
+                ),
+              ),
+            ],
+          ),
+          if (_haggle.itemGuessTrace case final t?)
+            GroupFooter(
+              l10n.aiNewItemLine(t.engine.displayName, t.elapsedLabel),
+            ),
+        ] else
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              for (final s in options.isEmpty ? _haggle.items : options)
+                _ItemChip(
+                  label: s.item.nameEn,
+                  selected: false,
+                  onPressed: () => _haggle.chooseItem(s),
+                ),
+              // Not on our list: the traveler names it.
+              _ItemChip(
+                label: l10n.haggleSomethingElse,
+                selected: false,
+                onPressed: () => _typeItem(heard.amount),
+              ),
+            ],
+          ),
         ...saidSection,
       ];
     }
@@ -719,6 +756,151 @@ class _HaggleScreenState extends State<HaggleScreen>
       ),
     ],
   );
+
+  /// A counter-offer for an item without a sourced range: the traveler's
+  /// own discount on this item, else their usual discount on any item.
+  /// Null without any such record.
+  CounterFromHistory? _newItemCounter(HaggleState state) {
+    final item = _haggle.newItem;
+    final heard = state.heard;
+    if (item == null || heard == null) return null;
+    final history = pastPurchasesFromSaves(AppScope.of(context).trip.saves);
+    final now = DateTime.now();
+    return counterFromHistory(item.key, heard.amount, history, now) ??
+        counterFromHistory(_anyItem, heard.amount, [
+          for (final p in history)
+            PastPurchase(
+              itemKey: _anyItem,
+              paidThb: p.paidThb,
+              askedThb: p.askedThb,
+              at: p.at,
+              isSample: p.isSample,
+            ),
+        ], now);
+  }
+
+  static const _anyItem = 'any';
+
+  List<Widget> _newItemContent(
+    AppLocalizations l10n,
+    HaggleState state,
+    HeardPrice heard,
+    NewItem item,
+    List<Widget> saidSection,
+  ) {
+    final settings = AppScope.of(context).settings;
+    final ask = endingText(l10n, settings.politeEnding);
+    final counter = _newItemCounter(state);
+    final thai = Localizations.localeOf(context).languageCode == 'th';
+    final name = thai || item.nameEn == item.nameTh
+        ? item.nameTh
+        : '${item.nameEn} · ${item.nameTh}';
+    final amount = AppFormat.roundedAmount(heard.amount, marketCurrency);
+    return [
+      _Message(
+        title: l10n.haggleNewItemHeard(
+          name,
+          amount,
+          _unitLabel(l10n, heard.unit ?? item.unit),
+        ),
+        body: l10n.haggleNoRange,
+      ),
+      if (_haggle.itemGuessTrace case final t?)
+        GroupFooter(l10n.aiNewItemLine(t.engine.displayName, t.elapsedLabel)),
+      if (counter != null) ...[
+        const SizedBox(height: AppSpacing.zoneGap),
+        Builder(
+          builder: (context) {
+            final price = AppFormat.roundedNumber(counter.offerThb);
+            final sentence = l10n.counterOfferSentence(price, ask);
+            return _CounterCard(
+              label: l10n.speakCounterLabel,
+              amount: l10n.speakCounterAmount(price),
+              sentence: sentence,
+              sayIt: l10n.speakSayIt,
+              speakingLabel: l10n.speakSpeaking,
+              noVoice: l10n.speakNoVoice,
+              canSpeak: state.canSpeak,
+              speaking: state.speaking,
+              onSpeak: () => _haggle.speakCounter(sentence),
+              showSeller: l10n.haggleShowSeller,
+              onShowSeller: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => ShowSellerScreen(
+                    haggle: _haggle,
+                    sentence: sentence,
+                    amount: l10n.showSellerAmount(price),
+                    meaning: thai ? null : l10n.haggleOfferMeaning(price),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+        GroupCard(
+          children: [
+            GroupRow(
+              title: l10n.haggleUsualDiscountRow,
+              subtitle: _recordsBasis(
+                l10n,
+                counter.recordsUsed,
+                counter.sampleRecords,
+              ),
+              value: l10n.memoryDiscount(
+                NumberFormat.decimalPattern('en')
+                    .format(counter.medianDiscountPercent.round()),
+              ),
+            ),
+          ],
+        ),
+      ],
+      ...saidSection,
+    ];
+  }
+
+  /// "Something else": the traveler types the item and the price.
+  Future<void> _typeItem(double heardAmount) async {
+    final l10n = AppLocalizations.of(context);
+    final name = TextEditingController();
+    final price = TextEditingController(
+      text: AppFormat.roundedNumber(heardAmount).replaceAll(',', ''),
+    );
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.haggleTypeItem),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: name,
+              autofocus: true,
+              decoration: InputDecoration(hintText: l10n.haggleTypeItemHint),
+            ),
+            TextField(
+              controller: price,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(suffixText: marketCurrency),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.haggleNo),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.haggleYes),
+          ),
+        ],
+      ),
+    );
+    final amount = double.tryParse(price.text.trim());
+    if (ok == true && amount != null) _haggle.useTypedItem(name.text, amount);
+    name.dispose();
+    price.dispose();
+  }
 
   /// "You paid 90 THB here 2 days ago · from your 2 past records".
   static String _paidBeforeLine(

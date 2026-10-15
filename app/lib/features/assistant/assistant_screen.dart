@@ -123,7 +123,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
               const SizedBox(height: AppSpacing.xxl),
               _CashHero(plan: plan),
               SectionHeader(l10n.assistantStops),
-              _stops(l10n, plan, selected),
+              _stops(l10n, plan, selected, demo: scope.settings.demoState),
               const SizedBox(height: AppSpacing.zoneGap),
               PayCompareCard(
                 trip: trip,
@@ -158,7 +158,25 @@ class _AssistantScreenState extends State<AssistantScreen> {
     );
   }
 
-  Widget _stops(AppLocalizations l10n, DayCashPlan? plan, StopCash? selected) {
+  Widget _stops(
+    AppLocalizations l10n,
+    DayCashPlan? plan,
+    StopCash? selected, {
+    required bool demo,
+  }) {
+    // A demo traveler is somewhere else: the phone's calendar is not
+    // theirs, so say it is off rather than "no stops".
+    if (demo) {
+      return GroupCard(
+        children: [
+          GroupRow(
+            leading: const IconTile.blue(icon: Icons.event_rounded),
+            title: l10n.nearbyDemoOff,
+            subtitle: l10n.calendarPrivacy,
+          ),
+        ],
+      );
+    }
     final access = _briefing.calendar.access;
     if (access != CalendarAccess.granted) {
       return GroupCard(

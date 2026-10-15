@@ -8,6 +8,9 @@ import 'package:money_navigation/rules/haggle.dart';
 import 'package:money_navigation/rules/haggle_rounds.dart';
 import 'package:money_navigation/services/ai/ai_trace.dart';
 import 'package:money_navigation/services/ai/cloud_speech.dart';
+import 'package:money_navigation/services/ai/gemini_item.dart';
+import 'package:money_navigation/rules/new_item.dart';
+import 'package:money_navigation/rules/haggle.dart';
 import 'package:money_navigation/services/clip_recorder.dart';
 
 import 'haggle_controller_test.dart'
@@ -88,7 +91,10 @@ class FakeCloudSpeech implements CloudSpeech {
   /// One answer per call, the last repeated; null means the cloud failed.
   final List<List<String>?> answers;
   final calls = <(Uint8List, int, List<String>)>[];
-  static const trace = AiTrace(AiEngine.cloudSpeech, Duration(milliseconds: 1200));
+  static const trace = AiTrace(
+    AiEngine.cloudSpeech,
+    Duration(milliseconds: 1200),
+  );
 
   @override
   Future<(List<String>, AiTrace)?> recognize(
@@ -99,9 +105,10 @@ class FakeCloudSpeech implements CloudSpeech {
   }) async {
     calls.add((audio, sampleRateHertz, phrases));
     await gate?.future;
-    final a = answers[calls.length - 1 < answers.length
-        ? calls.length - 1
-        : answers.length - 1];
+    final a =
+        answers[calls.length - 1 < answers.length
+            ? calls.length - 1
+            : answers.length - 1];
     return a == null ? null : (a, trace);
   }
 }
@@ -115,6 +122,24 @@ class CountingTts extends FakeTts {
     return super.prepare();
   }
 }
+
+class FakeGuesser implements GeminiItemResolver {
+  FakeGuesser(this.answer);
+  final ItemGuess? Function(List<MarketItem> items) answer;
+  int calls = 0;
+
+  @override
+  Future<ItemGuess?> resolve(
+    List<String> alternatives,
+    List<MarketItem> items, {
+    PriceUnit? unit,
+  }) async {
+    calls++;
+    return answer(items);
+  }
+}
+
+const guessTrace = AiTrace(AiEngine.gemini, Duration(milliseconds: 2600));
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -134,6 +159,7 @@ void main() {
       ['มะม่วงกิโลละ 150'],
     ],
     bool cloudFirst = true,
+    FakeGuesser? guesser,
   }) {
     speech = FakeSpeech();
     tts = CountingTts();
@@ -148,6 +174,7 @@ void main() {
       recorder: recorder,
       cloudSpeech: cloud,
       cloudFirst: cloudFirst,
+      itemGuesser: guesser ?? FakeGuesser((_) => null),
     );
   }
 
@@ -388,6 +415,71 @@ void main() {
 
     expect(rec.recordCalls, 1);
     expect(speech.listenCalls, greaterThan(0));
+    c.dispose();
+  });
+
+  test('an item outside the list is named and kept, with no verdict', () async {
+    final c = build(
+      answers: const [
+        ['ลาเต้วานิลลาแก้วละ 120'],
+      ],
+      guesser: FakeGuesser(
+        (_) => const ItemGuess(
+          newItem: NewItem(
+            nameTh: 'ลาเต้วานิลลา',
+            nameEn: 'Vanilla latte',
+            unit: PriceUnit.each,
+            category: ItemCategory.drink,
+          ),
+          confidence: 0.95,
+          trace: guessTrace,
+        ),
+      ),
+    );
+    await c.start();
+    await settle();
+    expect(c.newItem?.nameEn, 'Vanilla latte');
+    expect(c.newItem?.key, 'new:ลาเต้วานิลลา');
+    expect(c.itemGuessTrace, same(guessTrace));
+    expect(c.state.heard?.amount, 120);
+    expect(c.state.verdict, isNull);
+    c.dispose();
+  });
+
+  test(
+    'a known item from Gemini is only a suggestion until confirmed',
+    () async {
+      final c = build(
+        answers: const [
+          ['อะไรกิโลละ 150'],
+        ],
+        guesser: FakeGuesser(
+          (items) => ItemGuess(
+            known: items.firstWhere((i) => i.key == 'mango'),
+            confidence: 0.92,
+            trace: guessTrace,
+          ),
+        ),
+      );
+      await c.start();
+      await settle();
+      expect(c.suggestion?.item.key, 'mango');
+      expect(c.state.verdict, isNull);
+      c.acceptSuggestion(true);
+      expectMango150(c.state);
+      expect(c.suggestion, isNull);
+      c.dispose();
+    },
+  );
+
+  test('a typed item outside the list keeps the typed price', () async {
+    final c = build();
+    await c.start();
+    await settle();
+    c.useTypedItem('Sunscreen', 350);
+    expect(c.newItem?.nameEn, 'Sunscreen');
+    expect(c.state.heard?.amount, 350);
+    expect(c.state.typed, isTrue);
     c.dispose();
   });
 
