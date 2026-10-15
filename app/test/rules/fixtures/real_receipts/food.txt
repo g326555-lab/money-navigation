@@ -1,0 +1,182 @@
+### F01 S&P Bus Stop cafe (unsigned promo discount, VAT incl) | cafe | https://www.flickr.com/photos/canadagood/28793095317/ | exact | adds up: yes
+TAX INVOICE (ABB)
+N-ลาเต้เย็น 16 oz. PT 1 78.00T
+N-ครัวซองท์ยอดดอกโรล 2 70.00T
+**Promotion 05 วันพุธ ลด 20%
+Sub-TOTAL (Item 3) 148.00
+ลด Promotion 14.00
+Net-TOTAL 134.00
+Vat... 8.77
+Cash : 200.00 Change : 66.00
+
+### F02 Ta-Kri JW Marriott (discount, SVC, VAT on top) | hotel restaurant | https://www.flickr.com/photos/gojupete/50272735382/ | exact | adds up: yes
+1 Phak Thod 290.00 T1
+1 Satay Gai 270.00 T1
+1 Gaeng Karee Goong 420.00 T1
+1 Kra Prow Moo 320.00 T1
+1 Matua S.CF. 900.00 T1
+1 AP Member Benefit 10% (10.00 %) -220.00
+Food 1300.00
+Wine 900.00
+Discount -220.00
+10% SVC 198.00
+7% Vat 152.46
+Total Due 2330.46
+TIPS : ____
+
+### F03 Friendship Khao Lak (handwritten, no decimals) | beach restaurant | https://www.flickr.com/photos/gojupete/50095721347/ | partial | adds up: yes
+White wine 150 300
+1 S/s 60 60
+1 Tom yum 150 150
+1 Fried Roasted Chili 150 150
+รวมเงิน TOTAL 660
+
+### F04 Mali Khao Lak (handwritten, tally qty) | beach restaurant | https://www.flickr.com/photos/gojupete/50939984707/ | partial | adds up: yes
+1 Chang L 110 110
+II White wine 149 298
+1 D/F Squid 130
+1 Green curry prawn coconut 200
+1 Chicken Thai curry 130
+II 20 40
+รวมเงิน TOTAL 908
+
+### F05 Sunset View Khao Lak (handwritten) | beach bar | https://www.flickr.com/photos/gojupete/50271899148/ | exact | adds up: yes
+1 Paneang curry with Chicken 120 120
+1 Shrimp Coconut Milk 150 150
+1 Steamed rice 20 20
+1 Singha L 100 100
+II White wine 120 240
+รวมเงิน TOTAL 630
+
+### F06 Hops Brewhouse Pattaya (SC + VAT on top, rounding) | brewpub | https://www.flickr.com/photos/neumeyer/52672191596/ | exact | adds up: yes
+Receipt / TAX Invoice (ABB) VAT Included
+1 PIZZA ANCHOVIES 280.00
+2 WHEAT BEER 0.5 L 350.00
+Items: 3
+Subtotal: 630.00
+Service Charge(10%): 63.00
+Before TAX: 693.00
+TAX(7%): 48.51
+Rounding: 0.49
+Total: 742.00
+Cash 1,000.00
+Change 258.00
+
+### F07 Sun Sabella Pattaya (VAT on top, service 0.00) | bar-restaurant | https://www.flickr.com/photos/neumeyer/54382470093/ | exact | adds up: yes
+1 Spicy Thai Salad w/Grill 220.00
+1 D/F Shrimps Cake 220.00
+1 Soda 50.00
+1 TN Hot Coffee (Pot) 180.00
+1 Margarita 190.00
+Subtotal 860.00
+Service 10% 0.00
+Tax 7% 60.20
+TOTAL 920.20
+
+### F08 Inthanin coffee (VAT incl, amounts above labels) | cafe | https://www.flickr.com/photos/neumeyer/54400404456/ | partial | adds up: yes
+Receipt/Tax invoice (ABB)
+คาปูชิโน่ร้อน(DINE IN) 1 55.00V
+ครัวซองท์ผักโขมอบชีส 1 60.00V
+115.00
+115.00
+ITEMS::2
+Cash 200.00
+Receive Cash:/Change 85.00
+VATable: 107.48
+VAT:7.00% 7.52
+Total VATable 115.00
+*** VAT INCLUDED ***
+
+### F09 Kai Thong Muang Thong (VATable = gross) | Thai restaurant | https://www.flickr.com/photos/68755434@N00/5939295905/ | exact | adds up: yes
+ใบเสร็จรับเงิน
+กุ้งผัดซอสฮ่องกง(เล็ก) 1 420.00
+ปลาเก๋านึ่งซีอิ๊ว (เล็ก) 1 950.00
+ใหญ่-เนื้อ(เล็ก) 1 120.00
+จิ้มจุ่ม 1 250.00
+น้ำแข็งถัง(เล็ก) 1 15.00
+ข้าวถ้วย 3 48.00
+น้ำ 3 45.00
+ITEMS :11 1,848.00
+Total 1,848.00
+Credit card : 1848.00
+VATable 1,848.00
+VAT 7.00% 120.90
+
+### F10 Bubble in the Forest (VAT and SC inside item prices) | cafe | https://www.thairath.co.th/news/society/2222811 | partial | adds up: yes
+1 174.33
+1 747.93
+3 522.99
+1 139.23
+1 291.33
+4 93.60
+1 256.23
+2 418.86
+ยอดรวม 14 2,644.50
+Vat 7% (รวม) 173.00
+ค่าบริการ 10% (รวม) 224.68
+ทั้งหมด ฿2,644.50
+
+### F11 Lastberry cafe (labels hidden, cash/change) | cafe | https://www.flickr.com/photos/neumeyer/49555746697/ | partial | adds up: yes
+H-Cappuccino 1 65.00
+MixedBerryCrumble 1 89.00
+Subtotal 2 154.00
+฿154.00
+฿500.00
+฿346.00
+
+### F12 Happy Herbs Mae Sot (minus promo, cash) | pub | https://www.flickr.com/photos/neumeyer/54782442341/ | partial | adds up: yes
+Crackers 1 x 50.00 50.00
+Tomato Salad 1 x 50.00 50.00
+Soda 1 x 20.00 20.00
+Margarita 1 x 199.00 199.00
+Daiquiri(Rum) 1 x 145.00 145.00
+Margarita 1 x 199.00 199.00
+December Promotions -199.00
+Total 464.00
+Cash 464.00
+
+### F13 Cafe Uthai Thani (Ocha POS, ฿, cash/change unlabeled) | small cafe | https://www.flickr.com/photos/neumeyer/55183598105/ | partial | adds up: yes
+โรตีแป้งมาเลย์ 2 60.00
+แกงกะหรี่ปลาแรด(ราดข้าว) 1 125.00
+ไข่เจียวญี่ปุ่น 1 40.00
+โซดา 1 10.00
+มะนาว 2 15.00
+คาปูชิโน่(ร้อน) 1 100.00
+ยอดรวม 8 350.00
+ทั้งหมด ฿350.00
+฿500.00
+฿150.00
+
+### F14 Rabieng Rimnam Phetchaburi (Ocha, no VAT) | restaurant | https://www.flickr.com/photos/neumeyer/54550150127/ | exact | adds up: yes
+เบียร์สิงห์ Singha(ราคาปกติ) 1 90.00
+แกงหัวตาล Sugar Palm Tree Fruit in Curry(กุ้ง Prawn) 1 120.00
+ข้าวสวย (จาน) A Plate of steamed Rice 2 20.00
+ยอดรวม 4 230.00
+ทั้งหมด ฿230.00
+
+### F15 Kingdao Nan (unit and line price columns, 0.00 modifier) | cafe-restaurant | https://www.flickr.com/photos/neumeyer/52702252282/ | exact | adds up: yes
+ข้าวผัดไข่ (M) 1 90.00 90.00
+สลัดปลาดอลลี่ 1 99.00 99.00
+น้ำมะนาว (น้ำมะนาวเย็น) 1 55.00 55.00
+- ระดับความหวาน: หวานน้อย 1 0.00 0.00
+เอสเปรสโซ่ (ร้อน) 1 55.00 55.00
+คาปูชิโน่ (ร้อน) 1 55.00 55.00
+น้ำแข็งถัง (น้ำแข็ง..) 1 15.00 15.00
+ยอดรวม 6 369.00
+ทั้งหมด ฿369.00
+
+### X02 Sri Ayudhya Seafood viral overcharge (does not add up -> expect NOT VERIFIED) | seafood restaurant | https://www.bangkokpost.com/thailand/general/563935/tourists-pay-8840-baht-for-a-meal | partial | adds up: no
+ผัก vegi 300
+ข้าว rice 150
+ปลา fish 1800
+ปู Crab 1600
+หมึก octopus 960
+กุ้ง prawn 1750
+ข้าว rice 150
+ชา tea 80
+ผ้า towel 40
+ค่าบริการ ภาษี 17%
+8039
+ทิป 800
+รวมเงิน TOTAL 8840
+

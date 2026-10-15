@@ -1,0 +1,37 @@
+### T01 Davis Hotel coffee shop (service 10%, no VAT line) | hotel F&B | https://www.flickr.com/photos/avlxyz/4463871845 | exact | adds up: yes
+PHAD THAI 1 125.00
+GREEN CURRY FRIED RIC 1 115.00
+TOM YUM SEAFOOD 1 145.00
+BOILED RICE SOUP 1 95.00
+PAPAYA SALAD 1 75.00
+PLAIN RICE 1 25.00
+MINERAL WATER 1 30.00
+Sub-Total 610.00
+Service 10% 61.00
+Total 671.00
+
+### T02 Starbucks Suvarnabhumi airside (VAT incl, back-calculated) | airport shop | https://www.flickr.com/photos/avlxyz/4463871845 | exact | adds up: yes
+1 Sw-Bkk-Ham Cheddar C TG 105.00
+Subtotal 105.00
+TOTAL 105.00
+Cash 105.00
+VAT included TAX Inv.(ABB)No.: 25703
+Vat: 6.87
+Amt: 98.13
+105.00
+
+### T03 Bamboo farm homestay Surin (nights x rate) | guesthouse | https://www.flickr.com/photos/neumeyer/54458607725 | exact | adds up: yes
+ใบเสร็จรับเงิน เลขที่ 680006 วันที่ 10 ม.ค. 68
+1 Classic Bamboo1 ราคาต่อหน่วย 1,431.00 จำนวนคืน 6 รวม 8,586.00
+ยอดรวม 8,586.00
+
+### T04 Phuket RT-PCR receipt (one item, no decimals) | clinic | https://www.flickr.com/photos/70680479@N05/51997229056 | exact | adds up: yes
+Receipt No:621955 Payment Date:Apr 09, 2022
+RT - PCR booking for Test and Go / Sandbox Program 1500
+Total (Thai Baht) 1500
+
+### T05 Immigration Surin fee (handwritten, dash satang) | government fee | https://www.flickr.com/photos/neumeyer/54458506483 | exact | adds up: yes
+ใบเสร็จรับเงิน ในราชการสำนักงานตำรวจแห่งชาติ เล่มที่ 54187 เลขที่ 25
+ค่าธรรมเนียม ขออยู่ต่อ 1,900 —
+รวม บาท 1,900 —
+

@@ -41,6 +41,7 @@ class BillCheck {
     this.beforeVat,
     this.itemCount,
     bool? vatOnTop,
+    this.serviceIncluded = false,
   }) : vatOnTop = vatOnTop ?? kind == BillKind.vatOnTop;
 
   final BillKind kind;
@@ -62,8 +63,12 @@ class BillCheck {
   /// charge as on a "++" restaurant bill) rather than inside the prices.
   final bool vatOnTop;
 
+  /// The service charge printed as already inside the item prices
+  /// ("ค่าบริการ 10% (รวม)"), not added on top.
+  final bool serviceIncluded;
+
   /// The service charge was added after the subtotal, not hidden in prices.
-  bool get serviceAddedOnTop => serviceCharge != null;
+  bool get serviceAddedOnTop => serviceCharge != null && !serviceIncluded;
 
   /// The VAT amount is already inside the total (total - VAT = before tax).
   bool get vatIncluded => vat != null && beforeVat != null && !vatOnTop;
@@ -72,7 +77,7 @@ class BillCheck {
   bool get vatAddedOnTop => vatOnTop;
 
   /// Nothing was added on top of what the goods cost.
-  bool get nothingAdded => serviceCharge == null && !vatAddedOnTop;
+  bool get nothingAdded => !serviceAddedOnTop && !vatAddedOnTop;
 }
 
 /// Checks a bill from Cloud Vision's `read-text` answer:

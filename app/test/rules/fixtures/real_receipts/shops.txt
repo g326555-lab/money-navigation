@@ -1,0 +1,156 @@
+### S01 7-Eleven Din So e-receipt | convenience | https://pantip.com/topic/44247066 | exact | adds up: yes
+1 Hเอสที แพคค้า 10.00
+1 Hหนองโพนนมปรุงแต่ง 10.00
+2 Hน้ำแร่เพอร์ร่า 750 @12.00 24.00
+ยอดสุทธิ 4 ชิ้น 44.00
+ทรูมันนี่วอลเล็ท 44.00
+
+### S02 7-Eleven Nayom e-receipt | convenience | https://pantip.com/topic/44098259 | exact | adds up: yes
+1 มาม่าคัพ รสต้มแซ่บ 14.00
+1 ข้าวกะเพราไก่+ไข่ต้ม 49.00
+ยอดสุทธิ 2 ชิ้น 63.00
+ทรูวอลเล็ท7App 63.00
+
+### S03 7-Eleven Isaraphap 37 (0.00N lines, cash/change one line) | convenience | https://pantip.com/topic/43728333 | exact | adds up: yes
+1 แซนวิชชีสซี่เบคอนสลิ 29.00
+1 UHTโฟร์โมสต์หวาน 12.50
+1 Hคุกกี้ดิวเบอร์รี่ แยม 12.00
+1 ทิวลี่ซีเล็คเวเฟอร์บร 10.00
+1 บงบงช็อกโกแลต EZ 39.00
+1 Hนมเปรี้ยวบีทาเก้น 20.00
+1 ตราปั๊มจังหวัด 0.00N
+1 ภารกิจช้อปหน้าร้าน 0.00N
+1 M-Stamp(บาท) 0.00N
+ยอดสุทธิ 6 ชิ้น 122.50
+เงินสด/เงินทอน 125.00 2.50
+
+### S04 7-Eleven delivery (unsigned discounts and coupons) | convenience | https://pantip.com/topic/43770492 | exact | adds up: yes
+1 เค้กทุบดูไบช็อกโกแล 45.00
+2 ทรอลลี่เยลลี่ตัวหนอน @10.00 20.00
+2 ทรอลลี่เยลลี่บอทเทิล @10.00 20.00
+2 ทรอลลี่เยลลี่ไนท์ครอ @10.00 20.00
+2 ทรอลลี่เยลลี่ไดโนเร็ @10.00 20.00
+1 Hเต้าหู้นมสด เจ้าจุก 22.00
+1 Hพุดดิ้งมะพร้าวอ่อน 22.00
+2 @บะหมี่ชามคุกกิ้งทาว @22.00 44.00
+1 @บะหมี่ชามคุกกิ้งทาว 22.00
+4 Hเฉาก๊วยเส้นในน้ำเ @12.00 48.00
+2 นมพาสฯดัชมิลล์ 400 @26.75 53.50
+10 Delivery Servi @0.00 0.00N
+1 ตราปั๊มจังหวัด 0.00
+1 ภารกิจช้อปครบรับเงิน 0.00
+1 ภารกิจช้อป7Delivery 0.00
+3 M-Stamp(บาท) 0.00
+ยอดรวม 336.50
+4 ฟรีทรอลลี่เยลลี่ ด. 40.00
+1 ส่วนลดดัชมิลล์ 4.50
+2 TMWส่วนลดพุดดิ้ง เต้าหู้ เต้า 6.00
+1 คูปองคุกกิ้งทาวน์Line 22.00
+1 คูปองเฉาก๊วยปุ้นแอนด์เปาLi 5.00
+1 M-Stamp 1.00
+ยอดสุทธิ 30 ชิ้น 258.00
+ทรูวอลเล็ท7App 258.00
+R#1000178440P1 :0977250 04/10/68 20:44
+แต้มสมาชิก ได้รับ +75 ใช้ไป 0 คงเหลือ 80
+
+### S05 Lotus's Go Fresh (coupon as tender) | supermarket | https://pantip.com/topic/43889105 | partial | adds up: yes
+คุ้มค่าข้าวเสาไห้35% 89.00N
+มาม่าเส้นหมี่น้ำใสX4 27.00V
+ยอดรวม 116.00
+คูปองท้ายบิล 25.00
+QR PromptP 91.00
+เงินทอน 0.00
+
+### S06 Big C Mini (qty@unit, minus discount, VAT incl) | supermarket | https://pantip.com/topic/43655513 | exact | adds up: yes
+P พริงเกิลส์ 102 132.00
+3.000@ 44.00/PCS
+A หมูแท่งออริ18ก 40.00
+2.000@ 20.00/PCS
+1A โอริโอโรลานิล54 20.00
+1P โอจิซิน้ำผึ้ง40 20.00
+1A โอจิซิช้าวผัด 20.00
+ลด โอริโอโรลานิล -7.00
+Total (8ชิ้น)*******225.00
+QR Payment 225.00
+Vatable 225.00
+Vat 14.72
+*VAT INCLUDED*
+07-31-2025 15:05 Rcpt#101518909
+
+### S07 Big C full e-tax invoice (discount column) | supermarket | https://pantip.com/topic/43926803 | exact | adds up: yes
+3.000 SINO กระเช้า 1699_2026_A 1,699.00 1,698.84 3,398.16
+3.000 SINO กระเช้า 1699_2026_B 1,699.00 1,699.16 3,397.84
+3.000 SINO กระเช้า 1299_2026 1,299.00 1,299.00 2,598.00
+1.000 SINO กระเช้า 1499_2026 1,499.00 0.00 1,499.00
+ชำระโดย MAST 10,893.00
+รวมเงิน 10,893.00
+มูลค่าสินค้าที่ยกเว้นภาษีมูลค่าเพิ่ม 0.00
+มูลค่าสินค้าที่เสียภาษีมูลค่าเพิ่ม 10,180.37
+ภาษีมูลค่าเพิ่ม 712.63
+ส่วนลดเงินสด 0.00
+รวมเงินสุทธิ 10,893.00
+
+### S08 Watsons Ladprao (VAT off by 1 satang) | pharmacy | https://pantip.com/topic/38448645 | exact | adds up: yes
+277138 #SDSSMRiceCell+Gra 32.00 T
+277139 #SDSSMApple+WildHo 32.00 T
+278421 #BanobagiMaskRelax 44.00 T
+278420 #BanobagiMaskLifti 44.00 T
+273424 SenkaMaskExtraWh25 39.00 T
+277915 #MN RedWineEssenMa 24.00 T
+273424 SenkaMaskExtraWh25 39.00 T
+273422 SenkaExtraMask 25m 39.00 T
+273423 SenkaMaskSoothin25 39.00 T
+9 SUBTOTAL 332.00
+CASH 500.00
+CHANGE 168.00
+Rate T 7.00% NET 310.29 VAT 21.71 TOTAL 332.00
+
+### S09 Boots Sriracha (buy 1 get 1 minus lines) | pharmacy | https://pantip.com/topic/38088349 | exact | adds up: yes
+S&G HAPPY GLAMPER T 600.00
+S&G HAPPY GLAMPER T 600.00
+PROMOTION DISC. -600.00
+S&G HAPPY GLAMPER T 600.00
+S&G SUGAR CRUSH SC T 455.00
+PROMOTION DISC. -455.00
+S&G THE RIGHT BUTT T 480.00
+PROMOTION DISC. -25.00
+S&G THE RIGHT BUTT T 480.00
+PROMOTION DISC. -455.00
+S&G BREAKFAST SCRU T 455.00
+S&G PINK EDT T 890.00
+PROMOTION DISC. -600.00
+S&G PINK EDT T 890.00
+PROMOTION DISC. -290.00
+TOTAL 3,025.00
+SALE VISA-TMB 3,025.00
+CHANGE 0.00
+VATABLE 2,827.10
+VAT 7% 197.90
+TOTAL QTY 9
+SALES SAVING : -2,425.00
+
+### S10 Pearly Tea kiosk (minus promo, VAT incl) | shop | https://pantip.com/topic/42863263 | exact | adds up: yes
+ออริจินัลมิลค์ที 1 39.00
+PLTไข่มุกจิ๋ว 1 10.00
+โกโก้มิลค์ที 1 50.00
+Total Baht 99.00
+PLTแก้วที่2 ลด50% -19.50
+NET BAHT 79.50
+QR\ PROMPTPAY 79.50
+VATAble 79.50
+VAT 7.00% 5.20
+
+### S11 Makro PRO e-receipt B (฿ sign, discount + coupon) | wholesale | https://pantip.com/topic/44139686 | partial | adds up: yes
+ยอดสั่งซื้อ 1,974.50 ฿
+ส่วนลด -12.00 ฿
+คูปอง -12.00 ฿
+ค่าจัดส่ง 0.00 ฿
+ยอดชำระ 1,950.50 ฿
+
+### X01 Makro PRO e-receipt A (printed total wrong -> expect NOT VERIFIED) | wholesale | https://pantip.com/topic/44139686 | partial | adds up: no
+ยอดสั่งซื้อ 1,974.50 ฿
+ส่วนลด -12.00 ฿
+คูปอง -12.00 ฿
+ค่าจัดส่ง 0.00 ฿
+ยอดชำระ 1,962.50 ฿
+

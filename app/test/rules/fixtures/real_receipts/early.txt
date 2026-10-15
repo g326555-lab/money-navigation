@@ -1,0 +1,230 @@
+### 01 7-Eleven 2006 (VAT incl, cash/change one line) | | | | adds up: yes
+7-Eleven TAX INVOICE(ABB) (VAT Included)
+1 น้ำดื่มสิงห์ 750 CC 9.00
+Total (1) 9.00
+Cash/Change 20.00 11.00
+
+### 02 7-Eleven 2018 (0.00 promo lines) | | | | adds up: yes
+ITEM 25.00
+ITEM 25.00
+ITEM 6.00
+0.00
+0.00
+0.00
+ยอดสุทธิ 3 ชิ้น 56.00
+เงินสด/เงินทอน 100.00 44.00
+
+### 03 7-Eleven 7App (qty @, discounts without minus) | | | | adds up: yes
+12 ลิปตันเลมอน ไม่มีน้ำ @20.00 240.00
+1 เค้กโรลวานิลาLP 39.00
+3 หมูหยอง @20.00 60.00
+3 Hแซนวิชคุกกี้โอริโอ @6.00 18.00
+1 แพดเดิลป๊อบ 15.00
+2 กล้วยหอมทอง @9.00 18.00N
+1 S-โอวัลตินคูลแคลเซ 16.00
+1 โพนี่เครื่องทำป๊อบคอ 299.00
+1 ภารกิจช้อปครบรับเงินคืน 0.00N
+ยอดรวม 705.00
+10 ส่วนลดลิปตันเลมอน 50.00
+1 ฟรีคุกกี้แซนวิชโอริโอ ด. 6.00
+ยอดสุทธิ 24 ชิ้น 649.00
+ทรูวอลเล็ท7App 649.00
+
+### 04a Big C (21 items, minus discounts, VAT incl) | | | | adds up: yes
+159.00
+27.00
+69.00
+69.00
+25.00
+24.00
+29.00
+39.00
+119.00
+12.00
+16.50
+54.00
+30.00
+40.00
+29.00
+99.00
+99.00
+125.00
+125.00
+109.00
+25.00
+P โอวัลติน700 207.00
+3.000@ 69.00/PCS
+ลด PH_คอลเกตจาน -138.00
+2.000@ 69.00/PCS
+1ลด นีเวีย -62.50
+1ลด นีเวีย -62.50
+ลด โอวัลติน700 -69.00
+3.000@ 23.00/PCS
+Total (24ชิ้น)*****1,198.50
+1,198.50
+VISA 1,198.50
+Vatable 1,198.50
+Vat 78.41
+*VAT INCLUDED*
+
+### 04b Big C (coupon, VAT-exempt rice) | | | | adds up: yes
+69.00
+69.00
+35.00
+49.00
+1ก#ข้าวกล้อง 189.00
+135.00
+1ก#ข้าวกล้อง 189.00
+52.00
+52.00
+Total (9ชิ้น)*******839.00
+CPN 130.00
+CASH 709.00
+Vatable 461.00
+Vat 30.16
+
+### 05 Starbucks (amounts above labels, redemptions) | | | | adds up: yes
+1 V.CRML FR 175.00
+Personal Cup -10.00
+>1 1 PUMP 0.00
+>1 PCUP 0.00
+>1 TO GO 0.00
+1 V.CRML FR 175.00
+Personal Cup -10.00
+>1 1 PUMP 0.00
+>1 PCUP 0.00
+>1 TO GO 0.00
+Sbux Redeem 30.00
+150.00
+150.00
+Total 330.00
+Payment 330.00
+330.00
+21.59 VAT TTL
+Net TTL 308.41
+TAX INVOICE(ABB)
+
+### 06 Black Canyon (service, VAT incl, cash no decimals) | | | | adds up: yes
+2 มอคค่าเย็น 140.00
+1 ไวท์ช็อคโกแลตมอคค่า 85.00
+ยอดรวม 225.00
+ส่วนลด 15% 13.00
+ค่าบริการ 10% 21.00
+ยอดก่อนภาษี 217.76
+ภาษี 7% 15.24
+ยอดชำระ 233.00
+ราคารวมภาษีมูลค่าเพิ่มแล้ว
+Cash(THA): 300
+Change(Baht): 67.00
+
+### 07 Kumpoon (service + VAT on top, ++) | | | | adds up: yes
+อาหาร 345.00
+เครื่องดื่ม 25.00
+อาหาร และ เครื่องดื่ม 370.00
+ยอดรวม 370.00
+ค่าบริการ 10% 37.00
+VAT 28.49
+สุทธิ 435.49
+เงินสด 1,000.00
+เงินทอน 564.51
+
+### 08 Hanrahan's (VAT incl, no service) | | | | adds up: yes
+TAX Inv. (ABB)
+Burger Wednesday 1 370.00
+Free Beer BTL For Burger 1 0.00
+Order Amt 370.00
+Total 370.00
+VAT 7% 24.21
+AMT 345.79
+Total 370.00
+
+### 09 McDonald's (VAT incl, cash tendered) | | | | adds up: yes
+1 Big Mac 165.00
+Subtotal Before Discount 165.00
+Rounded Discount 0.00
+Subtotal 165.00
+Eat-In Total (incl Tax) 165.00
+Cash Tendered 200.00
+Change 35.00
+Net Total 154.21
+TAX INCLUDED 10.79
+
+### 10 KFC/Yum (no VAT line) | | | | adds up: yes
+2 TR-PJ10 10.00 20.00
+1 ITEM 109.00 109.00
+1 ITEM 105.00 105.00
+TAKE OUT TOTAL WITH VAT 234.00
+CASH TEND 240.00
+CHANGE 6.00
+
+### 11 Chiang Mai local restaurant (no VAT, no service) | | | | adds up: yes
+1 จอผักกาด 2 ชาม 73.00 146.00
+73.00
+67.00
+67.00
+2 จาน 83.00 166.00
+6 จาน 23.00 138.00
+2 ถ้วย 97.00 194.00
+67.00
+2 จาน 187.00 374.00
+15.00
+3 ขวด 10.00 30.00
+10.00
+15.00
+รวมจำนวนเงินทั้งหมด 1,362.00 บาท
+ส่วนลด 0.00 บาท
+คงเหลือจำนวนเงิน 1,362.00 บาท
+
+### 12 Pattaya local restaurant (no decimals at all) | | | | adds up: yes
+2 X เบียร์ สิงห์ (ใหญ่) 300
+1 X น้ำแข็ง (เล็ก) 40
+1 X แกงส้มชะอม ทะเล S 190
+1 X ข้าวต้ม-ข้าวสวย (จาน) 20
+1 X ผลไม้รวม (กลาง) 120
+Sub Total: 670
+Total: 670
+Payments: Cash 1,000
+Payment Received: 1,000
+CHANGE: 330
+
+### 13 Bar bill (category subtotals) | | | | adds up: yes
+รีเจนซี่ (ใหญ่) 1 900.00
+s1 5 175.00
+w1 2 70.00
+น้ำแข็ง (ใหญ่) 1 80.00
+ไฮเนเก้น 1 150.00
+B.sing 1 150.00
+เครื่องดื่ม 325.00
+แอลกอฮอล์ 1,200.00
+รวม 1,525.00
+รวมสุทธิ 1,525.00
+ชำระ 1,525.00
+
+### 14a Guesthouse handwritten (no decimals) | | | | adds up: yes
+1 AIR 600
+รวมเงิน Total 600
+
+### 14b Guesthouse handwritten (no decimals) | | | | adds up: yes
+room 550 1100
+coffee 40 40
+breakfast 75 75
+รวม TOTAL 1215
+
+### 15 Boots pharmacy (VAT incl) | | | | adds up: yes
+TAX INVOICE (ABB) VAT INCLUDED
+YA THAT NAM KHOW T 55.00
+TOTAL 55.00
+SALE CASH 60.00
+CHANGE 5.00
+VATABLE 51.40
+VAT 7% 3.60
+TOTAL QTY 1
+
+### N1 GrabFood sample (does not add up -> expect null) | | | | adds up: no
+1x Pork ฿125
+1x Rice ฿125
+Subtotal ฿250
+incl. Tax ฿29
+Delivery fee ฿40
+Foreign payment fee (3%) ฿10
+TOTAL (INCL. TAX) ฿329

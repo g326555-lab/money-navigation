@@ -14,11 +14,28 @@ enum RowRole {
   payment,
   change,
   cashAndChange,
+
+  /// "Rounding 0.49" / "ปัดเศษ": a few satang either way.
+  rounding,
+
+  /// A Thai coupon line (คูปอง): a discount on one receipt (Makro), money
+  /// handed over on another (Lotus's). The arithmetic decides which.
+  coupon,
 }
 
 /// One receipt row with an amount.
 class RoleRow {
-  const RoleRow(this.role, this.cents, {this.change, this.percent});
+  const RoleRow(
+    this.role,
+    this.cents, {
+    this.change,
+    this.percent,
+    this.included = false,
+  });
+
+  /// The row says its charge is already inside the prices ("(รวม)",
+  /// "incl").
+  final bool included;
 
   /// A percent printed on the row ("Service 10%"), if any.
   final double? percent;
@@ -33,44 +50,38 @@ class RoleRow {
 }
 
 /// Reads [rows] (printed receipt rows, top to bottom) by their labels and
-/// accepts a total only when the arithmetic proves it:
-/// - the item lines add up to it (directly, through printed subtotals,
-///   discounts, a service charge and VAT on top), or
-/// - VAT inside it checks out and the payment gives it back exactly.
-/// Every printed subtotal, total, service and VAT figure must fit the
-/// accepted reading; one that does not makes the receipt unverified (null).
+/// accepts a total only when the arithmetic proves it: items, less
+/// discounts (labelled, or unlabelled amounts between the items and the
+/// total), plus a service charge and VAT added on top, plus or minus a
+/// rounding line, give the total; or VAT inside the total checks out and the
+/// payment gives it back exactly. Every printed subtotal, total, service and
+/// VAT figure must fit the accepted reading, and printed payments must give
+/// back exactly the total; anything else makes the receipt unverified.
 BillCheck? readByRoles(List<String> rows, {double vatPercent = 7}) {
   final parsed = parseRoleRows(rows);
   if (parsed.isEmpty) return null;
 
-  // Item lines: every amount row above the first summary row.
+  // Item lines: every amount row above the first summary row. Trailing
+  // lines that repeat the sum of the items above them are an unlabelled
+  // subtotal and total (labels printed elsewhere), not more items.
   final firstSummary = parsed.indexWhere((r) => r.role != RowRole.item);
-  final items = [
+  var items = [
     for (final r in firstSummary < 0 ? parsed : parsed.sublist(0, firstSummary))
       r.cents,
   ];
+  final unlabelledTotals = <int>[];
+  for (var k = 1; k < items.length; k++) {
+    final head = items.sublist(0, k).fold<int>(0, (a, b) => a + b);
+    if (head > 0 && items.sublist(k).every((v) => v == head)) {
+      unlabelledTotals.add(head);
+      items = items.sublist(0, k);
+      break;
+    }
+  }
   final rest = firstSummary < 0
       ? const <RoleRow>[]
       : parsed.sublist(firstSummary);
-  final itemSum = items.fold<int>(0, (a, b) => a + b);
 
-  int sumOf(RowRole role) => rest
-      .where((r) => r.role == role)
-      .fold<int>(0, (a, r) => a + r.cents.abs());
-  final printedSubtotals = [
-    for (final r in rest)
-      if (r.role == RowRole.subtotal) r.cents,
-  ];
-  final totals = [
-    for (final r in rest)
-      if (r.role == RowRole.total) r.cents,
-  ];
-  final discount = sumOf(RowRole.discount);
-  final service = sumOf(RowRole.service);
-  final servicePercents = {
-    for (final r in rest)
-      if (r.role == RowRole.service && r.percent != null) r.percent!,
-  };
   // A VAT row printing another rate is not this country's VAT.
   if (rest.any(
     (r) =>
@@ -78,86 +89,132 @@ BillCheck? readByRoles(List<String> rows, {double vatPercent = 7}) {
   )) {
     return null;
   }
-  final vats = [
+  List<int> amountsOf(RowRole role) => [
     for (final r in rest)
-      if (r.role == RowRole.vat) r.cents,
+      if (r.role == role) r.cents,
   ];
-  final vatables = [
-    for (final r in rest)
-      if (r.role == RowRole.vatable) r.cents,
-  ];
+  final printedSubtotals = amountsOf(RowRole.subtotal);
+  final totals = amountsOf(RowRole.total);
+  final vats = amountsOf(RowRole.vat);
+  final vatables = amountsOf(RowRole.vatable);
+  final roundings = amountsOf(RowRole.rounding);
   final payments = [
+    ...amountsOf(RowRole.payment),
     for (final r in rest)
-      if (r.role == RowRole.payment || r.role == RowRole.cashAndChange) r.cents,
+      if (r.role == RowRole.cashAndChange) r.cents,
   ];
   final changes = [
-    for (final r in rest)
-      if (r.role == RowRole.change) r.cents,
+    ...amountsOf(RowRole.change),
     for (final r in rest)
       if (r.role == RowRole.cashAndChange && r.change != null) r.change!,
   ];
+  final labelledDiscount = amountsOf(RowRole.discount)
+      .fold<int>(0, (a, b) => a + b.abs());
+  final coupons = [for (final c in amountsOf(RowRole.coupon)) c.abs()];
+  final serviceRows = [
+    for (final r in rest)
+      if (r.role == RowRole.service) r,
+  ];
+  final serviceAdded = serviceRows
+      .where((r) => !r.included)
+      .fold<int>(0, (a, r) => a + r.cents.abs());
+  final serviceInside = serviceRows
+      .where((r) => r.included)
+      .fold<int>(0, (a, r) => a + r.cents.abs());
+  final servicePercents = {
+    for (final r in serviceRows)
+      if (r.percent != null && r.cents != 0) r.percent!,
+  };
 
-  // A bill may repeat its items as category subtotals right above the
-  // total ("Food 345, Drinks 25, Food and drinks 370"): the items then add
-  // up to twice the subtotal. That reading is used only when a printed
-  // subtotal or total confirms it.
-  final split = _categorySplit(items);
-  final itemsBase =
-      split != null &&
-          [...printedSubtotals, ...totals].contains(split) &&
-          ![...printedSubtotals, ...totals].contains(itemSum)
-      ? split
-      : itemSum;
-  // The subtotal the chain starts from: the item sum, which a printed
-  // subtotal must match when there are items.
-  final subtotal = items.isNotEmpty
-      ? itemsBase
-      : (printedSubtotals.isNotEmpty ? printedSubtotals.last : null);
-  if (items.isNotEmpty &&
-      printedSubtotals.isNotEmpty &&
-      !printedSubtotals.contains(itemsBase)) {
-    return null;
+  // Where the subtotal can come from: all item lines, only the positive
+  // ones (when a discount is printed both inline and again below), or the
+  // category subtotals of a bar bill.
+  final itemSum = items.fold<int>(0, (a, b) => a + b);
+  final subtotals = <int>{
+    if (items.isNotEmpty) itemSum,
+    if (items.any((v) => v < 0))
+      items.where((v) => v > 0).fold<int>(0, (a, b) => a + b),
+    ?_categorySplit(items),
+    if (items.isEmpty) ...printedSubtotals,
+  };
+  if (printedSubtotals.isNotEmpty) {
+    subtotals.removeWhere((v) => !printedSubtotals.contains(v));
+    if (subtotals.isEmpty) return null;
   }
 
   // Candidate totals, latest printed first: the payable one comes last.
-  final candidates = <int>{...totals.reversed, ...printedSubtotals.reversed};
+  final candidates = <int>{
+    ...totals.reversed,
+    ...unlabelledTotals,
+    ...printedSubtotals.reversed,
+  };
   for (final t in candidates) {
     if (t <= 0) continue;
-    final reading = _prove(
-      t: t,
-      subtotal: subtotal,
-      itemCount: items.isEmpty ? null : items.length,
-      discount: discount,
-      service: service,
-      vats: vats,
-      vatables: vatables,
-      payments: payments,
-      changes: changes,
-      vatPercent: vatPercent,
-      serviceMustBeUsed: service > 0,
-      servicePercents: servicePercents,
+    // Unlabelled amounts between the items and this total.
+    final tIndex = rest.lastIndexWhere(
+      (r) =>
+          r.cents == t &&
+          (r.role == RowRole.total || r.role == RowRole.subtotal),
     );
-    if (reading == null) continue;
-    // Every printed summary figure must fit this reading.
-    final known = <int>{
-      t,
-      ?subtotal,
-      if (subtotal != null) subtotal - discount,
-      if (reading.vat != null) ((reading.total - reading.vat!) * 100).round(),
-      if (reading.vat != null && reading.vatAddedOnTop)
-        ((reading.total - reading.vat!) * 100).round(),
-    };
-    final stray = [
-      ...totals,
-      ...printedSubtotals,
-    ].any((v) => !known.contains(v));
-    if (stray) return null;
-    // Printed payments must give back exactly this total: a rounding line
-    // or a discount the reading missed shows up here.
-    if (payments.isNotEmpty && !_paysExactly(t, payments, changes)) {
-      return null;
+    final middle = [
+      if (tIndex >= 0)
+        for (final r in rest.sublist(0, tIndex))
+          if (r.role == RowRole.item && r.cents != 0) r.cents.abs(),
+    ];
+    final middleSum = middle.fold<int>(0, (a, b) => a + b);
+    for (final couponIsDiscount in coupons.isEmpty ? [false] : [true, false]) {
+      for (final int? subtotal
+          in subtotals.isEmpty ? <int?>[null] : subtotals) {
+        final discount =
+            labelledDiscount +
+            (couponIsDiscount ? coupons.fold<int>(0, (a, b) => a + b) : 0);
+        final paidWith = [...payments, if (!couponIsDiscount) ...coupons];
+        // Category lines that add up to the subtotal are explained. Other
+        // unlabelled lines count as discounts only beside labelled ones (a
+        // 7-Eleven "M-Stamp 1.00" among its coupons); alone they may be a
+        // second receipt in the same photo, so the reading is refused.
+        final explained = subtotal != null && middleSum == subtotal;
+        // Unusable items: only VAT inside the total plus an exact payment
+        // can still prove it (Starbucks prints split payments unlabelled).
+        final itemsUsable = explained || middleSum == 0 || discount > 0;
+        final adjustments = explained || !itemsUsable ? 0 : middleSum;
+        final reading = _prove(
+          t: t,
+          subtotal: itemsUsable ? subtotal : null,
+          itemCount: items.isEmpty || !itemsUsable ? null : items.length,
+          discount: discount + adjustments,
+          serviceAdded: serviceAdded,
+          serviceInside: serviceInside,
+          servicePercents: servicePercents,
+          vats: vats,
+          vatables: vatables,
+          roundings: roundings,
+          payments: paidWith,
+          changes: changes,
+          vatPercent: vatPercent,
+        );
+        if (reading == null) continue;
+        // Every printed summary figure must fit this reading.
+        final net = subtotal == null || !itemsUsable
+            ? null
+            : subtotal - discount - adjustments;
+        final known = <int>{
+          t,
+          ?subtotal,
+          ?net,
+          if (net != null) net + serviceAdded,
+          if (reading.vat != null)
+            ((reading.total - reading.vat!) * 100).round(),
+        };
+        if ([...totals, ...printedSubtotals].any((v) => !known.contains(v))) {
+          continue;
+        }
+        if (paidWith.isNotEmpty && !_paysExactly(t, paidWith, changes)) {
+          continue;
+        }
+        return reading;
+      }
     }
-    return reading;
   }
   return null;
 }
@@ -167,100 +224,100 @@ BillCheck? _prove({
   required int? subtotal,
   required int? itemCount,
   required int discount,
-  required int service,
+  required int serviceAdded,
+  required int serviceInside,
+  required Set<double> servicePercents,
   required List<int> vats,
   required List<int> vatables,
+  required List<int> roundings,
   required List<int> payments,
   required List<int> changes,
   required double vatPercent,
-  required bool serviceMustBeUsed,
-  required Set<double> servicePercents,
 }) {
+  final vatShare = vatPercent / (100 + vatPercent);
   int? vatInside;
   for (final v in vats) {
-    final fromTotal = (t * vatPercent / (100 + vatPercent)).round();
-    if ((v - fromTotal).abs() <= 1) vatInside = v;
+    if ((v - (t * vatShare).round()).abs() <= 1) vatInside = v;
     // VAT on the VAT-able part only (VAT-exempt items such as rice).
     for (final x in vatables) {
-      final fromVatable = (x * vatPercent / (100 + vatPercent)).round();
-      if (x <= t && (v - fromVatable).abs() <= 1) vatInside = v;
+      if (x <= t && (v - (x * vatShare).round()).abs() <= 1) vatInside = v;
     }
   }
-  final paid = _paysExactly(t, payments, changes);
+  // A service charge already inside the prices ("ค่าบริการ 10% (รวม)"):
+  // it must be that share of the total before VAT.
+  if (serviceInside > 0) {
+    final beforeVat = vatInside != null ? t - vatInside : t;
+    final ok = servicePercents.any(
+      (p) => (serviceInside - (beforeVat * p / (100 + p)).round()).abs() <= 1,
+    );
+    if (!ok) return null;
+  }
+  final rounding = roundings.fold<int>(0, (a, b) => a + b.abs());
 
   if (subtotal != null) {
     final net = subtotal - discount;
-    final withService = net + service;
-    // A printed service rate must match the charge: exact to the satang
-    // or rounded to the nearest baht.
-    for (final p in servicePercents) {
-      final exact = net * p / 100;
-      final ok =
-          (service - exact).abs() <= 1 ||
-          (service % 100 == 0 && (service - exact).abs() <= 50);
-      if (!ok) return null;
+    final withService = net + serviceAdded;
+    // A printed service rate must match the charge added: exact to the
+    // satang or rounded to the nearest baht.
+    if (serviceAdded > 0) {
+      for (final p in servicePercents) {
+        final exact = net * p / 100;
+        final ok =
+            (serviceAdded - exact).abs() <= 1 ||
+            (serviceAdded % 100 == 0 && (serviceAdded - exact).abs() <= 50);
+        if (!ok) return null;
+      }
     }
-    // Service charge, then VAT on top of everything.
-    for (final v in vats) {
-      final onTop = (withService * vatPercent / 100).round();
-      if ((v - onTop).abs() <= 1 && withService + v == t) {
+    for (final r in <int>{0, rounding, -rounding}) {
+      // VAT on top of everything above it.
+      for (final v in vats) {
+        final onTop = (withService * vatPercent / 100).round();
+        if ((v - onTop).abs() <= 1 && withService + v + r == t) {
+          return _check(
+            kind: serviceAdded > 0 ? BillKind.serviceCharge : BillKind.vatOnTop,
+            t: t,
+            subtotal: subtotal,
+            discount: discount,
+            service: serviceAdded,
+            net: net,
+            vat: v,
+            vatOnTop: true,
+            beforeVat: withService,
+            vatPercent: vatPercent,
+            itemCount: itemCount,
+          );
+        }
+      }
+      if (withService + r == t && (vats.isEmpty || vatInside != null)) {
         return _check(
-          kind: service > 0 ? BillKind.serviceCharge : BillKind.vatOnTop,
+          kind: serviceAdded > 0
+              ? BillKind.serviceCharge
+              : (vatInside != null ? BillKind.vatIncluded : BillKind.itemsOnly),
           t: t,
           subtotal: subtotal,
           discount: discount,
-          service: service,
+          service: serviceAdded > 0 ? serviceAdded : serviceInside,
+          serviceIncluded: serviceAdded == 0 && serviceInside > 0,
           net: net,
-          vat: v,
-          vatOnTop: true,
+          vat: vatInside,
+          vatOnTop: false,
           vatPercent: vatPercent,
           itemCount: itemCount,
         );
       }
     }
-    if (withService == t && (vats.isEmpty || vatInside != null)) {
-      return _check(
-        kind: service > 0
-            ? BillKind.serviceCharge
-            : (vatInside != null ? BillKind.vatIncluded : BillKind.itemsOnly),
-        t: t,
-        subtotal: subtotal,
-        discount: discount,
-        service: service,
-        net: net,
-        vat: vatInside,
-        vatOnTop: false,
-        vatPercent: vatPercent,
-        itemCount: itemCount,
-      );
-    }
-    // Items add up to the total and the other lines are payments (a
-    // Starbucks redemption, a coupon taken at the till).
-    if (subtotal == t &&
-        !serviceMustBeUsed &&
-        (vats.isEmpty || vatInside != null)) {
-      return _check(
-        kind: vatInside != null ? BillKind.vatIncluded : BillKind.itemsOnly,
-        t: t,
-        subtotal: subtotal,
-        discount: 0,
-        service: 0,
-        net: subtotal,
-        vat: vatInside,
-        vatOnTop: false,
-        vatPercent: vatPercent,
-        itemCount: itemCount,
-      );
-    }
   }
   // No usable items: VAT inside the total and an exact payment together.
-  if (vatInside != null && paid && service == 0) {
+  if (vatInside != null &&
+      serviceAdded == 0 &&
+      _paysExactly(t, payments, changes)) {
     return _check(
       kind: BillKind.vatIncluded,
       t: t,
       subtotal: null,
       discount: 0,
-      service: 0,
+      service: serviceInside,
+      serviceIncluded: serviceInside > 0,
       net: null,
       vat: vatInside,
       vatOnTop: false,
@@ -277,14 +334,18 @@ BillCheck _check({
   required int? subtotal,
   required int discount,
   required int service,
+  bool serviceIncluded = false,
   required int? net,
   required int? vat,
   required bool vatOnTop,
+  int? beforeVat,
   required double vatPercent,
   required int? itemCount,
 }) {
   final servicePercent = service > 0 && net != null && net > 0
-      ? (service * 1000 / net).round() / 10
+      ? (serviceIncluded
+            ? (service * 1000 / (net - service)).round() / 10
+            : (service * 1000 / net).round() / 10)
       : null;
   return BillCheck(
     kind: kind,
@@ -295,9 +356,10 @@ BillCheck _check({
     servicePercent: servicePercent?.roundToDouble(),
     vat: vat == null ? null : vat / 100,
     vatPercent: vat == null ? null : vatPercent,
-    beforeVat: vat == null ? null : (t - vat) / 100,
+    beforeVat: vat == null ? null : (beforeVat ?? t - vat) / 100,
     itemCount: itemCount,
     vatOnTop: vatOnTop,
+    serviceIncluded: serviceIncluded,
   );
 }
 
@@ -311,15 +373,19 @@ bool _paysExactly(int t, List<int> payments, List<int> changes) {
 }
 
 /// The subtotal of a bill whose last few item lines are category subtotals
-/// of the lines above them: both halves add up to the same amount.
+/// of the lines above them ("Food 1300.00, Wine 900.00"): they add up to
+/// the lines above, counted with or without an inline discount line.
 int? _categorySplit(List<int> items) {
-  final total = items.fold<int>(0, (a, b) => a + b);
-  if (total <= 0 || total.isOdd || items.length < 3) return null;
+  if (items.length < 3) return null;
   var suffix = 0;
   for (var i = items.length - 1; i > 0; i--) {
+    if (items[i] <= 0) return null;
     suffix += items[i];
-    if (suffix == total ~/ 2) return suffix;
-    if (suffix > total ~/ 2) return null;
+    final head = items.sublist(0, i);
+    final all = head.fold<int>(0, (a, b) => a + b);
+    final gross = head.where((v) => v > 0).fold<int>(0, (a, b) => a + b);
+    if (suffix == all || suffix == gross) return suffix;
+    if (suffix > gross) return null;
   }
   return null;
 }
@@ -334,7 +400,9 @@ List<RoleRow> parseRoleRows(List<String> rows) {
   );
   final out = <RoleRow>[];
   for (final row in rows) {
-    if (_quantityRow.hasMatch(row.toLowerCase())) continue;
+    final lower = row.toLowerCase();
+    // Piece counts, dates and document numbers are not money.
+    if (_quantityRow.hasMatch(lower) || _metaRow.hasMatch(lower)) continue;
     final role = roleOf(row);
     final percent = double.tryParse(_percent.firstMatch(row)?[1] ?? '');
     final amounts = [
@@ -365,9 +433,25 @@ List<RoleRow> parseRoleRows(List<String> rows) {
     final cents = amounts.last;
     // A minus-signed line without a discount word is part of the item list
     // (a cup discount under its drink); with one, it is a discount.
-    out.add(RoleRow(role, cents, percent: percent));
+    out.add(
+      RoleRow(
+        role,
+        cents,
+        percent: percent,
+        included: role == RowRole.service && _included.hasMatch(lower),
+      ),
+    );
   }
-  return out;
+  // "Receive Cash:/Change 85.00" with one amount, below a separate cash
+  // row, is the change.
+  final otherPayment = out.any((r) => r.role == RowRole.payment);
+  return [
+    for (final r in out)
+      if (r.role == RowRole.cashAndChange && r.change == null && otherPayment)
+        RoleRow(RowRole.change, r.cents)
+      else
+        r,
+  ];
 }
 
 /// The role of one printed row, from its words. English words match whole
@@ -385,6 +469,8 @@ RowRole roleOf(String row) {
   if (vat && (!total || t.contains('vat ttl'))) return RowRole.vat;
   if (total) return RowRole.total;
   if (_service.hasMatch(t)) return RowRole.service;
+  if (_rounding.hasMatch(t)) return RowRole.rounding;
+  if (_coupon.hasMatch(t)) return RowRole.coupon;
   if (_discount.hasMatch(t)) return RowRole.discount;
   if (cash) return RowRole.payment;
   return RowRole.item;
@@ -393,21 +479,30 @@ RowRole roleOf(String row) {
 final _change = RegExp(r'\bchange\b|ทอน');
 final _payment = RegExp(
   r'\b(?:cash|tend(?:er(?:ed)?)?|payments?|paid|received|visa|mastercard|'
-  r'wallet|redeem|cpn|coupon|voucher)\b|เงินสด|วอลเล็ท|ชำระเงิน|'
+  r'wallet|redeem|cpn|coupon|voucher|qr|promptpay)\b|เงินสด|วอลเล็ท|'
+  r'ชำระเงิน|พร้อมเพย์|'
   r'(?<!ยอด)ชำระ',
 );
-final _vatable = RegExp(r'\bvatable\b|\bbefore vat\b|ก่อนภาษี');
+final _vatable = RegExp(r'\bvatable\b|\bbefore (?:vat|tax)\b|ก่อนภาษี');
 final _subtotal = RegExp(r'\bsub[\s-]?total\b|ยอดรวม|\border amt\b');
 final _vat = RegExp(r'\bvat\b|\btax\b|ภาษี');
 // รวม alone means total only as the row's first word: ผลไม้รวม is "mixed
 // fruit" and รวมมิตร a dessert.
 final _total = RegExp(
   r'\btotal\b|\bttl\b|\bnet\b|\bgrand total\b|\bamount due\b|สุทธิ|ยอดชำระ|'
-  r'คงเหลือ|รวมเงิน|รวมทั้งหมด|รวมสุทธิ|รวมจำนวนเงิน|^\s*รวม(?=[\s\d:]|$)',
+  r'คงเหลือ|รวมเงิน|ทั้งหมด|รวมสุทธิ|รวมจำนวนเงิน|^\s*รวม(?=[\s\d:]|$)',
 );
 final _service = RegExp(r'\bservice\b|\bsvc\b|\bs/c\b|ค่าบริการ');
-final _discount = RegExp(
-  r'\bdiscount\b|\bround(?:ing)?\b|ส่วนลด|ลด|ฟรี|ปัดเศษ',
+final _discount = RegExp(r'\bdiscount\b|ส่วนลด|ลด|ฟรี');
+final _coupon = RegExp(r'คูปอง');
+final _rounding = RegExp(r'\bround(?:ing)?\b|ปัดเศษ');
+
+/// A charge printed as already inside the prices.
+final _included = RegExp(r'\(รวม\)|\bincl(?:uded)?\b');
+
+/// Date, document-number and phone rows.
+final _metaRow = RegExp(
+  r'\bdate\b|\breceipt no\b|\btel\b|\btax id\b|เลขที่|เล่มที่|วันที่|โทร',
 );
 
 /// Rows that count pieces, not money ("Total Qty 2").
