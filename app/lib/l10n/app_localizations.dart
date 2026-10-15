@@ -2445,7 +2445,7 @@ abstract class AppLocalizations {
   /// No description provided for @showSellerClose.
   ///
   /// In en, this message translates to:
-  /// **'Tap the sentence to close'**
+  /// **'Close'**
   String get showSellerClose;
 
   /// No description provided for @showSellerAmount.

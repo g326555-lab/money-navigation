@@ -1284,7 +1284,7 @@
   "haggleShowSeller": "Show the seller",
   "showSellerTurn": "Turn to the seller",
   "showSellerTurnBack": "Turn back to me",
-  "showSellerClose": "Tap the sentence to close",
+  "showSellerClose": "Close",
   "showSellerAmount": "{amount} บาท",
   "@showSellerAmount": {
     "placeholders": {

@@ -1474,7 +1474,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showSellerTurnBack => 'Turn back to me';
 
   @override
-  String get showSellerClose => 'Tap the sentence to close';
+  String get showSellerClose => 'Close';
 
   @override
   String showSellerAmount(String amount) {

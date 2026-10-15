@@ -43,6 +43,10 @@ abstract final class AppSizes {
   /// Icon tile inside a group row; the hairline then starts at 72.
   static const double rowIconTile = 40;
 
+  /// Below this width two dock buttons stack instead of sitting side by
+  /// side (Fold cover screen).
+  static const double dockStackBelow = 360;
+
   /// Trip map: the map card takes this share of the screen height, kept
   /// between the bounds (Fold cover 737 -> 295, unfolded 704 -> 282,
   /// 844 phone -> 338), and pins (with their white ring).

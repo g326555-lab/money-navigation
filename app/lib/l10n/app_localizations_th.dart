@@ -1440,7 +1440,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get showSellerTurnBack => 'หันกลับมาทางฉัน';
 
   @override
-  String get showSellerClose => 'แตะข้อความเพื่อปิด';
+  String get showSellerClose => 'ปิด';
 
   @override
   String showSellerAmount(String amount) {

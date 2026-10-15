@@ -388,7 +388,7 @@
   "haggleShowSeller": "ให้ผู้ขายดู",
   "showSellerTurn": "หันให้ผู้ขาย",
   "showSellerTurnBack": "หันกลับมาทางฉัน",
-  "showSellerClose": "แตะข้อความเพื่อปิด",
+  "showSellerClose": "ปิด",
   "showSellerAmount": "{amount} บาท",
   "haggleOfferMeaning": "ขอลดเหลือ {amount} บาท",
   "haggleAcceptMeaning": "ตกลงที่ {amount} บาท",
