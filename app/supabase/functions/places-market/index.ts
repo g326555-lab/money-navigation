@@ -3,6 +3,7 @@
 // level). The field mask is strict: reviews would bill the call at the
 // Atmosphere SKU, so they are not requested.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
+import { paymentOf } from "../_shared/places.ts";
 
 const PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby";
 const FIELD_MASK = [
@@ -15,6 +16,9 @@ const FIELD_MASK = [
   "places.googleMapsUri",
   "places.location",
 ].join(",");
+// Payment options bill at a higher Places SKU, so they are asked for only
+// when the caller sets withPayment.
+const PAYMENT_FIELDS = ["places.paymentOptions", "places.types"].join(",");
 const TIMEOUT_MS = 4000;
 const RADIUS_M = 1500;
 const MAX_RESULTS = 10;
@@ -22,7 +26,8 @@ const MAX_RESULTS = 10;
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
-    const { lat, lng, types } = await req.json();
+    const { lat, lng, types, withPayment } = await req.json();
+    const payment = withPayment === true;
     if (typeof lat !== "number" || typeof lng !== "number") {
       return json({ error: "lat and lng are required numbers" }, 400);
     }
@@ -31,7 +36,7 @@ Deno.serve(async (req) => {
       headers: {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": requireSecret("GOOGLE_MAPS_API_KEY"),
-        "X-Goog-FieldMask": FIELD_MASK,
+        "X-Goog-FieldMask": payment ? `${FIELD_MASK},${PAYMENT_FIELDS}` : FIELD_MASK,
       },
       body: JSON.stringify({
         includedTypes: Array.isArray(types) && types.length
@@ -46,9 +51,10 @@ Deno.serve(async (req) => {
     }, TIMEOUT_MS);
     const body = await res.json();
     if (!res.ok) return json({ error: body?.error?.message ?? "places error" }, 502);
-    // Only places people have actually rated count as evidence.
+    // Only places people have actually rated count as price evidence.
+    // Payment lookups (ATMs are rarely rated) keep every place.
     const places = (body.places ?? [])
-      .filter((p: Record<string, any>) => (p.userRatingCount ?? 0) > 0)
+      .filter((p: Record<string, any>) => payment || (p.userRatingCount ?? 0) > 0)
       .map((p: Record<string, any>) => ({
       id: p.id,
       name: p.displayName?.text ?? "",
@@ -57,6 +63,9 @@ Deno.serve(async (req) => {
       ratingCount: p.userRatingCount ?? 0,
       priceLevel: p.priceLevel ?? null,
       mapsUri: p.googleMapsUri ?? null,
+      lat: p.location?.latitude ?? null,
+      lng: p.location?.longitude ?? null,
+      ...(payment ? { payment: paymentOf(p.paymentOptions), types: p.types ?? [] } : {}),
       }));
     return json({ places, source: "Google Maps", fetchedAt: new Date().toISOString() });
   } catch (e) {
