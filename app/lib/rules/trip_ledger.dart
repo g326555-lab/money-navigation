@@ -25,6 +25,8 @@ class TripSave {
     this.askedThb,
     this.paidThb,
     this.placeName,
+    this.placeLat,
+    this.placeLng,
     this.sellerPrices,
     this.ourOffers,
     this.isSample = false,
@@ -49,6 +51,10 @@ class TripSave {
   /// Haggle only: the market it happened at, from Google Maps, when known.
   final String? placeName;
 
+  /// Where it happened, when the phone knew (both or neither).
+  final double? placeLat;
+  final double? placeLng;
+
   /// Haggle only: every price the seller said, first ask first, and every
   /// price we offered, so a later verdict can learn from the exchange.
   final List<double>? sellerPrices;
@@ -67,6 +73,10 @@ class TripSave {
     if (askedThb != null) 'askedThb': askedThb,
     if (paidThb != null) 'paidThb': paidThb,
     if (placeName != null) 'placeName': placeName,
+    if (placeLat != null && placeLng != null) ...{
+      'placeLat': placeLat,
+      'placeLng': placeLng,
+    },
     if (sellerPrices != null) 'sellerPrices': sellerPrices,
     if (ourOffers != null) 'ourOffers': ourOffers,
     if (isSample) 'isSample': true,
@@ -84,6 +94,8 @@ class TripSave {
     if (id is! String || id.isEmpty || kind == null) return null;
     if (kept == null || kept < 0 || savedAt == null) return null;
     final itemKey = json['itemKey'];
+    final lat = _number(json['placeLat']);
+    final lng = _number(json['placeLng']);
     return TripSave(
       id: id,
       kind: kind,
@@ -97,6 +109,8 @@ class TripSave {
           : null,
       sellerPrices: _numbers(json['sellerPrices']),
       ourOffers: _numbers(json['ourOffers']),
+      placeLat: lat != null && lng != null ? lat : null,
+      placeLng: lat != null && lng != null ? lng : null,
       isSample: json['isSample'] == true,
     );
   }
@@ -192,6 +206,8 @@ TripSave? saveFromHaggle({
   required double askedThb,
   required double paidThb,
   String? placeName,
+  double? placeLat,
+  double? placeLng,
   List<double>? sellerPrices,
   List<double>? ourOffers,
 }) {
@@ -205,6 +221,8 @@ TripSave? saveFromHaggle({
     askedThb: askedThb,
     paidThb: paidThb,
     placeName: placeName,
+    placeLat: placeLat != null && placeLng != null ? placeLat : null,
+    placeLng: placeLat != null && placeLng != null ? placeLng : null,
     sellerPrices: sellerPrices,
     ourOffers: ourOffers,
   );

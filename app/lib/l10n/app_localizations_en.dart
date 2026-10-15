@@ -2017,4 +2017,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get billBrandServiceAdded => 'service charge added';
+
+  @override
+  String get tripMapTitle => 'Trip map';
+
+  @override
+  String get tripMapEmpty =>
+      'No places yet. Receipts and haggles saved with a location appear here.';
+
+  @override
+  String get tripMapOsm => 'OpenStreetMap contributors';
+
+  @override
+  String tripMapKeptDay(String amount) {
+    return 'Kept $amount';
+  }
+
+  @override
+  String tripMapKept(String amount) {
+    return 'Kept $amount';
+  }
+
+  @override
+  String get tripMapSample => 'Sample';
+
+  @override
+  String get tripMapCorrected => 'Your correction';
+
+  @override
+  String get tripMapKindReceipt => 'Receipt';
+
+  @override
+  String get tripMapKindHaggle => 'Haggle';
+
+  @override
+  String get tripMapKindAtm => 'ATM';
+
+  @override
+  String get tripMapKindTerminal => 'Card terminal';
 }

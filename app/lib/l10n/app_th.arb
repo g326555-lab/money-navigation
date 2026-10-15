@@ -522,5 +522,16 @@
   "countryThailand": "ไทย",
   "billMemoryNoteBranch": "โน้ตของคุณที่สาขาอื่น ({count} ใบ): {note}",
   "billBrandMemory": "สาขาอื่นของร้านนี้: {habit} ({count} ใบเสร็จ)",
-  "billBrandServiceAdded": "บวกค่าบริการ"
+  "billBrandServiceAdded": "บวกค่าบริการ",
+  "tripMapTitle": "แผนที่ทริป",
+  "tripMapEmpty": "ยังไม่มีสถานที่ ใบเสร็จและการต่อราคาที่บันทึกพร้อมตำแหน่งจะแสดงที่นี่",
+  "tripMapOsm": "ผู้ร่วมสร้าง OpenStreetMap",
+  "tripMapKeptDay": "ประหยัด {amount}",
+  "tripMapKept": "ประหยัด {amount}",
+  "tripMapSample": "ตัวอย่าง",
+  "tripMapCorrected": "ตัวเลขที่คุณแก้",
+  "tripMapKindReceipt": "ใบเสร็จ",
+  "tripMapKindHaggle": "ต่อราคา",
+  "tripMapKindAtm": "ATM",
+  "tripMapKindTerminal": "เครื่องรูดบัตร"
 }

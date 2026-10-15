@@ -3251,6 +3251,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'service charge added'**
   String get billBrandServiceAdded;
+
+  /// No description provided for @tripMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip map'**
+  String get tripMapTitle;
+
+  /// No description provided for @tripMapEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No places yet. Receipts and haggles saved with a location appear here.'**
+  String get tripMapEmpty;
+
+  /// No description provided for @tripMapOsm.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenStreetMap contributors'**
+  String get tripMapOsm;
+
+  /// No description provided for @tripMapKeptDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept {amount}'**
+  String tripMapKeptDay(String amount);
+
+  /// No description provided for @tripMapKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept {amount}'**
+  String tripMapKept(String amount);
+
+  /// No description provided for @tripMapSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample'**
+  String get tripMapSample;
+
+  /// No description provided for @tripMapCorrected.
+  ///
+  /// In en, this message translates to:
+  /// **'Your correction'**
+  String get tripMapCorrected;
+
+  /// No description provided for @tripMapKindReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get tripMapKindReceipt;
+
+  /// No description provided for @tripMapKindHaggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Haggle'**
+  String get tripMapKindHaggle;
+
+  /// No description provided for @tripMapKindAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM'**
+  String get tripMapKindAtm;
+
+  /// No description provided for @tripMapKindTerminal.
+  ///
+  /// In en, this message translates to:
+  /// **'Card terminal'**
+  String get tripMapKindTerminal;
 }
 
 class _AppLocalizationsDelegate

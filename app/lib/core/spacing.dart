@@ -43,6 +43,14 @@ abstract final class AppSizes {
   /// Icon tile inside a group row; the hairline then starts at 72.
   static const double rowIconTile = 40;
 
+  /// Trip map: card height and pins (with their white ring).
+  static const double tripMapHeight = 320;
+  static const double mapPin = 18;
+  static const double mapPinSelected = 26;
+  static const double mapPinRing = 3;
+  static const double mapPinShadow = 4;
+  static const double tripMapStartZoom = 13;
+
   /// Widest a row's amount may get, as a share of the row.
   static const double rowValueMaxFraction = 0.55;
 

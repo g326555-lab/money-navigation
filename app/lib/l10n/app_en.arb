@@ -1676,5 +1676,30 @@
       }
     }
   },
-  "billBrandServiceAdded": "service charge added"
+  "billBrandServiceAdded": "service charge added",
+  "tripMapTitle": "Trip map",
+  "tripMapEmpty": "No places yet. Receipts and haggles saved with a location appear here.",
+  "tripMapOsm": "OpenStreetMap contributors",
+  "tripMapKeptDay": "Kept {amount}",
+  "@tripMapKeptDay": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripMapKept": "Kept {amount}",
+  "@tripMapKept": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripMapSample": "Sample",
+  "tripMapCorrected": "Your correction",
+  "tripMapKindReceipt": "Receipt",
+  "tripMapKindHaggle": "Haggle",
+  "tripMapKindAtm": "ATM",
+  "tripMapKindTerminal": "Card terminal"
 }

@@ -65,6 +65,9 @@ abstract final class AppColors {
   static const stackCard = Color(0xFF2A3038);
   static const glassFill = Color(0xB8FFFFFF);
 
+  /// Soft shadow under map pins.
+  static const mapPinShadowAlpha = 0.25;
+
   /// Glass lifts the colour of what passes beneath it (saturation 1.6),
   /// so blurred content reads as light through glass, not grey fog.
   static const glassSaturate = <double>[

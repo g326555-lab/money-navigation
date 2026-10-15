@@ -1921,4 +1921,42 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get billBrandServiceAdded => 'บวกค่าบริการ';
+
+  @override
+  String get tripMapTitle => 'แผนที่ทริป';
+
+  @override
+  String get tripMapEmpty =>
+      'ยังไม่มีสถานที่ ใบเสร็จและการต่อราคาที่บันทึกพร้อมตำแหน่งจะแสดงที่นี่';
+
+  @override
+  String get tripMapOsm => 'ผู้ร่วมสร้าง OpenStreetMap';
+
+  @override
+  String tripMapKeptDay(String amount) {
+    return 'ประหยัด $amount';
+  }
+
+  @override
+  String tripMapKept(String amount) {
+    return 'ประหยัด $amount';
+  }
+
+  @override
+  String get tripMapSample => 'ตัวอย่าง';
+
+  @override
+  String get tripMapCorrected => 'ตัวเลขที่คุณแก้';
+
+  @override
+  String get tripMapKindReceipt => 'ใบเสร็จ';
+
+  @override
+  String get tripMapKindHaggle => 'ต่อราคา';
+
+  @override
+  String get tripMapKindAtm => 'ATM';
+
+  @override
+  String get tripMapKindTerminal => 'เครื่องรูดบัตร';
 }
