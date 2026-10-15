@@ -43,5 +43,14 @@ with open(out, "w") as f:
 print(f"pinned Release: lib/main.dart, version {name}+{number}, defines {', '.join(values)}")
 PY
 if [ "$build" = 1 ]; then
+  # Shared build lock (docs/BOARD.md rule 4): wait while another session's
+  # lock is younger than 15 minutes, then hold it for the build.
+  lock=/tmp/money-nav-build.lock
+  while [ -f "$lock" ] && [ -n "$(find "$lock" -mmin -15 2>/dev/null)" ]; do
+    echo "waiting for build lock: $(cat "$lock" 2>/dev/null)"
+    sleep 20
+  done
+  echo "release prepare_ios_archive.sh $(date '+%H:%M')" > "$lock"
+  trap 'rm -f "$lock"' EXIT INT TERM
   flutter build ios --release --no-codesign --dart-define-from-file="$src"
 fi
