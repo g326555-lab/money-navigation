@@ -26,6 +26,7 @@ import '../briefing/briefing_rows.dart';
 import '../briefing/calendar_source.dart';
 import '../briefing/trip_context.dart';
 import 'card_facts_sheet.dart';
+import 'facts_section.dart';
 import 'pay_compare_card.dart';
 
 /// The demo state's arrival: the Thai traveler lands in Japan.
@@ -80,7 +81,11 @@ class _AssistantScreenState extends State<AssistantScreen> {
     final l10n = AppLocalizations.of(context);
     final type = AppTypography.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final trip = TripContext.of(scope, _briefing.facts);
+    final trip = TripContext.of(
+      scope,
+      // The demo state keeps the facts it shipped with.
+      scope.settings.demoState ? _briefing.bundledFacts : _briefing.facts,
+    );
     final plan = _briefing.cashPlan(
       trip.history,
       demo: scope.settings.demoState,
@@ -144,6 +149,8 @@ class _AssistantScreenState extends State<AssistantScreen> {
               _nearby(l10n, traps, demo: scope.settings.demoState),
               SectionHeader(l10n.assistantArrival),
               _arrival(l10n, scope, trip),
+              SectionHeader(l10n.assistantFacts),
+              FactsSection(repository: _briefing.live),
             ],
           ),
         ),

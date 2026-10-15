@@ -208,7 +208,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ? null
         : demoQuote ?? scope.rates.quoteFor(currency);
     final persona = scope.settings.demoPersona;
-    final trip = TripContext.of(scope, _briefing.facts);
+    final trip = TripContext.of(
+      scope,
+      // The demo state keeps the facts it shipped with.
+      scope.settings.demoState ? _briefing.bundledFacts : _briefing.facts,
+    );
     final plan = scope.trip.loaded
         ? _briefing.cashPlan(trip.history, demo: scope.settings.demoState)
         : null;

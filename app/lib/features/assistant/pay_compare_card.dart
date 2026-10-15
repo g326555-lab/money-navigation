@@ -74,7 +74,7 @@ class _PayCompareCardState extends State<PayCompareCard> {
             place: widget.place,
             profile: widget.profile,
             facts: trip.localFacts,
-            withdrawalThb: widget.withdrawalThb,
+            withdrawalThb: _withdrawal(amount, rate),
             homeToThb: trip.homeToThb,
           );
 
@@ -137,7 +137,18 @@ class _PayCompareCardState extends State<PayCompareCard> {
           ],
           const SizedBox(height: AppSpacing.md),
           Text(
-            _basis(l10n, trip),
+            [
+              _basis(l10n, trip),
+              if (route?.option(PayMethod.cash).extraThb != null)
+                widget.withdrawalThb == null
+                    ? l10n.payCompareWithdrawalAssumed
+                    : l10n.payCompareWithdrawalPlan(
+                        AppFormat.roundedAmount(
+                          widget.withdrawalThb!,
+                          marketCurrency,
+                        ),
+                      ),
+            ].join(' · '),
             style: type.footer.copyWith(
               color: AppColors.onSurfaceDarkSecondary,
             ),
@@ -146,6 +157,11 @@ class _PayCompareCardState extends State<PayCompareCard> {
       ),
     );
   }
+
+  /// One withdrawal: today's planned cash, or else just this amount.
+  double? _withdrawal(double? amount, double? rate) =>
+      widget.withdrawalThb ??
+      (amount == null || rate == null ? null : amount * rate);
 
   String _verdict(AppLocalizations l10n, PayRoute? route) {
     if (route == null) return l10n.payCompareAsk;
@@ -158,6 +174,8 @@ class _PayCompareCardState extends State<PayCompareCard> {
       null =>
         widget.profile.cardFeePercent == null
             ? l10n.payCompareNeedCard
+            : widget.profile.atmFeePolicy == AtmFeePolicy.unknown
+            ? l10n.payCompareNeedBank
             : l10n.payCompareNeedWithdrawal,
     };
   }

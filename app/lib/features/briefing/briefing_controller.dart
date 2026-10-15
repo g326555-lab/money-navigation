@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../rules/day_cash.dart';
+import '../../rules/facts_cache.dart';
 import '../../rules/nearby_traps.dart';
 import '../../rules/pay_facts.dart';
 import '../../rules/personal_context.dart';
@@ -11,6 +12,7 @@ import '../../services/ai/personal_memory.dart';
 import '../assistant/card_profile_store.dart';
 import 'calendar_source.dart';
 import 'country_locator.dart';
+import 'facts_repository.dart';
 import 'phone_location.dart';
 import 'places_client.dart';
 
@@ -28,12 +30,16 @@ class BriefingController extends ChangeNotifier {
     PhoneLocation? location,
     CountryLocator? countries,
     CardProfileStore? card,
+    FactsRepository? live,
     this._bundle,
   }) : calendar = calendar ?? CalendarSource(),
        places = places ?? PlacesClient(),
        location = location ?? PhoneLocation(),
        countries = countries ?? CountryLocator(),
-       card = card ?? CardProfileStore();
+       card = card ?? CardProfileStore(),
+       live = live ?? FactsRepository() {
+    this.live.addListener(notifyListeners);
+  }
 
   /// One briefing for the whole app.
   static final instance = BriefingController();
@@ -43,10 +49,21 @@ class BriefingController extends ChangeNotifier {
   final PhoneLocation location;
   final CountryLocator countries;
   final CardProfileStore card;
+
+  /// Facts the server re-checked today, laid over the bundled file.
+  final FactsRepository live;
   final AssetBundle? _bundle;
 
   PayFacts? _facts;
-  PayFacts? get facts => _facts;
+
+  /// The bundled facts with today's checked values laid over them.
+  PayFacts? get facts {
+    final bundled = _facts;
+    return bundled == null ? null : applyLiveFacts(bundled, live.facts);
+  }
+
+  /// The bundled file as shipped: the demo state's fixed facts.
+  PayFacts? get bundledFacts => _facts;
 
   List<DayEvent> _events = const [];
   List<DayEvent> get events => _events;
@@ -69,6 +86,7 @@ class BriefingController extends ChangeNotifier {
     if (_started) return;
     _started = true;
     await Future.wait([_loadFacts(), card.load(), calendar.checkAccess()]);
+    unawaited(live.load());
     notifyListeners();
     unawaited(_loadAccountCard());
     await refresh();
@@ -112,6 +130,7 @@ class BriefingController extends ChangeNotifier {
     final day = DateTime(now.year, now.month, now.day);
     final last = _nearbyAt;
     await Future.wait([
+      live.load(),
       if (_loadedDay != day) _loadEvents(),
       if (last == null || now.difference(last) >= resumeThrottle) _loadNearby(),
     ]);
@@ -198,7 +217,7 @@ class BriefingController extends ChangeNotifier {
   }) {
     // The phone's real surroundings do not belong to a demo traveler.
     if (demo) return const [];
-    final facts = countryCode == null ? null : _facts?.country(countryCode);
+    final facts = countryCode == null ? null : this.facts?.country(countryCode);
     final foreign = facts != null && facts.currency != homeCurrency;
     return nearbyTraps(_nearby, foreign ? facts : null, limit: limit);
   }
