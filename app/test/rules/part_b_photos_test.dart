@@ -83,7 +83,26 @@ const _knownMisreads = <String, (double, double)>{
   // Keystone photo: EUR selling ".86" was dropped and GBP selling 70.90 from
   // the next row was taken instead. Only boardRatePlausible catches it.
   '155435 EUR': (45.72, 70.90),
+  // Flat retake: EUR selling "48,88" for printed 46.86, a single-digit
+  // misread.
+  '162620 EUR': (45.72, 48.88),
+  // Flat retake: EUR selling "46.88" for printed 46.86, a single-digit
+  // misread.
+  '162621 EUR': (45.72, 46.88),
+  // Flat retake: CAD selling "30.60" for printed 30.66, a single-digit
+  // misread.
+  '162621 CAD': (29.65, 30.60),
 };
+
+/// The subset of [_knownMisreads] that also passes boardRatePlausible
+/// against the printed mid, so readCheckedBoardRate still returns it.
+const _knownCheckedMisreads = [
+  '200dpi SGD',
+  '200dpi CAD',
+  '162620 EUR',
+  '162621 EUR',
+  '162621 CAD',
+];
 
 RateQuote _referenceAtPrintedMid(String code) {
   final (buying, selling) = _printed[code]!;
@@ -101,6 +120,8 @@ final _boardCaptures = <String, String>{
   '155435': rowsFromLines(straightenLines(boardPhoto155435Quads)),
   '155438': rowsFromLines(straightenLines(boardPhoto155438Quads)),
   '155444': rowsFromLines(straightenLines(boardPhoto155444Quads)),
+  '162620': rowsFromLines(straightenLines(boardPhoto162620Quads)),
+  '162621': rowsFromLines(straightenLines(boardPhoto162621Quads)),
 };
 
 void main() {
@@ -330,6 +351,17 @@ void main() {
   });
 
   group('board known limitations (documented, not fixed)', () {
+    for (final key in ['162620 EUR', '162621 EUR', '162621 CAD']) {
+      test('$key: flat-retake single-digit misread is read as OCR saw it', () {
+        final [capture, code] = key.split(' ');
+        final (buying, selling) = _knownMisreads[key]!;
+        final r = readExchangeBoard(_boardCaptures[capture]!, code: code);
+        expect(r, isNotNull);
+        expect(r!.buying, closeTo(buying, 1e-9));
+        expect(r.selling, closeTo(selling, 1e-9));
+      });
+    }
+
     test('200dpi SGD: single-digit misread 23.50 for 23.59 is read and '
         'passes the reference check', () {
       final r = readExchangeBoard(_boardCaptures['200dpi']!, code: 'SGD')!;
@@ -428,10 +460,9 @@ void main() {
   });
 
   group('checked board truth table: null or the printed rate', () {
-    const knownCheckedMisreads = {'200dpi SGD', '200dpi CAD'};
     _boardCaptures.forEach((capture, rows) {
       for (final MapEntry(key: code, value: printed) in _printed.entries) {
-        if (knownCheckedMisreads.contains('$capture $code')) continue;
+        if (_knownCheckedMisreads.contains('$capture $code')) continue;
         test('$capture $code', () {
           final r = readCheckedBoardRate(
             rows,
@@ -447,14 +478,12 @@ void main() {
       }
     });
 
-    for (final (code, buying, selling) in [
-      ('SGD', 22.89, 23.50),
-      ('CAD', 29.65, 30.60),
-    ]) {
-      test('known limitation: 200dpi $code single-digit misread '
-          '$buying / $selling passes the check', () {
+    for (final key in _knownCheckedMisreads) {
+      test('known limitation: $key single-digit misread passes the check', () {
+        final [capture, code] = key.split(' ');
+        final (buying, selling) = _knownMisreads[key]!;
         final r = readCheckedBoardRate(
-          _boardCaptures['200dpi']!,
+          _boardCaptures[capture]!,
           code: code,
           reference: _referenceAtPrintedMid(code),
           home: 'THB',
@@ -462,6 +491,34 @@ void main() {
         expect(r, isNotNull);
         expect(r!.buying, closeTo(buying, 1e-9));
         expect(r.selling, closeTo(selling, 1e-9));
+      });
+    }
+  });
+
+  group('flat retakes of the board read the demo USD row', () {
+    final demoUsd = RateQuote(
+      base: 'THB',
+      quote: 'USD',
+      rate: 0.02978,
+      date: '2026-10-14',
+      fetchedAt: DateTime.utc(2026, 10, 15),
+    );
+    for (final (name, quads) in [
+      ('162620', boardPhoto162620Quads),
+      ('162621', boardPhoto162621Quads),
+    ]) {
+      test('$name: USD 35.03 / 36.10, mid 35.565, about 1.5 % less', () {
+        final r = readCheckedBoardRate(
+          rowsFromLines(straightenLines(quads)),
+          code: 'USD',
+          reference: demoUsd,
+          home: 'THB',
+        );
+        expect(r, isNotNull);
+        expect(r!.buying, closeTo(35.03, 1e-9));
+        expect(r.selling, closeTo(36.10, 1e-9));
+        expect(r.mid, closeTo(35.565, 1e-9));
+        expect(r.sellLossPercent, closeTo(1.504, 0.001));
       });
     }
   });
