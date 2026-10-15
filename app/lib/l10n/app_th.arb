@@ -407,7 +407,7 @@
   "billUseCorrection": "ใช้ตัวเลขนี้",
   "billCorrectedNote": "นี่คือตัวเลขที่คุณแก้ บันทึกเป็นของคุณ ไม่ใช่ผลที่แอปตรวจ",
   "billMemoryVisits": "คุณเคยบันทึกบิลที่ร้านนี้ {visits} ใบ ครั้งล่าสุด {total}",
-  "billMemoryNote": "โน้ตของคุณจากบิล {count} ใบก่อนหน้า: {note}",
+  "billMemoryNote": "โน้ตของคุณที่ร้านนี้ ({count} ใบก่อน): {note}",
   "billNoteServiceIncluded": "รวมค่าบริการแล้ว",
   "billNoteServiceAdded": "บวกค่าบริการ {percent} %",
   "billNoteNoService": "ไม่มีค่าบริการ",
@@ -519,5 +519,8 @@
   "arrivalBodyAtm": "ถ้าเครื่องรูดบัตรหรือตู้ ATM ถามว่าจ่ายเป็น {home} หรือ {local} ให้เลือก {local}",
   "arrivalChannel": "แจ้งเตือนเมื่อถึงปลายทาง",
   "countryJapan": "ญี่ปุ่น",
-  "countryThailand": "ไทย"
+  "countryThailand": "ไทย",
+  "billMemoryNoteBranch": "โน้ตของคุณที่สาขาอื่น ({count} ใบ): {note}",
+  "billBrandMemory": "สาขาอื่นของร้านนี้: {habit} ({count} ใบเสร็จ)",
+  "billBrandServiceAdded": "บวกค่าบริการ"
 }

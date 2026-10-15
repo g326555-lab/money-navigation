@@ -1334,7 +1334,7 @@
       }
     }
   },
-  "billMemoryNote": "{count, plural, =1{Your note from 1 earlier bill: {note}} other{Your note from {count} earlier bills: {note}}}",
+  "billMemoryNote": "{count, plural, =1{You noted here last time: {note}} other{You noted here in {count} earlier bills: {note}}}",
   "@billMemoryNote": {
     "placeholders": {
       "note": {
@@ -1653,5 +1653,28 @@
   },
   "arrivalChannel": "Arrival alerts",
   "countryJapan": "Japan",
-  "countryThailand": "Thailand"
+  "countryThailand": "Thailand",
+  "billMemoryNoteBranch": "{count, plural, =1{You noted at another branch: {note}} other{You noted at other branches in {count} bills: {note}}}",
+  "@billMemoryNoteBranch": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billBrandMemory": "{count, plural, =1{Another branch of this shop: {habit} (1 receipt)} other{Other branches of this shop: {habit} ({count} receipts)}}",
+  "@billBrandMemory": {
+    "placeholders": {
+      "habit": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billBrandServiceAdded": "service charge added"
 }

@@ -1507,7 +1507,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String billMemoryNote(String note, int count) {
-    return 'โน้ตของคุณจากบิล $count ใบก่อนหน้า: $note';
+    return 'โน้ตของคุณที่ร้านนี้ ($count ใบก่อน): $note';
   }
 
   @override
@@ -1908,4 +1908,17 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get countryThailand => 'ไทย';
+
+  @override
+  String billMemoryNoteBranch(String note, int count) {
+    return 'โน้ตของคุณที่สาขาอื่น ($count ใบ): $note';
+  }
+
+  @override
+  String billBrandMemory(String habit, int count) {
+    return 'สาขาอื่นของร้านนี้: $habit ($count ใบเสร็จ)';
+  }
+
+  @override
+  String get billBrandServiceAdded => 'บวกค่าบริการ';
 }

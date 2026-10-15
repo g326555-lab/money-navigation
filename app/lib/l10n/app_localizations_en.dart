@@ -1549,8 +1549,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Your note from $count earlier bills: $note',
-      one: 'Your note from 1 earlier bill: $note',
+      other: 'You noted here in $count earlier bills: $note',
+      one: 'You noted here last time: $note',
     );
     return '$_temp0';
   }
@@ -1992,4 +1992,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get countryThailand => 'Thailand';
+
+  @override
+  String billMemoryNoteBranch(String note, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You noted at other branches in $count bills: $note',
+      one: 'You noted at another branch: $note',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String billBrandMemory(String habit, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Other branches of this shop: $habit ($count receipts)',
+      one: 'Another branch of this shop: $habit (1 receipt)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get billBrandServiceAdded => 'service charge added';
 }

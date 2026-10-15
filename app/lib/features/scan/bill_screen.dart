@@ -155,16 +155,30 @@ class _BillScreenState extends State<BillScreen> {
         if (r.id != record.id) r,
     ];
     final memory = merchantMemory(record, history, now);
+    // Same name elsewhere is another branch: its habits, never a "visit".
+    final brand = memory == null ? brandMemory(record, history, now) : null;
     final hint = formatHint(record, history, now);
     String money(double v) => AppFormat.cents(v, marketCurrency);
+    String? brandHabit(BrandMemory b) {
+      if (b.noServiceRecords == b.records) return l10n.billNoteNoService;
+      if (b.serviceIncludedRecords == b.records) {
+        return l10n.billNoteServiceIncluded;
+      }
+      if (b.serviceAddedRecords == b.records) return l10n.billBrandServiceAdded;
+      return null;
+    }
+
     return [
       if (memory != null)
         GroupFooter(
           l10n.billMemoryVisits(memory.visits, money(memory.lastTotalThb)),
         ),
+      if (brand != null)
+        if (brandHabit(brand) case final habit?)
+          GroupFooter(l10n.billBrandMemory(habit, brand.records)),
       if (hint != null)
         GroupFooter(
-          l10n.billMemoryNote(
+          (hint.sameShop ? l10n.billMemoryNote : l10n.billMemoryNoteBranch)(
             hint.serviceIncluded
                 ? l10n.billNoteServiceIncluded
                 : hint.servicePercent != null
@@ -573,6 +587,8 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
       totalThb: _number(_total),
       servicePercent: _service == _Service.added ? _number(_percent) : null,
       serviceIncluded: _service == _Service.included,
+      // "No service charge" must clear what was read, not keep it.
+      serviceCharged: _service != _Service.none,
       vatOnTop: _vatOnTop,
     );
     Navigator.of(context).pop(
