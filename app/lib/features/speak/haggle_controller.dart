@@ -11,6 +11,7 @@ import '../../services/ai/ai_trace.dart';
 import '../../services/ai/cloud_functions.dart';
 import '../../services/ai/cloud_speech.dart';
 import '../../services/ai/gemini_item.dart';
+import '../../services/ai/price_reference.dart';
 import '../../rules/new_item.dart';
 import '../../services/ai/item_matcher.dart';
 import '../../services/ai/item_resolver.dart';
@@ -118,7 +119,9 @@ class HaggleController extends ChangeNotifier {
     CloudSpeech? cloudSpeech,
     bool? cloudFirst,
     GeminiItemResolver? itemGuesser,
+    PriceReferenceService? priceReference,
   }) : _recorderOverride = recorder,
+       _priceReference = priceReference ?? PriceReferenceService(),
        _guesser = itemGuesser ?? GeminiItemResolver(),
        _cloudSpeech = cloudSpeech ?? CloudSpeech(),
        _cloudFirst = cloudFirst ?? CloudFunctions.configured,
@@ -142,6 +145,16 @@ class HaggleController extends ChangeNotifier {
   /// An item outside our price list, named from what was heard or typed.
   NewItem? get newItem => _newItem;
   NewItem? _newItem;
+
+  /// A usual price for an item outside our list, looked up on the web
+  /// (wholesale pages are filtered out by the service).
+  final PriceReferenceService _priceReference;
+  PriceReference? get reference => _reference;
+  PriceReference? _reference;
+
+  /// True while the web lookup runs; the screen never waits for it.
+  bool get checkingPrices => _checkingPrices;
+  bool _checkingPrices = false;
 
   /// How the item was named (Gemini), when it was.
   AiTrace? get itemGuessTrace => _guessTrace;
@@ -459,6 +472,56 @@ class HaggleController extends ChangeNotifier {
     _suggestion = null;
     _newItem = null;
     _guessTrace = null;
+    _reference = null;
+    _checkingPrices = false;
+  }
+
+  /// Looks the new item up on the web. With a sourced range it becomes an
+  /// item like ours and gets a verdict; without one the screen keeps
+  /// saying there is no sourced range.
+  Future<void> _lookUpPrice(NewItem item) async {
+    _checkingPrices = true;
+    notifyListeners();
+    final ref = await _priceReference.lookup(item.nameEn);
+    if (_disposed || !identical(_newItem, item)) return;
+    _checkingPrices = false;
+    _reference = ref;
+    final heard = _state.heard;
+    if (ref == null || heard == null || ref.sources.isEmpty) {
+      notifyListeners();
+      return;
+    }
+    final unit = heard.unit ?? item.unit;
+    final market = MarketItem(
+      key: item.key,
+      nameEn: item.nameEn,
+      nameTh: item.nameTh,
+      keywordsTh: [item.nameTh],
+      unit: unit,
+      low: ref.lowThb,
+      high: ref.highThb,
+    );
+    final sourced = SourcedItem(
+      item: market,
+      sources: [
+        for (final q in ref.sources)
+          PriceSource(title: Uri.parse(q.url).host, url: q.url, date: q.date),
+      ],
+    );
+    final withItem = HeardPrice(amount: heard.amount, item: market, unit: unit);
+    final verdict = judgePrice(withItem, market);
+    _set(
+      HaggleState(
+        phase: _state.phase,
+        words: _state.words,
+        heard: withItem,
+        match: sourced,
+        verdict: verdict,
+        problem: verdict == null ? HeardProblem.unitMismatch : null,
+        canSpeak: _state.canSpeak,
+        typed: _state.typed,
+      ),
+    );
   }
 
   /// "Did they mean …?" answered: yes takes the suggested item.
@@ -496,6 +559,7 @@ class HaggleController extends ChangeNotifier {
         typed: true,
       ),
     );
+    unawaited(_lookUpPrice(_newItem!));
   }
 
   void _resetHaggle() {
@@ -813,6 +877,7 @@ class HaggleController extends ChangeNotifier {
       _newItem = guess.newItem;
     }
     notifyListeners();
+    if (_newItem case final item?) unawaited(_lookUpPrice(item));
   }
 
   /// speech_to_text reports dB-like levels (about -2..10 on iOS, 0..10 on

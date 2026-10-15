@@ -24,6 +24,7 @@ import '../../rules/personal_context.dart';
 import '../../rules/trip_ledger.dart';
 import '../../services/ai/ai_trace.dart';
 import '../../services/ai/gemini_explainer.dart';
+import '../../services/ai/price_reference.dart';
 import '../../shared/action_dock.dart';
 import '../../shared/app_button.dart';
 import '../../shared/group.dart';
@@ -379,7 +380,8 @@ class _HaggleScreenState extends State<HaggleScreen>
       ?_aiMatchLine(l10n, state),
     ];
 
-    if (heard != null && _haggle.newItem != null) {
+    // An item outside the list without a sourced range yet.
+    if (heard != null && _haggle.newItem != null && state.match == null) {
       return _newItemContent(l10n, state, heard, _haggle.newItem!, saidSection);
     }
 
@@ -529,7 +531,11 @@ class _HaggleScreenState extends State<HaggleScreen>
             ),
         ],
       ),
-      GroupFooter(_sourcesLine(l10n, match)),
+      if (_haggle.reference case final ref?
+          when match.item.key.startsWith('new:'))
+        ..._webReference(l10n, ref)
+      else
+        GroupFooter(_sourcesLine(l10n, match)),
       if (paidBefore != null)
         GroupFooter(_paidBeforeLine(l10n, paidBefore, place)),
       // It words the first verdict; once the haggle moves on it would be
@@ -795,7 +801,9 @@ class _HaggleScreenState extends State<HaggleScreen>
           amount,
           _unitLabel(l10n, heard.unit ?? item.unit),
         ),
-        body: l10n.haggleNoRange,
+        body: _haggle.checkingPrices
+            ? l10n.haggleCheckingPrices
+            : l10n.haggleNoRange,
       ),
       if (_haggle.itemGuessTrace case final t?)
         GroupFooter(l10n.aiNewItemLine(t.engine.displayName, t.elapsedLabel)),
@@ -847,6 +855,37 @@ class _HaggleScreenState extends State<HaggleScreen>
         ),
       ],
       ...saidSection,
+    ];
+  }
+
+  /// A range found on the web: marked "about", each page's own words, its
+  /// site and the date it was read.
+  List<Widget> _webReference(AppLocalizations l10n, PriceReference ref) {
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    String day(String date) {
+      final d = DateTime.tryParse(date);
+      return d == null ? date : DateFormat.yMMMd(locale).format(d);
+    }
+
+    return [
+      GroupFooter(
+        l10n.haggleWebRange(
+          AppFormat.roundedNumber(ref.lowThb),
+          AppFormat.roundedNumber(ref.highThb),
+          ref.sources.length,
+        ),
+      ),
+      for (final q in ref.sources)
+        GroupFooter(
+          l10n.haggleWebQuote(
+            q.quote,
+            Uri.parse(q.url).host.replaceFirst('www.', ''),
+            q.fetched ? l10n.haggleReadOn(day(q.date)) : day(q.date),
+          ),
+        ),
+      GroupFooter(
+        l10n.aiTrace(ref.trace.engine.displayName, ref.trace.elapsedLabel),
+      ),
     ];
   }
 

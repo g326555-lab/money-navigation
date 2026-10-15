@@ -9,6 +9,7 @@ import 'package:money_navigation/rules/haggle_rounds.dart';
 import 'package:money_navigation/services/ai/ai_trace.dart';
 import 'package:money_navigation/services/ai/cloud_speech.dart';
 import 'package:money_navigation/services/ai/gemini_item.dart';
+import 'package:money_navigation/services/ai/price_reference.dart';
 import 'package:money_navigation/rules/new_item.dart';
 import 'package:money_navigation/services/clip_recorder.dart';
 
@@ -138,6 +139,20 @@ class FakeGuesser implements GeminiItemResolver {
   }
 }
 
+class FakeReference implements PriceReferenceService {
+  FakeReference([this.answer]);
+  PriceReference? answer;
+  Completer<void>? gate;
+  final asked = <String>[];
+
+  @override
+  Future<PriceReference?> lookup(String nameEn) async {
+    asked.add(nameEn);
+    await gate?.future;
+    return answer;
+  }
+}
+
 const guessTrace = AiTrace(AiEngine.gemini, Duration(milliseconds: 2600));
 
 void main() {
@@ -159,6 +174,7 @@ void main() {
     ],
     bool cloudFirst = true,
     FakeGuesser? guesser,
+    FakeReference? reference,
   }) {
     speech = FakeSpeech();
     tts = CountingTts();
@@ -174,6 +190,7 @@ void main() {
       cloudSpeech: cloud,
       cloudFirst: cloudFirst,
       itemGuesser: guesser ?? FakeGuesser((_) => null),
+      priceReference: reference ?? FakeReference(),
     );
   }
 
@@ -479,6 +496,77 @@ void main() {
     expect(c.newItem?.nameEn, 'Sunscreen');
     expect(c.state.heard?.amount, 350);
     expect(c.state.typed, isTrue);
+    c.dispose();
+  });
+
+  FakeGuesser umbrella() => FakeGuesser(
+    (_) => const ItemGuess(
+      newItem: NewItem(
+        nameTh: 'ร่มกันแดด',
+        nameEn: 'Sun umbrella',
+        unit: PriceUnit.each,
+        category: ItemCategory.goods,
+      ),
+      confidence: 0.95,
+      trace: guessTrace,
+    ),
+  );
+
+  test('a web range turns a new item into a judged one', () async {
+    final ref = FakeReference(
+      const PriceReference(
+        lowThb: 80,
+        highThb: 100,
+        sources: [
+          PriceQuote(
+            url: 'https://shop.example/umbrella',
+            quote: 'UV umbrella 89 baht',
+            date: '2026-10-16',
+            fetched: true,
+          ),
+        ],
+        cached: false,
+        trace: AiTrace(AiEngine.gemini, Duration(seconds: 5)),
+      ),
+    )..gate = Completer<void>();
+    final c = build(
+      answers: const [
+        ['ร่มกันแดดคันละ 120'],
+      ],
+      guesser: umbrella(),
+      reference: ref,
+    );
+    await c.start();
+    await settle();
+    // The screen shows the item at once; the lookup runs behind it.
+    expect(c.newItem?.nameEn, 'Sun umbrella');
+    expect(c.checkingPrices, isTrue);
+    expect(c.state.verdict, isNull);
+    ref.gate!.complete();
+    await settle();
+    expect(ref.asked, ['Sun umbrella']);
+    expect(c.checkingPrices, isFalse);
+    expect(c.state.match?.item.low, 80);
+    expect(c.state.match?.item.high, 100);
+    expect(c.state.match?.item.key, 'new:ร่มกันแดด');
+    expect(c.state.verdict?.verdict, PriceVerdict.high);
+    c.dispose();
+  });
+
+  test('no web range keeps the new item without a verdict', () async {
+    final c = build(
+      answers: const [
+        ['ร่มกันแดดคันละ 120'],
+      ],
+      guesser: umbrella(),
+      reference: FakeReference(),
+    );
+    await c.start();
+    await settle();
+    expect(c.checkingPrices, isFalse);
+    expect(c.reference, isNull);
+    expect(c.state.match, isNull);
+    expect(c.newItem, isNotNull);
     c.dispose();
   });
 
