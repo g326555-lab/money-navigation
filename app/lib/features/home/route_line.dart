@@ -163,12 +163,23 @@ class _StopLabel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: type.label.copyWith(color: AppColors.onSurface),
-        ),
+        // A single long word (an airport name) must not break mid-word.
+        title.contains(' ')
+            ? Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: type.label.copyWith(color: AppColors.onSurface),
+              )
+            : FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  style: type.label.copyWith(color: AppColors.onSurface),
+                ),
+              ),
         const SizedBox(height: AppSpacing.xs / 2),
         Text(
           value,

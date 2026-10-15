@@ -308,7 +308,7 @@ class _OptionLine extends StatelessWidget {
     } else if (o.accepted == Acceptance.no) {
       value = l10n.payNotTaken;
     } else if (o.extraThb != null) {
-      value = l10n.payExtra(AppFormat.cents(o.extraThb!, marketCurrency));
+      value = l10n.payExtra(AppFormat.amount(o.extraThb!, marketCurrency));
     } else {
       value = switch (method) {
         PayMethod.card => l10n.payNeedCardFee,

@@ -13,6 +13,8 @@ final PayFacts facts = PayFacts.parse(
         'country': 'TH',
         'currency': 'THB',
         'atmOffersConversion': true,
+        'atmConversionSource': 'Portail Asie ATM guide',
+        'atmConversionChecked': '2026-10-15',
         'foreignCardAtmFee': {
           'value': 220,
           'currency': 'THB',

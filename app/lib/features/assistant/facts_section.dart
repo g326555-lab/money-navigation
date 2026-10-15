@@ -26,10 +26,11 @@ class FactsSection extends StatelessWidget {
     final snapshot = repository.snapshot;
     final facts = repository.facts;
     final summary = snapshot?.summary(DateTime.now());
+    // Only a read that was confirmed counts as checked; kept ones failed.
     final headline = summary == null || summary.checked == 0
         ? l10n.factsNotToday
         : l10n.factsSummary(
-            summary.checked,
+            summary.updated + summary.unchanged,
             summary.updated,
             summary.unchanged,
             summary.kept,
@@ -110,7 +111,11 @@ class _FactRow extends StatelessWidget {
       _ => l10n.factNew,
     };
     final host = Uri.tryParse(fact.sourceUrl)?.host.replaceFirst('www.', '');
-    final when = DateFormat.MMMd(locale).add_Hm().format(fact.checkedAt);
+    // A failed check is not a confirmation: show when it last was one.
+    final confirmed = fact.status == 'kept' ? fact.fetchedAt : fact.checkedAt;
+    final when = confirmed == null
+        ? null
+        : DateFormat.MMMd(locale).add_Hm().format(confirmed);
     final unit = fact.unit.replaceFirst('/kg', '');
     final value = AppFormat.amount(fact.value, unit);
     final perKg = fact.unit.endsWith('/kg');
@@ -139,7 +144,9 @@ class _FactRow extends StatelessWidget {
                 if (fact.quote != null && fact.status != 'kept')
                   Text('“${fact.quote}”', style: type.rowSubtitle),
                 Text(
-                  l10n.factSourceLine(host ?? fact.sourceUrl, when),
+                  when == null
+                      ? (host ?? fact.sourceUrl)
+                      : l10n.factSourceLine(host ?? fact.sourceUrl, when),
                   style: type.footer,
                 ),
               ],

@@ -117,8 +117,8 @@ PlacePayment paymentFromJson(Object? json) {
   final nfc = flag('nfc');
   // Google sometimes says "cash only" and "takes cards" for the same place
   // (seen for a Bangkok hotel). Conflicting evidence is no evidence.
-  final cashOnly = flag('cashOnly') == true && (cards == true || nfc == true)
-      ? null
-      : flag('cashOnly');
-  return PlacePayment(cashOnly: cashOnly, cards: cards, nfc: nfc);
+  if (flag('cashOnly') == true && (cards == true || nfc == true)) {
+    return PlacePayment.unknown;
+  }
+  return PlacePayment(cashOnly: flag('cashOnly'), cards: cards, nfc: nfc);
 }
