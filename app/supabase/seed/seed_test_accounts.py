@@ -9,6 +9,7 @@ and their passwords, and refreshes profiles and sample records.
 """
 
 import json
+from datetime import datetime, timedelta, timezone
 import secrets
 import string
 import subprocess
@@ -33,6 +34,51 @@ MANGO_COUNTER = {
 CHATUCHAK = {"place_name": "Chatuchak Weekend Market", "place_lat": 13.7999, "place_lng": 100.5503}
 HAGGLE_AI = "speech_to_text+item_matcher+places"
 
+def days_ago(days, hour, minute):
+    """A Bangkok local time `days` before today, as UTC ISO 8601."""
+    bkk = timezone(timedelta(hours=7))
+    t = datetime.now(bkk).replace(hour=hour, minute=minute, second=0, microsecond=0)
+    return (t - timedelta(days=days)).astimezone(timezone.utc).isoformat()
+
+
+# Receipt samples in the ReceiptRecord shape (lib/rules/receipt_record.dart).
+# The figures add up the way bill_check verifies them.
+VISITOR_RECEIPTS = [
+    {
+        # 3 items, no service charge, VAT inside the total.
+        "client_id": "seed-receipt-1",
+        "saved_at": days_ago(1, 21, 10),
+        "total_thb": 85.00,
+        "verified": True,
+        "merchant_name": "7-Eleven",
+        "place_name": "7-Eleven, Sukhumvit Soi 11",
+        "place_lat": 13.7428,
+        "place_lng": 100.5555,
+        "kind": "itemsOnly",
+        "item_count": 3,
+        "category": "shopping",
+    },
+    {
+        # 300.00 - 0 + 10 % service 30.00 = 330.00; VAT 7 % inside = 21.59.
+        "client_id": "seed-receipt-2",
+        "saved_at": days_ago(2, 19, 40),
+        "total_thb": 330.00,
+        "verified": True,
+        "merchant_name": "Baan Som Tam (sample)",
+        "place_name": "Siam Square",
+        "place_lat": 13.7454,
+        "place_lng": 100.5341,
+        "kind": "serviceCharge",
+        "subtotal_thb": 300.00,
+        "discount_thb": 0,
+        "service_thb": 30.00,
+        "service_percent": 10,
+        "vat_thb": 21.59,
+        "item_count": 4,
+        "category": "food",
+    },
+]
+
 ACCOUNTS = [
     {
         "slug": "visitor",
@@ -50,6 +96,7 @@ ACCOUNTS = [
             "atm_fee_value": 5.0,
         },
         "polite_ending": "male",
+        "receipts": VISITOR_RECEIPTS,
         "records": [
             {
                 "client_id": "seed-atm-1",
@@ -310,7 +357,7 @@ def main():
                              {"polite_ending": a["polite_ending"]}, "return=minimal")
             check(status, (200, 204), f"{a['slug']}: settings")
         # Sample rows are marked is_sample; clearing them leaves real use alone.
-        for table in ("haggle_rounds", "trip_records"):
+        for table in ("haggle_rounds", "trip_records", "receipts"):
             status, _ = call(key, "DELETE",
                              f"/rest/v1/{table}?user_id=eq.{uid}&is_sample=is.true")
             check(status, (200, 204), f"{a['slug']}: clear sample {table}")
@@ -346,12 +393,21 @@ def main():
                                  "return=minimal")
                 check(status, (200, 201), f"{a['slug']}: sample haggle rounds")
 
+        if a.get("receipts"):
+            cols = ("merchant_name", "place_name", "place_lat", "place_lng", "kind",
+                    "subtotal_thb", "discount_thb", "service_thb", "service_percent",
+                    "vat_thb", "item_count")
+            rows = [{**{c: None for c in cols}, **r, "user_id": uid, "is_sample": True}
+                    for r in a["receipts"]]
+            status, _ = call(key, "POST", "/rest/v1/receipts", rows, "return=minimal")
+            check(status, (200, 201), f"{a['slug']}: sample receipts")
+
         lines += [
             f"## {a['slug']}: {a['about']}",
             "",
             f"- Email: `{a['email']}`",
             f"- Password: `{password}`",
-            f"- Sample records: {len(a['records'])}",
+            f"- Sample records: {len(a['records'])}, receipts: {len(a.get('receipts', []))}",
             "",
         ]
         print(f"{a['slug']}: ok ({len(a['records'])} sample records)")

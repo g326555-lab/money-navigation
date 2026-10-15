@@ -11,6 +11,7 @@ import '../../services/auth/account_models.dart';
 import '../../services/auth/auth_failure.dart';
 import '../../shared/app_button.dart';
 import '../../shared/group.dart';
+import '../../shared/icon_tile.dart';
 import '../../shared/pressable.dart';
 import 'auth_gate.dart';
 import 'auth_widgets.dart';
@@ -118,6 +119,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       children: [
         SectionHeader(l10n.authSetupTypeHeader, first: true),
         GroupCard(
+          dividerInset: AppSpacing.rowIconTextInset,
           children: [
             for (final t in TravelerType.values)
               AuthChoiceRow(
@@ -128,6 +130,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 subtitle: switch (t) {
                   TravelerType.visitorInThailand => l10n.authTypeVisitorSub,
                   TravelerType.thaiAbroad => l10n.authTypeThaiSub,
+                },
+                leading: switch (t) {
+                  TravelerType.visitorInThailand => const IconTile.blue(
+                    icon: Icons.flight_land_rounded,
+                  ),
+                  TravelerType.thaiAbroad => const IconTile.orange(
+                    icon: Icons.flight_takeoff_rounded,
+                  ),
                 },
                 selected: _draft.travelerType == t,
                 onPressed: () {
@@ -206,12 +216,54 @@ class _CurrencyRow extends StatelessWidget {
       onPressed: onPressed,
       semanticLabel: '$title, $name',
       child: ExcludeSemantics(
-        child: GroupRow(
-          title: title,
-          subtitle: name == code ? null : name,
-          value: code,
-          valueStyle: type.rowTitle.copyWith(
-            color: AppColors.onSurfaceSecondary,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppSizes.rowMinHeight),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.groupPaddingH,
+              vertical: AppSpacing.rowPaddingV,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: type.rowTitle),
+                      if (name != code) Text(name, style: type.rowSubtitle),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.lg),
+                // The code in a pill with a chevron: this row opens a list.
+                DecoratedBox(
+                  decoration: const ShapeDecoration(
+                    shape: StadiumBorder(),
+                    color: AppColors.background,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.chipPadding,
+                      AppSpacing.sm,
+                      AppSpacing.chipPadding,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(code, style: type.rowTitle),
+                        const SizedBox(width: AppSpacing.xs),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          size: AppSizes.buttonIcon,
+                          color: AppColors.onSurfaceTertiary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

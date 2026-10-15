@@ -1,8 +1,10 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../rules/receipt_record.dart';
 import '../../rules/trip_ledger.dart';
 import 'account_models.dart';
 import 'auth_failure.dart';
+import 'receipt_record_mapper.dart';
 import 'trip_record_mapper.dart';
 
 /// Reads and writes the signed-in traveler's rows. Row level security limits
@@ -105,6 +107,31 @@ class AccountRepository {
   Future<void> removeSave(String clientId) => _guard(() async {
     await _db
         .from('trip_records')
+        .delete()
+        .eq('user_id', _uid)
+        .eq('client_id', clientId);
+  });
+
+  /// Adds or replaces one checked receipt (no photo, no item names).
+  Future<void> upsertReceipt(ReceiptRecord record) => _guard(() async {
+    await _db
+        .from('receipts')
+        .upsert(receiptToRow(record), onConflict: 'user_id,client_id');
+  });
+
+  /// The traveler's receipts, newest first.
+  Future<List<ReceiptRecord>> loadReceipts() => _guard(() async {
+    final rows = await _db
+        .from('receipts')
+        .select()
+        .eq('user_id', _uid)
+        .order('saved_at', ascending: false);
+    return receiptsFromRows(rows);
+  });
+
+  Future<void> removeReceipt(String clientId) => _guard(() async {
+    await _db
+        .from('receipts')
         .delete()
         .eq('user_id', _uid)
         .eq('client_id', clientId);

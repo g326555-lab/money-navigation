@@ -4,6 +4,9 @@ library;
 
 final _currencyCode = RegExp(r'^[A-Z]{3}$');
 
+/// Longest display name, as `profiles.display_name` allows.
+const int maxDisplayNameLength = 80;
+
 /// Which half of the app the traveler uses.
 enum TravelerType {
   /// Part A: a visitor paying in baht, English UI.

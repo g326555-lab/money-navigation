@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/colors.dart';
 import '../../core/spacing.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/auth/account_models.dart';
 import '../../services/auth/auth_failure.dart';
 import '../../services/auth/auth_service.dart';
 import '../../services/auth/auth_validation.dart';
@@ -106,17 +108,18 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     if (_mode == _Mode.confirm) {
       return AuthPage(
         title: l10n.authConfirmTitle,
-        dock: AppButton(
-          label: l10n.authBackToSignIn,
-          onPressed: () => setState(() {
-            _mode = _Mode.signIn;
-            _password.clear();
-          }),
-        ),
         children: [
           AuthMessage(
             l10n.authConfirmBody(normalizeEmail(_email.text)),
             isError: false,
+          ),
+          const SizedBox(height: AppSpacing.xxl),
+          AppButton(
+            label: l10n.authBackToSignIn,
+            onPressed: () => setState(() {
+              _mode = _Mode.signIn;
+              _password.clear();
+            }),
           ),
         ],
       );
@@ -125,11 +128,6 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     return AutofillGroup(
       child: AuthPage(
         title: creating ? l10n.authCreateTitle : l10n.authSignInTitle,
-        dock: AppButton(
-          label: creating ? l10n.authCreateAction : l10n.authSignInAction,
-          busy: _busy,
-          onPressed: _submit,
-        ),
         children: [
           GroupCard(
             children: [
@@ -140,7 +138,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                   enabled: !_busy,
                   textInputAction: TextInputAction.next,
                   autofillHints: const [AutofillHints.name],
-                  maxLength: 80,
+                  maxLength: maxDisplayNameLength,
                 ),
               AuthField(
                 label: l10n.authEmailLabel,
@@ -151,6 +149,14 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 onSubmitted: (_) => _passwordFocus.requestFocus(),
+                onChanged: (_) => setState(() {}),
+                trailing: checkEmail(_email.text) == null
+                    ? const Icon(
+                        Icons.check_circle_rounded,
+                        size: AppSizes.tabIcon,
+                        color: AppColors.primaryText,
+                      )
+                    : null,
               ),
               AuthField(
                 label: l10n.authPasswordLabel,
@@ -167,27 +173,46 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                   creating ? AutofillHints.newPassword : AutofillHints.password,
                 ],
                 onSubmitted: (_) => _submit(),
+                // The links row and the button sit under this field.
+                scrollBottom:
+                    AppSizes.minTouchTarget +
+                    AppSpacing.xxl +
+                    AppSizes.buttonHeight,
               ),
             ],
           ),
           if (_error != null) AuthMessage(_error!),
-          const SizedBox(height: AppSpacing.groupGap),
-          AuthTextLink(
-            label: creating ? l10n.authToSignIn : l10n.authToCreate,
-            onPressed: _busy ? null : _switchMode,
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              if (!creating)
+                AuthTextLink(
+                  label: l10n.authForgot,
+                  onPressed: _busy
+                      ? null
+                      : () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) =>
+                                ResetPasswordScreen(initialEmail: _email.text),
+                          ),
+                        ),
+                ),
+              const Spacer(),
+              AuthTextLink(
+                label: creating ? l10n.authSignInAction : l10n.authCreateAction,
+                emphasis: true,
+                onPressed: _busy ? null : _switchMode,
+              ),
+            ],
           ),
-          if (!creating)
-            AuthTextLink(
-              label: l10n.authForgot,
-              onPressed: _busy
-                  ? null
-                  : () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) =>
-                            ResetPasswordScreen(initialEmail: _email.text),
-                      ),
-                    ),
-            ),
+          // The button sits right under the fields, so the keyboard never
+          // covers either.
+          const SizedBox(height: AppSpacing.xxl),
+          AppButton(
+            label: creating ? l10n.authCreateAction : l10n.authSignInAction,
+            busy: _busy,
+            onPressed: _submit,
+          ),
         ],
       ),
     );
