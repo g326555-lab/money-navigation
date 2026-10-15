@@ -2028,6 +2028,89 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Figures checked on this phone · {elapsed}'**
   String billCheckedTrace(String elapsed);
+
+  /// No description provided for @authSigningIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in'**
+  String get authSigningIn;
+
+  /// No description provided for @authErrTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Try again.'**
+  String get authErrTryAgain;
+
+  /// No description provided for @authErrEmailRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'This email can\'t be used. Try another one.'**
+  String get authErrEmailRejected;
+
+  /// No description provided for @authErrEmailUndeliverable.
+  ///
+  /// In en, this message translates to:
+  /// **'We can\'t send email to this address yet.'**
+  String get authErrEmailUndeliverable;
+
+  /// No description provided for @billTimeoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'That took too long'**
+  String get billTimeoutTitle;
+
+  /// No description provided for @billTimeoutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'That took too long. Try again in a moment.'**
+  String get billTimeoutBody;
+
+  /// No description provided for @scanKindLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{engine} sees {kind} ({confidence}) · {elapsed}'**
+  String scanKindLine(
+    String engine,
+    String kind,
+    String confidence,
+    String elapsed,
+  );
+
+  /// No description provided for @scanCheckAsBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Check it as a bill'**
+  String get scanCheckAsBill;
+
+  /// No description provided for @kindAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'an ATM screen'**
+  String get kindAtm;
+
+  /// No description provided for @kindTerminal.
+  ///
+  /// In en, this message translates to:
+  /// **'a card terminal'**
+  String get kindTerminal;
+
+  /// No description provided for @kindBill.
+  ///
+  /// In en, this message translates to:
+  /// **'a bill or menu'**
+  String get kindBill;
+
+  /// No description provided for @kindPriceTag.
+  ///
+  /// In en, this message translates to:
+  /// **'a price tag'**
+  String get kindPriceTag;
+
+  /// No description provided for @kindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'something else'**
+  String get kindOther;
 }
 
 class _AppLocalizationsDelegate

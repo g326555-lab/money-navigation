@@ -914,5 +914,34 @@
         "type": "String"
       }
     }
+  },
+  "authSigningIn": "Signing in",
+  "authErrTryAgain": "That didn't work. Try again.",
+  "authErrEmailRejected": "This email can't be used. Try another one.",
+  "authErrEmailUndeliverable": "We can't send email to this address yet.",
+  "billTimeoutTitle": "That took too long",
+  "billTimeoutBody": "That took too long. Try again in a moment.",
+  "scanKindLine": "{engine} sees {kind} ({confidence}) · {elapsed}",
+  "scanCheckAsBill": "Check it as a bill",
+  "kindAtm": "an ATM screen",
+  "kindTerminal": "a card terminal",
+  "kindBill": "a bill or menu",
+  "kindPriceTag": "a price tag",
+  "kindOther": "something else",
+  "@scanKindLine": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "confidence": {
+        "type": "String"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -79,6 +79,7 @@ flutter:
   assets:
     - assets/data/
     - assets/images/
+    - assets/models/
   fonts:
     - family: Google Sans Flex
       fonts:

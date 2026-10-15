@@ -26,6 +26,7 @@ import '../../rules/demo_rates.dart';
 import '../../rules/exchange_rate.dart';
 import '../../services/rate_service.dart';
 import 'part_b_result_screen.dart';
+import '../../services/ai/photo_kind_classifier.dart';
 
 enum _CameraStatus { starting, ready, unavailable, denied }
 
@@ -43,7 +44,10 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<ScanScreen>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
-  late final _scan = ScanController(rateFor: _rateFor);
+  late final _scan = ScanController(
+    rateFor: _rateFor,
+    classifier: PhotoKindClassifier(),
+  );
 
   /// Fixed demo rates, loaded once; used only in the demo state.
   DemoRates? _demoRates;
@@ -264,11 +268,14 @@ class _ScanScreenState extends State<ScanScreen>
 
   /// Opens the bill check. The camera is released while it is open, since
   /// the bill photo is taken with the system camera.
-  Future<void> _openBill() async {
+  Future<void> _openBill({String? photoPath}) async {
     _stopCamera();
     _otherFlowOpen = true;
-    await Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (_) => const BillScreen()));
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => BillScreen(initialPhotoPath: photoPath),
+      ),
+    );
     _otherFlowOpen = false;
     if (mounted && _camera == null && _scan.state.photoPath == null) {
       _startCamera();
@@ -465,6 +472,9 @@ class _ScanScreenState extends State<ScanScreen>
                         key: const ValueKey('sheet'),
                         state: state,
                         onRetry: _retry,
+                        onCheckBill: CloudFunctions.configured
+                            ? () => _openBill(photoPath: state.photoPath)
+                            : null,
                       )
                     : _CaptureControls(
                         key: const ValueKey('controls'),

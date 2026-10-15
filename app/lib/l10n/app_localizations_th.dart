@@ -1142,4 +1142,50 @@ class AppLocalizationsTh extends AppLocalizations {
   String billCheckedTrace(String elapsed) {
     return 'ตรวจตัวเลขในเครื่องนี้ · $elapsed';
   }
+
+  @override
+  String get authSigningIn => 'กำลังเข้าสู่ระบบ';
+
+  @override
+  String get authErrTryAgain => 'ทำไม่สำเร็จ ลองอีกครั้ง';
+
+  @override
+  String get authErrEmailRejected => 'ใช้อีเมลนี้ไม่ได้ ลองอีเมลอื่น';
+
+  @override
+  String get authErrEmailUndeliverable => 'ตอนนี้ยังส่งอีเมลไปที่อยู่นี้ไม่ได้';
+
+  @override
+  String get billTimeoutTitle => 'ใช้เวลานานเกินไป';
+
+  @override
+  String get billTimeoutBody => 'ใช้เวลานานเกินไป ลองใหม่อีกสักครู่';
+
+  @override
+  String scanKindLine(
+    String engine,
+    String kind,
+    String confidence,
+    String elapsed,
+  ) {
+    return '$engine เห็นว่าเป็น$kind ($confidence) · $elapsed';
+  }
+
+  @override
+  String get scanCheckAsBill => 'ตรวจเป็นบิล';
+
+  @override
+  String get kindAtm => 'หน้าจอ ATM';
+
+  @override
+  String get kindTerminal => 'เครื่องรูดบัตร';
+
+  @override
+  String get kindBill => 'บิลหรือเมนู';
+
+  @override
+  String get kindPriceTag => 'ป้ายราคา';
+
+  @override
+  String get kindOther => 'อย่างอื่น';
 }

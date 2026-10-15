@@ -11,12 +11,26 @@ import '../../rules/atm_conversion.dart';
 import '../../shared/app_button.dart';
 import 'scan_controller.dart';
 
+import 'package:intl/intl.dart';
+
+import '../../services/ai/photo_kind_classifier.dart';
+import '../../shared/action_dock.dart';
+
 /// White sheet listing the real steps of a scan as they finish.
 class ScanStepsSheet extends StatelessWidget {
-  const ScanStepsSheet({super.key, required this.state, required this.onRetry});
+  const ScanStepsSheet({
+    super.key,
+    required this.state,
+    required this.onRetry,
+    this.onCheckBill,
+  });
 
   final ScanState state;
   final VoidCallback onRetry;
+
+  /// Offered when the photo was not a payment screen but the on-device
+  /// model sees a bill or menu.
+  final VoidCallback? onCheckBill;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +76,22 @@ class ScanStepsSheet extends StatelessWidget {
               step: step,
               text: _stepText(l10n, step),
             ),
+          if (state.kindGuess case (final kind, final confidence, final trace))
+            Padding(
+              padding: const EdgeInsets.only(
+                left: AppSizes.stepIcon + AppSpacing.md,
+                bottom: AppSpacing.md,
+              ),
+              child: Text(
+                l10n.scanKindLine(
+                  trace.engine.displayName,
+                  _kindName(l10n, kind),
+                  NumberFormat.percentPattern('en').format(confidence),
+                  trace.elapsedLabel,
+                ),
+                style: type.footer,
+              ),
+            ),
           if (failure != null) ...[
             // Aligned with the step text, under the step that failed.
             Padding(
@@ -76,7 +106,16 @@ class ScanStepsSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
-            AppButton(label: l10n.scanTryAgain, onPressed: onRetry),
+            if (onCheckBill != null &&
+                state.kindGuess?.$1 == PhotoKind.receiptMenu)
+              DockPair(
+                secondaryLabel: l10n.scanTryAgain,
+                onSecondary: onRetry,
+                primaryLabel: l10n.scanCheckAsBill,
+                onPrimary: onCheckBill,
+              )
+            else
+              AppButton(label: l10n.scanTryAgain, onPressed: onRetry),
           ],
         ],
       ),
@@ -132,6 +171,15 @@ class ScanStepsSheet extends StatelessWidget {
             : l10n.stepCompareEven;
     }
   }
+
+  static String _kindName(AppLocalizations l10n, PhotoKind kind) =>
+      switch (kind) {
+        PhotoKind.atm => l10n.kindAtm,
+        PhotoKind.cardTerminal => l10n.kindTerminal,
+        PhotoKind.receiptMenu => l10n.kindBill,
+        PhotoKind.priceTag => l10n.kindPriceTag,
+        PhotoKind.other => l10n.kindOther,
+      };
 
   String _tip(AppLocalizations l10n, ScanFailure failure) => switch (failure) {
     ScanFailure.noText => l10n.scanTipNoText,

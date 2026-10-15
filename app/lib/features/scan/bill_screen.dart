@@ -24,10 +24,13 @@ import '../../shared/pill.dart';
 /// Zones: hero (the total, or what is happening), content (how the total
 /// was built, then the AI steps that ran), pinned dock.
 class BillScreen extends StatefulWidget {
-  const BillScreen({super.key, this.reader});
+  const BillScreen({super.key, this.reader, this.initialPhotoPath});
 
   /// Supplied by tests; the screen makes its own otherwise.
   final BillReader? reader;
+
+  /// A photo already taken on the scan screen, read straight away.
+  final String? initialPhotoPath;
 
   @override
   State<BillScreen> createState() => _BillScreenState();
@@ -41,6 +44,13 @@ class _BillScreenState extends State<BillScreen> {
   _Phase _phase = _Phase.start;
   BillReading? _reading;
 
+  @override
+  void initState() {
+    super.initState();
+    final path = widget.initialPhotoPath;
+    if (path != null) _read(XFile(path));
+  }
+
   Future<void> _pick(ImageSource source) async {
     final XFile? file;
     try {
@@ -53,6 +63,10 @@ class _BillScreenState extends State<BillScreen> {
       return;
     }
     if (file == null || !mounted) return;
+    await _read(file);
+  }
+
+  Future<void> _read(XFile file) async {
     setState(() {
       _phase = _Phase.reading;
       _reading = null;
@@ -191,6 +205,7 @@ class _BillScreenState extends State<BillScreen> {
     final (title, body) = switch (reading?.failure) {
       BillFailure.offline => (l10n.billOfflineTitle, l10n.billOfflineBody),
       BillFailure.tooLarge => (l10n.billTooLargeTitle, l10n.billTooLargeBody),
+      BillFailure.timeout => (l10n.billTimeoutTitle, l10n.billTimeoutBody),
       BillFailure.noText => (l10n.billNoTextTitle, l10n.billNoTextBody),
       BillFailure.doesNotAddUp => (l10n.billNoMatchTitle, l10n.billNoMatchBody),
       _ => (l10n.billServiceTitle, l10n.billServiceBody),

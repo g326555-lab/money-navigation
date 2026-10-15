@@ -319,5 +319,18 @@
   "settingsDemoOn": "ใช้อัตราคงที่สำหรับสาธิต",
   "settingsDemoOnHint": "อัตราจากไฟล์สาธิต ไม่ใช่อัตราวันนี้",
   "settingsDemoFooter": "ใช้ตอนนำเสนอเท่านั้น ผลลัพธ์จะไม่เปลี่ยนบนเวที ปิดเพื่อใช้อัตราของวันนี้",
-  "billCheckedTrace": "ตรวจตัวเลขในเครื่องนี้ · {elapsed}"
+  "billCheckedTrace": "ตรวจตัวเลขในเครื่องนี้ · {elapsed}",
+  "authSigningIn": "กำลังเข้าสู่ระบบ",
+  "authErrTryAgain": "ทำไม่สำเร็จ ลองอีกครั้ง",
+  "authErrEmailRejected": "ใช้อีเมลนี้ไม่ได้ ลองอีเมลอื่น",
+  "authErrEmailUndeliverable": "ตอนนี้ยังส่งอีเมลไปที่อยู่นี้ไม่ได้",
+  "billTimeoutTitle": "ใช้เวลานานเกินไป",
+  "billTimeoutBody": "ใช้เวลานานเกินไป ลองใหม่อีกสักครู่",
+  "scanKindLine": "{engine} เห็นว่าเป็น{kind} ({confidence}) · {elapsed}",
+  "scanCheckAsBill": "ตรวจเป็นบิล",
+  "kindAtm": "หน้าจอ ATM",
+  "kindTerminal": "เครื่องรูดบัตร",
+  "kindBill": "บิลหรือเมนู",
+  "kindPriceTag": "ป้ายราคา",
+  "kindOther": "อย่างอื่น"
 }

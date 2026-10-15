@@ -11,6 +11,11 @@ import '../../rules/terminal_dcc.dart';
 import '../../rules/ocr_layout.dart';
 import '../../services/text_recognition_service.dart';
 
+import 'dart:async';
+
+import '../../services/ai/ai_trace.dart';
+import '../../services/ai/photo_kind_classifier.dart';
+
 enum ScanStepId {
   readText,
   findAtm,
@@ -52,6 +57,7 @@ class ScanState {
     this.dcc,
     this.board,
     this.boardReference,
+    this.kindGuess,
   });
 
   final String? photoPath;
@@ -72,6 +78,11 @@ class ScanState {
   /// The live rate the board was checked against, when there was one.
   final RateQuote? boardReference;
 
+  /// What the on-device photo classifier thinks the photo shows, with its
+  /// confidence and measured time. A hint shown beside the steps; the
+  /// verdict itself always comes from the numbers read.
+  final (PhotoKind, double, AiTrace)? kindGuess;
+
   bool get hasResult => verdict != null || dcc != null || board != null;
 
   bool get isWorking => photoPath != null && !hasResult && failure == null;
@@ -88,6 +99,7 @@ class ScanState {
     DccVerdict? dcc,
     BoardRate? board,
     RateQuote? boardReference,
+    (PhotoKind, double, AiTrace)? kindGuess,
   }) => ScanState(
     photoPath: photoPath,
     scannedAt: scannedAt,
@@ -102,6 +114,7 @@ class ScanState {
     dcc: dcc ?? this.dcc,
     board: board ?? this.board,
     boardReference: boardReference ?? this.boardReference,
+    kindGuess: kindGuess ?? this.kindGuess,
   );
 }
 
@@ -109,8 +122,15 @@ class ScanState {
 /// values, compare totals. Each step is published as soon as it really
 /// finishes; nothing is scripted.
 class ScanController extends ChangeNotifier {
-  ScanController({TextRecognitionService? recognition, this.rateFor})
-    : _recognition = recognition ?? TextRecognitionService();
+  ScanController({
+    TextRecognitionService? recognition,
+    this.rateFor,
+    this.classifier,
+  }) : _recognition = recognition ?? TextRecognitionService();
+
+  /// The on-device model trained for this app (ATM, card terminal, bill or
+  /// menu, price tag). Optional; runs beside OCR.
+  final PhotoKindClassifier? classifier;
 
   /// The rate from THB to a currency, for card terminals and rate boards:
   /// the fixed demo rate in the demo state, otherwise the live daily rate.
@@ -139,6 +159,16 @@ class ScanController extends ChangeNotifier {
       ),
     );
 
+    // The classifier runs beside OCR and reports whenever it is done.
+    final classify = classifier;
+    if (classify != null) {
+      unawaited(
+        classify.classify(path).then((guess) {
+          if (run != _run || guess == null) return;
+          _set(_state.copyWith(kindGuess: guess));
+        }, onError: (Object _) {}),
+      );
+    }
     final (size, read) = await (
       _imageSize(path),
       _recognition.readFile(path),
@@ -332,6 +362,7 @@ class ScanController extends ChangeNotifier {
   void dispose() {
     _run++;
     _recognition.close();
+    classifier?.close();
     super.dispose();
   }
 }

@@ -133,6 +133,9 @@ class _HaggleScreenState extends State<HaggleScreen>
       itemKey: match.item.key,
       askedThb: heard.amount,
       paidThb: paid,
+      placeName: _haggle.places?.place.name,
+      sellerPrices: _haggle.history?.sellerPrices,
+      ourOffers: _haggle.history?.ourOffers,
     );
     if (save == null) return;
     await trip.add(save);

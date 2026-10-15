@@ -23,6 +23,9 @@ class TripSave {
     this.itemKey,
     this.askedThb,
     this.paidThb,
+    this.placeName,
+    this.sellerPrices,
+    this.ourOffers,
   });
 
   final String id;
@@ -41,6 +44,14 @@ class TripSave {
   /// Haggle only: what the traveler paid.
   final double? paidThb;
 
+  /// Haggle only: the market it happened at, from Google Maps, when known.
+  final String? placeName;
+
+  /// Haggle only: every price the seller said, first ask first, and every
+  /// price we offered, so a later verdict can learn from the exchange.
+  final List<double>? sellerPrices;
+  final List<double>? ourOffers;
+
   Map<String, Object?> toJson() => {
     'id': id,
     'kind': kind.name,
@@ -49,6 +60,9 @@ class TripSave {
     if (itemKey != null) 'itemKey': itemKey,
     if (askedThb != null) 'askedThb': askedThb,
     if (paidThb != null) 'paidThb': paidThb,
+    if (placeName != null) 'placeName': placeName,
+    if (sellerPrices != null) 'sellerPrices': sellerPrices,
+    if (ourOffers != null) 'ourOffers': ourOffers,
   };
 
   /// Null when [json] is not a well-formed save.
@@ -71,6 +85,11 @@ class TripSave {
       itemKey: itemKey is String ? itemKey : null,
       askedThb: _number(json['askedThb']),
       paidThb: _number(json['paidThb']),
+      placeName: json['placeName'] is String
+          ? json['placeName'] as String
+          : null,
+      sellerPrices: _numbers(json['sellerPrices']),
+      ourOffers: _numbers(json['ourOffers']),
     );
   }
 }
@@ -79,6 +98,12 @@ double? _number(Object? value) {
   if (value is! num) return null;
   final v = value.toDouble();
   return v.isFinite ? v : null;
+}
+
+List<double>? _numbers(Object? value) {
+  if (value is! List) return null;
+  final out = [for (final v in value) ?_number(v)];
+  return out.length == value.length ? out : null;
 }
 
 double keptTotalThb(Iterable<TripSave> saves) =>
@@ -139,6 +164,9 @@ TripSave? saveFromHaggle({
   required String itemKey,
   required double askedThb,
   required double paidThb,
+  String? placeName,
+  List<double>? sellerPrices,
+  List<double>? ourOffers,
 }) {
   if (paidThb <= 0 || paidThb > askedThb) return null;
   return TripSave(
@@ -149,6 +177,9 @@ TripSave? saveFromHaggle({
     itemKey: itemKey,
     askedThb: askedThb,
     paidThb: paidThb,
+    placeName: placeName,
+    sellerPrices: sellerPrices,
+    ourOffers: ourOffers,
   );
 }
 

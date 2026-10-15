@@ -1157,4 +1157,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String billCheckedTrace(String elapsed) {
     return 'Figures checked on this phone · $elapsed';
   }
+
+  @override
+  String get authSigningIn => 'Signing in';
+
+  @override
+  String get authErrTryAgain => 'That didn\'t work. Try again.';
+
+  @override
+  String get authErrEmailRejected =>
+      'This email can\'t be used. Try another one.';
+
+  @override
+  String get authErrEmailUndeliverable =>
+      'We can\'t send email to this address yet.';
+
+  @override
+  String get billTimeoutTitle => 'That took too long';
+
+  @override
+  String get billTimeoutBody => 'That took too long. Try again in a moment.';
+
+  @override
+  String scanKindLine(
+    String engine,
+    String kind,
+    String confidence,
+    String elapsed,
+  ) {
+    return '$engine sees $kind ($confidence) · $elapsed';
+  }
+
+  @override
+  String get scanCheckAsBill => 'Check it as a bill';
+
+  @override
+  String get kindAtm => 'an ATM screen';
+
+  @override
+  String get kindTerminal => 'a card terminal';
+
+  @override
+  String get kindBill => 'a bill or menu';
+
+  @override
+  String get kindPriceTag => 'a price tag';
+
+  @override
+  String get kindOther => 'something else';
 }

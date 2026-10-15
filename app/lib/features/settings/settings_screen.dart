@@ -11,6 +11,8 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/group.dart';
 import '../../shared/pressable.dart';
 import '../../shared/content_width.dart';
+import '../auth/account_section.dart';
+import '../auth/auth_gate.dart' show AuthScope;
 
 /// The traveler's own currency and how the app speaks Thai for them.
 class SettingsScreen extends StatelessWidget {
@@ -31,6 +33,9 @@ class SettingsScreen extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Only under the sign-in gate (absent in previews and tests).
+              if (context.getInheritedWidgetOfExactType<AuthScope>() != null)
+                const AccountSection(),
               SectionHeader(l10n.settingsCurrency, first: true),
               GroupCard(
                 children: [
