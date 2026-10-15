@@ -24,6 +24,24 @@ enum _Tab { home, scan, speak, assistant, records }
 class _AppShellState extends State<AppShell> {
   _Tab _page = _Tab.home;
 
+  /// Tabs visited before this one, so system back walks back through them
+  /// like pages; back on Home with nothing behind it leaves the app.
+  final List<_Tab> _history = [];
+
+  void _go(_Tab tab) {
+    if (tab == _page) return;
+    setState(() {
+      _history
+        ..remove(tab)
+        ..add(_page);
+      _page = tab;
+    });
+  }
+
+  void _back() => setState(() {
+    _page = _history.isEmpty ? _Tab.home : _history.removeLast();
+  });
+
   void _open(Widget screen) => Navigator.of(context).push(
     MaterialPageRoute<void>(builder: (_) => screen, fullscreenDialog: true),
   );
@@ -35,13 +53,23 @@ class _AppShellState extends State<AppShell> {
       case _Tab.speak:
         _open(const HaggleScreen());
       case final tab:
-        setState(() => _page = tab);
+        _go(tab);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    return PopScope(
+      canPop: _page == _Tab.home && _history.isEmpty,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _back();
+      },
+      child: _scaffold(l10n),
+    );
+  }
+
+  Widget _scaffold(AppLocalizations l10n) {
     return Scaffold(
       extendBody: true,
       body: IndexedStack(
@@ -54,11 +82,11 @@ class _AppShellState extends State<AppShell> {
           ContentWidth(
             child: HomeScreen(
               onScan: () => _open(const ScanScreen()),
-              onSeeAll: () => setState(() => _page = _Tab.records),
+              onSeeAll: () => _go(_Tab.records),
               onSettings: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
               ),
-              onOpenAssistant: () => setState(() => _page = _Tab.assistant),
+              onOpenAssistant: () => _go(_Tab.assistant),
             ),
           ),
           const ContentWidth(child: AssistantScreen()),
