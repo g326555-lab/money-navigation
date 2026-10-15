@@ -58,6 +58,7 @@ dependencies:
   geocoding: ^5.0.0
   wakelock_plus: ^1.8.0
   google_maps_flutter: ^2.19.0
+  record: ^7.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
