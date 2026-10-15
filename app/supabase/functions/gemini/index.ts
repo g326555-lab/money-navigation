@@ -6,7 +6,10 @@ import { corsHeaders, fetchWithTimeout, json } from "../_shared/http.ts";
 import { vertexAccessToken } from "../_shared/google_auth.ts";
 
 const MODELS = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash"];
-const TIMEOUT_MS = 8000;
+// The free Developer key often answers 503 or hangs, and every caller treats
+// Gemini as optional. The app waits 3 s, so the function gives up at 2.2 s
+// to leave room for the network and still deliver an answer that arrives.
+const DEADLINE_MS = 2200;
 
 type Task = "read_bill" | "resolve_item" | "explain";
 
@@ -61,7 +64,7 @@ function buildRequest(task: Task, input: Record<string, unknown>) {
   }
 }
 
-async function callVertex(model: string, body: unknown) {
+async function callVertex(model: string, body: unknown, ms: number) {
   const project = Deno.env.get("GCP_PROJECT_ID");
   const sa = Deno.env.get("GOOGLE_SA_JSON");
   if (!project || !sa) throw new Error("vertex not configured");
@@ -73,11 +76,11 @@ async function callVertex(model: string, body: unknown) {
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(body),
     },
-    TIMEOUT_MS,
+    ms,
   );
 }
 
-async function callDeveloperApi(model: string, body: unknown) {
+async function callDeveloperApi(model: string, body: unknown, ms: number) {
   const key = Deno.env.get("GEMINI_API_KEY");
   if (!key) throw new Error("developer api not configured");
   return fetchWithTimeout(
@@ -87,7 +90,7 @@ async function callDeveloperApi(model: string, body: unknown) {
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify(body),
     },
-    TIMEOUT_MS,
+    ms,
   );
 }
 
@@ -103,9 +106,17 @@ Deno.serve(async (req) => {
     const errors: string[] = [];
     for (const [path, call] of [["vertex", callVertex], ["developer", callDeveloperApi]] as const) {
       for (const model of MODELS) {
+        const left = DEADLINE_MS - (Date.now() - started);
+        if (left < 300) break;
         try {
-          const res = await call(model, body);
-          const data = await res.json();
+          const res = await call(model, body, left);
+          // The fetch timer stops once headers arrive; bound the body too.
+          const data = await Promise.race([
+            res.json(),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("deadline")), Math.max(0, DEADLINE_MS - (Date.now() - started)))
+            ),
+          ]) as Record<string, any>;
           if (!res.ok) {
             errors.push(`${path}/${model}: ${res.status}`);
             continue;
