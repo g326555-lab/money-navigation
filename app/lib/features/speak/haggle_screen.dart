@@ -30,6 +30,7 @@ import '../../shared/pressable.dart';
 import '../../shared/price_scale.dart';
 import '../settings/settings_screen.dart' show endingText, statementEndingText;
 import 'haggle_controller.dart';
+import 'show_seller_screen.dart';
 import '../../shared/surface.dart';
 import '../../shared/content_width.dart';
 
@@ -431,6 +432,10 @@ class _HaggleScreenState extends State<HaggleScreen>
               low: item.low,
               high: item.high,
               asked: heard.amount,
+              verdict: verdict,
+              unit: unit,
+              counter: offer,
+              lastPaid: paidBefore?.lastPaidThb,
             ),
           ),
           GroupRow(
@@ -443,14 +448,6 @@ class _HaggleScreenState extends State<HaggleScreen>
             valueStyle: AppTypography.of(context).rowTitle
                 .copyWith(color: AppColors.primaryText),
           ),
-          GroupRow(
-            title: l10n.speakAsked,
-            value: AppFormat.roundedAmount(heard.amount, marketCurrency),
-            valueStyle: verdict.verdict == PriceVerdict.high
-                ? AppTypography.of(context).rowTitle
-                      .copyWith(color: AppColors.errorText)
-                : null,
-          ),
           if (counter != null)
             GroupRow(
               title: l10n.memoryCounterRow,
@@ -459,8 +456,11 @@ class _HaggleScreenState extends State<HaggleScreen>
                 counter.recordsUsed,
                 counter.sampleRecords,
               ),
-              value: l10n.memoryAbout(
-                AppFormat.roundedAmount(counter.offerThb, marketCurrency),
+              // The traveler's usual discount, not a second price: the
+              // counter-offer above stays the one to say.
+              value: l10n.memoryDiscount(
+                NumberFormat.decimalPattern('en')
+                    .format(counter.medianDiscountPercent.round()),
               ),
             ),
         ],
@@ -531,6 +531,20 @@ class _HaggleScreenState extends State<HaggleScreen>
         l10n.haggleLeaveSentence(say),
       ),
     };
+    // What the seller reads, and its meaning for the traveler (a Thai
+    // screen needs no translation).
+    final thaiScreen = Localizations.localeOf(context).languageCode == 'th';
+    final (sellerAmount, meaning) = switch (kind) {
+      MoveKind.offer => (
+        l10n.showSellerAmount(price),
+        l10n.haggleOfferMeaning(price),
+      ),
+      MoveKind.accept => (
+        l10n.showSellerAmount(price),
+        l10n.haggleAcceptMeaning(price),
+      ),
+      MoveKind.stop => (null, l10n.haggleLeaveMeaning),
+    };
     return [
       const SizedBox(height: AppSpacing.zoneGap),
       _PeekingStack(
@@ -545,6 +559,24 @@ class _HaggleScreenState extends State<HaggleScreen>
           canSpeak: state.canSpeak,
           speaking: state.speaking,
           onSpeak: () => _haggle.speakCounter(sentence),
+          showSeller: l10n.haggleShowSeller,
+          onShowSeller: () => Navigator.of(context).push(
+            PageRouteBuilder<void>(
+              transitionDuration: AppMotion.of(context, AppMotion.standard),
+              reverseTransitionDuration: AppMotion.of(
+                context,
+                AppMotion.standard,
+              ),
+              pageBuilder: (_, _, _) => ShowSellerScreen(
+                haggle: _haggle,
+                sentence: sentence,
+                amount: sellerAmount,
+                meaning: thaiScreen ? null : meaning,
+              ),
+              transitionsBuilder: (_, animation, _, child) =>
+                  FadeTransition(opacity: animation, child: child),
+            ),
+          ),
         ),
       ),
       if (_haggle.voiceTrace case final voice?)
@@ -957,11 +989,15 @@ class _CounterCard extends StatelessWidget {
     required this.canSpeak,
     required this.speaking,
     required this.onSpeak,
+    required this.showSeller,
+    required this.onShowSeller,
   });
 
   final String label;
   final String amount;
   final String sentence;
+  final String showSeller;
+  final VoidCallback onShowSeller;
   final String sayIt;
   final String speakingLabel;
   final String noVoice;
@@ -1021,6 +1057,13 @@ class _CounterCard extends StatelessWidget {
                 color: AppColors.onSurfaceDarkSecondary,
               ),
             ),
+          const SizedBox(height: AppSpacing.md),
+          // Too loud to be heard: the words, large, for the seller to read.
+          AppButton.secondary(
+            label: showSeller,
+            icon: Icons.open_in_full_rounded,
+            onPressed: onShowSeller,
+          ),
         ],
       ),
     );
