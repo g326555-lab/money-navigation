@@ -1010,26 +1010,38 @@
       }
     }
   },
-  "homeCashBasis": "{days, plural, other{Estimate from your last {days} days}}",
+  "homeCashBasis": "{count, plural, =1{Estimate from 1 of your records over the last {days} days} other{Estimate from {count} of your records over the last {days} days}}",
   "@homeCashBasis": {
     "placeholders": {
       "days": {
         "type": "int"
-      }
-    }
-  },
-  "homeCashBasisSamples": "{days, plural, other{Estimate from {days} days of sample records}}",
-  "@homeCashBasisSamples": {
-    "placeholders": {
-      "days": {
+      },
+      "count": {
         "type": "int"
       }
     }
   },
-  "homeCashBasisMixed": "{days, plural, other{Estimate from your last {days} days, sample records included}}",
+  "homeCashBasisSamples": "{count, plural, =1{Estimate from 1 sample record over {days} days} other{Estimate from {count} sample records over {days} days}}",
+  "@homeCashBasisSamples": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeCashBasisMixed": "Estimate from {count} records over the last {days} days, {samples} of them samples",
   "@homeCashBasisMixed": {
     "placeholders": {
       "days": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      },
+      "samples": {
         "type": "int"
       }
     }
@@ -1116,7 +1128,7 @@
       }
     }
   },
-  "memoryCounterRow": "Your past haggles suggest",
+  "memoryCounterRow": "Your past haggles",
   "memoryAbout": "About {amount}",
   "@memoryAbout": {
     "placeholders": {
@@ -1138,8 +1150,8 @@
   },
   "settingsAbout": "About",
   "settingsCredits": "Photo credits",
-  "creditsUnavailable": "The credits list couldn't be opened.",
-  "settingsCreditsHint": "The on-device photo model learned from {count} photos shared under Creative Commons licences. Their authors are credited below.",
+  "creditsUnavailable": "The credits list could not be read",
+  "settingsCreditsHint": "{count} photos that taught the app to tell photos apart",
   "@settingsCreditsHint": {
     "placeholders": {
       "count": {
@@ -1158,7 +1170,7 @@
       }
     }
   },
-  "creditsFooter": "Photos from Wikimedia Commons, used under the licence named on each row.",
+  "creditsFooter": "These photos from Wikimedia Commons trained the on-device model that tells an ATM screen, a card terminal, a rate board and a receipt apart. Each is used under the licence shown, with its author.",
   "aiWordedBy": "Worded by {engine} from the figures above · {elapsed}",
   "@aiWordedBy": {
     "placeholders": {
@@ -1169,5 +1181,14 @@
         "type": "String"
       }
     }
-  }
+  },
+  "memoryDiscount": "About {percent} % off the first price",
+  "@memoryDiscount": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "homeKeptSamples": "Includes sample records"
 }

@@ -1130,7 +1130,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get settingsDemoFooter =>
-      'ใช้ตอนนำเสนอ ภาษา สกุลเงิน และบันทึกจะเปลี่ยนพร้อมกัน ใช้อัตราคงที่ บันทึกของคุณยังอยู่และจะกลับมาเมื่อปิด';
+      'ใช้ตอนนำเสนอ เปลี่ยนภาษา สกุลเงิน และบันทึกพร้อมกันด้วยอัตราคงที่ บันทึกของคุณจะกลับมาเมื่อปิดโหมดสาธิต';
 
   @override
   String billCheckedTrace(String elapsed) {
@@ -1237,33 +1237,18 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String homeCashBasis(int days) {
-    String _temp0 = intl.Intl.pluralLogic(
-      days,
-      locale: localeName,
-      other: 'ประมาณจาก $days วันล่าสุดของคุณ',
-    );
-    return '$_temp0';
+  String homeCashBasis(int days, int count) {
+    return 'ประมาณจากบันทึกของคุณ $count รายการใน $days วันล่าสุด';
   }
 
   @override
-  String homeCashBasisSamples(int days) {
-    String _temp0 = intl.Intl.pluralLogic(
-      days,
-      locale: localeName,
-      other: 'ประมาณจากบันทึกตัวอย่าง $days วัน',
-    );
-    return '$_temp0';
+  String homeCashBasisSamples(int days, int count) {
+    return 'ประมาณจากบันทึกตัวอย่าง $count รายการใน $days วัน';
   }
 
   @override
-  String homeCashBasisMixed(int days) {
-    String _temp0 = intl.Intl.pluralLogic(
-      days,
-      locale: localeName,
-      other: 'ประมาณจาก $days วันล่าสุด รวมบันทึกตัวอย่าง',
-    );
-    return '$_temp0';
+  String homeCashBasisMixed(int days, int count, int samples) {
+    return 'ประมาณจากบันทึก $count รายการใน $days วันล่าสุด เป็นตัวอย่าง $samples รายการ';
   }
 
   @override
@@ -1280,17 +1265,17 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String memoryPaidHere(String amount, String when) {
-    return 'คุณจ่าย $amount ที่นี่$when';
+    return '$whenคุณจ่ายที่นี่ $amount';
   }
 
   @override
   String memoryPaidAt(String amount, String place, String when) {
-    return 'คุณจ่าย $amount ที่ $place $when';
+    return '$whenคุณจ่ายที่ $place $amount';
   }
 
   @override
   String memoryPaid(String amount, String when) {
-    return 'คุณจ่าย $amount $when';
+    return '$whenคุณจ่าย $amount';
   }
 
   @override
@@ -1324,7 +1309,7 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get memoryCounterRow => 'จากการต่อราคาครั้งก่อน';
+  String get memoryCounterRow => 'การต่อราคาครั้งก่อนของคุณ';
 
   @override
   String memoryAbout(String amount) {
@@ -1346,17 +1331,17 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get settingsAbout => 'เกี่ยวกับ';
+  String get settingsAbout => 'เกี่ยวกับแอป';
 
   @override
   String get settingsCredits => 'เครดิตภาพ';
 
   @override
-  String get creditsUnavailable => 'เปิดรายการเครดิตไม่ได้';
+  String get creditsUnavailable => 'อ่านรายการเครดิตไม่ได้';
 
   @override
   String settingsCreditsHint(int count) {
-    return 'โมเดลแยกประเภทรูปในเครื่องเรียนรู้จากรูป $count รูปที่แบ่งปันภายใต้สัญญาอนุญาตครีเอทีฟคอมมอนส์ รายชื่อผู้ถ่ายอยู่ด้านล่าง';
+    return 'ภาพ $count ภาพที่ใช้สอนแอปให้แยกประเภทภาพ';
   }
 
   @override
@@ -1366,10 +1351,18 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get creditsFooter =>
-      'รูปจาก Wikimedia Commons ใช้ตามสัญญาอนุญาตที่ระบุในแต่ละแถว';
+      'ภาพเหล่านี้จาก Wikimedia Commons ใช้ฝึกโมเดลบนเครื่องที่แยกหน้าจอ ATM เครื่องรูดบัตร ป้ายอัตราแลกเปลี่ยน และใบเสร็จ แต่ละภาพใช้ตามสัญญาอนุญาตที่แสดง พร้อมชื่อผู้สร้าง';
 
   @override
   String aiWordedBy(String engine, String elapsed) {
-    return '$engine เรียบเรียงจากตัวเลขด้านบน · $elapsed';
+    return 'เรียบเรียงโดย $engine จากตัวเลขด้านบน · $elapsed';
   }
+
+  @override
+  String memoryDiscount(String percent) {
+    return 'ลดจากราคาแรกได้ราว $percent %';
+  }
+
+  @override
+  String get homeKeptSamples => 'รวมบันทึกตัวอย่าง';
 }

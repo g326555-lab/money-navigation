@@ -2181,20 +2181,20 @@ abstract class AppLocalizations {
   /// No description provided for @homeCashBasis.
   ///
   /// In en, this message translates to:
-  /// **'{days, plural, other{Estimate from your last {days} days}}'**
-  String homeCashBasis(int days);
+  /// **'{count, plural, =1{Estimate from 1 of your records over the last {days} days} other{Estimate from {count} of your records over the last {days} days}}'**
+  String homeCashBasis(int days, int count);
 
   /// No description provided for @homeCashBasisSamples.
   ///
   /// In en, this message translates to:
-  /// **'{days, plural, other{Estimate from {days} days of sample records}}'**
-  String homeCashBasisSamples(int days);
+  /// **'{count, plural, =1{Estimate from 1 sample record over {days} days} other{Estimate from {count} sample records over {days} days}}'**
+  String homeCashBasisSamples(int days, int count);
 
   /// No description provided for @homeCashBasisMixed.
   ///
   /// In en, this message translates to:
-  /// **'{days, plural, other{Estimate from your last {days} days, sample records included}}'**
-  String homeCashBasisMixed(int days);
+  /// **'Estimate from {count} records over the last {days} days, {samples} of them samples'**
+  String homeCashBasisMixed(int days, int count, int samples);
 
   /// No description provided for @memoryDaysAgo.
   ///
@@ -2247,7 +2247,7 @@ abstract class AppLocalizations {
   /// No description provided for @memoryCounterRow.
   ///
   /// In en, this message translates to:
-  /// **'Your past haggles suggest'**
+  /// **'Your past haggles'**
   String get memoryCounterRow;
 
   /// No description provided for @memoryAbout.
@@ -2295,13 +2295,13 @@ abstract class AppLocalizations {
   /// No description provided for @creditsUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'The credits list couldn\'t be opened.'**
+  /// **'The credits list could not be read'**
   String get creditsUnavailable;
 
   /// No description provided for @settingsCreditsHint.
   ///
   /// In en, this message translates to:
-  /// **'The on-device photo model learned from {count} photos shared under Creative Commons licences. Their authors are credited below.'**
+  /// **'{count} photos that taught the app to tell photos apart'**
   String settingsCreditsHint(int count);
 
   /// No description provided for @creditsRow.
@@ -2313,7 +2313,7 @@ abstract class AppLocalizations {
   /// No description provided for @creditsFooter.
   ///
   /// In en, this message translates to:
-  /// **'Photos from Wikimedia Commons, used under the licence named on each row.'**
+  /// **'These photos from Wikimedia Commons trained the on-device model that tells an ATM screen, a card terminal, a rate board and a receipt apart. Each is used under the licence shown, with its author.'**
   String get creditsFooter;
 
   /// No description provided for @aiWordedBy.
@@ -2321,6 +2321,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Worded by {engine} from the figures above · {elapsed}'**
   String aiWordedBy(String engine, String elapsed);
+
+  /// No description provided for @memoryDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'About {percent} % off the first price'**
+  String memoryDiscount(String percent);
+
+  /// No description provided for @homeKeptSamples.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes sample records'**
+  String get homeKeptSamples;
 }
 
 class _AppLocalizationsDelegate

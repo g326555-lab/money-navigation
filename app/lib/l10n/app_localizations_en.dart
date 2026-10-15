@@ -1254,33 +1254,30 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String homeCashBasis(int days) {
+  String homeCashBasis(int days, int count) {
     String _temp0 = intl.Intl.pluralLogic(
-      days,
+      count,
       locale: localeName,
-      other: 'Estimate from your last $days days',
+      other: 'Estimate from $count of your records over the last $days days',
+      one: 'Estimate from 1 of your records over the last $days days',
     );
     return '$_temp0';
   }
 
   @override
-  String homeCashBasisSamples(int days) {
+  String homeCashBasisSamples(int days, int count) {
     String _temp0 = intl.Intl.pluralLogic(
-      days,
+      count,
       locale: localeName,
-      other: 'Estimate from $days days of sample records',
+      other: 'Estimate from $count sample records over $days days',
+      one: 'Estimate from 1 sample record over $days days',
     );
     return '$_temp0';
   }
 
   @override
-  String homeCashBasisMixed(int days) {
-    String _temp0 = intl.Intl.pluralLogic(
-      days,
-      locale: localeName,
-      other: 'Estimate from your last $days days, sample records included',
-    );
-    return '$_temp0';
+  String homeCashBasisMixed(int days, int count, int samples) {
+    return 'Estimate from $count records over the last $days days, $samples of them samples';
   }
 
   @override
@@ -1343,7 +1340,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get memoryCounterRow => 'Your past haggles suggest';
+  String get memoryCounterRow => 'Your past haggles';
 
   @override
   String memoryAbout(String amount) {
@@ -1371,11 +1368,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsCredits => 'Photo credits';
 
   @override
-  String get creditsUnavailable => 'The credits list couldn\'t be opened.';
+  String get creditsUnavailable => 'The credits list could not be read';
 
   @override
   String settingsCreditsHint(int count) {
-    return 'The on-device photo model learned from $count photos shared under Creative Commons licences. Their authors are credited below.';
+    return '$count photos that taught the app to tell photos apart';
   }
 
   @override
@@ -1385,10 +1382,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get creditsFooter =>
-      'Photos from Wikimedia Commons, used under the licence named on each row.';
+      'These photos from Wikimedia Commons trained the on-device model that tells an ATM screen, a card terminal, a rate board and a receipt apart. Each is used under the licence shown, with its author.';
 
   @override
   String aiWordedBy(String engine, String elapsed) {
     return 'Worded by $engine from the figures above · $elapsed';
   }
+
+  @override
+  String memoryDiscount(String percent) {
+    return 'About $percent % off the first price';
+  }
+
+  @override
+  String get homeKeptSamples => 'Includes sample records';
 }
