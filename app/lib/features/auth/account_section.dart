@@ -119,7 +119,7 @@ class _AccountSectionState extends State<AccountSection> {
       children: [
         SectionHeader(l10n.authAccountHeader, first: widget.first),
         GroupCard(children: rows),
-        if (_error != null) AuthMessage(_error!),
+        AuthMessageSlot(_error),
       ],
     );
   }
@@ -141,7 +141,14 @@ class _ActionRow extends StatelessWidget {
     onPressed: onPressed,
     semanticLabel: label,
     child: ExcludeSemantics(
-      child: GroupRow(title: label, titleStyle: style),
+      // Muted while signing out or deleting, so the rows do not look
+      // tappable while they are not.
+      child: GroupRow(
+        title: label,
+        titleStyle: onPressed == null
+            ? style.copyWith(color: AppColors.onSurfaceMuted)
+            : style,
+      ),
     ),
   );
 }

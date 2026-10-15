@@ -1,10 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../shared/pressable.dart';
-import '../../shared/surface.dart';
 
 /// Values that Apple and Google fix for their sign-in buttons. They are the
 /// one place the app shows another company's mark, and both companies
@@ -24,6 +26,13 @@ abstract final class ProviderBrand {
   static const googleStrokeWidth = 1.0;
   static const googleTextWeight = 500;
 
+  /// Google's disabled light button: fill #FFFFFF at 38 %, stroke #1F1F1F
+  /// at 12 %, text and logo at 38 %. Apple publishes no disabled style, so
+  /// its button fades by the same 38 %.
+  static const googleDisabledFill = Color(0x61FFFFFF);
+  static const googleDisabledStroke = Color(0x1F1F1F1F);
+  static const googleDisabledContent = 0.38;
+
   /// The G is drawn at the size Google's 40 high button uses, scaled to our
   /// button height.
   static const googleLogoRatio = 20 / 40;
@@ -37,37 +46,44 @@ abstract final class ProviderBrand {
 }
 
 /// "Continue with Apple", black, at the height and corner of our buttons so
-/// it is never smaller than the other choices.
+/// it is never smaller than the other choices. Disabled (another way in is
+/// working) fades it like the Google button; [busy] keeps it as it is.
 class AppleSignInButton extends StatelessWidget {
   const AppleSignInButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.busy = false,
   });
 
   final String label;
   final VoidCallback? onPressed;
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
+    final enabled = onPressed != null || busy;
     return Semantics(
       button: true,
       enabled: onPressed != null,
       label: label,
       onTap: onPressed,
       excludeSemantics: true,
-      // The package draws a plain rounded rectangle; clip it to the app's
-      // superellipse so every button shares one corner shape.
-      child: ClipRSuperellipse(
-        borderRadius: const BorderRadius.all(Radius.circular(AppRadius.md)),
-        child: IgnorePointer(
-          ignoring: onPressed == null,
-          child: SignInWithAppleButton(
-            text: label,
-            height: AppSizes.buttonHeight,
-            style: SignInWithAppleButtonStyle.black,
-            borderRadius: BorderRadius.zero,
-            onPressed: onPressed ?? () {},
+      child: Opacity(
+        opacity: enabled ? 1 : ProviderBrand.googleDisabledContent,
+        // The package draws a plain rounded rectangle; clip it to the app's
+        // superellipse so every button shares one corner shape.
+        child: ClipRSuperellipse(
+          borderRadius: const BorderRadius.all(Radius.circular(AppRadius.md)),
+          child: IgnorePointer(
+            ignoring: onPressed == null,
+            child: SignInWithAppleButton(
+              text: label,
+              height: AppSizes.buttonHeight,
+              style: SignInWithAppleButtonStyle.black,
+              borderRadius: BorderRadius.zero,
+              onPressed: onPressed ?? () {},
+            ),
           ),
         ),
       ),
@@ -76,68 +92,83 @@ class AppleSignInButton extends StatelessWidget {
 }
 
 /// "Continue with Google" in Google's light theme.
+///
+/// Disabled (another way in is working) uses Google's disabled colours;
+/// [busy] (this way in is working) keeps the enabled look and ignores taps.
 class GoogleSignInButton extends StatelessWidget {
   const GoogleSignInButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.busy = false,
   });
 
   final String label;
   final VoidCallback? onPressed;
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
+    final enabled = onPressed != null || busy;
     final style = AppTypography.of(context).bodyLg.copyWith(
-      color: ProviderBrand.googleText,
+      color: enabled
+          ? ProviderBrand.googleText
+          : ProviderBrand.googleText.withValues(
+              alpha: ProviderBrand.googleDisabledContent,
+            ),
       fontWeight: FontWeight(ProviderBrand.googleTextWeight),
       fontVariations: [
         FontVariation.weight(ProviderBrand.googleTextWeight.toDouble()),
       ],
     );
     const logo = AppSizes.buttonHeight * ProviderBrand.googleLogoRatio;
+    // Whole device pixels, so every straight edge covers the same number
+    // of pixels (2.6 px would land on 2 at one edge and 3 at the other).
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final strokeWidth =
+        math.max(1, (ProviderBrand.googleStrokeWidth * dpr).round()) / dpr;
     return Pressable(
-      onPressed: onPressed,
+      onPressed: busy ? null : onPressed,
       semanticLabel: label,
-      child: Surface(
-        radius: AppRadius.md,
-        color: ProviderBrand.googleFill,
-        shadows: const [],
-        child: DecoratedBox(
-          decoration: const ShapeDecoration(
-            shape: RoundedSuperellipseBorder(
-              borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
-              side: BorderSide(
-                color: ProviderBrand.googleStroke,
-                width: ProviderBrand.googleStrokeWidth,
-              ),
+      haptic: HapticFeedback.lightImpact,
+      child: CustomPaint(
+        painter: _OutlinedSuperellipse(
+          radius: AppRadius.md,
+          fill: enabled
+              ? ProviderBrand.googleFill
+              : ProviderBrand.googleDisabledFill,
+          stroke: enabled
+              ? ProviderBrand.googleStroke
+              : ProviderBrand.googleDisabledStroke,
+          strokeWidth: strokeWidth,
+        ),
+        child: SizedBox(
+          height: AppSizes.buttonHeight,
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSizes.buttonPaddingH,
             ),
-          ),
-          child: SizedBox(
-            height: AppSizes.buttonHeight,
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.buttonPaddingH,
-              ),
-              // The button's own label is the semantics; skip the text copy.
-              child: ExcludeSemantics(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox.square(
+            // The button's own label is the semantics; skip the text copy.
+            child: ExcludeSemantics(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Opacity(
+                    opacity: enabled ? 1 : ProviderBrand.googleDisabledContent,
+                    child: const SizedBox.square(
                       dimension: logo,
                       child: CustomPaint(painter: GoogleLogoPainter()),
                     ),
-                    const SizedBox(width: ProviderBrand.googleLogoGap),
-                    Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(label, maxLines: 1, style: style),
-                      ),
+                  ),
+                  const SizedBox(width: ProviderBrand.googleLogoGap),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(label, maxLines: 1, style: style),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -145,6 +176,54 @@ class GoogleSignInButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A filled superellipse with a hairline outline drawn as a ring: the area
+/// between the outer shape and a concentric inner one (inset by the stroke,
+/// radius reduced by the same amount). A stroked path is widened along its
+/// normals, so on the tight corner curve it covers more pixels than on the
+/// straight edges and the corners read heavier; the ring keeps one width
+/// all the way round.
+class _OutlinedSuperellipse extends CustomPainter {
+  const _OutlinedSuperellipse({
+    required this.radius,
+    required this.fill,
+    required this.stroke,
+    required this.strokeWidth,
+  });
+
+  final double radius;
+  final Color fill;
+  final Color stroke;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final outer = RSuperellipse.fromRectAndRadius(
+      Offset.zero & size,
+      Radius.circular(radius),
+    );
+    final inner = RSuperellipse.fromRectAndRadius(
+      (Offset.zero & size).deflate(strokeWidth),
+      Radius.circular(radius - strokeWidth),
+    );
+    // Both fills go through Path so they share one tessellation of the
+    // inner edge; drawRSuperellipse tessellates differently and leaves a
+    // one-pixel seam of page colour along the long edges.
+    canvas.drawPath(Path()..addRSuperellipse(inner), Paint()..color = fill);
+    final ring = Path()
+      ..fillType = PathFillType.evenOdd
+      ..addRSuperellipse(outer)
+      ..addRSuperellipse(inner);
+    canvas.drawPath(ring, Paint()..color = stroke);
+  }
+
+  @override
+  bool shouldRepaint(_OutlinedSuperellipse old) =>
+      old.radius != radius ||
+      old.fill != fill ||
+      old.stroke != stroke ||
+      old.strokeWidth != strokeWidth;
 }
 
 /// Google's standard G, painted from the paths of its published

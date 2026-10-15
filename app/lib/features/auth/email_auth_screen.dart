@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/colors.dart';
 import '../../core/spacing.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/auth/account_models.dart';
 import '../../services/auth/auth_failure.dart';
 import '../../services/auth/auth_service.dart';
 import '../../services/auth/auth_validation.dart';
+import '../../shared/action_dock.dart';
 import '../../shared/app_button.dart';
 import '../../shared/group.dart';
 import 'auth_gate.dart';
@@ -51,6 +51,11 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
       null => null,
     };
     if (email != null) return email;
+    // The length rule is for new passwords; an existing one is the
+    // server's to judge.
+    if (_mode != _Mode.create) {
+      return _password.text.isEmpty ? l10n.authErrPasswordEmpty : null;
+    }
     return switch (checkPassword(_password.text)) {
       PasswordProblem.empty => l10n.authErrPasswordEmpty,
       PasswordProblem.tooShort => l10n.authErrPasswordShort(minPasswordLength),
@@ -108,18 +113,17 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     if (_mode == _Mode.confirm) {
       return AuthPage(
         title: l10n.authConfirmTitle,
+        dock: AppButton(
+          label: l10n.authBackToSignIn,
+          onPressed: () => setState(() {
+            _mode = _Mode.signIn;
+            _password.clear();
+          }),
+        ),
         children: [
           AuthMessage(
             l10n.authConfirmBody(normalizeEmail(_email.text)),
             isError: false,
-          ),
-          const SizedBox(height: AppSpacing.xxl),
-          AppButton(
-            label: l10n.authBackToSignIn,
-            onPressed: () => setState(() {
-              _mode = _Mode.signIn;
-              _password.clear();
-            }),
           ),
         ],
       );
@@ -128,6 +132,13 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     return AutofillGroup(
       child: AuthPage(
         title: creating ? l10n.authCreateTitle : l10n.authSignInTitle,
+        // Pinned in the dock, the button rides on top of the keyboard, so
+        // it is always in reach while typing.
+        dock: AppButton(
+          label: creating ? l10n.authCreateAction : l10n.authSignInAction,
+          busy: _busy,
+          onPressed: _submit,
+        ),
         children: [
           GroupCard(
             children: [
@@ -150,13 +161,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                 autofillHints: const [AutofillHints.email],
                 onSubmitted: (_) => _passwordFocus.requestFocus(),
                 onChanged: (_) => setState(() {}),
-                trailing: checkEmail(_email.text) == null
-                    ? const Icon(
-                        Icons.check_circle_rounded,
-                        size: AppSizes.tabIcon,
-                        color: AppColors.primaryText,
-                      )
-                    : null,
+                trailing: EmailCheck(visible: checkEmail(_email.text) == null),
               ),
               AuthField(
                 label: l10n.authPasswordLabel,
@@ -173,17 +178,20 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                   creating ? AutofillHints.newPassword : AutofillHints.password,
                 ],
                 onSubmitted: (_) => _submit(),
-                // The links row and the button sit under this field.
+                // The links row sits under this field, the dock under that.
                 scrollBottom:
-                    AppSizes.minTouchTarget +
-                    AppSpacing.xxl +
-                    AppSizes.buttonHeight,
+                    ActionDock.heightOf(context) + AppSizes.minTouchTarget,
               ),
             ],
           ),
-          if (_error != null) AuthMessage(_error!),
+          AuthMessageSlot(_error),
           const SizedBox(height: AppSpacing.sm),
-          Row(
+          // Side by side when they fit; with large text the second link
+          // moves to its own line instead of running into the first.
+          Wrap(
+            alignment: creating
+                ? WrapAlignment.end
+                : WrapAlignment.spaceBetween,
             children: [
               if (!creating)
                 AuthTextLink(
@@ -197,21 +205,12 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                           ),
                         ),
                 ),
-              const Spacer(),
               AuthTextLink(
                 label: creating ? l10n.authSignInAction : l10n.authCreateAction,
                 emphasis: true,
                 onPressed: _busy ? null : _switchMode,
               ),
             ],
-          ),
-          // The button sits right under the fields, so the keyboard never
-          // covers either.
-          const SizedBox(height: AppSpacing.xxl),
-          AppButton(
-            label: creating ? l10n.authCreateAction : l10n.authSignInAction,
-            busy: _busy,
-            onPressed: _submit,
           ),
         ],
       ),

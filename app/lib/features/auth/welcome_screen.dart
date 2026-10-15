@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/colors.dart';
 import '../../core/elevation.dart';
 import '../../core/formatters.dart';
+import '../../core/motion.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
@@ -34,6 +37,10 @@ class WelcomeScreen extends StatefulWidget {
 enum _Provider { apple, google }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  /// Shares of the spare height above and below the hero.
+  static const _heroSpaceAbove = 2;
+  static const _heroSpaceBelow = 3;
+
   bool _apple = false;
   _Provider? _busy;
   String? _error;
@@ -92,11 +99,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final auth = AuthScope.of(context);
     final padding = MediaQuery.paddingOf(context);
     final busy = _busy != null;
+    // The page measures its height intrinsically, so the text is balanced
+    // against the known width rather than a measured one.
+    final textWidth =
+        math.min(MediaQuery.sizeOf(context).width, AppSizes.contentMaxWidth) -
+        AppSpacing.screenMargin * 2 -
+        AppSpacing.sectionHeaderInset * 2;
+    final lookAroundColor = busy
+        ? AppColors.onSurfaceMuted
+        : AppColors.onSurfaceSecondary;
 
     final hero = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _ExampleCard(),
+        _ExampleCard(
+          textWidth:
+              textWidth +
+              (AppSpacing.sectionHeaderInset - AppSpacing.heroCardPadding) * 2,
+        ),
         const SizedBox(height: AppSpacing.zoneGap),
         Padding(
           padding: const EdgeInsets.symmetric(
@@ -107,10 +127,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             children: [
               Semantics(
                 header: true,
-                child: Text(l10n.authWelcomeTitle, style: type.headline),
+                child: BalancedText(
+                  l10n.authWelcomeTitle,
+                  style: type.headline,
+                  maxWidth: textWidth,
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(l10n.authWelcomeBody, style: type.heroLabel),
+              BalancedText(
+                l10n.authWelcomeBody,
+                style: type.heroLabel,
+                maxWidth: textWidth,
+              ),
             ],
           ),
         ),
@@ -121,15 +149,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final actions = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (_error != null) ...[
-          AuthMessage(_error!),
-          const SizedBox(height: AppSpacing.lg),
-        ],
+        // The message sits above the ways in, with the group gap below it.
+        AuthMessageSlot(_error),
+        AnimatedSize(
+          duration: AppMotion.of(context, AppMotion.standard),
+          curve: AppMotion.move,
+          child: SizedBox(height: _error == null ? 0 : AppSpacing.lg),
+        ),
         if (_apple) ...[
           AppleSignInButton(
             label: _busy == _Provider.apple
                 ? l10n.authSigningIn
                 : l10n.authContinueApple,
+            busy: _busy == _Provider.apple,
             onPressed: busy ? null : () => _signIn(_Provider.apple),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -139,6 +171,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             label: _busy == _Provider.google
                 ? l10n.authSigningIn
                 : l10n.authContinueGoogle,
+            busy: _busy == _Provider.google,
             onPressed: busy ? null : () => _signIn(_Provider.google),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -159,26 +192,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           onPressed: busy ? null : auth.continueAsGuest,
           semanticLabel: l10n.authLookAround,
           child: ExcludeSemantics(
-            child: SizedBox(
-              height: AppSizes.minTouchTarget,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Text(
-                      l10n.authLookAround,
-                      style: type.label.copyWith(
-                        color: AppColors.onSurfaceSecondary,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: AppSizes.minTouchTarget,
+              ),
+              // The arrow rides inline after the last word, so with large
+              // text the line wraps centred and the arrow stays with it.
+              child: Center(
+                child: Text.rich(
+                  TextSpan(
+                    text: l10n.authLookAround,
+                    children: [
+                      // A no-break space glues the arrow to the last word.
+                      const TextSpan(text: '\u00A0'),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          size: AppSizes.buttonIcon,
+                          color: lookAroundColor,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: AppSpacing.xs),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    size: AppSizes.buttonIcon,
-                    color: AppColors.onSurfaceSecondary,
-                  ),
-                ],
+                  textAlign: TextAlign.center,
+                  style: type.label.copyWith(color: lookAroundColor),
+                ),
               ),
             ),
           ),
@@ -190,41 +229,58 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
         backgroundColor: AppColors.background,
-        body: ContentWidth(
-          // Hero at the top, the ways in at the bottom; on a short screen
-          // (the Fold cover) the whole page scrolls instead of squeezing.
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.screenMargin,
-                padding.top + AppSpacing.lg,
-                AppSpacing.screenMargin,
-                padding.bottom + AppSpacing.lg,
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight:
-                      constraints.maxHeight -
-                      padding.top -
-                      padding.bottom -
-                      AppSpacing.lg * 2,
-                ),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      hero,
-                      // DESIGN.md: the action zone sits at the bottom, in
-                      // thumb reach; on short screens this gap collapses.
-                      const Spacer(),
-                      const SizedBox(height: AppSpacing.zoneGap),
-                      actions,
-                    ],
+        body: Stack(
+          children: [
+            ContentWidth(
+              // Hero at the top, the ways in at the bottom; on a short screen
+              // (the Fold cover) the whole page scrolls instead of squeezing.
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.screenMargin,
+                    padding.top + AppSpacing.lg,
+                    AppSpacing.screenMargin,
+                    padding.bottom + AppSpacing.lg,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight:
+                          constraints.maxHeight -
+                          padding.top -
+                          padding.bottom -
+                          AppSpacing.lg * 2,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // DESIGN.md: the action zone sits at the bottom, in
+                          // thumb reach. On a tall screen the spare height is
+                          // shared, two fifths above the hero and three fifths
+                          // below it, so the hero sits in the upper part of
+                          // the page instead of leaving one wide hole above
+                          // the buttons. On short screens both collapse.
+                          const Spacer(flex: _heroSpaceAbove),
+                          hero,
+                          const Spacer(flex: _heroSpaceBelow),
+                          const SizedBox(height: AppSpacing.zoneGap),
+                          actions,
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+            // The page scrolls on short screens; keep the clock legible.
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              height: padding.top,
+              child: const ColoredBox(color: AppColors.background),
+            ),
+          ],
         ),
       ),
     );
@@ -233,7 +289,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
 /// The hero card: the coin, what the ATM offered, and what declining kept.
 class _ExampleCard extends StatelessWidget {
-  const _ExampleCard();
+  const _ExampleCard({required this.textWidth});
+
+  /// Width of the card's text column, for balancing the label.
+  final double textWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +317,6 @@ class _ExampleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Coin(size: AuthSizes.welcomeCoin),
                 const Spacer(),
@@ -279,11 +337,12 @@ class _ExampleCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text(
+            BalancedText(
               l10n.authWelcomeExampleLabel,
               style: type.heroLabel.copyWith(
                 color: AppColors.onPrimaryContainer,
               ),
+              maxWidth: textWidth,
             ),
             const SizedBox(height: AppSpacing.xs),
             FittedBox(
@@ -294,9 +353,10 @@ class _ExampleCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             _Chip(
               label: l10n.authWelcomeExampleChip,
-              leading: const Icon(
+              // As tall as the label's line, so mark and words read as one.
+              leading: Icon(
                 Icons.check_circle_outline_rounded,
-                size: AppSizes.buttonIcon,
+                size: type.label.fontSize! * type.label.height!,
                 color: AppColors.primaryText,
               ),
               strong: true,

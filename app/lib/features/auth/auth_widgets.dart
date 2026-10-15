@@ -33,6 +33,8 @@ String? failureMessage(
   AuthFailure.unknown => signingIn ? l10n.authErrUnknown : l10n.authErrTryAgain,
 };
 
+Future<void> _noHaptic() async {}
+
 /// An everyday page for the account flow: grey page, optional back button,
 /// large title, content, and a pinned action dock.
 class AuthPage extends StatelessWidget {
@@ -85,6 +87,8 @@ class AuthPage extends StatelessWidget {
                       child: Pressable(
                         onPressed: () => Navigator.of(context).maybePop(),
                         semanticLabel: l10n.back,
+                        // Going back is not an outcome; no haptic.
+                        haptic: _noHaptic,
                         child: const SizedBox.square(
                           dimension: AppSizes.minTouchTarget,
                           child: Icon(
@@ -102,7 +106,7 @@ class AuthPage extends StatelessWidget {
                     ),
                     child: Semantics(
                       header: true,
-                      child: Text(title, style: type.headline),
+                      child: BalancedText(title, style: type.headline),
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -111,13 +115,22 @@ class AuthPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.sectionHeaderInset,
                       ),
-                      child: Text(subtitle!, style: type.heroLabel),
+                      child: BalancedText(subtitle!, style: type.heroLabel),
                     ),
                   ],
                   const SizedBox(height: AppSpacing.zoneGap),
                   ...children,
                 ],
               ),
+            ),
+            // Content scrolls away under the status bar instead of
+            // running through the clock and icons.
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              height: padding.top,
+              child: const ColoredBox(color: AppColors.background),
             ),
             if (dock != null)
               Positioned(
@@ -312,6 +325,31 @@ class AuthMessage extends StatelessWidget {
   }
 }
 
+/// The place under a group where a step's error appears. It opens and
+/// closes smoothly, so what sits below moves instead of jumping, and a new
+/// message cross-fades over the old one.
+class AuthMessageSlot extends StatelessWidget {
+  const AuthMessageSlot(this.text, {super.key});
+
+  /// The error to show, or null for none.
+  final String? text;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: AppMotion.of(context, AppMotion.standard),
+      curve: AppMotion.move,
+      alignment: Alignment.topCenter,
+      child: AnimatedSwitcher(
+        duration: AppMotion.of(context, AppMotion.quick),
+        child: text == null
+            ? const SizedBox(width: double.infinity)
+            : AuthMessage(text!, key: ValueKey(text)),
+      ),
+    );
+  }
+}
+
 /// A plain text action in the content zone (switch between sign in and
 /// create account, forgot password). 48 high so it is easy to hit.
 class AuthTextLink extends StatelessWidget {
@@ -333,6 +371,7 @@ class AuthTextLink extends StatelessWidget {
     final type = AppTypography.of(context);
     return Align(
       alignment: Alignment.centerLeft,
+      widthFactor: 1,
       child: Pressable(
         onPressed: onPressed,
         semanticLabel: label,
@@ -350,8 +389,12 @@ class AuthTextLink extends StatelessWidget {
                 widthFactor: 1,
                 child: Text(
                   label,
+                  // Muted while the page is working, so it does not look
+                  // tappable when it is not.
                   style: type.label.copyWith(
-                    color: emphasis
+                    color: onPressed == null
+                        ? AppColors.onSurfaceMuted
+                        : emphasis
                         ? AppColors.onSurface
                         : AppColors.onSurfaceSecondary,
                   ),
@@ -375,12 +418,20 @@ class AuthChoiceRow extends StatelessWidget {
     this.subtitle,
     this.titleStyle,
     this.leading,
+    this.ring = true,
   });
 
   final String title;
   final String? subtitle;
   final bool selected;
-  final VoidCallback onPressed;
+
+  /// Null while the page is saving.
+  final VoidCallback? onPressed;
+
+  /// Show the empty disc on unchosen rows. A short set of choices (two or
+  /// three) shows it, so the rows read as options; a long list hides it and
+  /// marks only the chosen row, so thirty empty marks do not crowd it.
+  final bool ring;
   final TextStyle? titleStyle;
 
   /// A 40 icon tile before the text; the group's hairline then starts at 72.
@@ -419,7 +470,7 @@ class AuthChoiceRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.lg),
-                SelectionMark(selected: selected),
+                SelectionMark(selected: selected, ring: ring),
               ],
             ),
           ),
@@ -432,26 +483,34 @@ class AuthChoiceRow extends StatelessWidget {
 /// Sizes of the account screens' own marks, derived from the row tokens.
 /// Candidates for lib/core/spacing.dart when another screen needs them.
 abstract final class AuthSizes {
-  /// Ring of an unchosen [SelectionMark] (24 across).
-  static const double selectionRing = 1.5;
+  /// Check inside a chosen [SelectionMark], as points of its 24 box: the
+  /// short arm starts left of centre, the long arm ends high on the right,
+  /// so the check sits optically centred in the disc.
+  static const selectionCheck = [
+    Offset(7, 12.5),
+    Offset(10.5, 16),
+    Offset(17, 9),
+  ];
 
-  /// Check inside a chosen [SelectionMark].
-  static const double selectionGlyph = 16;
-
-  /// The coin on the welcome card: two icon tiles high.
-  static const double welcomeCoin = AppSizes.iconTile * 2;
+  /// The coin on the welcome card, about 1.4 lines of the 46 number high:
+  /// here the number is the hero and the coin only says "money", so it is
+  /// smaller than the success-screen coin (132, compact 88).
+  static const double welcomeCoin = 72;
 
   /// The small green dot before "Example".
   static const double tagDot = 8;
 }
 
-/// The round mark at the end of a choice row: a green disc with a white
-/// check when chosen, an empty grey ring otherwise, so the choice reads
-/// without relying on colour alone.
+/// The round mark at the end of a choice row: a green disc with a dark
+/// check when chosen, a plain grey disc otherwise, so the choice reads by
+/// the check and not by colour alone.
 class SelectionMark extends StatelessWidget {
-  const SelectionMark({super.key, required this.selected});
+  const SelectionMark({super.key, required this.selected, this.ring = true});
 
   final bool selected;
+
+  /// Draw the empty disc when not chosen (see [AuthChoiceRow.ring]).
+  final bool ring;
 
   @override
   Widget build(BuildContext context) {
@@ -460,17 +519,14 @@ class SelectionMark extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const DecoratedBox(
-            decoration: ShapeDecoration(
-              shape: CircleBorder(
-                side: BorderSide(
-                  color: AppColors.onSurfaceTertiary,
-                  width: AuthSizes.selectionRing,
-                ),
+          if (ring)
+            const DecoratedBox(
+              decoration: ShapeDecoration(
+                shape: CircleBorder(),
+                color: AppColors.surfaceDim,
               ),
+              child: SizedBox.expand(),
             ),
-            child: SizedBox.expand(),
-          ),
           AnimatedScale(
             scale: selected ? 1 : AppMotion.checkFrom,
             duration: AppMotion.of(context, AppMotion.standard),
@@ -484,17 +540,140 @@ class SelectionMark extends StatelessWidget {
                   color: AppColors.primary,
                 ),
                 child: SizedBox.expand(
-                  child: Icon(
-                    Icons.check_rounded,
-                    size: AuthSizes.selectionGlyph,
-                    color: AppColors.onPrimary,
-                  ),
+                  child: CustomPaint(painter: _CheckPainter()),
                 ),
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// The mark at the end of the email row once the address reads right. It
+/// always holds its place, so the field never changes width as it appears,
+/// and it lands with the same small settle as a selection check.
+class EmailCheck extends StatelessWidget {
+  const EmailCheck({super.key, required this.visible});
+
+  final bool visible;
+
+  @override
+  Widget build(BuildContext context) {
+    return ExcludeSemantics(
+      child: AnimatedScale(
+        scale: visible ? 1 : AppMotion.checkFrom,
+        duration: AppMotion.of(context, AppMotion.standard),
+        curve: visible ? AppMotion.settle : AppMotion.exit,
+        child: AnimatedOpacity(
+          opacity: visible ? 1 : 0,
+          duration: AppMotion.of(context, AppMotion.quick),
+          child: const Icon(
+            Icons.check_circle_rounded,
+            size: AppSizes.tabIcon,
+            color: AppColors.primaryText,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The check in a [SelectionMark], stroked with round ends so it reads as
+/// firmly as the disc around it (the icon-font check is a hairline at 16).
+class _CheckPainter extends CustomPainter {
+  const _CheckPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final scale = size.width / AppSizes.tabIcon;
+    final points = [for (final p in AuthSizes.selectionCheck) p * scale];
+    final path = Path()..moveTo(points.first.dx, points.first.dy);
+    for (final p in points.skip(1)) {
+      path.lineTo(p.dx, p.dy);
+    }
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = AppSizes.progressStroke * scale
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..color = AppColors.onPrimary,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_CheckPainter oldDelegate) => false;
+}
+
+/// Text whose lines are evened out, like CSS `text-wrap: balance`: it takes
+/// the narrowest width that still needs the same number of lines, so a
+/// heading never ends on one orphaned word at the Fold cover width.
+///
+/// Give [maxWidth] where the parent asks for intrinsic sizes (a
+/// LayoutBuilder cannot answer them); otherwise the width is measured.
+class BalancedText extends StatelessWidget {
+  const BalancedText(
+    this.text, {
+    super.key,
+    required this.style,
+    this.maxWidth,
+  });
+
+  final String text;
+  final TextStyle style;
+  final double? maxWidth;
+
+  /// Halvings of the width range; 10 lands within a fraction of a point.
+  static const _steps = 10;
+
+  @override
+  Widget build(BuildContext context) {
+    if (maxWidth != null) return _balanced(context, maxWidth!);
+    return LayoutBuilder(
+      builder: (context, constraints) =>
+          _balanced(context, constraints.maxWidth),
+    );
+  }
+
+  Widget _balanced(BuildContext context, double width) {
+    final painter = TextPainter(
+      // Measure with what Text will render: the inherited style merged in.
+      text: TextSpan(
+        text: text,
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      locale: Localizations.maybeLocaleOf(context),
+    );
+    int linesAt(double w) {
+      painter.layout(maxWidth: w);
+      return painter.computeLineMetrics().length;
+    }
+
+    final lines = width.isFinite ? linesAt(width) : 1;
+    var fits = width;
+    if (lines > 1) {
+      var tooNarrow = 0.0;
+      for (var i = 0; i < _steps; i++) {
+        final mid = (tooNarrow + fits) / 2;
+        if (linesAt(mid) <= lines) {
+          fits = mid;
+        } else {
+          tooNarrow = mid;
+        }
+      }
+    }
+    painter.dispose();
+    final child = Text(text, style: style);
+    if (lines <= 1) return child;
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      widthFactor: 1,
+      child: SizedBox(width: fits.ceilToDouble(), child: child),
     );
   }
 }

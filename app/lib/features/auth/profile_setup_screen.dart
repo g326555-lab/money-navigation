@@ -140,11 +140,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 },
                 selected: _draft.travelerType == t,
-                onPressed: () {
-                  if (_draft.travelerType != t) {
-                    setState(() => _draft = _defaults(t));
-                  }
-                },
+                onPressed: _busy
+                    ? null
+                    : () {
+                        if (_draft.travelerType != t) {
+                          setState(() => _draft = _defaults(t));
+                        }
+                      },
               ),
           ],
         ),
@@ -177,8 +179,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 // Each language is written in its own script.
                 titleStyle: lang == AppLanguage.th ? thaiTitle : type.rowTitle,
                 selected: _draft.language == lang,
-                onPressed: () =>
-                    setState(() => _draft = _draft.copyWith(language: lang)),
+                onPressed: _busy
+                    ? null
+                    : () => setState(
+                        () => _draft = _draft.copyWith(language: lang),
+                      ),
               ),
           ],
         ),
@@ -272,7 +277,8 @@ class _CurrencyRow extends StatelessWidget {
 }
 
 /// Every currency the daily rate source covers; returns the chosen code.
-class SetupCurrencyPicker extends StatelessWidget {
+/// Opens scrolled to the current choice, which is the only row marked.
+class SetupCurrencyPicker extends StatefulWidget {
   const SetupCurrencyPicker({
     super.key,
     required this.title,
@@ -283,6 +289,11 @@ class SetupCurrencyPicker extends StatelessWidget {
   final String selected;
 
   @override
+  State<SetupCurrencyPicker> createState() => _SetupCurrencyPickerState();
+}
+
+class _SetupCurrencyPickerState extends State<SetupCurrencyPicker> {
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final rates = AppScope.of(context).rates;
@@ -292,7 +303,7 @@ class SetupCurrencyPicker extends StatelessWidget {
         final currencies = rates.currencies.entries.toList()
           ..sort((a, b) => a.value.compareTo(b.value));
         return AuthPage(
-          title: title,
+          title: widget.title,
           children: currencies.isEmpty
               ? [AuthMessage(l10n.currencyOffline, isError: false)]
               : [
@@ -302,7 +313,8 @@ class SetupCurrencyPicker extends StatelessWidget {
                         AuthChoiceRow(
                           title: c.value,
                           subtitle: c.key,
-                          selected: c.key == selected,
+                          selected: c.key == widget.selected,
+                          ring: false,
                           onPressed: () => Navigator.of(context).pop(c.key),
                         ),
                     ],

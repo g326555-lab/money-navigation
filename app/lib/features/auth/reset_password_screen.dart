@@ -191,7 +191,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               ),
             ],
           ),
-          if (_error != null) AuthMessage(_error!),
+          AuthMessageSlot(_error),
         ],
       ),
     );
