@@ -1614,14 +1614,6 @@
     }
   },
   "cardSheetTitle": "Your card",
-  "cardCatalogTitle": "Choose a card",
-  "cardCatalogOther": "Other card / enter details yourself",
-  "cardCatalogUtopia": "U-topia U-Card · Visa",
-  "cardCatalogUtopiaFacts": "U-topia describes virtual and physical Visa cards, spending alerts, freeze/unfreeze, and custom spending limits.",
-  "cardCatalogUtopiaFeeNote": "Its card terms dated May 20, 2026 list up to 1.5% foreign-exchange and up to 1.5% cross-border fees. These are separate fees, so they are not copied into the single fee field below.",
-  "cardCatalogUtopiaIssuerNote": "U-topia's public documents name different card providers: the May 20 card terms say Third National, while the privacy policy updated October 6 names Rain. Check the current terms in your U-topia account before using fee comparisons.",
-  "cardCatalogSource": "Open U-topia card terms",
-  "cardCatalogProductSource": "Open U-topia product page",
   "cardFeeLabel": "Foreign transaction fee",
   "cardFeeHintThai": "Thai banks publish up to 2.5% (Kasikorn, ttb fee lists 2025-2026)",
   "cardFeeHintOther": "Your card's terms list the exact fee.",
@@ -2099,5 +2091,47 @@
     }
   },
   "haggleGuessing": "Working out what they are selling",
-  "haggleGuessFailed": "The AI could not name it this time. Pick it below or type it."
+  "haggleGuessFailed": "The AI could not name it this time. Pick it below or type it.",
+  "cardYourCard": "Your card",
+  "cardChooseList": "Choose from the list",
+  "cardScan": "Scan your card",
+  "cardScanPrivacy": "The photo is read on this phone and deleted straight away. Card numbers are dropped before anything is matched and are never saved.",
+  "cardScanReading": "Reading the card",
+  "cardScanNoMatch": "This card is not in the list yet. Choose it from the list, or enter its fees below.",
+  "cardScanConfirm": "Is this your card?",
+  "cardPickerTitle": "Choose your card",
+  "cardPickerFooter": "Fees and benefits come from each issuer's own page on the date shown. Check your card's current terms before relying on them.",
+  "cardForeignFeeUpTo": "Foreign purchases: up to {percent}",
+  "@cardForeignFeeUpTo": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cardForeignFeeValue": "Foreign purchases: {percent}",
+  "@cardForeignFeeValue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cardForeignFeeNone": "No foreign fee figure on the issuer's page",
+  "cardFromIssuer": "From the issuer",
+  "cardSourceChecked": "{source} · checked {date}",
+  "@cardSourceChecked": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "cardChange": "Change card",
+  "cardManual": "Or enter the fees yourself",
+  "cardNotThis": "Not using a listed card",
+  "cardFilled": "Fees filled in from this card's page"
 }

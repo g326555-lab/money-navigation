@@ -28,6 +28,9 @@ import '../briefing/briefing_rows.dart';
 import '../briefing/calendar_source.dart';
 import '../briefing/trip_context.dart';
 import '../briefing/trip_dates.dart';
+import '../../data/card_catalog_repository.dart';
+import '../../rules/card_catalog.dart';
+import 'card_face.dart';
 import 'card_facts_sheet.dart';
 import 'facts_section.dart';
 import '../home/cash_balance_card.dart';
@@ -60,10 +63,16 @@ class _AssistantScreenState extends State<AssistantScreen> {
   static String _key(StopCash s) =>
       '${s.event.start.toIso8601String()}|${s.event.title}|${s.event.location}';
 
+  final _catalog = CardCatalogRepository();
+  List<CatalogCard> _cards = const [];
+
   @override
   void initState() {
     super.initState();
     _briefing.start();
+    _catalog.load().then((cards) {
+      if (mounted) setState(() => _cards = cards);
+    });
   }
 
   @override
@@ -278,11 +287,23 @@ class _AssistantScreenState extends State<AssistantScreen> {
     return GroupCard(
       dividerInset: AppSpacing.rowIconTextInset,
       children: [
-        if (_briefing.card.productId == 'utopia-u-card')
+        // The chosen card, or the two ways to choose one.
+        if (_cards.where((c) => c.id == _briefing.card.productId).firstOrNull
+            case final card?)
           _ActionRow(
-            icon: const IconTile.blue(icon: Icons.credit_card_rounded),
-            title: l10n.cardCatalogUtopia,
-            subtitle: l10n.cardCatalogUtopiaFacts,
+            icon: SizedBox(
+              width: AppSizes.cardThumbWidth,
+              child: CardFace(card: card, compact: true),
+            ),
+            title: '${card.issuer} ${card.name}',
+            subtitle: cardFeeLine(l10n, card),
+            onPressed: () => _editCard(trip),
+          )
+        else if (_cards.isNotEmpty)
+          _ActionRow(
+            icon: const IconTile.blue(icon: Icons.add_card_rounded),
+            title: l10n.cardChooseList,
+            subtitle: l10n.cardScan,
             onPressed: () => _editCard(trip),
           ),
         _ActionRow(

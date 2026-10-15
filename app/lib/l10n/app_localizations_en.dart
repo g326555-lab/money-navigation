@@ -2064,33 +2064,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardSheetTitle => 'Your card';
 
   @override
-  String get cardCatalogTitle => 'Choose a card';
-
-  @override
-  String get cardCatalogOther => 'Other card / enter details yourself';
-
-  @override
-  String get cardCatalogUtopia => 'U-topia U-Card · Visa';
-
-  @override
-  String get cardCatalogUtopiaFacts =>
-      'U-topia describes virtual and physical Visa cards, spending alerts, freeze/unfreeze, and custom spending limits.';
-
-  @override
-  String get cardCatalogUtopiaFeeNote =>
-      'Its card terms dated May 20, 2026 list up to 1.5% foreign-exchange and up to 1.5% cross-border fees. These are separate fees, so they are not copied into the single fee field below.';
-
-  @override
-  String get cardCatalogUtopiaIssuerNote =>
-      'U-topia\'s public documents name different card providers: the May 20 card terms say Third National, while the privacy policy updated October 6 names Rain. Check the current terms in your U-topia account before using fee comparisons.';
-
-  @override
-  String get cardCatalogSource => 'Open U-topia card terms';
-
-  @override
-  String get cardCatalogProductSource => 'Open U-topia product page';
-
-  @override
   String get cardFeeLabel => 'Foreign transaction fee';
 
   @override
@@ -2663,4 +2636,68 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get haggleGuessFailed =>
       'The AI could not name it this time. Pick it below or type it.';
+
+  @override
+  String get cardYourCard => 'Your card';
+
+  @override
+  String get cardChooseList => 'Choose from the list';
+
+  @override
+  String get cardScan => 'Scan your card';
+
+  @override
+  String get cardScanPrivacy =>
+      'The photo is read on this phone and deleted straight away. Card numbers are dropped before anything is matched and are never saved.';
+
+  @override
+  String get cardScanReading => 'Reading the card';
+
+  @override
+  String get cardScanNoMatch =>
+      'This card is not in the list yet. Choose it from the list, or enter its fees below.';
+
+  @override
+  String get cardScanConfirm => 'Is this your card?';
+
+  @override
+  String get cardPickerTitle => 'Choose your card';
+
+  @override
+  String get cardPickerFooter =>
+      'Fees and benefits come from each issuer\'s own page on the date shown. Check your card\'s current terms before relying on them.';
+
+  @override
+  String cardForeignFeeUpTo(String percent) {
+    return 'Foreign purchases: up to $percent';
+  }
+
+  @override
+  String cardForeignFeeValue(String percent) {
+    return 'Foreign purchases: $percent';
+  }
+
+  @override
+  String get cardForeignFeeNone =>
+      'No foreign fee figure on the issuer\'s page';
+
+  @override
+  String get cardFromIssuer => 'From the issuer';
+
+  @override
+  String cardSourceChecked(String source, String date) {
+    return '$source · checked $date';
+  }
+
+  @override
+  String get cardChange => 'Change card';
+
+  @override
+  String get cardManual => 'Or enter the fees yourself';
+
+  @override
+  String get cardNotThis => 'Not using a listed card';
+
+  @override
+  String get cardFilled => 'Fees filled in from this card\'s page';
 }

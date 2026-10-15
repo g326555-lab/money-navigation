@@ -3444,54 +3444,6 @@ abstract class AppLocalizations {
   /// **'Your card'**
   String get cardSheetTitle;
 
-  /// No description provided for @cardCatalogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a card'**
-  String get cardCatalogTitle;
-
-  /// No description provided for @cardCatalogOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Other card / enter details yourself'**
-  String get cardCatalogOther;
-
-  /// No description provided for @cardCatalogUtopia.
-  ///
-  /// In en, this message translates to:
-  /// **'U-topia U-Card · Visa'**
-  String get cardCatalogUtopia;
-
-  /// No description provided for @cardCatalogUtopiaFacts.
-  ///
-  /// In en, this message translates to:
-  /// **'U-topia describes virtual and physical Visa cards, spending alerts, freeze/unfreeze, and custom spending limits.'**
-  String get cardCatalogUtopiaFacts;
-
-  /// No description provided for @cardCatalogUtopiaFeeNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Its card terms dated May 20, 2026 list up to 1.5% foreign-exchange and up to 1.5% cross-border fees. These are separate fees, so they are not copied into the single fee field below.'**
-  String get cardCatalogUtopiaFeeNote;
-
-  /// No description provided for @cardCatalogUtopiaIssuerNote.
-  ///
-  /// In en, this message translates to:
-  /// **'U-topia\'s public documents name different card providers: the May 20 card terms say Third National, while the privacy policy updated October 6 names Rain. Check the current terms in your U-topia account before using fee comparisons.'**
-  String get cardCatalogUtopiaIssuerNote;
-
-  /// No description provided for @cardCatalogSource.
-  ///
-  /// In en, this message translates to:
-  /// **'Open U-topia card terms'**
-  String get cardCatalogSource;
-
-  /// No description provided for @cardCatalogProductSource.
-  ///
-  /// In en, this message translates to:
-  /// **'Open U-topia product page'**
-  String get cardCatalogProductSource;
-
   /// No description provided for @cardFeeLabel.
   ///
   /// In en, this message translates to:
@@ -4355,6 +4307,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The AI could not name it this time. Pick it below or type it.'**
   String get haggleGuessFailed;
+
+  /// No description provided for @cardYourCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Your card'**
+  String get cardYourCard;
+
+  /// No description provided for @cardChooseList.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from the list'**
+  String get cardChooseList;
+
+  /// No description provided for @cardScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan your card'**
+  String get cardScan;
+
+  /// No description provided for @cardScanPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo is read on this phone and deleted straight away. Card numbers are dropped before anything is matched and are never saved.'**
+  String get cardScanPrivacy;
+
+  /// No description provided for @cardScanReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the card'**
+  String get cardScanReading;
+
+  /// No description provided for @cardScanNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This card is not in the list yet. Choose it from the list, or enter its fees below.'**
+  String get cardScanNoMatch;
+
+  /// No description provided for @cardScanConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Is this your card?'**
+  String get cardScanConfirm;
+
+  /// No description provided for @cardPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your card'**
+  String get cardPickerTitle;
+
+  /// No description provided for @cardPickerFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees and benefits come from each issuer\'s own page on the date shown. Check your card\'s current terms before relying on them.'**
+  String get cardPickerFooter;
+
+  /// No description provided for @cardForeignFeeUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign purchases: up to {percent}'**
+  String cardForeignFeeUpTo(String percent);
+
+  /// No description provided for @cardForeignFeeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign purchases: {percent}'**
+  String cardForeignFeeValue(String percent);
+
+  /// No description provided for @cardForeignFeeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No foreign fee figure on the issuer\'s page'**
+  String get cardForeignFeeNone;
+
+  /// No description provided for @cardFromIssuer.
+  ///
+  /// In en, this message translates to:
+  /// **'From the issuer'**
+  String get cardFromIssuer;
+
+  /// No description provided for @cardSourceChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'{source} · checked {date}'**
+  String cardSourceChecked(String source, String date);
+
+  /// No description provided for @cardChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change card'**
+  String get cardChange;
+
+  /// No description provided for @cardManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Or enter the fees yourself'**
+  String get cardManual;
+
+  /// No description provided for @cardNotThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Not using a listed card'**
+  String get cardNotThis;
+
+  /// No description provided for @cardFilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees filled in from this card\'s page'**
+  String get cardFilled;
 }
 
 class _AppLocalizationsDelegate

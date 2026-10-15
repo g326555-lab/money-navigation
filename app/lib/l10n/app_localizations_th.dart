@@ -2006,33 +2006,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cardSheetTitle => 'บัตรของคุณ';
 
   @override
-  String get cardCatalogTitle => 'เลือกบัตร';
-
-  @override
-  String get cardCatalogOther => 'บัตรอื่น / กรอกรายละเอียดเอง';
-
-  @override
-  String get cardCatalogUtopia => 'U-topia U-Card · Visa';
-
-  @override
-  String get cardCatalogUtopiaFacts =>
-      'U-topia ระบุว่ามีบัตร Visa ทั้งแบบเสมือนและแบบจริง พร้อมการแจ้งเตือน การระงับ/เปิดใช้บัตร และกำหนดวงเงินเองได้';
-
-  @override
-  String get cardCatalogUtopiaFeeNote =>
-      'เงื่อนไขบัตรลงวันที่ 20 พ.ค. 2026 ระบุค่าธรรมเนียมแลกเปลี่ยนเงินตราต่างประเทศสูงสุด 1.5% และค่าธรรมเนียมข้ามประเทศสูงสุด 1.5% ซึ่งเป็นคนละรายการ จึงไม่ได้นำไปใส่ในช่องค่าธรรมเนียมเดียวด้านล่าง';
-
-  @override
-  String get cardCatalogUtopiaIssuerNote =>
-      'เอกสารสาธารณะของ U-topia ระบุผู้ให้บริการบัตรไม่ตรงกัน: เงื่อนไขบัตรวันที่ 20 พ.ค. ระบุ Third National ส่วนประกาศความเป็นส่วนตัวที่ปรับปรุงวันที่ 6 ต.ค. ระบุ Rain โปรดตรวจสอบเงื่อนไขล่าสุดในบัญชี U-topia ก่อนใช้เปรียบเทียบค่าธรรมเนียม';
-
-  @override
-  String get cardCatalogSource => 'เปิดเงื่อนไขบัตร U-topia';
-
-  @override
-  String get cardCatalogProductSource => 'เปิดหน้าผลิตภัณฑ์ U-topia';
-
-  @override
   String get cardFeeLabel => 'ค่าธรรมเนียมใช้จ่ายต่างประเทศ';
 
   @override
@@ -2561,4 +2534,68 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get haggleGuessFailed =>
       'ครั้งนี้ AI บอกชื่อไม่ได้ เลือกด้านล่างหรือพิมพ์เอง';
+
+  @override
+  String get cardYourCard => 'บัตรของคุณ';
+
+  @override
+  String get cardChooseList => 'เลือกจากรายการ';
+
+  @override
+  String get cardScan => 'สแกนบัตร';
+
+  @override
+  String get cardScanPrivacy =>
+      'แอปอ่านรูปบนโทรศัพท์นี้แล้วลบทันที ตัวเลขบนบัตรถูกตัดทิ้งก่อนจับคู่และไม่เคยถูกบันทึก';
+
+  @override
+  String get cardScanReading => 'กำลังอ่านบัตร';
+
+  @override
+  String get cardScanNoMatch =>
+      'ยังไม่มีบัตรนี้ในรายการ เลือกจากรายการ หรือกรอกค่าธรรมเนียมด้านล่าง';
+
+  @override
+  String get cardScanConfirm => 'ใช่บัตรของคุณไหม';
+
+  @override
+  String get cardPickerTitle => 'เลือกบัตรของคุณ';
+
+  @override
+  String get cardPickerFooter =>
+      'ค่าธรรมเนียมและสิทธิประโยชน์มาจากหน้าเว็บของผู้ออกบัตรตามวันที่แสดง โปรดตรวจเงื่อนไขล่าสุดของบัตรก่อนใช้';
+
+  @override
+  String cardForeignFeeUpTo(String percent) {
+    return 'ซื้อในต่างประเทศ: สูงสุด $percent';
+  }
+
+  @override
+  String cardForeignFeeValue(String percent) {
+    return 'ซื้อในต่างประเทศ: $percent';
+  }
+
+  @override
+  String get cardForeignFeeNone =>
+      'หน้าเว็บผู้ออกบัตรไม่ระบุค่าธรรมเนียมต่างประเทศ';
+
+  @override
+  String get cardFromIssuer => 'ข้อมูลจากผู้ออกบัตร';
+
+  @override
+  String cardSourceChecked(String source, String date) {
+    return '$source · ตรวจเมื่อ $date';
+  }
+
+  @override
+  String get cardChange => 'เปลี่ยนบัตร';
+
+  @override
+  String get cardManual => 'หรือกรอกค่าธรรมเนียมเอง';
+
+  @override
+  String get cardNotThis => 'ไม่ได้ใช้บัตรในรายการ';
+
+  @override
+  String get cardFilled => 'กรอกค่าธรรมเนียมจากหน้าเว็บของบัตรนี้แล้ว';
 }

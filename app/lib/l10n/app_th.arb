@@ -589,14 +589,6 @@
   "cardAtmFixedValue": "ครั้งละ {amount}",
   "cardAtmPercentValue": "{percent} ของแต่ละครั้งที่ถอน",
   "cardSheetTitle": "บัตรของคุณ",
-  "cardCatalogTitle": "เลือกบัตร",
-  "cardCatalogOther": "บัตรอื่น / กรอกรายละเอียดเอง",
-  "cardCatalogUtopia": "U-topia U-Card · Visa",
-  "cardCatalogUtopiaFacts": "U-topia ระบุว่ามีบัตร Visa ทั้งแบบเสมือนและแบบจริง พร้อมการแจ้งเตือน การระงับ/เปิดใช้บัตร และกำหนดวงเงินเองได้",
-  "cardCatalogUtopiaFeeNote": "เงื่อนไขบัตรลงวันที่ 20 พ.ค. 2026 ระบุค่าธรรมเนียมแลกเปลี่ยนเงินตราต่างประเทศสูงสุด 1.5% และค่าธรรมเนียมข้ามประเทศสูงสุด 1.5% ซึ่งเป็นคนละรายการ จึงไม่ได้นำไปใส่ในช่องค่าธรรมเนียมเดียวด้านล่าง",
-  "cardCatalogUtopiaIssuerNote": "เอกสารสาธารณะของ U-topia ระบุผู้ให้บริการบัตรไม่ตรงกัน: เงื่อนไขบัตรวันที่ 20 พ.ค. ระบุ Third National ส่วนประกาศความเป็นส่วนตัวที่ปรับปรุงวันที่ 6 ต.ค. ระบุ Rain โปรดตรวจสอบเงื่อนไขล่าสุดในบัญชี U-topia ก่อนใช้เปรียบเทียบค่าธรรมเนียม",
-  "cardCatalogSource": "เปิดเงื่อนไขบัตร U-topia",
-  "cardCatalogProductSource": "เปิดหน้าผลิตภัณฑ์ U-topia",
   "cardFeeLabel": "ค่าธรรมเนียมใช้จ่ายต่างประเทศ",
   "cardFeeHintThai": "ธนาคารไทยระบุไม่เกิน 2.5% (ตารางค่าธรรมเนียมกสิกรไทย ทีทีบี ปี 2025-2026)",
   "cardFeeHintOther": "ดูค่าธรรมเนียมจริงได้ในเงื่อนไขบัตร",
@@ -834,5 +826,47 @@
     }
   },
   "haggleGuessing": "กำลังดูว่าเขาขายอะไร",
-  "haggleGuessFailed": "ครั้งนี้ AI บอกชื่อไม่ได้ เลือกด้านล่างหรือพิมพ์เอง"
+  "haggleGuessFailed": "ครั้งนี้ AI บอกชื่อไม่ได้ เลือกด้านล่างหรือพิมพ์เอง",
+  "cardYourCard": "บัตรของคุณ",
+  "cardChooseList": "เลือกจากรายการ",
+  "cardScan": "สแกนบัตร",
+  "cardScanPrivacy": "แอปอ่านรูปบนโทรศัพท์นี้แล้วลบทันที ตัวเลขบนบัตรถูกตัดทิ้งก่อนจับคู่และไม่เคยถูกบันทึก",
+  "cardScanReading": "กำลังอ่านบัตร",
+  "cardScanNoMatch": "ยังไม่มีบัตรนี้ในรายการ เลือกจากรายการ หรือกรอกค่าธรรมเนียมด้านล่าง",
+  "cardScanConfirm": "ใช่บัตรของคุณไหม",
+  "cardPickerTitle": "เลือกบัตรของคุณ",
+  "cardPickerFooter": "ค่าธรรมเนียมและสิทธิประโยชน์มาจากหน้าเว็บของผู้ออกบัตรตามวันที่แสดง โปรดตรวจเงื่อนไขล่าสุดของบัตรก่อนใช้",
+  "cardForeignFeeUpTo": "ซื้อในต่างประเทศ: สูงสุด {percent}",
+  "@cardForeignFeeUpTo": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cardForeignFeeValue": "ซื้อในต่างประเทศ: {percent}",
+  "@cardForeignFeeValue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cardForeignFeeNone": "หน้าเว็บผู้ออกบัตรไม่ระบุค่าธรรมเนียมต่างประเทศ",
+  "cardFromIssuer": "ข้อมูลจากผู้ออกบัตร",
+  "cardSourceChecked": "{source} · ตรวจเมื่อ {date}",
+  "@cardSourceChecked": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "cardChange": "เปลี่ยนบัตร",
+  "cardManual": "หรือกรอกค่าธรรมเนียมเอง",
+  "cardNotThis": "ไม่ได้ใช้บัตรในรายการ",
+  "cardFilled": "กรอกค่าธรรมเนียมจากหน้าเว็บของบัตรนี้แล้ว"
 }

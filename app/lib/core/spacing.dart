@@ -69,6 +69,13 @@ abstract final class AppSizes {
   static const double mapPinShadow = 4;
   static const double tripMapStartZoom = 13;
 
+  /// A payment card's width to height (ISO/IEC 7810 ID-1, 85.60 x 53.98 mm).
+  static const double cardAspect = 85.60 / 53.98;
+
+  /// Width and corner of the small card face in lists.
+  static const double cardThumbWidth = 56;
+  static const double cardThumbRadius = 6;
+
   /// How far a receipt photo can be pinched in.
   static const double photoMaxZoom = 5;
 

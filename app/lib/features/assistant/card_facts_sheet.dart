@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/colors.dart';
@@ -7,12 +10,21 @@ import '../../core/elevation.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
+import '../../data/card_catalog_repository.dart';
+import '../../rules/card_catalog.dart';
 import '../../rules/personal_context.dart';
+import '../../services/text_recognition_service.dart';
 import '../../shared/app_button.dart';
 import '../../shared/pressable.dart';
 import '../../shared/surface.dart';
 import '../home/home_metrics.dart';
+import 'card_face.dart';
+import 'card_picker_screen.dart';
 import 'card_profile_store.dart';
+
+/// Wide enough for the printed name on a card photo; small enough to read
+/// quickly on the phone.
+const cardPhotoMaxWidth = 1600.0;
 
 /// Edits the card's foreign fee and the home bank's ATM fee.
 Future<void> showCardFactsSheet(
@@ -46,6 +58,220 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
   late AtmFeePolicy _policy = widget.store.profile.atmFeePolicy;
   late String? _productId = widget.store.productId;
   String? _error;
+
+  final _catalog = CardCatalogRepository();
+  List<CatalogCard> _cards = const [];
+  CatalogCard? _card;
+
+  /// A card the photo matched, waiting for the traveler's yes.
+  CatalogCard? _pending;
+  bool _scanning = false;
+  bool _scanMissed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _catalog.load().then((cards) {
+      if (!mounted) return;
+      setState(() {
+        _cards = cards;
+        _card = cards.where((c) => c.id == _productId).firstOrNull;
+      });
+    });
+  }
+
+  /// Takes the card's fees and ATM policy from its catalogue entry.
+  void _use(CatalogCard card) {
+    final profile = profileFromCard(card, homeCurrency: widget.homeCurrency);
+    HapticFeedback.selectionClick();
+    setState(() {
+      _card = card;
+      _pending = null;
+      _scanMissed = false;
+      _productId = card.id;
+      _fee.text = _plain(profile.cardFeePercent);
+      _policy = profile.atmFeePolicy;
+      _atmValue.text = _plain(profile.atmFeeValue);
+      _error = null;
+    });
+  }
+
+  Future<void> _choose() async {
+    final chosen = await Navigator.of(context).push<CatalogCard>(
+      MaterialPageRoute(
+        builder: (_) => CardPickerScreen(
+          cards: _cards,
+          homeCurrency: widget.homeCurrency,
+          selectedId: _productId,
+        ),
+      ),
+    );
+    if (chosen != null && mounted) _use(chosen);
+  }
+
+  /// Photo of the card's front, read on the phone and deleted at once.
+  /// Only letters are compared; digits never leave cardFaceWords.
+  Future<void> _scan() async {
+    final XFile? photo;
+    try {
+      photo = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        maxWidth: cardPhotoMaxWidth,
+      );
+    } on PlatformException {
+      return;
+    }
+    if (photo == null || !mounted) return;
+    setState(() {
+      _scanning = true;
+      _scanMissed = false;
+      _pending = null;
+    });
+    final reader = TextRecognitionService();
+    List<CatalogCard> found = const [];
+    try {
+      final read = await reader.readFile(photo.path);
+      found = matchCardFace(read.lines.map((l) => l.text).join('\n'), _cards);
+    } on Object {
+      found = const [];
+    } finally {
+      await reader.close();
+      try {
+        await File(photo.path).delete();
+      } on Object {
+        // The picker's temporary copy; the system clears it anyway.
+      }
+    }
+    if (!mounted) return;
+    setState(() {
+      _scanning = false;
+      _pending = found.firstOrNull;
+      _scanMissed = found.isEmpty;
+    });
+  }
+
+  List<Widget> _cardSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final type = AppTypography.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+    final pending = _pending;
+    final card = _card;
+    return [
+      Text(l10n.cardYourCard, style: type.sectionHeader),
+      const SizedBox(height: AppSpacing.sm),
+      if (pending != null) ...[
+        CardFace(card: pending),
+        const SizedBox(height: AppSpacing.md),
+        Text(l10n.cardScanConfirm, style: type.title),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            Expanded(
+              child: AppButton.secondary(
+                label: l10n.haggleNo,
+                onPressed: () => setState(() {
+                  _pending = null;
+                  _scanMissed = true;
+                }),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: AppButton.green(
+                label: l10n.haggleYes,
+                onPressed: () => _use(pending),
+              ),
+            ),
+          ],
+        ),
+      ] else if (card != null) ...[
+        CardFace(card: card),
+        const SizedBox(height: AppSpacing.md),
+        Text(cardFeeLine(l10n, card), style: type.rowTitle),
+        Text(l10n.cardFilled, style: type.footer),
+        if (card.benefits.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          Text(l10n.cardFromIssuer, style: type.label),
+          for (final b in card.benefits)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              child: Text('\u2022 ${b.of(language)}', style: type.rowSubtitle),
+            ),
+        ],
+        for (final n in card.notes)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.sm),
+            child: Text(n.of(language), style: type.footer),
+          ),
+        const SizedBox(height: AppSpacing.sm),
+        for (final s in card.sources)
+          Pressable(
+            onPressed: () => launchUrl(
+              Uri.parse(s.url),
+              mode: LaunchMode.externalApplication,
+            ),
+            semanticLabel: s.label,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: AppSizes.minTouchTarget,
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  cardSourceLine(context, l10n, s),
+                  style: type.link.copyWith(color: AppColors.primaryText),
+                ),
+              ),
+            ),
+          ),
+      ],
+      if (_scanning) ...[
+        const SizedBox(height: AppSpacing.md),
+        Text(l10n.cardScanReading, style: type.rowSubtitle),
+      ] else if (_scanMissed) ...[
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          l10n.cardScanNoMatch,
+          style: type.label.copyWith(color: AppColors.onSurfaceSecondary),
+        ),
+      ],
+      const SizedBox(height: AppSpacing.md),
+      if (_cards.isNotEmpty)
+        AppButton.secondary(
+          label: card == null ? l10n.cardChooseList : l10n.cardChange,
+          icon: Icons.list_rounded,
+          onPressed: _choose,
+        ),
+      const SizedBox(height: AppSpacing.sm),
+      if (_cards.isNotEmpty)
+        AppButton.secondary(
+          label: l10n.cardScan,
+          icon: Icons.photo_camera_outlined,
+          onPressed: _scanning ? null : _scan,
+        ),
+      if (_cards.isNotEmpty) ...[
+        const SizedBox(height: AppSpacing.xs),
+        Text(l10n.cardScanPrivacy, style: type.footer),
+      ],
+      if (card != null)
+        Pressable(
+          onPressed: () => setState(() {
+            _card = null;
+            _productId = null;
+          }),
+          semanticLabel: l10n.cardNotThis,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: AppSizes.minTouchTarget,
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(l10n.cardNotThis, style: type.link),
+            ),
+          ),
+        ),
+    ];
+  }
 
   static String _plain(double? v) => v == null
       ? ''
@@ -116,54 +342,9 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
                 const SizedBox(height: AppSpacing.lg),
                 Text(l10n.cardSheetTitle, style: type.title),
                 const SizedBox(height: AppSpacing.lg),
-                Text(l10n.cardCatalogTitle, style: type.rowTitle),
-                const SizedBox(height: AppSpacing.sm),
-                DropdownButtonFormField<String?>(
-                  initialValue: _productId,
-                  items: [
-                    DropdownMenuItem(
-                      value: null,
-                      child: Text(l10n.cardCatalogOther),
-                    ),
-                    DropdownMenuItem(
-                      value: 'utopia-u-card',
-                      child: Text(l10n.cardCatalogUtopia),
-                    ),
-                  ],
-                  onChanged: (value) => setState(() => _productId = value),
-                  decoration: const InputDecoration(border: InputBorder.none),
-                ),
-                if (_productId == 'utopia-u-card') ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(l10n.cardCatalogUtopiaFacts, style: type.rowSubtitle),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(l10n.cardCatalogUtopiaFeeNote, style: type.footer),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(l10n.cardCatalogUtopiaIssuerNote, style: type.footer),
-                  const SizedBox(height: AppSpacing.sm),
-                  Pressable(
-                    onPressed: () => launchUrl(
-                      Uri.parse(
-                        'https://u-topia.com/terms-of-service/international',
-                      ),
-                      mode: LaunchMode.externalApplication,
-                    ),
-                    semanticLabel: l10n.cardCatalogSource,
-                    child: Text(l10n.cardCatalogSource, style: type.link),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Pressable(
-                    onPressed: () => launchUrl(
-                      Uri.parse('https://u-topia.com/about'),
-                      mode: LaunchMode.externalApplication,
-                    ),
-                    semanticLabel: l10n.cardCatalogProductSource,
-                    child: Text(
-                      l10n.cardCatalogProductSource,
-                      style: type.link,
-                    ),
-                  ),
-                ],
+                ..._cardSection(context),
+                const SizedBox(height: AppSpacing.xl),
+                Text(l10n.cardManual, style: type.sectionHeader),
                 const SizedBox(height: AppSpacing.xl),
                 Text(l10n.cardFeeLabel, style: type.rowTitle),
                 const SizedBox(height: AppSpacing.sm),
