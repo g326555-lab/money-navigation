@@ -30,3 +30,8 @@ export function validLatLng(lat: unknown, lng: unknown): boolean {
     Number.isFinite(lat) && Number.isFinite(lng) &&
     Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
 }
+
+/// A BCP-47 language code such as "en", "th" or "en-US" for place names.
+export function validLanguage(code: unknown): code is string {
+  return typeof code === "string" && /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(code);
+}
