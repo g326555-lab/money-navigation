@@ -555,5 +555,20 @@
   "payCompareWithdrawalPlan": "คิดเงินสดโดยถือว่าถอนครั้งเดียวราว {amount} ตามยอดประมาณวันนี้",
   "aiHeardBy": "ฟังโดย {engine} · {elapsed}",
   "speakWordsAfter": "คำพูดจะขึ้นเมื่อผู้ขายพูดจบ",
-  "speakReading": "กำลังอ่านสิ่งที่ผู้ขายพูด"
+  "speakReading": "กำลังอ่านสิ่งที่ผู้ขายพูด",
+  "assistantFacts": "ข้อมูลที่ตรวจทางออนไลน์",
+  "factsSummary": "วันนี้ตรวจ {checked} รายการ · อัปเดต {updated} · เท่าเดิม {unchanged} · คงค่าเดิม {kept}",
+  "factsNotToday": "วันนี้ยังไม่ได้ตรวจ",
+  "factsOffline": "ออฟไลน์ แสดงข้อมูลชุดของ {date}",
+  "factsFooter": "Gemini อ่านแต่ละหน้าวันละครั้ง ใช้ตัวเลขเฉพาะเมื่อประโยคนั้นปรากฏในหน้าเว็บตรงทุกตัวอักษร",
+  "factThAtmVisa": "ค่าธรรมเนียม ATM กสิกรไทย บัตร Visa",
+  "factThAtmMastercard": "ค่าธรรมเนียม ATM กสิกรไทย บัตร Mastercard",
+  "factMangoLowest": "มะม่วง ราคาส่งต่ำสุดวันนี้",
+  "factUpdated": "อ่านจากหน้าเว็บวันนี้",
+  "factUnchanged": "เท่าเดิม ตรวจแล้ววันนี้",
+  "factKeptBlocked": "คงค่าเดิม เว็บไซต์ไม่อนุญาตให้อ่านอัตโนมัติ",
+  "factKeptNoMatch": "คงค่าเดิม ไม่พบตัวเลขในหน้าเว็บแบบตรงทุกตัวอักษร",
+  "factKeptOther": "คงค่าเดิม อ่านหน้าเว็บไม่ได้",
+  "factNew": "ค้นคว้าด้วยตนเอง ยังไม่ได้ตรวจออนไลน์",
+  "factSourceLine": "{host} · ตรวจเมื่อ {time}"
 }

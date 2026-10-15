@@ -1792,5 +1792,53 @@
     }
   },
   "speakWordsAfter": "Their words appear when they finish",
-  "speakReading": "Reading what they said"
+  "speakReading": "Reading what they said",
+  "assistantFacts": "Facts checked online",
+  "factsSummary": "{checked} checked today · {updated} updated · {unchanged} unchanged · {kept} kept",
+  "@factsSummary": {
+    "placeholders": {
+      "checked": {
+        "type": "int"
+      },
+      "updated": {
+        "type": "int"
+      },
+      "unchanged": {
+        "type": "int"
+      },
+      "kept": {
+        "type": "int"
+      }
+    }
+  },
+  "factsNotToday": "Not checked yet today",
+  "factsOffline": "Offline, showing the copy from {date}",
+  "@factsOffline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "factsFooter": "Gemini reads each page once a day. A figure is used only when its sentence appears word for word on that page.",
+  "factThAtmVisa": "ATM fee, Kasikorn K-ATM, Visa",
+  "factThAtmMastercard": "ATM fee, Kasikorn K-ATM, Mastercard",
+  "factMangoLowest": "Mango, lowest wholesale price today",
+  "factUpdated": "Read from the page today",
+  "factUnchanged": "Same as before, checked today",
+  "factKeptBlocked": "Kept the last value, the site blocks automated reads",
+  "factKeptNoMatch": "Kept the last value, the figure was not found word for word",
+  "factKeptOther": "Kept the last value, the page could not be read",
+  "factNew": "Researched by hand, not checked online yet",
+  "factSourceLine": "{host} · checked {time}",
+  "@factSourceLine": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

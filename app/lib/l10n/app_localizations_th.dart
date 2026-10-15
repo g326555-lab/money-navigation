@@ -2043,4 +2043,57 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get speakReading => 'กำลังอ่านสิ่งที่ผู้ขายพูด';
+
+  @override
+  String get assistantFacts => 'ข้อมูลที่ตรวจทางออนไลน์';
+
+  @override
+  String factsSummary(int checked, int updated, int unchanged, int kept) {
+    return 'วันนี้ตรวจ $checked รายการ · อัปเดต $updated · เท่าเดิม $unchanged · คงค่าเดิม $kept';
+  }
+
+  @override
+  String get factsNotToday => 'วันนี้ยังไม่ได้ตรวจ';
+
+  @override
+  String factsOffline(String date) {
+    return 'ออฟไลน์ แสดงข้อมูลชุดของ $date';
+  }
+
+  @override
+  String get factsFooter =>
+      'Gemini อ่านแต่ละหน้าวันละครั้ง ใช้ตัวเลขเฉพาะเมื่อประโยคนั้นปรากฏในหน้าเว็บตรงทุกตัวอักษร';
+
+  @override
+  String get factThAtmVisa => 'ค่าธรรมเนียม ATM กสิกรไทย บัตร Visa';
+
+  @override
+  String get factThAtmMastercard => 'ค่าธรรมเนียม ATM กสิกรไทย บัตร Mastercard';
+
+  @override
+  String get factMangoLowest => 'มะม่วง ราคาส่งต่ำสุดวันนี้';
+
+  @override
+  String get factUpdated => 'อ่านจากหน้าเว็บวันนี้';
+
+  @override
+  String get factUnchanged => 'เท่าเดิม ตรวจแล้ววันนี้';
+
+  @override
+  String get factKeptBlocked => 'คงค่าเดิม เว็บไซต์ไม่อนุญาตให้อ่านอัตโนมัติ';
+
+  @override
+  String get factKeptNoMatch =>
+      'คงค่าเดิม ไม่พบตัวเลขในหน้าเว็บแบบตรงทุกตัวอักษร';
+
+  @override
+  String get factKeptOther => 'คงค่าเดิม อ่านหน้าเว็บไม่ได้';
+
+  @override
+  String get factNew => 'ค้นคว้าด้วยตนเอง ยังไม่ได้ตรวจออนไลน์';
+
+  @override
+  String factSourceLine(String host, String time) {
+    return '$host · ตรวจเมื่อ $time';
+  }
 }

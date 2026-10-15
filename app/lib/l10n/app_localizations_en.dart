@@ -2158,4 +2158,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get speakReading => 'Reading what they said';
+
+  @override
+  String get assistantFacts => 'Facts checked online';
+
+  @override
+  String factsSummary(int checked, int updated, int unchanged, int kept) {
+    return '$checked checked today · $updated updated · $unchanged unchanged · $kept kept';
+  }
+
+  @override
+  String get factsNotToday => 'Not checked yet today';
+
+  @override
+  String factsOffline(String date) {
+    return 'Offline, showing the copy from $date';
+  }
+
+  @override
+  String get factsFooter =>
+      'Gemini reads each page once a day. A figure is used only when its sentence appears word for word on that page.';
+
+  @override
+  String get factThAtmVisa => 'ATM fee, Kasikorn K-ATM, Visa';
+
+  @override
+  String get factThAtmMastercard => 'ATM fee, Kasikorn K-ATM, Mastercard';
+
+  @override
+  String get factMangoLowest => 'Mango, lowest wholesale price today';
+
+  @override
+  String get factUpdated => 'Read from the page today';
+
+  @override
+  String get factUnchanged => 'Same as before, checked today';
+
+  @override
+  String get factKeptBlocked =>
+      'Kept the last value, the site blocks automated reads';
+
+  @override
+  String get factKeptNoMatch =>
+      'Kept the last value, the figure was not found word for word';
+
+  @override
+  String get factKeptOther => 'Kept the last value, the page could not be read';
+
+  @override
+  String get factNew => 'Researched by hand, not checked online yet';
+
+  @override
+  String factSourceLine(String host, String time) {
+    return '$host · checked $time';
+  }
 }

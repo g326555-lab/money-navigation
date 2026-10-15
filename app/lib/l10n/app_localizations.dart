@@ -3449,6 +3449,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reading what they said'**
   String get speakReading;
+
+  /// No description provided for @assistantFacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Facts checked online'**
+  String get assistantFacts;
+
+  /// No description provided for @factsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{checked} checked today · {updated} updated · {unchanged} unchanged · {kept} kept'**
+  String factsSummary(int checked, int updated, int unchanged, int kept);
+
+  /// No description provided for @factsNotToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked yet today'**
+  String get factsNotToday;
+
+  /// No description provided for @factsOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline, showing the copy from {date}'**
+  String factsOffline(String date);
+
+  /// No description provided for @factsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Gemini reads each page once a day. A figure is used only when its sentence appears word for word on that page.'**
+  String get factsFooter;
+
+  /// No description provided for @factThAtmVisa.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM fee, Kasikorn K-ATM, Visa'**
+  String get factThAtmVisa;
+
+  /// No description provided for @factThAtmMastercard.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM fee, Kasikorn K-ATM, Mastercard'**
+  String get factThAtmMastercard;
+
+  /// No description provided for @factMangoLowest.
+  ///
+  /// In en, this message translates to:
+  /// **'Mango, lowest wholesale price today'**
+  String get factMangoLowest;
+
+  /// No description provided for @factUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Read from the page today'**
+  String get factUpdated;
+
+  /// No description provided for @factUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as before, checked today'**
+  String get factUnchanged;
+
+  /// No description provided for @factKeptBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept the last value, the site blocks automated reads'**
+  String get factKeptBlocked;
+
+  /// No description provided for @factKeptNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept the last value, the figure was not found word for word'**
+  String get factKeptNoMatch;
+
+  /// No description provided for @factKeptOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept the last value, the page could not be read'**
+  String get factKeptOther;
+
+  /// No description provided for @factNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Researched by hand, not checked online yet'**
+  String get factNew;
+
+  /// No description provided for @factSourceLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{host} · checked {time}'**
+  String factSourceLine(String host, String time);
 }
 
 class _AppLocalizationsDelegate
