@@ -2019,4 +2019,17 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get nearbyDemoOffBody => 'คำเตือนใกล้ตัวมาจากตำแหน่งจริงของโทรศัพท์';
+
+  @override
+  String get payCompareNeedBank =>
+      'ใส่ค่าธรรมเนียมที่ธนาคารของคุณคิดเมื่อถอนที่ ATM ต่างประเทศ เพื่อเทียบกับเงินสด';
+
+  @override
+  String get payCompareWithdrawalAssumed =>
+      'คิดเงินสดโดยถือว่าถอนเท่ากับยอดนี้พอดี';
+
+  @override
+  String payCompareWithdrawalPlan(String amount) {
+    return 'คิดเงินสดโดยถือว่าถอนครั้งเดียวราว $amount ตามยอดประมาณวันนี้';
+  }
 }

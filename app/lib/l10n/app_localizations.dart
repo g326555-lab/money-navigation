@@ -3413,6 +3413,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Warnings nearby come from where your phone really is'**
   String get nearbyDemoOffBody;
+
+  /// No description provided for @payCompareNeedBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Add what your bank charges at foreign ATMs to compare with cash'**
+  String get payCompareNeedBank;
+
+  /// No description provided for @payCompareWithdrawalAssumed.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash assumes you take out just this amount'**
+  String get payCompareWithdrawalAssumed;
+
+  /// No description provided for @payCompareWithdrawalPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash assumes one withdrawal of about {amount}, today\'s estimate'**
+  String payCompareWithdrawalPlan(String amount);
 }
 
 class _AppLocalizationsDelegate

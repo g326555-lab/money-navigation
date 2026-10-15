@@ -2134,4 +2134,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get nearbyDemoOffBody =>
       'Warnings nearby come from where your phone really is';
+
+  @override
+  String get payCompareNeedBank =>
+      'Add what your bank charges at foreign ATMs to compare with cash';
+
+  @override
+  String get payCompareWithdrawalAssumed =>
+      'Cash assumes you take out just this amount';
+
+  @override
+  String payCompareWithdrawalPlan(String amount) {
+    return 'Cash assumes one withdrawal of about $amount, today\'s estimate';
+  }
 }

@@ -1769,5 +1769,15 @@
   },
   "arrivalOff": "Off until notifications are allowed",
   "nearbyDemoOff": "Off in the demo state",
-  "nearbyDemoOffBody": "Warnings nearby come from where your phone really is"
+  "nearbyDemoOffBody": "Warnings nearby come from where your phone really is",
+  "payCompareNeedBank": "Add what your bank charges at foreign ATMs to compare with cash",
+  "payCompareWithdrawalAssumed": "Cash assumes you take out just this amount",
+  "payCompareWithdrawalPlan": "Cash assumes one withdrawal of about {amount}, today's estimate",
+  "@payCompareWithdrawalPlan": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }
