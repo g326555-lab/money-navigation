@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches the app icon background so launch is not a white flash. -->
+    <color name="launch_background">#12161A</color>
+    <!-- Adaptive icon background (flutter_launcher_icons). -->
+    <color name="ic_launcher_background">#12161A</color>
+</resources>

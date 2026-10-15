@@ -49,14 +49,17 @@ String rowsFromLines(List<OcrLine> lines) {
       best.add(line);
     }
   }
-  return rows.map((row) {
-    row.sort((a, b) => a.left.compareTo(b.left));
-    return row.map((l) => l.text.trim()).join(' ');
-  }).join('\n');
+  return rows
+      .map((row) {
+        row.sort((a, b) => a.left.compareTo(b.left));
+        return row.map((l) => l.text.trim()).join(' ');
+      })
+      .join('\n');
 }
 
 double _overlapRatio(OcrLine a, OcrLine b) {
-  final overlap = (a.bottom < b.bottom ? a.bottom : b.bottom) -
+  final overlap =
+      (a.bottom < b.bottom ? a.bottom : b.bottom) -
       (a.top > b.top ? a.top : b.top);
   final smaller = a.height < b.height ? a.height : b.height;
   if (overlap <= 0 || smaller <= 0) return 0;

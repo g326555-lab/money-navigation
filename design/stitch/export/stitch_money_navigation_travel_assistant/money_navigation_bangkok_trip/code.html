@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Navigation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: '#F2F4F6',
+          txt: '#111418',
+          sub: '#4E5968',
+          ter: '#8B95A1',
+          greenAccent: '#19D873',
+          greenText: '#00A85A',
+          lineBorder: '#E5E8EB',
+          darkBtn: '#111418'
+        },
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', '"Noto Sans Thai"', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    background-color: #F2F4F6;
+    color: #111418;
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Thai', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .tight-hero {
+    letter-spacing: -0.05em;
+    line-height: 0.92;
+  }
+</style>
+</head>
+<body class="min-h-screen bg-[#F2F4F6] text-[#111418] flex justify-center selection:bg-emerald-100">
+  <div class="w-full max-w-[466px] min-h-screen flex flex-col justify-between px-6 pt-5 pb-8 relative">
+    
+    <!-- Top Area -->
+    <div>
+      <!-- Top row: App title left, pill toggle right -->
+      <header class="flex items-center justify-between pt-2 pb-6">
+        <h1 class="text-[17px] font-bold tracking-tight text-[#111418]">Money Navigation</h1>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E5E8EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#19D873]"></span>
+          <span class="text-[13px] font-semibold text-[#4E5968]">Bangkok · USD</span>
+        </div>
+      </header>
+
+      <!-- Hero Section (directly on background) -->
+      <section class="pt-3 pb-7">
+        <p class="text-[14px] font-medium text-[#4E5968] mb-2">Kept on this trip</p>
+        <div class="flex items-baseline gap-2 mb-1.5">
+          <span class="text-[88px] font-extrabold tracking-tighter text-[#111418] tight-hero">316</span>
+          <span class="text-[22px] font-bold text-[#4E5968] tracking-tight">THB</span>
+        </div>
+        <p class="text-[15px] font-medium text-[#8B95A1] tracking-tight">≈ $10.24</p>
+      </section>
+
+      <!-- Brand motif: Green route line with stops -->
+      <!-- Route stops: "ATM · +246", "Market · +70", hollow dot "Next stop" -->
+      <div class="py-4 px-1 mb-6">
+        <div class="relative flex items-center justify-between">
+          <!-- Continuous background track & active route bar -->
+          <div class="absolute left-3 right-3 top-[7px] h-[2px] bg-[#E5E8EB] -z-0"></div>
+          <div class="absolute left-3 right-[32%] top-[7px] h-[2px] bg-[#19D873] -z-0"></div>
+
+          <!-- Stop 1: ATM -->
+          <div class="flex flex-col items-start z-10">
+            <div class="w-3.5 h-3.5 rounded-full bg-[#19D873] ring-4 ring-[#F2F4F6] mb-2.5"></div>
+            <div class="flex flex-col text-left">
+              <span class="text-[13px] font-semibold text-[#111418] whitespace-nowrap">ATM</span>
+              <span class="text-[12px] font-bold text-[#00A85A]">+246</span>
+            </div>
+          </div>
+
+          <!-- Stop 2: Market -->
+          <div class="flex flex-col items-center z-10 -ml-2">
+            <div class="w-3.5 h-3.5 rounded-full bg-[#19D873] ring-4 ring-[#F2F4F6] mb-2.5"></div>
+            <div class="flex flex-col items-center">
+              <span class="text-[13px] font-semibold text-[#111418] whitespace-nowrap">Market</span>
+              <span class="text-[12px] font-bold text-[#00A85A]">+70</span>
+            </div>
+          </div>
+
+          <!-- Stop 3: Next stop (Hollow dot) -->
+          <div class="flex flex-col items-end z-10">
+            <div class="w-3.5 h-3.5 rounded-full bg-[#F2F4F6] border-2 border-[#8B95A1] ring-4 ring-[#F2F4F6] mb-2.5"></div>
+            <div class="flex flex-col items-end">
+              <span class="text-[13px] font-medium text-[#8B95A1] whitespace-nowrap">Next stop</span>
+              <span class="text-[12px] font-medium text-[#8B95A1] opacity-0">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Briefing row with small icon -->
+      <div class="bg-white rounded-2xl p-4 border border-[#E5E8EB] mb-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-start gap-3.5">
+        <div class="w-8 h-8 rounded-full bg-[#F2F4F6] flex items-center justify-center shrink-0 mt-0.5 text-[#111418]">
+          <!-- Minimal clean cash / bank note vector icon -->
+          <svg class="w-4 h-4 text-[#111418]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2" />
+            <circle cx="12" cy="12" r="2" />
+            <path d="M6 12h.01M18 12h.01" />
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-[15px] font-bold text-[#111418] leading-snug">About 2,000 THB in cash today</p>
+          <p class="text-[13px] font-normal text-[#8B95A1] mt-0.5 leading-normal">Chatuchak market is mostly cash only</p>
+        </div>
+      </div>
+
+      <!-- Recent saves section: plain rows with thin dividers -->
+      <div class="mt-2">
+        <h3 class="text-[13px] font-semibold text-[#8B95A1] mb-2 px-0.5">Recent saves</h3>
+        <div class="divide-y divide-[#E5E8EB]">
+          <!-- Row 1 -->
+          <div class="py-3.5 flex items-center justify-between">
+            <span class="text-[15px] font-medium text-[#111418]">ATM conversion avoided</span>
+            <span class="text-[15px] font-semibold text-[#00A85A] font-mono-numeric">+246 THB</span>
+          </div>
+          <!-- Row 2 -->
+          <div class="py-3.5 flex items-center justify-between">
+            <span class="text-[15px] font-medium text-[#111418]">Mango price checked</span>
+            <span class="text-[15px] font-semibold text-[#00A85A] font-mono-numeric">+70 THB</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Actions Area -->
+    <div class="pt-8 flex flex-col gap-3">
+      <!-- Large full-width dark button "Scan to check" with camera icon -->
+      <button class="w-full h-[58px] bg-[#111418] hover:bg-[#20252c] active:scale-[0.99] transition-all rounded-2xl flex items-center justify-center gap-2.5 text-white shadow-[0_4px_14px_rgba(17,20,24,0.16)] cursor-pointer">
+        <!-- Camera Icon -->
+        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+          <circle cx="12" cy="13" r="3"/>
+        </svg>
+        <span class="text-[16px] font-bold tracking-tight">Scan to check</span>
+      </button>
+
+      <!-- Smaller text button "Hear a price" with microphone icon -->
+      <button class="w-full h-[44px] flex items-center justify-center gap-2 text-[#4E5968] hover:text-[#111418] active:opacity-75 transition-colors cursor-pointer">
+        <!-- Microphone Icon -->
+        <svg class="w-4 h-4 text-[#4E5968]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+        <span class="text-[14px] font-semibold">Hear a price</span>
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

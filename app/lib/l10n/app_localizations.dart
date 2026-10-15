@@ -103,6 +103,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Money Navigation'**
   String get appName;
+
+  /// No description provided for @scanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point at the ATM screen'**
+  String get scanHint;
+
+  /// No description provided for @scanShutter.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get scanShutter;
+
+  /// No description provided for @scanChoosePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose photo'**
+  String get scanChoosePhoto;
+
+  /// No description provided for @scanClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get scanClose;
+
+  /// No description provided for @scanFlashOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on light'**
+  String get scanFlashOn;
+
+  /// No description provided for @scanFlashOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off light'**
+  String get scanFlashOff;
+
+  /// No description provided for @scanCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera isn\'t available. You can still choose a photo.'**
+  String get scanCameraUnavailable;
+
+  /// No description provided for @scanCameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off for Money Navigation. Turn it on in Settings, or choose a photo.'**
+  String get scanCameraDenied;
+
+  /// No description provided for @stepReadText.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the photo'**
+  String get stepReadText;
+
+  /// No description provided for @stepReadTextDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on your phone in {ms} ms'**
+  String stepReadTextDone(int ms);
+
+  /// No description provided for @stepFindAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for an ATM conversion offer'**
+  String get stepFindAtm;
+
+  /// No description provided for @stepFindAtmDone.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM conversion offer found'**
+  String get stepFindAtmDone;
+
+  /// No description provided for @stepValues.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal {withdrawal} · fee {fee} · 1 USD = {rate} THB'**
+  String stepValues(String withdrawal, String fee, String rate);
+
+  /// No description provided for @stepValuesMarkup.
+  ///
+  /// In en, this message translates to:
+  /// **'{values} · mark-up {markup}'**
+  String stepValuesMarkup(String values, String markup);
+
+  /// No description provided for @stepCompare.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparing both totals'**
+  String get stepCompare;
+
+  /// No description provided for @stepCompareDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Converting costs about {amount} more'**
+  String stepCompareDone(String amount);
+
+  /// No description provided for @stepCompareEven.
+  ///
+  /// In en, this message translates to:
+  /// **'Both totals come out about the same'**
+  String get stepCompareEven;
+
+  /// No description provided for @scanTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get scanTryAgain;
+
+  /// No description provided for @atmKeepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You keep about'**
+  String get atmKeepLabel;
+
+  /// No description provided for @atmPress.
+  ///
+  /// In en, this message translates to:
+  /// **'Press'**
+  String get atmPress;
+
+  /// No description provided for @atmDeclineButton.
+  ///
+  /// In en, this message translates to:
+  /// **'The option without conversion, so you pay in baht'**
+  String get atmDeclineButton;
+
+  /// No description provided for @atmReasonMarkup.
+  ///
+  /// In en, this message translates to:
+  /// **'The ATM\'s own rate adds {markup} on top.'**
+  String atmReasonMarkup(String markup);
+
+  /// No description provided for @atmReasonNoMarkup.
+  ///
+  /// In en, this message translates to:
+  /// **'The ATM\'s own rate charges more than the rate on its screen.'**
+  String get atmReasonNoMarkup;
+
+  /// No description provided for @atmSource.
+  ///
+  /// In en, this message translates to:
+  /// **'From the numbers on this ATM screen · {time}'**
+  String atmSource(String time);
+
+  /// No description provided for @atmEvenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Either choice costs about the same'**
+  String get atmEvenTitle;
+
+  /// No description provided for @atmEvenBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The converted total matches the rate on the screen, so there is nothing to keep here.'**
+  String get atmEvenBody;
+
+  /// No description provided for @stepFindAtmFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'No ATM conversion offer in this photo'**
+  String get stepFindAtmFailed;
+
+  /// No description provided for @stepReadTextFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'No text found'**
+  String get stepReadTextFailed;
+
+  /// No description provided for @stepValuesFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Some numbers couldn\'t be read'**
+  String get stepValuesFailed;
+
+  /// No description provided for @scanTipNoText.
+  ///
+  /// In en, this message translates to:
+  /// **'Move closer so the screen fills most of the photo.'**
+  String get scanTipNoText;
+
+  /// No description provided for @scanTipNotAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'Point at the ATM screen that shows the amount in your home currency.'**
+  String get scanTipNotAtm;
+
+  /// No description provided for @scanTipMissingValues.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the phone straight and avoid glare on the screen.'**
+  String get scanTipMissingValues;
+
+  /// No description provided for @atmBothTotals.
+  ///
+  /// In en, this message translates to:
+  /// **'Both totals'**
+  String get atmBothTotals;
+
+  /// No description provided for @atmIfConvertDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'At the ATM\'s own rate'**
+  String get atmIfConvertDetail;
+
+  /// No description provided for @atmIfNotConvertDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Your card\'s bank converts it'**
+  String get atmIfNotConvertDetail;
+
+  /// No description provided for @atmOnScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'On this screen'**
+  String get atmOnScreen;
+
+  /// No description provided for @atmRowWithdrawal.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal'**
+  String get atmRowWithdrawal;
+
+  /// No description provided for @atmRowFee.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM access fee'**
+  String get atmRowFee;
+
+  /// No description provided for @atmRowRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate shown'**
+  String get atmRowRate;
+
+  /// No description provided for @atmRowMarkup.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark-up shown'**
+  String get atmRowMarkup;
+
+  /// No description provided for @atmRateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'1 USD = {rate} THB'**
+  String atmRateValue(String rate);
+
+  /// No description provided for @atmIfConvert.
+  ///
+  /// In en, this message translates to:
+  /// **'If you convert'**
+  String get atmIfConvert;
+
+  /// No description provided for @atmIfNotConvert.
+  ///
+  /// In en, this message translates to:
+  /// **'If you don\'t'**
+  String get atmIfNotConvert;
+
+  /// No description provided for @atmScanAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan another'**
+  String get atmScanAnother;
 }
 
 class _AppLocalizationsDelegate

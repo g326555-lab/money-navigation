@@ -13,16 +13,33 @@ abstract final class AppColors {
   static const background = Color(0xFFF2F4F6);
   static const surface = Color(0xFFFFFFFF);
   static const surfaceDim = Color(0xFFE5E8EB);
+  static const surfaceSunken = Color(0xFFF9FAFB);
+  static const divider = Color(0xFFE5E8EB);
+  static const handle = Color(0xFFD1D6DB);
   static const surfaceDark = Color(0xFF111418);
   static const onSurface = Color(0xFF111418);
   static const onSurfaceSecondary = Color(0xFF4E5968);
   static const onSurfaceTertiary = Color(0xFF6B7684);
   static const onSurfaceMuted = Color(0xFF8B95A1);
   static const onSurfaceDark = Color(0xFFFFFFFF);
+  static const onSurfaceDarkSecondary = Color(0xFFB0B8C1);
 
   static const error = Color(0xFFFF3B5C);
   static const errorText = Color(0xFFD1173A);
   static const errorContainer = Color(0xFFFFE9EC);
+
+  // Depth and floating chrome (DESIGN.md "Elevation & Depth").
+  static const shadow = Color(0xFF111418);
+  static const glassFill = Color(0xB8FFFFFF);
+  static const glassBorder = Color(0x0F111418);
+  static const dockFill = Color(0xE6F2F4F6);
+  static const tabIndicator = Color(0x12111418);
+
+  // Camera screens (DESIGN.md: glass only for camera controls).
+  static const cameraBackground = Color(0xFF000000);
+  // Dark glass: legible over both bright and dark camera scenes.
+  static const cameraGlass = Color(0x66111418);
+  static const detectionFill = Color(0x2619D873);
 
   static const iconBlue = Color(0xFF2463F0);
   static const iconBlueLight = Color(0xFF5B9BFF);

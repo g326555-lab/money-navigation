@@ -5,7 +5,7 @@ The app must look and read like it was made by a small, obsessive product team, 
 ## Visual tells to avoid
 - Default framework look: Flutter's default purple/deepPurple seed color, untouched Material 3 components, default ripple, default Roboto, default AppBar. Everything comes from our tokens in docs/DESIGN.md.
 - "VibeCode purple", lavender accents, purple-to-blue gradients. Gradients in general unless DESIGN.md defines them.
-- Colored glows, colored box-shadows, glassmorphism.
+- Colored glows, colored box-shadows, glassmorphism. Exception: the glass defined in DESIGN.md for the floating tab bar, the action dock and camera controls only.
 - Cards with a colored top or left border stripe (the most recognizable AI tell).
 - Rows of identical cards with an icon on top; every block in the same rounded card with the same shadow.
 - Stat-banner rows and "1-2-3" step rows used as decoration.

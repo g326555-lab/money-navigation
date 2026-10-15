@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import '../features/scan/scan_screen.dart';
 import 'theme.dart';
 
 class MoneyNavigationApp extends StatelessWidget {
@@ -14,8 +15,11 @@ class MoneyNavigationApp extends StatelessWidget {
       theme: buildAppTheme(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      // Screens are added in demo order; the scan screen is the first one.
-      home: const Scaffold(),
+      // Part A is English. The demo switch (scene 4) will own the locale;
+      // until then the device language must not turn the app Thai.
+      locale: const Locale('en'),
+      // Screens are added in demo order. Home (scene 3) will replace this.
+      home: const ScanScreen(),
     );
   }
 }

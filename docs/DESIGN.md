@@ -13,6 +13,11 @@ colors:
   background: "#F2F4F6"
   surface: "#FFFFFF"
   surface-dim: "#E5E8EB"
+  surface-sunken: "#F9FAFB"
+  divider: "#E5E8EB"
+  handle: "#D1D6DB"
+  glass-fill: "#FFFFFFB8"
+  shadow: "#111418"
   surface-dark: "#111418"
   on-surface: "#111418"
   on-surface-secondary: "#4E5968"
@@ -151,10 +156,10 @@ components:
     rounded: "{rounded.sm}"
     size: 44px
   tab-bar:
-    backgroundColor: "{colors.surface}"
+    backgroundColor: "{colors.glass-fill}"
     textColor: "{colors.on-surface-tertiary}"
     rounded: "{rounded.full}"
-    height: 66px
+    height: 64px
 ---
 
 ## Overview
@@ -177,11 +182,29 @@ Copy is English, short, friendly and in sentence case. No exclamation marks. Say
 
 ## Layout
 
-Screen margin 16. Cards stack vertically with 12 between them. Content is left-aligned; only success screens are centered. The primary button is pinned to the bottom, full width or two thirds beside a secondary button. Leave space at the top for the system status bar but do not draw one. Minimum touch target 48.
+Screen margin 16. Every screen has three zones in this order: hero zone, content zone, action zone. Gaps are never shared between levels: 32 between zones, 12 between groups inside a zone, 0 between rows inside a group (rows are divided by a hairline). Every list of two or more rows sits in one group card under a section header. Content is left-aligned; only success screens are centered. The primary button is pinned to the bottom, full width or two thirds beside a secondary button. Leave space at the top for the system status bar but do not draw one. Minimum touch target 48.
 
 ## Elevation & Depth
 
-Depth comes from the gray page against white cards, not from shadows. Cards have no border and no shadow. Soft shadows are used only under the floating tab bar, under the coin, and as a faint colored glow under glossy icon tiles. Glass (translucent blur) is used only for the floating tab bar and for controls on camera screens.
+Depth comes from surface levels, plus exactly two shadow tokens.
+
+| Level | Color | Use |
+| --- | --- | --- |
+| L0 page | background #F2F4F6 | Every everyday screen. |
+| L1 group | surface #FFFFFF, radius 20 | Every set of rows. Flat, no border, no shadow. |
+| L1 well | surface-sunken #F9FAFB, radius 12 | Only a numeric breakdown inside a group. Replaces cards in cards. |
+| L2 floating | surface or glass | Tab bar, sticky action dock, bottom sheet. |
+| Emphasis | surface-dark #111418 | The one dark card per screen. |
+
+Shadow color is `shadow` #111418.
+- E1, hero card and dark card only: (0,1) blur 2 at 4 %, plus (0,4) blur 12 at 5 %.
+- E2, floating chrome only (tab bar, dock, sheet; sheets use y -8): (0,2) blur 6 at 6 %, plus (0,10) blur 30 at 12 %.
+
+Rows inside a group are divided by a 0.5 `divider` hairline that starts at the text start (inset 20, or 72 with a 40 icon) and runs to the card edge; never above the first or below the last row. Glass (translucent blur) is used only for the floating tab bar, the sticky action dock and controls on camera screens.
+
+Section header: outside the group, 15/700 on-surface, sentence case, 28 above, 10 below, inset 4 from the card edge; optional trailing link 14/600 on-surface-tertiary. Group card: padding 20 horizontal, 8 vertical. Row: min height 56, 14 vertical padding, title 16/600, subtitle 13/500 on-surface-tertiary, amount right-aligned in tabular figures. Footer (source and date): 12/500 on-surface-tertiary (on-surface-muted fails WCAG AA on the page), 8 below the group.
+
+Hero zone sits directly on the page, no card: label 15/500 on-surface-secondary, the number in display weight 800, at most one chip, then 32 of space.
 
 ## Shapes
 
@@ -191,12 +214,14 @@ Bottom sheets 28, hero and dark cards 24, cards 20, buttons 16, small tiles 12 t
 
 - Primary button: dark fill, white label, 56 high.
 - Secondary button: light gray fill, dark label.
-- Card: white, one topic per card, never a card inside a card.
+- Group card: white, one group per card holding one or more rows, never a card inside a card.
 - Hero card: soft green gradient with a label, one large number, a white chip and the coin on the right.
 - Dark card: the one suggestion to act on, with a small green label above large white text.
 - Icon tile: glossy rounded square, 44, white line glyph, in blue, orange, green or yellow.
 - Price scale: a light gray track with a green segment for the usual range and a red round marker for the asked price.
-- Tab bar: floating glass pill with five tabs (Home, Scan, Speak, Assistant, Records); the selected tab sits in a darker pill.
+- Tab bar: floating glass pill, 16 from the side edges and 8 above the bottom safe area, height 64, radius 32, glass-fill over blur sigma 24, 0.5 border of shadow at 6 %, E2. Five equal tabs (Home, Scan, Speak, Assistant, Records); icons 24, outline when inactive and filled when active; labels 11/600; inactive on-surface-tertiary, active on-surface. The active tab sits on a 56-tall pill of shadow at 7 % that slides between tabs (motion standard, enter curve), never green. Selection click haptic on change. Content scrolls under it with bottom padding 64 + safe area + 24. Hidden in full-screen flows (camera, verdict, success).
+- Action dock: a pinned primary button sits in a dock of background at 90 % over blur sigma 20 with a 0.5 divider hairline on top. Never stacked above a tab bar.
+- Bottom sheet: radius 28, E2 with y -8, 36 x 4 grabber in `handle`, overlapping a full-bleed camera.
 - Coin: a 3D Thai-style bimetal coin, silver outer ring and gold center with the baht sign. At most one hero object per screen.
 
 ## Do's and Don'ts

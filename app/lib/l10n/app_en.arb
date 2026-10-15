@@ -1,5 +1,109 @@
 {
   "@@locale": "en",
   "appName": "Money Navigation",
-  "@appName": {"description": "App name shown in the system and top of Home."}
+  "@appName": {
+    "description": "App name shown in the system and top of Home."
+  },
+  "scanHint": "Point at the ATM screen",
+  "scanShutter": "Take photo",
+  "scanChoosePhoto": "Choose photo",
+  "scanClose": "Close",
+  "scanFlashOn": "Turn on light",
+  "scanFlashOff": "Turn off light",
+  "scanCameraUnavailable": "The camera isn't available. You can still choose a photo.",
+  "scanCameraDenied": "Camera access is off for Money Navigation. Turn it on in Settings, or choose a photo.",
+  "stepReadText": "Reading the photo",
+  "stepReadTextDone": "Read on your phone in {ms} ms",
+  "@stepReadTextDone": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "stepFindAtm": "Looking for an ATM conversion offer",
+  "stepFindAtmDone": "ATM conversion offer found",
+  "stepValues": "Withdrawal {withdrawal} · fee {fee} · 1 USD = {rate} THB",
+  "@stepValues": {
+    "placeholders": {
+      "withdrawal": {
+        "type": "String"
+      },
+      "fee": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "stepValuesMarkup": "{values} · mark-up {markup}",
+  "@stepValuesMarkup": {
+    "placeholders": {
+      "values": {
+        "type": "String"
+      },
+      "markup": {
+        "type": "String"
+      }
+    }
+  },
+  "stepCompare": "Comparing both totals",
+  "stepCompareDone": "Converting costs about {amount} more",
+  "@stepCompareDone": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "stepCompareEven": "Both totals come out about the same",
+  "scanTryAgain": "Try again",
+  "atmKeepLabel": "You keep about",
+  "atmPress": "Press",
+  "atmDeclineButton": "The option without conversion, so you pay in baht",
+  "atmReasonMarkup": "The ATM's own rate adds {markup} on top.",
+  "@atmReasonMarkup": {
+    "placeholders": {
+      "markup": {
+        "type": "String"
+      }
+    }
+  },
+  "atmReasonNoMarkup": "The ATM's own rate charges more than the rate on its screen.",
+  "atmSource": "From the numbers on this ATM screen · {time}",
+  "@atmSource": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "atmEvenTitle": "Either choice costs about the same",
+  "atmEvenBody": "The converted total matches the rate on the screen, so there is nothing to keep here.",
+  "stepFindAtmFailed": "No ATM conversion offer in this photo",
+  "stepReadTextFailed": "No text found",
+  "stepValuesFailed": "Some numbers couldn't be read",
+  "scanTipNoText": "Move closer so the screen fills most of the photo.",
+  "scanTipNotAtm": "Point at the ATM screen that shows the amount in your home currency.",
+  "scanTipMissingValues": "Hold the phone straight and avoid glare on the screen.",
+  "atmBothTotals": "Both totals",
+  "atmIfConvertDetail": "At the ATM's own rate",
+  "atmIfNotConvertDetail": "Your card's bank converts it",
+  "atmOnScreen": "On this screen",
+  "atmRowWithdrawal": "Withdrawal",
+  "atmRowFee": "ATM access fee",
+  "atmRowRate": "Rate shown",
+  "atmRowMarkup": "Mark-up shown",
+  "atmRateValue": "1 USD = {rate} THB",
+  "@atmRateValue": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "atmIfConvert": "If you convert",
+  "atmIfNotConvert": "If you don't",
+  "atmScanAnother": "Scan another"
 }

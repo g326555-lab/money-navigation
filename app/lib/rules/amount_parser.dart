@@ -31,8 +31,7 @@ double? parseAmount(String raw) {
 /// Pattern for one amount inside longer OCR text, before any unit.
 /// Matches grouped forms ("4,220.00", "4.220", "4. 000", "12, 851.82") and plain
 /// forms ("220", "30.86").
-const amountPattern =
-    r'\d{1,3}(?:[.,] ?\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d+)?';
+const amountPattern = r'\d{1,3}(?:[.,] ?\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d+)?';
 
 final _trailingUnit = RegExp(r'\s*(?:[A-Za-z]{3}|%)$');
 final _commaSpace = RegExp(r',\s+');

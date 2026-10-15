@@ -28,14 +28,14 @@ ThemeData buildAppTheme() {
   );
 
   final textTheme = TextTheme(
-    displayLarge: AppTypography.displayXl,
-    displayMedium: AppTypography.displayLg,
-    headlineMedium: AppTypography.headline,
-    titleLarge: AppTypography.title,
-    bodyLarge: AppTypography.bodyLg,
-    bodyMedium: AppTypography.bodyMd,
-    labelLarge: AppTypography.label,
-    bodySmall: AppTypography.caption,
+    displayLarge: AppTypography.english.displayXl,
+    displayMedium: AppTypography.english.displayLg,
+    headlineMedium: AppTypography.english.headline,
+    titleLarge: AppTypography.english.title,
+    bodyLarge: AppTypography.english.bodyLg,
+    bodyMedium: AppTypography.english.bodyMd,
+    labelLarge: AppTypography.english.label,
+    bodySmall: AppTypography.english.caption,
   );
 
   final buttonShape = RoundedRectangleBorder(
@@ -57,7 +57,7 @@ ThemeData buildAppTheme() {
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
-      titleTextStyle: AppTypography.bodyLg,
+      titleTextStyle: AppTypography.english.bodyLg,
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
@@ -65,23 +65,28 @@ ThemeData buildAppTheme() {
         foregroundColor: AppColors.onSurfaceDark,
         minimumSize: const Size.fromHeight(AppSizes.buttonHeight),
         shape: buttonShape,
-        textStyle: AppTypography.bodyLg,
+        textStyle: AppTypography.english.bodyLg,
         elevation: 0,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.onSurface,
-        minimumSize: const Size(AppSizes.minTouchTarget, AppSizes.minTouchTarget),
+        minimumSize: const Size(
+          AppSizes.minTouchTarget,
+          AppSizes.minTouchTarget,
+        ),
         shape: buttonShape,
-        textStyle: AppTypography.bodyLg,
+        textStyle: AppTypography.english.bodyLg,
       ),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: AppColors.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.sheet)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.sheet),
+        ),
       ),
     ),
   );

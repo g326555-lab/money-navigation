@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "inverse-surface": "#2e3135", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#920028", "surface": "#f8f9ff", "surface-bright": "#f8f9ff", "inverse-on-surface": "#eff0f6", "primary-fixed": "#61ff98", "error-container": "#ffdad6", "surface-container-lowest": "#ffffff", "on-primary-fixed": "#00210c", "on-background": "#191c20", "outline": "#6c7b6d", "surface-tint": "#006d36", "on-secondary-container": "#00723b", "tertiary-fixed-dim": "#ffb3b6", "on-secondary-fixed-variant": "#005229", "surface-variant": "#e1e2e8", "on-tertiary-fixed": "#40000c", "on-error-container": "#93000a", "on-primary-fixed-variant": "#005227", "on-surface-variant": "#3c4a3e", "primary-fixed-dim": "#2fe27c", "on-tertiary": "#ffffff", "on-tertiary-container": "#9b002b", "surface-container-low": "#f2f3f9", "background": "#f8f9ff", "surface-container-high": "#e6e8ee", "outline-variant": "#bbcbba", "tertiary-fixed": "#ffdada", "secondary-fixed": "#77fca4", "primary": "#006d36", "secondary-fixed-dim": "#59df8a", "surface-dim": "#d8dadf", "error": "#ba1a1a", "secondary": "#006d38", "on-secondary": "#ffffff", "surface-container-highest": "#e1e2e8", "secondary-container": "#74f9a1", "surface-container": "#eceef3", "on-primary-container": "#00582a", "tertiary": "#be0037", "primary-container": "#19d873", "on-secondary-fixed": "#00210d", "tertiary-container": "#ffa4a9", "on-surface": "#191c20", "on-primary": "#ffffff", "inverse-primary": "#2fe27c" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-lg": "1rem", "space-md": "0.75rem", "space-xl": "1.5rem", "gutter": "1rem", "space-sm": "0.5rem", "margin": "1.25rem", "space-xs": "0.25rem" }, fontFamily: { "body-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "display-currency": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "display-currency-mobile": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"] }, fontSize: { "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }], "display-currency": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "600" }], "display-currency-mobile": ["34px", { "lineHeight": "38px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.01em", "fontWeight": "500" }], "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;font-family:'Plus Jakarta Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin max-w-[466px] mx-auto flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-2.5 h-2.5 rounded-full bg-primary-container ring-4 ring-primary-container/20"></div><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-semibold">Optimal Route</h1></div><div class="flex items-center gap-space-sm"><a class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="currency-reservoirs" href="#"><span class="material-symbols-outlined text-[22px]">tune</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full max-w-[466px] mx-auto px-margin pt-14 pb-28 bg-surface"><div class="flex flex-col w-full relative select-none">
+<!-- Viewfinder Overlay & Scanner Stage -->
+<div class="relative w-full h-[400px] overflow-hidden rounded-2xl bg-inverse-surface shadow-2xl flex flex-col justify-between p-space-lg">
+<!-- Realistic ATM Screen Simulation (Camera Backdrop) -->
+<div class="absolute inset-0 pointer-events-none opacity-90 overflow-hidden flex flex-col justify-center items-center bg-[#0d1117]">
+<div class="w-full max-w-[340px] px-space-md py-space-lg font-mono text-[12px] leading-relaxed text-[#85929E] space-y-3">
+<div class="flex items-center justify-between pb-2">
+<span class="font-bold tracking-tight text-[#E5E8EB] text-[13px]">Krungsri Global ATM #0842</span>
+<span class="text-[10px] text-[#5D6D7E]">Sukhumvit Soi 11</span>
+</div>
+<div class="bg-[#161b22] p-3 rounded-lg space-y-2 shadow-inner">
+<p class="text-[#D5D8DC] font-semibold text-[13px]">Currency Conversion Choice</p>
+<p class="text-[11px] text-[#A6ACAF]">Do you accept conversion to card currency?</p>
+<div class="space-y-1 pt-1 text-[11px]">
+<div class="flex justify-between text-[#F2F4F6]">
+<span>Withdrawal Amount:</span>
+<span class="font-semibold">4,000.00 THB</span>
+</div>
+<div class="flex justify-between text-[#F2F4F6]">
+<span>Access Fee:</span>
+<span>220.00 THB</span>
+</div>
+<div class="flex justify-between text-[#F2F4F6]">
+<span>Exchange Rate:</span>
+<span class="font-bold text-[#E5E8EB]">1 USD = 30.86 THB</span>
+</div>
+<div class="flex justify-between text-[#E74C3C]">
+<span>Includes Mark-up:</span>
+<span class="font-bold">5.50%</span>
+</div>
+<div class="flex justify-between pt-1 font-bold text-[#FDFEFE] text-[12px]">
+<span>Guaranteed Total:</span>
+<span>136.75 USD</span>
+</div>
+</div>
+</div>
+<div class="flex justify-between pt-1 text-[11px] text-[#7F8C8D]">
+<span>[LEFT] Continue Without Conversion</span>
+<span class="text-right">[RIGHT] Continue With Conversion</span>
+</div>
+</div>
+</div>
+<!-- Live Scanner Dynamic Highlighting Box -->
+<div class="absolute inset-x-5 top-[108px] h-[195px] pointer-events-none rounded-xl" style="box-shadow: 0 0 0 9999px rgba(13, 17, 23, 0.42);">
+<!-- Crisp Navigation Green Detection Reticle -->
+<div class="w-full h-full rounded-xl relative bg-primary-container/5" style="border: 2px solid #19D873;">
+<!-- Subtle Optical Target Crosshairs -->
+<div class="absolute -top-[5px] -left-[5px] w-3 h-3 border-t-2 border-l-2 border-primary-container"></div>
+<div class="absolute -top-[5px] -right-[5px] w-3 h-3 border-t-2 border-r-2 border-primary-container"></div>
+<div class="absolute -bottom-[5px] -left-[5px] w-3 h-3 border-b-2 border-l-2 border-primary-container"></div>
+<div class="absolute -bottom-[5px] -right-[5px] w-3 h-3 border-b-2 border-r-2 border-primary-container"></div>
+<!-- Tag Pinned to Reticle Top -->
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#111418] shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-sm text-[10px] tracking-wide text-surface-container-lowest font-medium">Amounts detected</span>
+</div>
+<!-- Real-time Horizontal Radar Scan Line -->
+<div class="w-full h-[1px] bg-primary-container/80 absolute top-0 shadow-[0_0_8px_#19D873] animate-[scan_2.8s_ease-in-out_infinite]"></div>
+</div>
+</div>
+<!-- Top Floating Camera Action Bar -->
+<div class="relative z-20 flex items-center justify-between w-full">
+<button aria-label="Close viewfinder" class="w-10 h-10 rounded-full bg-[#111418]/70 backdrop-blur-md flex items-center justify-center text-surface-container-lowest active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[19px]">close</span>
+</button>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111418]/75 backdrop-blur-md shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-label-sm text-label-sm text-surface-container-lowest font-medium">Scanning ATM screen</span>
+</div>
+<button aria-label="Toggle flashlight" class="w-10 h-10 rounded-full bg-[#111418]/70 backdrop-blur-md flex items-center justify-center text-surface-container-lowest active:scale-95 transition-all" id="torchToggle" type="button">
+<span class="material-symbols-outlined text-[19px]" id="torchIcon">flashlight_on</span>
+</button>
+</div>
+<!-- Viewport Subtle Guide Overlay -->
+<div class="relative z-10 flex items-center justify-between text-[#8B95A1] font-label-sm text-[11px] px-1">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">center_focus_strong</span>
+        Auto-align active
+      </span>
+<span>Bangkok · THB</span>
+</div>
+</div>
+<!-- Route Analysis Slide-Up Sheet -->
+<div class="relative z-30 -mt-5 bg-surface-container-lowest rounded-t-[32px] pt-3 pb-space-lg px-margin shadow-[0_-8px_24px_rgba(17,20,24,0.08)] flex flex-col">
+<!-- Tactile Drag Handle Indicator -->
+<div class="w-10 h-1 bg-surface-variant rounded-full mx-auto mb-4"></div>
+<!-- Header & Terminal Context -->
+<div class="flex items-start justify-between pb-4">
+<div>
+<p class="font-label-sm text-label-sm text-outline tracking-normal">Optimal Route Guard</p>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Analyzing ATM exchange rate</h2>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary">security</span>
+<span class="font-label-sm text-[11px] font-semibold text-primary">DCC Shield</span>
+</div>
+</div>
+<!-- Step Progress Motif Flow -->
+<div class="relative flex flex-col space-y-4 pt-1">
+<!-- Continuous Brand Navigational Path -->
+<div class="absolute left-[13px] top-[14px] bottom-[20px] w-[2px] bg-primary-container pointer-events-none"></div>
+<!-- Step 1: Terminal Recognition (Complete) -->
+<div class="relative flex items-start gap-3">
+<div class="relative z-10 w-7 h-7 rounded-full bg-primary-container flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-on-primary-container text-[16px] font-bold">check</span>
+</div>
+<div class="pt-0.5 min-w-0">
+<p class="font-label-md text-label-md text-on-surface font-medium leading-tight">ATM screen recognized</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Krungsri Bank Terminal · Currency Conversion Dialogue</p>
+</div>
+</div>
+<!-- Step 2: Rate Extraction & Markup Telemetry (Complete) -->
+<div class="relative flex items-start gap-3">
+<div class="relative z-10 w-7 h-7 rounded-full bg-primary-container flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-on-primary-container text-[16px] font-bold">check</span>
+</div>
+<div class="pt-0.5 w-full">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Extracted terminal terms</span>
+<span class="font-label-sm text-[11px] px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-semibold">5.50% markup</span>
+</div>
+<!-- Structured Telemetry Card (Zero Borders, Rich Surface) -->
+<div class="mt-2 p-3 rounded-lg bg-surface-container-low space-y-1.5 text-on-surface">
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Target cash</span>
+<span class="font-label-md text-on-surface tabular-nums">4,000 THB</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">ATM owner fee</span>
+<span class="font-label-md text-on-surface tabular-nums">220 THB</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">Offered DCC rate</span>
+<span class="font-label-md text-on-surface tabular-nums">1 USD = 30.86 THB</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Step 3: Global Mid-Market Calibration (Complete) -->
+<div class="relative flex items-start gap-3">
+<div class="relative z-10 w-7 h-7 rounded-full bg-primary-container flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-on-primary-container text-[16px] font-bold">check</span>
+</div>
+<div class="pt-0.5 min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-medium">Checked real mid-market rate</span>
+<span class="font-label-sm text-[11px] text-primary font-semibold tabular-nums">35.42 THB</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Verified live against interbank benchmark</p>
+</div>
+</div>
+<!-- Step 4: Decision Synthesis (Active) -->
+<div class="relative flex items-start gap-3">
+<div class="relative z-10 w-7 h-7 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0">
+<div class="w-7 h-7 rounded-full flex items-center justify-center bg-primary-container/20">
+<div class="w-4 h-4 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+</div>
+</div>
+<div class="pt-0.5 min-w-0 flex-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Working out the cheaper button</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Calculating savings between conversion options</p>
+</div>
+</div>
+</div>
+<!-- Directional Result Preview Banner -->
+<div class="mt-4 p-3 rounded-lg bg-surface-container flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary text-[18px]">touch_app</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-label-sm text-[11px] text-outline uppercase tracking-wider font-semibold">Recommendation cue</p>
+<p class="font-label-md text-label-md text-on-surface truncate">Prepare to tap: <span class="text-primary font-semibold">Continue without conversion</span></p>
+</div>
+</div>
+<!-- Bottom Secondary Actions -->
+<div class="pt-4 flex items-center gap-3">
+<button class="w-full h-[48px] rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-lg text-label-lg transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline">pause</span>
+        Pause scan
+      </button>
+<button class="w-full h-[48px] rounded-full bg-on-surface text-surface-container-lowest font-label-lg text-label-lg active:opacity-90 transition-opacity flex items-center justify-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+        Instant guide
+      </button>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const torchBtn = document.getElementById('torchToggle');
+    const torchIcon = document.getElementById('torchIcon');
+    let isOn = false;
+
+    if (torchBtn && torchIcon) {
+      torchBtn.addEventListener('click', function() {
+        isOn = !isOn;
+        if (isOn) {
+          torchBtn.classList.remove('bg-[#111418]/70');
+          torchBtn.classList.add('bg-primary-container', 'text-on-primary-container');
+          torchIcon.textContent = 'flash_on';
+        } else {
+          torchBtn.classList.remove('bg-primary-container', 'text-on-primary-container');
+          torchBtn.classList.add('bg-[#111418]/70', 'text-surface-container-lowest');
+          torchIcon.textContent = 'flashlight_on';
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.03)]" data-active-classes="text-primary font-semibold"><div class="max-w-[466px] mx-auto px-margin h-16 flex items-center justify-around"><a aria-current="page" class="group flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs transition-all text-primary font-semibold" data-path="optimal-route" href="#"><span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-105">alt_route</span><span class="font-label-sm text-label-sm mt-0.5">Route</span></a><a class="group flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-on-surface-variant hover:text-on-surface transition-all" data-path="currency-reservoirs" href="#"><span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-105">account_balance_wallet</span><span class="font-label-sm text-label-sm mt-0.5">Wallets</span></a><a class="group flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-on-surface-variant hover:text-on-surface transition-all" data-path="card-routing-deck" href="#"><span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-105">credit_card</span><span class="font-label-sm text-label-sm mt-0.5">Cards</span></a><a class="group flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-on-surface-variant hover:text-on-surface transition-all" data-path="fx-market-intel" href="#"><span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-105">monitoring</span><span class="font-label-sm text-label-sm mt-0.5">Rates</span></a><a class="group flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-on-surface-variant hover:text-on-surface transition-all" data-path="activity-ledger" href="#"><span class="material-symbols-outlined text-[22px] transition-transform group-hover:scale-105">receipt_long</span><span class="font-label-sm text-label-sm mt-0.5">Ledger</span></a></div></nav></body></html>

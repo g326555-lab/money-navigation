@@ -1,6 +1,10 @@
 import 'amount_parser.dart';
 import 'ocr_layout.dart';
 
+/// Currency codes of an ATM conversion offer in Thailand to a dollar card.
+const atmLocalCurrency = 'THB';
+const atmCardCurrency = 'USD';
+
 /// Values printed on an ATM screen that offers to convert the withdrawal
 /// into the card's home currency (dynamic currency conversion).
 class AtmScreenReading {
@@ -80,8 +84,9 @@ AtmScreenReading? parseAtmScreen(String ocrText) {
     withdrawalThb: withdrawalThb,
     accessFeeThb: accessFeeThb,
     thbPerUsd: thbPerUsd,
-    markupPercent:
-        markupMatch == null ? null : parseAmount(markupMatch.group(1)!),
+    markupPercent: markupMatch == null
+        ? null
+        : parseAmount(markupMatch.group(1)!),
     chargedThb: chargedThb,
     chargedUsd: usd.last,
   );
@@ -98,8 +103,9 @@ AtmVerdict evaluateAtm(AtmScreenReading reading) {
   // Decide on whole cents so floating-point noise never claims a saving.
   final extraCents = (extraUsd * 100).round();
   return AtmVerdict(
-    recommended:
-        extraCents > 0 ? AtmChoice.declineConversion : AtmChoice.acceptConversion,
+    recommended: extraCents > 0
+        ? AtmChoice.declineConversion
+        : AtmChoice.acceptConversion,
     extraCostUsd: extraUsd,
     extraCostThb: extraUsd * reading.thbPerUsd,
   );
@@ -114,18 +120,22 @@ String? declineButtonLabel(List<OcrLine> lines) {
     return _buttonVerb.hasMatch(text) &&
         text.contains('without') &&
         !RegExp(r'\d').hasMatch(text);
-  }).toList()
-    ..sort((a, b) => a.top.compareTo(b.top));
+  }).toList()..sort((a, b) => a.top.compareTo(b.top));
   if (candidates.isEmpty) return null;
 
   final first = candidates.first;
-  final below = lines.where((l) =>
-      l != first &&
-      l.top >= first.top &&
-      l.top - first.bottom <= first.height * 1.5 &&
-      l.left < first.right &&
-      l.right > first.left).toList()
-    ..sort((a, b) => a.top.compareTo(b.top));
+  final below =
+      lines
+          .where(
+            (l) =>
+                l != first &&
+                l.top >= first.top &&
+                l.top - first.bottom <= first.height * 1.5 &&
+                l.left < first.right &&
+                l.right > first.left,
+          )
+          .toList()
+        ..sort((a, b) => a.top.compareTo(b.top));
   final parts = [first.text, if (below.isNotEmpty) below.first.text];
   return parts.join(' ').replaceAll(RegExp(r'\s+'), ' ').trim();
 }
@@ -138,9 +148,8 @@ const _rowLabels = ['withdrawal amount', 'access fee', 'amount charged'];
 final _rate = RegExp('1 ?USD ?=? ?($amountPattern) ?THB');
 final _markup = RegExp(r'(\d+(?:\.\d+)?) ?%');
 
-List<double> _amountsIn(String text, String currency) => RegExp(
-      '(?<![\\d.,])($amountPattern) ?$currency\\b',
-    )
+List<double> _amountsIn(String text, String currency) =>
+    RegExp('(?<![\\d.,])($amountPattern) ?$currency\\b')
         .allMatches(text)
         .map((m) => parseAmount(m.group(1)!))
         .whereType<double>()
