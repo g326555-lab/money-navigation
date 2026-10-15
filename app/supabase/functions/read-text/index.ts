@@ -21,9 +21,9 @@ Deno.serve(async (req) => {
     if (typeof imageBase64 !== "string" || !imageBase64 || imageBase64.length > MAX_BASE64) {
       return json({ error: "imageBase64 is required (jpeg, under about 4 MB)" }, 400);
     }
-    const res = await fetchWithTimeout(`${VISION_URL}?key=${requireSecret("GOOGLE_MAPS_API_KEY")}`, {
+    const res = await fetchWithTimeout(VISION_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": requireSecret("GOOGLE_MAPS_API_KEY") },
       body: JSON.stringify({
         requests: [{ image: { content: imageBase64 }, features: [{ type: "DOCUMENT_TEXT_DETECTION" }] }],
       }),
@@ -64,6 +64,8 @@ Deno.serve(async (req) => {
     return json({ lines, source: "Google Cloud Vision", ms: Date.now() - started });
   } catch (e) {
     const timedOut = e instanceof DOMException && e.name === "AbortError";
-    return json({ error: timedOut ? "timeout" : String(e) }, timedOut ? 504 : 500);
+    // Details stay in the function log; they can carry request URLs.
+    if (!timedOut) console.error(e);
+    return json({ error: timedOut ? "timeout" : "internal error" }, timedOut ? 504 : 500);
   }
 });

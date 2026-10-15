@@ -21,6 +21,8 @@ export async function fetchWithTimeout(
 ): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);
+  // A caller's own signal (a raced request that lost) aborts it too.
+  init.signal?.addEventListener("abort", () => controller.abort());
   try {
     return await fetch(url, { ...init, signal: controller.signal });
   } finally {

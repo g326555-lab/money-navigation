@@ -16,10 +16,10 @@ Deno.serve(async (req) => {
       return json({ error: `text is required, at most ${MAX_CHARS} characters` }, 400);
     }
     const res = await fetchWithTimeout(
-      `${TTS_URL}?key=${requireSecret("GOOGLE_MAPS_API_KEY")}`,
+      TTS_URL,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-goog-api-key": requireSecret("GOOGLE_MAPS_API_KEY") },
         body: JSON.stringify({
           input: { text },
           voice: { languageCode: "th-TH", name: typeof voice === "string" ? voice : DEFAULT_VOICE },
@@ -33,6 +33,8 @@ Deno.serve(async (req) => {
     return json({ audioBase64: body.audioContent, voice: voice ?? DEFAULT_VOICE });
   } catch (e) {
     const timedOut = e instanceof DOMException && e.name === "AbortError";
-    return json({ error: timedOut ? "timeout" : String(e) }, timedOut ? 504 : 500);
+    // Details stay in the function log; they can carry request URLs.
+    if (!timedOut) console.error(e);
+    return json({ error: timedOut ? "timeout" : "internal error" }, timedOut ? 504 : 500);
   }
 });

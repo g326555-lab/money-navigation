@@ -31,9 +31,9 @@ Deno.serve(async (req) => {
     const hints = Array.isArray(phrases)
       ? phrases.filter((p: unknown) => typeof p === "string" && p.length > 0 && p.length <= 40).slice(0, MAX_PHRASES)
       : [];
-    const res = await fetchWithTimeout(`${SPEECH_URL}?key=${requireSecret("GOOGLE_SPEECH_API_KEY")}`, {
+    const res = await fetchWithTimeout(SPEECH_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": requireSecret("GOOGLE_SPEECH_API_KEY") },
       body: JSON.stringify({
         config: {
           encoding: enc,
@@ -56,6 +56,8 @@ Deno.serve(async (req) => {
     return json({ alternatives, source: "Google Cloud Speech-to-Text", ms: Date.now() - started });
   } catch (e) {
     const timedOut = e instanceof DOMException && e.name === "AbortError";
-    return json({ error: timedOut ? "timeout" : String(e) }, timedOut ? 504 : 500);
+    // Details stay in the function log; they can carry request URLs.
+    if (!timedOut) console.error(e);
+    return json({ error: timedOut ? "timeout" : "internal error" }, timedOut ? 504 : 500);
   }
 });

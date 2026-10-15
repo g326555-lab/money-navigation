@@ -59,6 +59,8 @@ Deno.serve(async (req) => {
     return json({ place, source: "Google Maps", fetchedAt: new Date().toISOString() });
   } catch (e) {
     const timedOut = e instanceof DOMException && e.name === "AbortError";
-    return json({ error: timedOut ? "timeout" : String(e) }, timedOut ? 504 : 500);
+    // Details stay in the function log; they can carry request URLs.
+    if (!timedOut) console.error(e);
+    return json({ error: timedOut ? "timeout" : "internal error" }, timedOut ? 504 : 500);
   }
 });

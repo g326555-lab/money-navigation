@@ -5,9 +5,10 @@ import 'ai_trace.dart';
 import 'cloud_functions.dart';
 
 /// Cloud recognition of the seller's sentence (function `stt-thai`, Google
-/// Cloud Speech-to-Text, th-TH, with our item words as hints). On 15 test
-/// sentences it got item and price right 15/15 in quiet and 13/15 with
-/// noise in about 1.1 s, against 9/15 and 1/15 on the phone, so it is the
+/// Cloud Speech-to-Text, th-TH, with our item words as hints). On the same
+/// 30 recorded clips (15 sentences, quiet and with pink noise) it got item
+/// and price right 14/15 and 14/15 through this path (median 1.2 s and
+/// 1.5 s), where the phone's own recognizer got 9/15 and 1/15. So it is the
 /// second, better guess: the on-device result shows at once and stays the
 /// fallback offline. The clip is not stored anywhere.
 class CloudSpeech {

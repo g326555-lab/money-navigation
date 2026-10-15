@@ -18,9 +18,10 @@ class GeminiItemResolver {
   /// The function gives up at 4.5 s; this leaves room for the network.
   static const timeout = Duration(seconds: 5);
 
-  /// Below this Gemini's own confidence the item stays unknown. On 5 test
-  /// sentences the right picks came at 0.9 and a wrong one at 0.85. Even
-  /// above it, the screen asks "Did they mean …?" rather than judging.
+  /// Below this Gemini's own confidence the item stays unknown. On 5
+  /// hand-written misheard transcripts (15 Oct, NOTES.md) the right picks
+  /// came at 0.9 and a wrong one at 0.85. Even above it, the screen asks
+  /// "Did they mean …?" rather than judging.
   static const minConfidence = 0.9;
 
   /// The item Gemini picked from [items] for [alternatives] (best first),

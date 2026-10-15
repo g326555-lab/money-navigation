@@ -74,7 +74,7 @@ function buildRequest(task: Task, input: Record<string, unknown>) {
   }
 }
 
-async function callVertex(model: string, body: unknown, ms: number) {
+async function callVertex(model: string, body: unknown, ms: number, signal?: AbortSignal) {
   const project = Deno.env.get("GCP_PROJECT_ID");
   const sa = Deno.env.get("GOOGLE_SA_JSON");
   if (!project || !sa) throw new Error("vertex not configured");
@@ -85,12 +85,13 @@ async function callVertex(model: string, body: unknown, ms: number) {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(body),
+      signal,
     },
     ms,
   );
 }
 
-async function callDeveloperApi(model: string, body: unknown, ms: number) {
+async function callDeveloperApi(model: string, body: unknown, ms: number, signal?: AbortSignal) {
   const key = Deno.env.get("GEMINI_API_KEY");
   if (!key) throw new Error("developer api not configured");
   return fetchWithTimeout(
@@ -99,6 +100,7 @@ async function callDeveloperApi(model: string, body: unknown, ms: number) {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify(body),
+      signal,
     },
     ms,
   );
@@ -117,16 +119,16 @@ Deno.serve(async (req) => {
     const errors: string[] = [];
     // The free key's latency swings from 1 s to over 10 s per model, so the
     // models are asked at the same time and the first complete answer wins.
+    let controllers: AbortController[] = [];
     const one = async (path: string, call: typeof callDeveloperApi, model: string) => {
       const left = deadline - (Date.now() - started);
       if (left < 300) throw new Error("deadline");
-      const res = await call(model, body, left);
-      const data = await Promise.race([
-        res.json(),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("deadline")), Math.max(0, deadline - (Date.now() - started)))
-        ),
-      ]) as Record<string, any>;
+      const controller = new AbortController();
+      controllers.push(controller);
+      const res = await call(model, body, left, controller.signal);
+      // The abort at the deadline or on another model's win also ends this
+      // body read.
+      const data = await res.json() as Record<string, any>;
       if (!res.ok) throw new Error(`${res.status}`);
       const candidate = data?.candidates?.[0];
       const text = candidate?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("").trim() ?? "";
@@ -136,7 +138,12 @@ Deno.serve(async (req) => {
       }
       return { text, model, path };
     };
+    // Losing and late requests are aborted, so they stop using the free
+    // key's quota and their body reads end.
+    const stopAll = () => controllers.forEach((c) => c.abort());
+    const deadlineTimer = setTimeout(stopAll, deadline);
     for (const [path, call] of [["vertex", callVertex], ["developer", callDeveloperApi]] as const) {
+      controllers = [];
       try {
         const won = await Promise.any(MODELS.map((m) =>
           one(path, call, m).catch((e) => {
@@ -144,13 +151,17 @@ Deno.serve(async (req) => {
             throw e;
           })
         ));
+        stopAll();
+        clearTimeout(deadlineTimer);
         return json({ ...won, ms: Date.now() - started });
       } catch {
         // every model on this path failed; try the next path
       }
     }
+    clearTimeout(deadlineTimer);
     return json({ error: "all models failed", details: errors }, 502);
   } catch (e) {
-    return json({ error: String(e) }, 500);
+    console.error(e);
+    return json({ error: "internal error" }, 500);
   }
 });
