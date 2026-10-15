@@ -17,12 +17,14 @@ List<OcrLine> _ocrLines(List<String> printed) => [
     ),
 ];
 
-// Bangkok, Sukhumvit area. 0.00045 deg of latitude is about 50 m,
-// 0.0027 deg about 300 m.
+// Bangkok, Sukhumvit area. 0.00018 deg of latitude is about 20 m,
+// 0.00045 deg about 50 m, 0.0027 deg about 300 m, 0.027 deg about 3 km.
 const double _lat = 13.7400;
 const double _lng = 100.5550;
+const double _lat20m = _lat + 0.00018;
 const double _lat50m = _lat + 0.00045;
 const double _lat300m = _lat + 0.0027;
+const double _lat3km = _lat + 0.027;
 
 final DateTime _now = DateTime(2026, 10, 15, 18, 0);
 
@@ -36,6 +38,7 @@ ReceiptRecord _rec(
   SpendCategory category = SpendCategory.other,
   bool verified = true,
   bool userCorrected = false,
+  double? serviceThb,
   double? servicePercent,
   bool serviceIncluded = false,
   bool vatOnTop = false,
@@ -49,6 +52,7 @@ ReceiptRecord _rec(
   lng: lng,
   category: category,
   userCorrected: userCorrected,
+  serviceThb: serviceThb,
   servicePercent: servicePercent,
   serviceIncluded: serviceIncluded,
   vatOnTop: vatOnTop,
@@ -269,6 +273,32 @@ void main() {
         ),
         throwsA(isA<AssertionError>()),
       );
+    });
+
+    test('serviceCharged false clears every service figure', () {
+      final c = original.corrected(serviceCharged: false);
+      expect(c.servicePercent, isNull);
+      expect(c.serviceThb, isNull);
+      expect(c.serviceIncluded, isFalse);
+      expect(c.totalThb, 330.00);
+      expect(c.userCorrected, isTrue);
+      expect(c.verified, isFalse);
+    });
+
+    test('serviceCharged false also clears a service-included record', () {
+      final included = _rec(
+        'inc',
+        _daysAgo(1),
+        300,
+        merchant: 'Som Tam Nua',
+        servicePercent: 10,
+        serviceIncluded: true,
+        serviceThb: 27.27,
+      );
+      final c = included.corrected(serviceCharged: false);
+      expect(c.servicePercent, isNull);
+      expect(c.serviceThb, isNull);
+      expect(c.serviceIncluded, isFalse);
     });
 
     test('does not change the original', () {
@@ -650,12 +680,12 @@ void main() {
     });
   });
 
-  group('merchantMemory', () {
+  group('merchantMemory (same shop only)', () {
     final current = _rec(
       'now',
       _now,
       120,
-      merchant: '7-Eleven Sukhumvit 11',
+      merchant: '7-Eleven',
       lat: _lat,
       lng: _lng,
     );
@@ -664,11 +694,26 @@ void main() {
       expect(merchantMemory(current, const [], _now), isNull);
     });
 
-    test('matches by merchant name, newest first', () {
+    test('same name within 100 m matches, newest first', () {
       final history = [
-        _rec('a', _daysAgo(3), 80, merchant: '7-ELEVEN  sukhumvit 11'),
-        _rec('b', _daysAgo(1), 95, merchant: '7-eleven Sukhumvit 11'),
-        _rec('c', _daysAgo(2), 300, merchant: 'Som Tam Nua'),
+        _rec('a', _daysAgo(3), 80, merchant: '7-ELEVEN', lat: _lat, lng: _lng),
+        _rec(
+          'b',
+          _daysAgo(1),
+          95,
+          merchant: '7-eleven',
+          lat: _lat50m,
+          lng: _lng,
+        ),
+        // Same spot, other merchant: not this shop.
+        _rec(
+          'c',
+          _daysAgo(2),
+          300,
+          merchant: 'Som Tam Nua',
+          lat: _lat,
+          lng: _lng,
+        ),
       ];
       final m = merchantMemory(current, history, _now);
       expect(m, isNotNull);
@@ -681,6 +726,105 @@ void main() {
       expect(m.lastVerified, isTrue);
     });
 
+    test('same 7-Eleven within 50 m: one visit, no brand memory', () {
+      final history = [
+        _rec(
+          'here',
+          _daysAgo(2),
+          70,
+          merchant: '7-Eleven',
+          lat: _lat50m,
+          lng: _lng,
+        ),
+      ];
+      final m = merchantMemory(current, history, _now);
+      expect(m, isNotNull);
+      expect(m!.visits, 1);
+      expect(m.lastTotalThb, 70);
+      expect(brandMemory(current, history, _now), isNull);
+    });
+
+    test('two 7-Eleven records 3 km apart are different shops', () {
+      final history = [
+        _rec(
+          'other',
+          _daysAgo(2),
+          60,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
+        ),
+      ];
+      expect(merchantMemory(current, history, _now), isNull);
+      final b = brandMemory(current, history, _now);
+      expect(b, isNotNull);
+      expect(b!.records, 1);
+    });
+
+    test('same name 300 m away is another branch, not this shop', () {
+      final history = [
+        _rec(
+          'far',
+          _daysAgo(1),
+          500,
+          merchant: '7-Eleven',
+          lat: _lat300m,
+          lng: _lng,
+        ),
+      ];
+      expect(merchantMemory(current, history, _now), isNull);
+      expect(brandMemory(current, history, _now)!.records, 1);
+    });
+
+    test('same name, earlier record without location: brand only', () {
+      final history = [_rec('noloc', _daysAgo(1), 90, merchant: '7-Eleven')];
+      expect(merchantMemory(current, history, _now), isNull);
+      expect(brandMemory(current, history, _now)!.records, 1);
+    });
+
+    test('same name, current record without location: brand only', () {
+      final noLoc = _rec('now', _now, 120, merchant: '7-Eleven');
+      final history = [
+        _rec(
+          'here',
+          _daysAgo(1),
+          90,
+          merchant: '7-Eleven',
+          lat: _lat,
+          lng: _lng,
+        ),
+      ];
+      expect(merchantMemory(noLoc, history, _now), isNull);
+      expect(brandMemory(noLoc, history, _now)!.records, 1);
+    });
+
+    test('different names 20 m apart are unrelated', () {
+      final history = [
+        _rec(
+          'next-door',
+          _daysAgo(1),
+          90,
+          merchant: 'FamilyMart',
+          lat: _lat20m,
+          lng: _lng,
+        ),
+      ];
+      expect(merchantMemory(current, history, _now), isNull);
+      expect(brandMemory(current, history, _now), isNull);
+    });
+
+    test('an unnamed record 50 m away is unrelated', () {
+      final history = [_rec('anon', _daysAgo(1), 90, lat: _lat50m, lng: _lng)];
+      expect(merchantMemory(current, history, _now), isNull);
+      expect(brandMemory(current, history, _now), isNull);
+    });
+
+    test('current without a name gives null even at the same spot', () {
+      final unnamed = _rec('now', _now, 50, lat: _lat, lng: _lng);
+      final history = [_rec('x', _daysAgo(1), 50, lat: _lat, lng: _lng)];
+      expect(merchantMemory(unnamed, history, _now), isNull);
+    });
+
     test('counts sample records among the visits', () {
       final history = [
         ReceiptRecord(
@@ -688,31 +832,23 @@ void main() {
           savedAt: _daysAgo(2),
           totalThb: 75,
           verified: true,
-          merchantName: '7-Eleven Sukhumvit 11',
+          merchantName: '7-Eleven',
+          lat: _lat,
+          lng: _lng,
           isSample: true,
         ),
-        _rec('real', _daysAgo(1), 90, merchant: '7-Eleven Sukhumvit 11'),
+        _rec(
+          'real',
+          _daysAgo(1),
+          90,
+          merchant: '7-Eleven',
+          lat: _lat,
+          lng: _lng,
+        ),
       ];
       final m = merchantMemory(current, history, _now)!;
       expect(m.visits, 2);
       expect(m.sampleRecords, 1);
-    });
-
-    test('matches an unnamed record within 100 m, not one 300 m away', () {
-      final history = [
-        _rec('near', _daysAgo(2), 70, lat: _lat50m, lng: _lng),
-        _rec('far', _daysAgo(1), 500, lat: _lat300m, lng: _lng),
-      ];
-      final m = merchantMemory(current, history, _now);
-      expect(m, isNotNull);
-      expect(m!.visits, 1);
-      expect(m.lastTotalThb, 70);
-      expect(m.dates, [_daysAgo(2)]);
-    });
-
-    test('only 300 m away gives null', () {
-      final history = [_rec('far', _daysAgo(1), 500, lat: _lat300m, lng: _lng)];
-      expect(merchantMemory(current, history, _now), isNull);
     });
 
     test('future records and the current moment are ignored', () {
@@ -721,10 +857,19 @@ void main() {
           'future',
           _now.add(const Duration(hours: 1)),
           999,
-          merchant: '7-Eleven Sukhumvit 11',
+          merchant: '7-Eleven',
+          lat: _lat,
+          lng: _lng,
         ),
-        _rec('same', _now, 888, merchant: '7-Eleven Sukhumvit 11'),
-        _rec('past', _daysAgo(4), 60, merchant: '7-Eleven Sukhumvit 11'),
+        _rec('same', _now, 888, merchant: '7-Eleven', lat: _lat, lng: _lng),
+        _rec(
+          'past',
+          _daysAgo(4),
+          60,
+          merchant: '7-Eleven',
+          lat: _lat,
+          lng: _lng,
+        ),
       ];
       final m = merchantMemory(current, history, _now)!;
       expect(m.visits, 1);
@@ -738,19 +883,32 @@ void main() {
           'old',
           _daysAgo(5),
           330,
-          merchant: '7-Eleven Sukhumvit 11',
+          merchant: '7-Eleven',
+          lat: _lat,
+          lng: _lng,
           servicePercent: 10,
         ),
         _rec(
           'new',
           _daysAgo(1),
           214,
-          merchant: '7-Eleven Sukhumvit 11',
+          merchant: '7-Eleven',
+          lat: _lat,
+          lng: _lng,
           servicePercent: 0,
           serviceIncluded: true,
           vatOnTop: true,
           userCorrected: true,
           verified: false,
+        ),
+        // A newer record at another branch must not leak in.
+        _rec(
+          'branch',
+          _daysAgo(0, hour: 9),
+          40,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
         ),
       ];
       final m = merchantMemory(current, history, _now)!;
@@ -762,11 +920,188 @@ void main() {
       expect(m.correctedRecords, 1);
       expect(m.lastVerified, isFalse);
     });
+  });
 
-    test('no name and no location gives null', () {
-      final bare = _rec('bare', _now, 50);
-      final history = [_rec('x', _daysAgo(1), 50)];
-      expect(merchantMemory(bare, history, _now), isNull);
+  group('brandMemory (other branches of the same name)', () {
+    final current = _rec(
+      'now',
+      _now,
+      120,
+      merchant: '7-Eleven',
+      lat: _lat,
+      lng: _lng,
+    );
+
+    test('null with no history', () {
+      expect(brandMemory(current, const [], _now), isNull);
+    });
+
+    test('null when the current record has no merchant name', () {
+      final unnamed = _rec('now', _now, 50, lat: _lat, lng: _lng);
+      final history = [_rec('b', _daysAgo(1), 50, merchant: '7-Eleven')];
+      expect(brandMemory(unnamed, history, _now), isNull);
+    });
+
+    test('three branches: two without service, one with VAT on top', () {
+      final history = [
+        _rec(
+          'b1',
+          _daysAgo(1),
+          60,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
+        ),
+        _rec(
+          'b2',
+          _daysAgo(3),
+          70,
+          merchant: '7-ELEVEN',
+          lat: _lat300m,
+          lng: _lng,
+        ),
+        _rec('b3', _daysAgo(2), 80, merchant: '7-eleven', vatOnTop: true),
+      ];
+      final b = brandMemory(current, history, _now);
+      expect(b, isNotNull);
+      expect(b!.merchantKey, current.merchantKey);
+      expect(b.records, 3);
+      expect(b.serviceAddedRecords, 0);
+      expect(b.serviceIncludedRecords, 0);
+      expect(b.noServiceRecords, 3);
+      expect(b.vatOnTopRecords, 1);
+      expect(b.sampleRecords, 0);
+      expect(b.dates, [_daysAgo(1), _daysAgo(2), _daysAgo(3)]);
+    });
+
+    test('splits records by service format and counts samples', () {
+      final history = [
+        // Service amount printed, no percent: added.
+        _rec(
+          'amount',
+          _daysAgo(1),
+          110,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
+          serviceThb: 10,
+        ),
+        // Service percent, not included: added.
+        _rec(
+          'percent',
+          _daysAgo(2),
+          110,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
+          servicePercent: 10,
+        ),
+        // Service included in prices.
+        _rec(
+          'included',
+          _daysAgo(3),
+          100,
+          merchant: '7-Eleven',
+          servicePercent: 10,
+          serviceIncluded: true,
+        ),
+        // No service at all, VAT on top, demo sample.
+        ReceiptRecord(
+          id: 'sample',
+          savedAt: _daysAgo(4),
+          totalThb: 107,
+          verified: true,
+          merchantName: '7-Eleven',
+          vatOnTop: true,
+          isSample: true,
+        ),
+      ];
+      final b = brandMemory(current, history, _now)!;
+      expect(b.records, 4);
+      expect(b.serviceAddedRecords, 2);
+      expect(b.serviceIncludedRecords, 1);
+      expect(b.noServiceRecords, 1);
+      expect(b.vatOnTopRecords, 1);
+      expect(b.sampleRecords, 1);
+    });
+
+    test('a branch corrected to no service counts as no service', () {
+      final scanned = _rec(
+        'scan',
+        _daysAgo(1),
+        110,
+        merchant: '7-Eleven',
+        lat: _lat3km,
+        lng: _lng,
+        servicePercent: 10,
+        serviceThb: 10,
+      );
+      final b = brandMemory(current, [
+        scanned.corrected(serviceCharged: false),
+      ], _now)!;
+      expect(b.records, 1);
+      expect(b.serviceAddedRecords, 0);
+      expect(b.serviceIncludedRecords, 0);
+      expect(b.noServiceRecords, 1);
+    });
+
+    test('excludes same-shop records and other merchants', () {
+      final history = [
+        _rec(
+          'shop',
+          _daysAgo(1),
+          90,
+          merchant: '7-Eleven',
+          lat: _lat50m,
+          lng: _lng,
+        ),
+        _rec(
+          'branch',
+          _daysAgo(2),
+          60,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
+        ),
+        _rec(
+          'other',
+          _daysAgo(3),
+          60,
+          merchant: 'FamilyMart',
+          lat: _lat3km,
+          lng: _lng,
+        ),
+      ];
+      final b = brandMemory(current, history, _now)!;
+      expect(b.records, 1);
+      expect(b.dates, [_daysAgo(2)]);
+      expect(merchantMemory(current, history, _now)!.visits, 1);
+    });
+
+    test('future records and the current moment are ignored', () {
+      final history = [
+        _rec(
+          'future',
+          _now.add(const Duration(hours: 1)),
+          999,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
+        ),
+        _rec('same', _now, 888, merchant: '7-Eleven', lat: _lat3km, lng: _lng),
+        _rec(
+          'past',
+          _daysAgo(4),
+          60,
+          merchant: '7-Eleven',
+          lat: _lat3km,
+          lng: _lng,
+        ),
+      ];
+      final b = brandMemory(current, history, _now)!;
+      expect(b.records, 1);
+      expect(b.dates, [_daysAgo(4)]);
+      expect(brandMemory(current, [history[0]], _now), isNull);
     });
   });
 
@@ -787,6 +1122,8 @@ void main() {
           _daysAgo(2),
           330,
           merchant: 'Som Tam Nua',
+          lat: _lat,
+          lng: _lng,
           servicePercent: 10,
         ),
       ];
@@ -800,6 +1137,8 @@ void main() {
           _daysAgo(6),
           300,
           merchant: 'som tam  nua',
+          lat: _lat,
+          lng: _lng,
           servicePercent: 5,
           userCorrected: true,
           verified: false,
@@ -809,6 +1148,8 @@ void main() {
           _daysAgo(3),
           321,
           merchant: 'Som Tam Nua',
+          lat: _lat50m,
+          lng: _lng,
           servicePercent: 0,
           serviceIncluded: true,
           vatOnTop: true,
@@ -821,6 +1162,8 @@ void main() {
           _daysAgo(1),
           330,
           merchant: 'Som Tam Nua',
+          lat: _lat,
+          lng: _lng,
           servicePercent: 10,
         ),
       ];
@@ -832,6 +1175,138 @@ void main() {
       expect(h.fromRecords, 2);
       expect(h.lastCorrectedAt, _daysAgo(3));
       expect(h.fromSample, isFalse);
+      expect(h.sameShop, isTrue);
+    });
+
+    test('a correction at another branch 3 km away is not sameShop', () {
+      final history = [
+        _rec(
+          'branch',
+          _daysAgo(2),
+          200,
+          merchant: 'Som Tam Nua',
+          lat: _lat3km,
+          lng: _lng,
+          servicePercent: 10,
+          userCorrected: true,
+          verified: false,
+        ),
+      ];
+      final h = formatHint(current, history, _now)!;
+      expect(h.servicePercent, 10);
+      expect(h.fromRecords, 1);
+      expect(h.sameShop, isFalse);
+    });
+
+    test('a correction without location is not sameShop', () {
+      final history = [
+        _rec(
+          'noloc',
+          _daysAgo(2),
+          200,
+          merchant: 'Som Tam Nua',
+          servicePercent: 10,
+          userCorrected: true,
+          verified: false,
+        ),
+      ];
+      expect(formatHint(current, history, _now)!.sameShop, isFalse);
+    });
+
+    test('sameShop follows the newest correction, shop or brand', () {
+      final shopOld = _rec(
+        'shop',
+        _daysAgo(5),
+        200,
+        merchant: 'Som Tam Nua',
+        lat: _lat,
+        lng: _lng,
+        servicePercent: 5,
+        userCorrected: true,
+        verified: false,
+      );
+      final brandNew = _rec(
+        'brand',
+        _daysAgo(1),
+        200,
+        merchant: 'Som Tam Nua',
+        lat: _lat3km,
+        lng: _lng,
+        servicePercent: 10,
+        userCorrected: true,
+        verified: false,
+      );
+      final h1 = formatHint(current, [shopOld, brandNew], _now)!;
+      expect(h1.servicePercent, 10);
+      expect(h1.sameShop, isFalse);
+      // Only other-branch corrections back a branch hint.
+      expect(h1.fromRecords, 1);
+
+      final shopNew = _rec(
+        'shop2',
+        _daysAgo(0, hour: 9),
+        200,
+        merchant: 'Som Tam Nua',
+        lat: _lat50m,
+        lng: _lng,
+        servicePercent: 0,
+        userCorrected: true,
+        verified: false,
+      );
+      final h2 = formatHint(current, [shopOld, brandNew, shopNew], _now)!;
+      expect(h2.servicePercent, 0);
+      expect(h2.sameShop, isTrue);
+      // Only same-shop corrections back a same-shop hint.
+      expect(h2.fromRecords, 2);
+    });
+
+    test('fromRecords counts only the scope of the hint', () {
+      final branchOld = _rec(
+        'branch',
+        _daysAgo(4),
+        200,
+        merchant: 'Som Tam Nua',
+        lat: _lat3km,
+        lng: _lng,
+        servicePercent: 10,
+        userCorrected: true,
+        verified: false,
+      );
+      final shopNew = _rec(
+        'shop',
+        _daysAgo(1),
+        200,
+        merchant: 'Som Tam Nua',
+        lat: _lat,
+        lng: _lng,
+        servicePercent: 5,
+        userCorrected: true,
+        verified: false,
+      );
+      final h = formatHint(current, [branchOld, shopNew], _now)!;
+      expect(h.sameShop, isTrue);
+      expect(h.servicePercent, 5);
+      expect(h.fromRecords, 1);
+      expect(h.lastCorrectedAt, _daysAgo(1));
+    });
+
+    test('a "no service" correction gives a null service percent', () {
+      final scanned = _rec(
+        'scan',
+        _daysAgo(2),
+        330,
+        merchant: 'Som Tam Nua',
+        lat: _lat,
+        lng: _lng,
+        servicePercent: 10,
+      );
+      final h = formatHint(current, [
+        scanned.corrected(serviceCharged: false),
+      ], _now)!;
+      expect(h.servicePercent, isNull);
+      expect(h.serviceIncluded, isFalse);
+      expect(h.sameShop, isTrue);
+      expect(h.fromRecords, 1);
     });
 
     test('fromSample is true when the last correction is a sample', () {
@@ -852,11 +1327,22 @@ void main() {
       expect(h.fromRecords, 1);
     });
 
-    test('a correction 50 m away counts, 300 m away does not', () {
-      final near = [
+    test('a nearby correction under another name or no name is ignored', () {
+      final history = [
         _rec(
-          'n',
+          'next-door',
           _daysAgo(2),
+          200,
+          merchant: 'Baan Khanitha',
+          lat: _lat20m,
+          lng: _lng,
+          servicePercent: 10,
+          userCorrected: true,
+          verified: false,
+        ),
+        _rec(
+          'anon',
+          _daysAgo(1),
           200,
           lat: _lat50m,
           lng: _lng,
@@ -865,40 +1351,18 @@ void main() {
           verified: false,
         ),
       ];
-      final far = [
-        _rec(
-          'f',
-          _daysAgo(2),
-          200,
-          lat: _lat300m,
-          lng: _lng,
-          servicePercent: 10,
-          userCorrected: true,
-          verified: false,
-        ),
-      ];
-      final h = formatHint(current, near, _now);
-      expect(h, isNotNull);
-      expect(h!.servicePercent, 10);
-      expect(h.fromRecords, 1);
-      expect(formatHint(current, far, _now), isNull);
+      expect(formatHint(current, history, _now), isNull);
     });
 
-    test('future corrections and other merchants are ignored', () {
+    test('future corrections are ignored', () {
       final history = [
         _rec(
           'future',
           _now.add(const Duration(minutes: 5)),
           200,
           merchant: 'Som Tam Nua',
-          userCorrected: true,
-          verified: false,
-        ),
-        _rec(
-          'other',
-          _daysAgo(1),
-          200,
-          merchant: 'Baan Khanitha',
+          lat: _lat,
+          lng: _lng,
           userCorrected: true,
           verified: false,
         ),

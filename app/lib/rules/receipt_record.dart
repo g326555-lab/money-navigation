@@ -95,11 +95,15 @@ class ReceiptRecord {
 
   /// The traveler's fix. The new figures were not proven by arithmetic, so
   /// the copy is no longer [verified].
+  ///
+  /// [serviceCharged] false records "no service charge": percent and
+  /// amount are cleared, so the record no longer counts as charged.
   ReceiptRecord corrected({
     double? totalThb,
     double? servicePercent,
     bool? serviceIncluded,
     bool? vatOnTop,
+    bool? serviceCharged,
   }) => ReceiptRecord(
     id: id,
     savedAt: savedAt,
@@ -114,11 +118,18 @@ class ReceiptRecord {
     discountThb: discountThb,
     // A changed format or total makes the proven amounts stale.
     serviceThb:
-        servicePercent == null && serviceIncluded == null && totalThb == null
+        servicePercent == null &&
+            serviceIncluded == null &&
+            totalThb == null &&
+            serviceCharged == null
         ? serviceThb
         : null,
-    servicePercent: servicePercent ?? this.servicePercent,
-    serviceIncluded: serviceIncluded ?? this.serviceIncluded,
+    servicePercent: serviceCharged == false
+        ? null
+        : servicePercent ?? this.servicePercent,
+    serviceIncluded: serviceCharged == false
+        ? false
+        : serviceIncluded ?? this.serviceIncluded,
     vatThb: vatOnTop == null && totalThb == null ? vatThb : null,
     vatOnTop: vatOnTop ?? this.vatOnTop,
     itemCount: itemCount,
@@ -351,7 +362,7 @@ MerchantMemory? merchantMemory(
   List<ReceiptRecord> history,
   DateTime now,
 ) {
-  final same = _sameMerchant(current, history, now);
+  final same = _earlier(current, history, now, (r) => _sameShop(current, r));
   if (same.isEmpty) return null;
   final last = same.first;
   return MerchantMemory(
@@ -377,6 +388,7 @@ class FormatHint {
     required this.fromRecords,
     required this.lastCorrectedAt,
     required this.fromSample,
+    required this.sameShop,
   });
 
   final double? servicePercent;
@@ -387,6 +399,10 @@ class FormatHint {
 
   /// The correction is on a demo sample record.
   final bool fromSample;
+
+  /// The correction was made at this very shop, not another branch of the
+  /// same name (a receipt format is usually the chain's).
+  final bool sameShop;
 }
 
 /// The traveler's last correction at this merchant, or null. It is shown
@@ -396,20 +412,81 @@ FormatHint? formatHint(
   List<ReceiptRecord> history,
   DateTime now,
 ) {
-  final fixed = _sameMerchant(
+  final key = current.merchantKey;
+  if (key == null) return null;
+  final fixed = _earlier(
     current,
     history,
     now,
-  ).where((r) => r.userCorrected).toList();
+    (r) => r.userCorrected && r.merchantKey == key,
+  );
   if (fixed.isEmpty) return null;
   final last = fixed.first;
+  final sameShop = _sameShop(current, last);
   return FormatHint(
+    sameShop: sameShop,
     servicePercent: last.servicePercent,
     serviceIncluded: last.serviceIncluded,
     vatOnTop: last.vatOnTop,
-    fromRecords: fixed.length,
+    // Counted in the same scope as the hint: this shop, or other branches.
+    fromRecords: fixed.where((r) => _sameShop(current, r) == sameShop).length,
     lastCorrectedAt: last.savedAt,
     fromSample: last.isSample,
+  );
+}
+
+/// What other branches of the same name showed: receipt format is
+/// usually a chain fact. Never counted as visits to this shop.
+class BrandMemory {
+  const BrandMemory({
+    required this.merchantKey,
+    required this.records,
+    required this.serviceAddedRecords,
+    required this.serviceIncludedRecords,
+    required this.noServiceRecords,
+    required this.vatOnTopRecords,
+    required this.sampleRecords,
+    required this.dates,
+  });
+
+  final String merchantKey;
+  final int records;
+  final int serviceAddedRecords;
+  final int serviceIncludedRecords;
+  final int noServiceRecords;
+  final int vatOnTopRecords;
+  final int sampleRecords;
+  final List<DateTime> dates;
+}
+
+/// Earlier receipts with the same name at other or unknown locations.
+BrandMemory? brandMemory(
+  ReceiptRecord current,
+  List<ReceiptRecord> history,
+  DateTime now,
+) {
+  final key = current.merchantKey;
+  if (key == null) return null;
+  final brand = _earlier(
+    current,
+    history,
+    now,
+    (r) => r.merchantKey == key && !_sameShop(current, r),
+  );
+  if (brand.isEmpty) return null;
+  bool added(ReceiptRecord r) =>
+      !r.serviceIncluded && (r.serviceThb != null || r.servicePercent != null);
+  return BrandMemory(
+    merchantKey: key,
+    records: brand.length,
+    serviceAddedRecords: brand.where(added).length,
+    serviceIncludedRecords: brand.where((r) => r.serviceIncluded).length,
+    noServiceRecords: brand
+        .where((r) => !r.serviceIncluded && !added(r))
+        .length,
+    vatOnTopRecords: brand.where((r) => r.vatOnTop).length,
+    sampleRecords: brand.where((r) => r.isSample).length,
+    dates: [for (final r in brand) r.savedAt],
   );
 }
 
@@ -509,22 +586,25 @@ DailySpend? dailySpend(List<ReceiptRecord> history, DateTime now) {
   );
 }
 
-/// Earlier receipts at the same merchant as [current] (same name key, or
-/// within [samePlaceMeters]), newest first.
-List<ReceiptRecord> _sameMerchant(
+/// Same shop: the same name key and both located within
+/// [samePlaceMeters]. A name alone is a brand (every 7-Eleven shares it),
+/// and a location alone may be the shop next door.
+bool _sameShop(ReceiptRecord a, ReceiptRecord b) {
+  final key = a.merchantKey;
+  return key != null && b.merchantKey == key && _near(a, b);
+}
+
+/// Records before [now] other than [current] that pass [test], newest
+/// first.
+List<ReceiptRecord> _earlier(
   ReceiptRecord current,
   List<ReceiptRecord> history,
   DateTime now,
-) {
-  final key = current.merchantKey;
-  return [
-    for (final r in history)
-      if (r.id != current.id &&
-          r.savedAt.isBefore(now) &&
-          ((key != null && r.merchantKey == key) || _near(current, r)))
-        r,
-  ]..sort((a, b) => b.savedAt.compareTo(a.savedAt));
-}
+  bool Function(ReceiptRecord) test,
+) => [
+  for (final r in history)
+    if (r.id != current.id && r.savedAt.isBefore(now) && test(r)) r,
+]..sort((a, b) => b.savedAt.compareTo(a.savedAt));
 
 bool _near(ReceiptRecord a, ReceiptRecord b) {
   final (lat1, lng1, lat2, lng2) = (a.lat, a.lng, b.lat, b.lng);
