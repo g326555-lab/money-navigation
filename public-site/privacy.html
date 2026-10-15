@@ -46,7 +46,9 @@
       <li>Spoken replies in Thai: the sentence text is sent to Google Cloud Text-to-Speech and the audio is played, not stored.</li>
       <li>Location, only while you use the app and only if you allow it: your position is sent to Google Places to find nearby markets. It is not stored unless you save a result with its place.</li>
       <li>Explanations: some short explanations are written by Google Gemini. The app sends only the facts of the result (for example the amounts and the verdict) and, for advice based on your history, a summary with item names, rounded prices and counts. It never sends your email, name or photos.</li>
-      <li>The app does not read your calendar, contacts or photo library beyond the photo you pick.</li>
+      <li>Calendar, for the morning briefing and only after you allow it there: the app reads today's timed events (title, location text and start time), read-only. Nothing is written to your calendar, and calendar data is not stored in the app's database or your account. The only part that leaves your phone is an event's location text (and your approximate position, if you allowed location), sent through our server function to Google Maps to look up the place and how it takes payment. Event titles are never sent. Looked-up places are kept in memory only while the app runs.</li>
+      <li>Arrival tip: when you allow location, your phone's own geocoder (Apple on iPhone, Google on Android) turns your position into a country so the app can show a one-time tip on arrival. The app keeps only the last country code on your phone.</li>
+      <li>The app does not read your contacts, and from your photo library it uses only the photo you pick.</li>
     </ul>
   </section>
 
@@ -76,6 +78,7 @@
       <li>เมื่อมีบัญชี เราเก็บอีเมล ชื่อ ประเภทนักเดินทาง สกุลเงิน ภาษา และผลลัพธ์ การต่อราคา หรือผลตรวจใบเสร็จ (ไม่รวมรูป) ที่คุณเลือกบันทึกเท่านั้น ไม่เก็บหมายเลขบัตร ไม่ขายข้อมูล และไม่ใช้เพื่อโฆษณา</li>
       <li>รูปหน้าจอ ATM เครื่องรูดบัตร และป้ายอัตราแลกเปลี่ยนอ่านบนเครื่องของคุณ รูปใบเสร็จส่งไปให้ Google Cloud Vision อ่านข้อความ และเราไม่เก็บรูปไว้</li>
       <li>เสียงพูดเก็บเป็นข้อความเท่านั้น ตำแหน่งใช้เพื่อหาตลาดใกล้เคียงขณะใช้งานแอป</li>
+      <li>ปฏิทิน (เมื่อคุณอนุญาตในหน้าสรุปตอนเช้า): อ่านอย่างเดียว เฉพาะชื่อ สถานที่ และเวลาเริ่มของนัดวันนี้ ไม่เก็บไว้ในบัญชี ส่งออกจากเครื่องเฉพาะข้อความสถานที่ (และตำแหน่งโดยประมาณถ้าอนุญาต) ไปยัง Google Maps เพื่อค้นหาสถานที่ ไม่ส่งชื่อนัดหมาย</li>
       <li>ผู้ประมวลผลข้อมูล: Supabase (เซิร์ฟเวอร์ในสิงคโปร์), Google Cloud และ Google Gemini</li>
       <li>ลบบัญชีและข้อมูลทั้งหมดได้ที่ การตั้งค่า &gt; บัญชี &gt; ลบบัญชี หรืออีเมลถึงเรา</li>
     </ul>

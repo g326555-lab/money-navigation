@@ -51,6 +51,9 @@ TripSave? tripSaveFromRow(Object? row) {
     placeName: placeName is String && placeName.isNotEmpty ? placeName : null,
     sellerPrices: detail is Map ? _numbers(detail['sellerPrices']) : null,
     ourOffers: detail is Map ? _numbers(detail['ourOffers']) : null,
+    // Seed rows say so, so the app labels them as samples. The app itself
+    // never writes is_sample (tripSaveToRow leaves it to the default).
+    isSample: row['is_sample'] == true,
   );
 }
 
