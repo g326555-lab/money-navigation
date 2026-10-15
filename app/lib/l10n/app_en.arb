@@ -1,0 +1,5 @@
+{
+  "@@locale": "en",
+  "appName": "Money Navigation",
+  "@appName": {"description": "App name shown in the system and top of Home."}
+}

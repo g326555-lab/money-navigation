@@ -27,7 +27,7 @@ codex/
 | Event day 1 | 15 Oct 10:00-18:00 | Create `app/`, the repository, designs, model, data. Build in the demo order. |
 | Event day 2 | 16 Oct 10:00-14:00 | Finish, polish, TestFlight build, rehearse, record a backup video. |
 
-Submission deadline: 16 Oct 14:00 Bangkok time (confirmed by Hyunjun on day 1). Day 2 has only four working hours, so demo scenes 1-3 must work end to end by the end of day 1, and the TestFlight archive must be ready by about 12:00 on day 2.
+Submission deadline: 16 Oct 14:00 Bangkok time (confirmed by Hyunjun on day 1). Work may continue overnight (more than 24 hours remain from day 1 morning), so the real limit is the usage budget below, not the clock. The TestFlight archive must be ready by about 12:00 on day 2.
 
 During Preparation you must not create `app/` or anything that will ship: no project code, no generated screens, no logo or coin image, no trained model, no data file for the app. If Hyunjun asks for one of these before the event starts, remind him of the hackathon rule and offer a practice version in `practice/` instead.
 
@@ -189,6 +189,7 @@ When to call whom (lead decides, these are the defaults):
 Context: start a fresh session after each finished screen. CLAUDE.md and docs/prep-notes.md carry the memory; write anything important there before ending a session.
 
 ## Usage budget (weekly limit resets Friday 16 Oct 22:00, AFTER the event ends)
+Update on day 1 (Hyunjun): usage is not a hard limit; he will buy extra usage if needed. Do not skip reviewer, craft or researcher to save usage. Keep the context-hygiene rules below because they also keep sessions fast and focused, and still report /usage at lunch and end of day.
 About 35% of the weekly limit must cover BOTH days. Plan: Day 1 at most ~15%, Day 2 at most ~15%, keep ~5% in reserve for last-minute fixes before judging.
 - Check /usage at lunch and at the end of each day and tell the owner the number.
 - Both days: lead + test-author + reviewer are the core. Call researcher only for a blocking error after two failed attempts. Craft polishes only the demo path (scenes 1-5), once per screen, plus one final pass on Day 2 afternoon.

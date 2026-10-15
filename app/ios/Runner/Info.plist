@@ -2,6 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Money Navigation uses the camera to read ATM screens, card terminals, price tags and bills so it can tell you the cheaper way to pay.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Money Navigation uses the microphone to hear prices when you talk with a seller.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Money Navigation turns spoken prices into text so it can translate them and check if they are fair.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Money Navigation uses your location to show the usual prices and payment tips for the place you are in.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>th</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -15,7 +34,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>money_navigation</string>
+	<string>Money Navigation</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
