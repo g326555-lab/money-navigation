@@ -44,6 +44,10 @@ class _BillScreenState extends State<BillScreen> {
   _Phase _phase = _Phase.start;
   BillReading? _reading;
 
+  /// Once a bill has been read, the camera button offers another one, and
+  /// keeps that label while the next photo is read.
+  bool _readOnce = false;
+
   @override
   void initState() {
     super.initState();
@@ -79,6 +83,7 @@ class _BillScreenState extends State<BillScreen> {
     setState(() {
       _phase = _Phase.done;
       _reading = reading;
+      _readOnce = true;
     });
   }
 
@@ -152,9 +157,9 @@ class _BillScreenState extends State<BillScreen> {
                   onSecondary: _phase == _Phase.reading
                       ? null
                       : () => _pick(ImageSource.gallery),
-                  primaryLabel: _phase == _Phase.start
-                      ? l10n.billTake
-                      : l10n.billTakeAnother,
+                  primaryLabel: _readOnce
+                      ? l10n.billTakeAnother
+                      : l10n.billTake,
                   onPrimary: _phase == _Phase.reading
                       ? null
                       : () => _pick(ImageSource.camera),

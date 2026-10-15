@@ -231,7 +231,10 @@ class _ScanScreenState extends State<ScanScreen>
             state: state,
             demo: AppScope.of(context).settings.demoState,
           ),
-          ScanState(board: _?) => BoardResultScreen(state: state),
+          ScanState(board: _?) => BoardResultScreen(
+            state: state,
+            demo: AppScope.of(context).settings.demoState,
+          ),
           _ => AtmResultScreen(state: state),
         },
         transitionsBuilder: (_, animation, _, child) {

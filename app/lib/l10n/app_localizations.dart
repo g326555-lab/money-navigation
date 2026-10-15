@@ -263,7 +263,7 @@ abstract class AppLocalizations {
   /// No description provided for @stepFindAtmFailed.
   ///
   /// In en, this message translates to:
-  /// **'No ATM conversion offer in this photo'**
+  /// **'No currency choice or rate board in this photo'**
   String get stepFindAtmFailed;
 
   /// No description provided for @stepReadTextFailed.
@@ -287,8 +287,14 @@ abstract class AppLocalizations {
   /// No description provided for @scanTipNotAtm.
   ///
   /// In en, this message translates to:
-  /// **'Point at the ATM screen that shows the amount in your home currency.'**
+  /// **'Point straight at the screen that offers two currencies, or at a rate board.'**
   String get scanTipNotAtm;
+
+  /// No description provided for @scanTipLooksLikeBill.
+  ///
+  /// In en, this message translates to:
+  /// **'This looks like a bill. You can check it here.'**
+  String get scanTipLooksLikeBill;
 
   /// No description provided for @scanTipMissingValues.
   ///
@@ -1180,7 +1186,7 @@ abstract class AppLocalizations {
   /// No description provided for @billServicePercent.
   ///
   /// In en, this message translates to:
-  /// **'Service charge {percent} %'**
+  /// **'Service charge {percent}%'**
   String billServicePercent(String percent);
 
   /// No description provided for @billVat.
@@ -1192,7 +1198,7 @@ abstract class AppLocalizations {
   /// No description provided for @billVatPercent.
   ///
   /// In en, this message translates to:
-  /// **'VAT {percent} %'**
+  /// **'VAT {percent}%'**
   String billVatPercent(String percent);
 
   /// No description provided for @billAddedOnTop.
@@ -1252,7 +1258,7 @@ abstract class AppLocalizations {
   /// No description provided for @billTooLargeBody.
   ///
   /// In en, this message translates to:
-  /// **'This photo is too big to send. Take it again from this screen, it sends a smaller copy.'**
+  /// **'Take it again from this screen and a smaller copy is sent.'**
   String get billTooLargeBody;
 
   /// No description provided for @billNoTextTitle.
@@ -1270,19 +1276,19 @@ abstract class AppLocalizations {
   /// No description provided for @billNoMatchTitle.
   ///
   /// In en, this message translates to:
-  /// **'Couldn\'t verify this bill'**
+  /// **'Couldn\'t verify this bill'**
   String get billNoMatchTitle;
 
   /// No description provided for @billNoMatchBody.
   ///
   /// In en, this message translates to:
-  /// **'The text was read, but its figures don\'t add up in a way we can prove. Nothing is shown rather than a guess. Try a sharper photo of the whole bill.'**
+  /// **'The text was read, but its figures don\'t add up, so nothing is shown rather than a guess. Try a sharper photo of the whole bill.'**
   String get billNoMatchBody;
 
   /// No description provided for @billServiceTitle.
   ///
   /// In en, this message translates to:
-  /// **'The reader didn\'t answer'**
+  /// **'The bill reader didn\'t answer'**
   String get billServiceTitle;
 
   /// No description provided for @billServiceBody.
@@ -1870,7 +1876,7 @@ abstract class AppLocalizations {
   /// No description provided for @dccReason.
   ///
   /// In en, this message translates to:
-  /// **'The {home} price on this terminal adds about {percent} on top of the bank rate.'**
+  /// **'The {home} price on this terminal is about {percent} above the bank rate.'**
   String dccReason(String home, String percent);
 
   /// No description provided for @dccBothOptions.
@@ -1891,6 +1897,12 @@ abstract class AppLocalizations {
   /// **'Your home currency'**
   String get dccOptionHome;
 
+  /// No description provided for @dccOptionHomeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Home currency · about {amount} more'**
+  String dccOptionHomeMore(String amount);
+
   /// No description provided for @dccOptionLocal.
   ///
   /// In en, this message translates to:
@@ -1906,38 +1918,38 @@ abstract class AppLocalizations {
   /// No description provided for @dccEvenTitle.
   ///
   /// In en, this message translates to:
-  /// **'Either key is fine here, F{key} included'**
-  String dccEvenTitle(int key);
+  /// **'Either key is fine here'**
+  String get dccEvenTitle;
 
   /// No description provided for @dccEvenBody.
   ///
   /// In en, this message translates to:
-  /// **'The home-currency price is not dearer than paying locally at today\'s rate.'**
+  /// **'Paying in your home currency costs no more than paying locally at today\'s rate.'**
   String get dccEvenBody;
 
   /// No description provided for @rateDemoSource.
   ///
   /// In en, this message translates to:
-  /// **'{pair} · fixed demo rate, {date}'**
+  /// **'{pair} · fixed demo rate, {date}'**
   String rateDemoSource(String pair, String date);
-
-  /// No description provided for @boardLossTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Selling {code} here gets about {percent} less than the middle rate'**
-  String boardLossTitle(String code, String percent);
-
-  /// No description provided for @boardLossBody.
-  ///
-  /// In en, this message translates to:
-  /// **'On {amount} that is about {loss} less in your hand.'**
-  String boardLossBody(String amount, String loss);
 
   /// No description provided for @boardRates.
   ///
   /// In en, this message translates to:
   /// **'{code} on this board'**
   String boardRates(String code);
+
+  /// No description provided for @boardHeroLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Selling {code} here, below the middle rate'**
+  String boardHeroLabel(String code);
+
+  /// No description provided for @boardLossChip.
+  ///
+  /// In en, this message translates to:
+  /// **'About {loss} less per {amount}'**
+  String boardLossChip(String loss, String amount);
 
   /// No description provided for @boardBuying.
   ///
@@ -1972,13 +1984,19 @@ abstract class AppLocalizations {
   /// No description provided for @boardVsReference.
   ///
   /// In en, this message translates to:
-  /// **'About {percent} below {source}'**
+  /// **'Buying rate about {percent} below {source}'**
   String boardVsReference(String percent, String source);
+
+  /// No description provided for @boardAboveReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Buying rate about {percent} above {source}'**
+  String boardAboveReference(String percent, String source);
 
   /// No description provided for @stepFindTerminalDone.
   ///
   /// In en, this message translates to:
-  /// **'Card terminal with two currencies found'**
+  /// **'Two-currency card terminal found'**
   String get stepFindTerminalDone;
 
   /// No description provided for @stepFindBoardDone.
@@ -2050,7 +2068,7 @@ abstract class AppLocalizations {
   /// No description provided for @billTimeoutBody.
   ///
   /// In en, this message translates to:
-  /// **'That took too long. Try again in a moment.'**
+  /// **'The connection may be slow. Try again in a moment.'**
   String get billTimeoutBody;
 
   /// No description provided for @scanKindLine.
@@ -2333,6 +2351,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Includes sample records'**
   String get homeKeptSamples;
+
+  /// No description provided for @priceSentenceHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'{asked} is {over} above the usual top price, about {percent}'**
+  String priceSentenceHigh(String asked, String over, String percent);
+
+  /// No description provided for @priceSentenceFair.
+  ///
+  /// In en, this message translates to:
+  /// **'{asked} is inside the usual price'**
+  String priceSentenceFair(String asked);
+
+  /// No description provided for @priceSentenceLow.
+  ///
+  /// In en, this message translates to:
+  /// **'{asked} is below the usual price, a good buy'**
+  String priceSentenceLow(String asked);
+
+  /// No description provided for @priceAsked.
+  ///
+  /// In en, this message translates to:
+  /// **'Asked {amount}'**
+  String priceAsked(String amount);
+
+  /// No description provided for @priceYouPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'You paid {amount}'**
+  String priceYouPaid(String amount);
+
+  /// No description provided for @priceZoneCheap.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheap'**
+  String get priceZoneCheap;
+
+  /// No description provided for @priceZoneUsual.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual {unit}'**
+  String priceZoneUsual(String unit);
+
+  /// No description provided for @priceZoneHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get priceZoneHigh;
+
+  /// No description provided for @priceZoneFarAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Far above'**
+  String get priceZoneFarAbove;
+
+  /// No description provided for @priceZoneFarBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Far below'**
+  String get priceZoneFarBelow;
+
+  /// No description provided for @priceSemanticsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual price {low} to {high} baht {unit}'**
+  String priceSemanticsRange(String low, String high, String unit);
+
+  /// No description provided for @priceSemanticsCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested offer {amount}'**
+  String priceSemanticsCounter(String amount);
+
+  /// No description provided for @haggleShowSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the seller'**
+  String get haggleShowSeller;
+
+  /// No description provided for @showSellerTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn to the seller'**
+  String get showSellerTurn;
+
+  /// No description provided for @showSellerTurnBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn back to me'**
+  String get showSellerTurnBack;
+
+  /// No description provided for @showSellerClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the sentence to close'**
+  String get showSellerClose;
+
+  /// No description provided for @showSellerAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} บาท'**
+  String showSellerAmount(String amount);
+
+  /// No description provided for @haggleOfferMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Could you do {amount} baht?'**
+  String haggleOfferMeaning(String amount);
+
+  /// No description provided for @haggleAcceptMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'OK, {amount} baht. It\'s a deal.'**
+  String haggleAcceptMeaning(String amount);
+
+  /// No description provided for @haggleLeaveMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'No thanks, maybe another time.'**
+  String get haggleLeaveMeaning;
 }
 
 class _AppLocalizationsDelegate

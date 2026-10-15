@@ -63,6 +63,49 @@ class HaggleVerdict {
   final double? counterOffer;
 }
 
+/// How far above the top of the usual range [asked] is, in percent of that
+/// top ([high]); 0 when it is not above.
+double percentOverUsual(double asked, double high) =>
+    asked > high && high > 0 ? (asked - high) / high * 100 : 0;
+
+/// The window a price scale shows around the usual range [low]–[high]: wide
+/// enough for the usual range to read as a band, the asked price and any
+/// past price on it, and capped so a wild price does not shrink the band to
+/// a sliver. [farAbove] / [farBelow] say the asked price lies past the cap.
+({double from, double to, bool farAbove, bool farBelow}) priceWindow({
+  required double low,
+  required double high,
+  required double asked,
+  double? lastPaid,
+}) {
+  final w = (high - low) > 0 ? high - low : high * priceWindowMinShare;
+  final capHigh = high + w * priceWindowCap;
+  final capLow = low - w * priceWindowCap;
+  final farAbove = asked > capHigh;
+  final farBelow = asked < capLow;
+  var from = low - w * priceWindowPad;
+  var to = high + w * priceWindowPad;
+  for (final v in [asked, ?lastPaid]) {
+    final clamped = v.clamp(capLow, capHigh);
+    if (clamped + w * priceWindowEdge > to) {
+      to = clamped + w * priceWindowEdge;
+    }
+    if (clamped - w * priceWindowEdge < from) {
+      from = clamped - w * priceWindowEdge;
+    }
+  }
+  if (from < 0) from = 0;
+  return (from: from, to: to, farAbove: farAbove, farBelow: farBelow);
+}
+
+/// Window shape, in widths of the usual range.
+const priceWindowPad = 0.6;
+const priceWindowEdge = 0.15;
+const priceWindowCap = 2.0;
+
+/// For a one-price "range", the band is drawn this share of the price wide.
+const priceWindowMinShare = 0.1;
+
 /// Unit words, longest first so "กิโล" wins over "โล".
 const _unitWords = <String, PriceUnit>{
   'ชั่วโมง': PriceUnit.perHour,

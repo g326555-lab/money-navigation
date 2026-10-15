@@ -293,8 +293,12 @@ class SuccessView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SliverFillRemaining(
-                      hasScrollBody: false,
+                    // The sheet sizes to its own content. Rows lay out with
+                    // a LayoutBuilder, which cannot report an intrinsic
+                    // height, so the sheet must not sit in a
+                    // SliverFillRemaining itself; an empty filler below it
+                    // carries the page color to the bottom instead.
+                    SliverToBoxAdapter(
                       child: DecoratedBox(
                         decoration: ShapeDecoration(
                           color: AppColors.background,
@@ -333,6 +337,10 @@ class SuccessView extends StatelessWidget {
                           ),
                         ),
                       ),
+                    ),
+                    const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: ColoredBox(color: AppColors.background),
                     ),
                   ],
                 ),

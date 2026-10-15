@@ -38,6 +38,10 @@ class ScanStepsSheet extends StatelessWidget {
     final type = AppTypography.of(context);
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final failure = state.failure;
+    // The on-device model sees a bill: offer the bill check instead of
+    // telling the traveler to aim at a payment screen.
+    final offerBill =
+        onCheckBill != null && state.kindGuess?.$1 == PhotoKind.receiptMenu;
     return Container(
       width: double.infinity,
       decoration: ShapeDecoration(
@@ -99,15 +103,16 @@ class ScanStepsSheet extends StatelessWidget {
                 left: AppSizes.stepIcon + AppSpacing.md,
               ),
               child: Text(
-                _tip(l10n, failure),
+                offerBill && failure == ScanFailure.notAtm
+                    ? l10n.scanTipLooksLikeBill
+                    : _tip(l10n, failure),
                 style: type.bodyMd.copyWith(
                   color: AppColors.onSurfaceSecondary,
                 ),
               ),
             ),
             const SizedBox(height: AppSpacing.xxl),
-            if (onCheckBill != null &&
-                state.kindGuess?.$1 == PhotoKind.receiptMenu)
+            if (offerBill)
               DockPair(
                 secondaryLabel: l10n.scanTryAgain,
                 onSecondary: onRetry,

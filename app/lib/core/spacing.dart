@@ -118,6 +118,17 @@ abstract final class AppSizes {
   /// How far the price marker runs past its place before settling.
   static const double priceMarkerOvershoot = 4;
 
+  /// The price ruler: row above the track for the asked-price label, label
+  /// rows under it (end prices, zone names), the counter-offer notch and
+  /// the "scale jumps here" cuts.
+  static const double pricePinHeight = 22;
+  static const int priceLabelRows = 2;
+  static const double priceNotch = 6;
+  static const double priceNotchWidth = 3;
+  static const double priceBreakStroke = 2;
+  static const double priceBreakGap = 3;
+  static const double priceBreakSlant = 3;
+
   /// Buttons: label inset from the edges, glyph size and gap.
   static const double buttonPaddingH = 16;
   static const double buttonIcon = 22;

@@ -16,6 +16,7 @@ import '../../shared/action_dock.dart';
 import '../../shared/app_button.dart';
 import '../../shared/content_width.dart';
 import '../../shared/group.dart';
+import '../../shared/pill.dart';
 import 'atm_result_screen.dart';
 import 'scan_controller.dart';
 
@@ -40,7 +41,7 @@ class DccResultScreen extends StatelessWidget {
     final details = _details(context, l10n, v);
     if (!v.payLocal || v.extraHome.round() <= 0) {
       return _PlainResult(
-        title: l10n.dccEvenTitle(v.homeOption.key),
+        title: l10n.dccEvenTitle,
         body: l10n.dccEvenBody,
         details: details,
       );
@@ -50,14 +51,15 @@ class DccResultScreen extends StatelessWidget {
         label: l10n.dccKeepLabel(local),
         amount: v.extraHome,
         unit: partBHomeCurrency,
-        chip: l10n.dccMarkupChip(AppFormat.percent(v.markupPercent)),
+        // The markup is derived from our rate, so it is an estimate.
+        chip: l10n.dccMarkupChip(AppFormat.roundedPercent(v.markupPercent)),
       ),
       press: PressCard(
         label: l10n.atmPress,
         action: l10n.dccPressKey(v.localOption.key, local),
         reason: l10n.dccReason(
           partBHomeCurrency,
-          AppFormat.percent(v.markupPercent),
+          AppFormat.roundedPercent(v.markupPercent),
         ),
       ),
       details: details,
@@ -89,22 +91,29 @@ class DccResultScreen extends StatelessWidget {
   ) {
     final type = AppTypography.of(context);
     String option(TerminalOption o) => AppFormat.amount(o.amount, o.code ?? '');
+    // Same pattern as the ATM verdict: the key to press is green, and the
+    // dearer key says in words what it costs, never by color alone.
+    final dearer = v.payLocal && v.extraHome.round() > 0;
     return [
       SectionHeader(l10n.dccBothOptions, first: true),
       GroupCard(
         children: [
           GroupRow(
             title: l10n.dccOptionKey(v.homeOption.key),
-            subtitle: l10n.dccOptionHome,
+            subtitle: dearer
+                ? l10n.dccOptionHomeMore(
+                    AppFormat.roundedAmount(v.extraHome, partBHomeCurrency),
+                  )
+                : l10n.dccOptionHome,
             value: option(v.homeOption),
-            valueStyle: v.payLocal
-                ? type.rowTitle.copyWith(color: AppColors.errorText)
-                : null,
           ),
           GroupRow(
             title: l10n.dccOptionKey(v.localOption.key),
             subtitle: l10n.dccOptionLocal,
             value: option(v.localOption),
+            valueStyle: dearer
+                ? type.rowTitle.copyWith(color: AppColors.primaryText)
+                : null,
           ),
           GroupRow(
             title: l10n.dccFairHome(partBHomeCurrency),
@@ -120,9 +129,12 @@ class DccResultScreen extends StatelessWidget {
 /// A money changer's board: how much less than the middle rate the
 /// traveler gets when selling their currency here.
 class BoardResultScreen extends StatelessWidget {
-  const BoardResultScreen({super.key, required this.state});
+  const BoardResultScreen({super.key, required this.state, required this.demo});
 
   final ScanState state;
+
+  /// True when the reference rate is the fixed demo rate, not a live one.
+  final bool demo;
 
   @override
   Widget build(BuildContext context) {
@@ -133,15 +145,14 @@ class BoardResultScreen extends StatelessWidget {
     final vsReference = reference == null
         ? null
         : lossVsReferencePercent(b, reference, home: partBHomeCurrency);
-    final rate = AppFormat.rate;
     return _PlainResult(
-      title: l10n.boardLossTitle(
-        b.code,
-        AppFormat.roundedPercent(b.sellLossPercent),
-      ),
-      body: l10n.boardLossBody(
-        AppFormat.amount(100, b.code),
-        AppFormat.cents(b.lossWhenSelling(100), partBHomeCurrency),
+      hero: _BoardHero(
+        label: l10n.boardHeroLabel(b.code),
+        percent: AppFormat.roundedPercent(b.sellLossPercent),
+        chip: l10n.boardLossChip(
+          AppFormat.cents(b.lossWhenSelling(100), partBHomeCurrency),
+          AppFormat.amount(100, b.code),
+        ),
       ),
       details: [
         SectionHeader(l10n.boardRates(b.code), first: true),
@@ -150,12 +161,15 @@ class BoardResultScreen extends StatelessWidget {
             GroupRow(
               title: l10n.boardBuying,
               subtitle: l10n.boardBuyingHint(b.code),
-              value: rate(b.buying),
+              value: AppFormat.preciseRate(b.buying),
             ),
-            GroupRow(title: l10n.boardSelling, value: rate(b.selling)),
+            GroupRow(
+              title: l10n.boardSelling,
+              value: AppFormat.preciseRate(b.selling),
+            ),
             GroupRow(
               title: l10n.boardMid,
-              value: rate(b.mid),
+              value: AppFormat.preciseRate(b.mid),
               valueStyle: type.rowTitle.copyWith(color: AppColors.primaryText),
             ),
           ],
@@ -163,11 +177,48 @@ class BoardResultScreen extends StatelessWidget {
         GroupFooter(l10n.boardSource),
         if (reference != null && vsReference != null)
           GroupFooter(
-            l10n.boardVsReference(
-              AppFormat.roundedPercent(vsReference),
-              rateLine(context, l10n, reference, demo: false),
+            // An older board can buy above today's rate; say so plainly
+            // rather than "-4.3 % below".
+            (vsReference < 0
+                ? l10n.boardAboveReference
+                : l10n.boardVsReference)(
+              AppFormat.roundedPercent(vsReference.abs()),
+              rateLine(context, l10n, reference, demo: demo),
             ),
           ),
+      ],
+    );
+  }
+}
+
+/// Hero zone for the board: what selling here means, the percent as the
+/// largest figure, and the chip in money.
+class _BoardHero extends StatelessWidget {
+  const _BoardHero({
+    required this.label,
+    required this.percent,
+    required this.chip,
+  });
+
+  final String label;
+  final String percent;
+  final String chip;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = AppTypography.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: type.heroLabel),
+        const SizedBox(height: AppSpacing.sm),
+        Text(percent, style: type.displayLg),
+        const SizedBox(height: AppSpacing.md),
+        Pill(
+          label: chip,
+          fill: AppColors.errorContainer,
+          textColor: AppColors.errorText,
+        ),
       ],
     );
   }
@@ -183,7 +234,8 @@ String rateLine(
   final locale = Localizations.localeOf(context).toLanguageTag();
   final date = DateFormat.MMMd(locale).format(DateTime.parse(rate.date));
   final pair = rate.rate >= 1
-      ? l10n.ratePair(rate.base, AppFormat.rateValue(rate.rate), rate.quote)
+      // A stated rate keeps every digit (4.6935); an inverted one is rounded.
+      ? l10n.ratePair(rate.base, AppFormat.preciseRate(rate.rate), rate.quote)
       : l10n.ratePair(
           rate.quote,
           AppFormat.rateValue(inverseRate(rate)),
@@ -194,16 +246,15 @@ String rateLine(
       : l10n.homeRateSource(pair, date);
 }
 
-/// A result with nothing kept: title, explanation, details, one action.
+/// A result with nothing kept: a hero zone (a title and explanation, or a
+/// figure), details, one action.
 class _PlainResult extends StatelessWidget {
-  const _PlainResult({
-    required this.title,
-    required this.body,
-    required this.details,
-  });
+  const _PlainResult({this.title, this.body, this.hero, required this.details})
+    : assert((title != null && body != null) || hero != null);
 
-  final String title;
-  final String body;
+  final String? title;
+  final String? body;
+  final Widget? hero;
   final List<Widget> details;
 
   @override
@@ -244,14 +295,17 @@ class _PlainResult extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text(title, style: type.headline),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      body,
-                      style: type.bodyMd.copyWith(
-                        color: AppColors.onSurfaceSecondary,
+                    ?hero,
+                    if (hero == null) ...[
+                      Text(title!, style: type.headline),
+                      const SizedBox(height: AppSpacing.md),
+                      Text(
+                        body!,
+                        style: type.bodyMd.copyWith(
+                          color: AppColors.onSurfaceSecondary,
+                        ),
                       ),
-                    ),
+                    ],
                     const SizedBox(height: AppSpacing.zoneGap),
                     ...details,
                   ],

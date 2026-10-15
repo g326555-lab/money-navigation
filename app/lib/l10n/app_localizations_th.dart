@@ -106,7 +106,8 @@ class AppLocalizationsTh extends AppLocalizations {
       'ยอดที่แปลงแล้วตรงกับอัตราบนหน้าจอ จึงไม่มีส่วนที่ประหยัดได้';
 
   @override
-  String get stepFindAtmFailed => 'ไม่พบข้อเสนอแปลงสกุลเงินของตู้ ATM ในรูปนี้';
+  String get stepFindAtmFailed =>
+      'ไม่พบตัวเลือกสกุลเงินหรือป้ายอัตราแลกเปลี่ยน';
 
   @override
   String get stepReadTextFailed => 'ไม่พบตัวอักษร';
@@ -119,7 +120,10 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get scanTipNotAtm =>
-      'เล็งไปที่หน้าจอตู้ ATM ที่แสดงยอดเป็นสกุลเงินของบัตร';
+      'เล็งตรงไปที่หน้าจอที่ให้เลือกสองสกุลเงิน หรือป้ายอัตราแลกเปลี่ยน';
+
+  @override
+  String get scanTipLooksLikeBill => 'รูปนี้ดูเหมือนบิล กดตรวจบิลนี้ได้เลย';
 
   @override
   String get scanTipMissingValues =>
@@ -616,7 +620,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get billTotalLabel => 'ยอดรวมของบิลนี้';
 
   @override
-  String get billServiceChip => 'บวกค่าบริการเพิ่ม';
+  String get billServiceChip => 'มีค่าบริการบวกเพิ่ม';
 
   @override
   String get billVatOnTopChip => 'บวก VAT เพิ่ม';
@@ -634,7 +638,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get billInsideTotal => 'รวมอยู่ในยอดแล้ว';
 
   @override
-  String get billSubtotal => 'ยอดก่อนหัก';
+  String get billSubtotal => 'ยอดก่อนส่วนลด';
 
   @override
   String billItems(int count) {
@@ -649,7 +653,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String billServicePercent(String percent) {
-    return 'ค่าบริการ $percent %';
+    return 'ค่าบริการ $percent%';
   }
 
   @override
@@ -657,7 +661,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String billVatPercent(String percent) {
-    return 'VAT $percent %';
+    return 'VAT $percent%';
   }
 
   @override
@@ -673,7 +677,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get billBeforeVat => 'ก่อน VAT';
 
   @override
-  String get billProof => 'ตัวเลขทุกตัวตรวจกับตัวเลขอื่นในบิลนี้แล้ว';
+  String get billProof => 'ตรวจแล้วว่าตัวเลขทุกตัวในบิลนี้รวมกันลงตัว';
 
   @override
   String billVisionTrace(String engine, int lines, String elapsed) {
@@ -691,8 +695,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get billTooLargeTitle => 'รูปใหญ่เกินไป';
 
   @override
-  String get billTooLargeBody =>
-      'รูปใหญ่เกินกว่าจะส่ง ถ่ายใหม่จากหน้านี้ ระบบจะส่งรูปที่เล็กลง';
+  String get billTooLargeBody => 'ถ่ายใหม่จากหน้านี้ ระบบจะส่งรูปที่เล็กลงให้';
 
   @override
   String get billNoTextTitle => 'ไม่พบข้อความ';
@@ -708,7 +711,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'อ่านข้อความได้ แต่ตัวเลขรวมกันไม่ลงตัวพอจะยืนยัน จึงไม่แสดงตัวเลขที่เดา ลองถ่ายบิลทั้งใบให้ชัดขึ้น';
 
   @override
-  String get billServiceTitle => 'ตัวอ่านไม่ตอบ';
+  String get billServiceTitle => 'อ่านบิลไม่สำเร็จ';
 
   @override
   String get billServiceBody => 'ลองใหม่อีกครั้งในอีกสักครู่';
@@ -1021,12 +1024,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String dccKeepLabel(String currency) {
-    return 'จ่ายเป็น $currency ประหยัด';
+    return 'จ่ายเป็น $currency ประหยัดได้';
   }
 
   @override
   String dccMarkupChip(String percent) {
-    return 'ไม่เสียส่วนเพิ่ม $percent';
+    return 'ไม่โดนบวกเพิ่ม $percent';
   }
 
   @override
@@ -1036,7 +1039,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String dccReason(String home, String percent) {
-    return 'ราคาเป็น $home ในเครื่องนี้บวกเพิ่มประมาณ $percent จากอัตราธนาคาร';
+    return 'ยอด $home บนเครื่องนี้แพงกว่าอัตราธนาคารประมาณ $percent';
   }
 
   @override
@@ -1051,35 +1054,28 @@ class AppLocalizationsTh extends AppLocalizations {
   String get dccOptionHome => 'สกุลเงินของคุณ';
 
   @override
+  String dccOptionHomeMore(String amount) {
+    return 'สกุลเงินของคุณ · แพงกว่าประมาณ $amount';
+  }
+
+  @override
   String get dccOptionLocal => 'สกุลเงินท้องถิ่น';
 
   @override
   String dccFairHome(String currency) {
-    return 'ราคาที่ควรเป็น $currency';
+    return 'ราคาที่ควรจ่ายเป็น $currency';
   }
 
   @override
-  String dccEvenTitle(int key) {
-    return 'กดปุ่มไหนก็ได้ รวมถึง F$key';
-  }
+  String get dccEvenTitle => 'กดปุ่มไหนก็ได้';
 
   @override
   String get dccEvenBody =>
-      'ราคาเป็นสกุลเงินของคุณไม่แพงกว่าการจ่ายเงินท้องถิ่นตามอัตราวันนี้';
+      'จ่ายเป็นสกุลเงินของคุณก็ไม่แพงกว่าจ่ายเงินท้องถิ่นตามอัตรา⁠วัน⁠นี้';
 
   @override
   String rateDemoSource(String pair, String date) {
     return '$pair · อัตราคงที่สำหรับสาธิต $date';
-  }
-
-  @override
-  String boardLossTitle(String code, String percent) {
-    return 'ขาย $code ที่นี่ได้น้อยกว่าอัตรากลางประมาณ $percent';
-  }
-
-  @override
-  String boardLossBody(String amount, String loss) {
-    return 'ทุก $amount คุณได้น้อยลงประมาณ $loss';
   }
 
   @override
@@ -1088,15 +1084,25 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String boardHeroLabel(String code) {
+    return 'ขาย $code ที่นี่ ได้ต่ำกว่าอัตรากลาง';
+  }
+
+  @override
+  String boardLossChip(String loss, String amount) {
+    return 'ได้น้อยลงประมาณ $loss ต่อ $amount';
+  }
+
+  @override
   String get boardBuying => 'รับซื้อ';
 
   @override
   String boardBuyingHint(String code) {
-    return 'ที่คุณได้ต่อ 1 $code';
+    return 'เงินที่คุณได้ต่อ 1 $code';
   }
 
   @override
-  String get boardSelling => 'ขาย';
+  String get boardSelling => 'ขายออก';
 
   @override
   String get boardMid => 'อัตรากลาง';
@@ -1106,7 +1112,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String boardVsReference(String percent, String source) {
-    return 'ต่ำกว่า $source ประมาณ $percent';
+    return 'อัตรารับซื้อต่ำกว่าประมาณ $percent เทียบกับ $source';
+  }
+
+  @override
+  String boardAboveReference(String percent, String source) {
+    return 'อัตรารับซื้อสูงกว่าประมาณ $percent เทียบกับ $source';
   }
 
   @override
@@ -1117,12 +1128,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String stepCompareDcc(String amount) {
-    return 'จ่ายเงินท้องถิ่นประหยัดประมาณ $amount';
+    return 'จ่ายเป็นเงินท้องถิ่นประหยัดได้ประมาณ $amount';
   }
 
   @override
   String stepCompareBoard(String percent) {
-    return 'ต่ำกว่าอัตรากลางประมาณ $percent';
+    return 'ต่ำกว่าอัตรากลางประมาณ $percent';
   }
 
   @override
@@ -1153,7 +1164,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get billTimeoutTitle => 'ใช้เวลานานเกินไป';
 
   @override
-  String get billTimeoutBody => 'ใช้เวลานานเกินไป ลองใหม่อีกสักครู่';
+  String get billTimeoutBody => 'สัญญาณอาจช้า ลองใหม่อีกสักครู่';
 
   @override
   String scanKindLine(
@@ -1166,7 +1177,7 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get scanCheckAsBill => 'ตรวจเป็นบิล';
+  String get scanCheckAsBill => 'ตรวจบิลนี้';
 
   @override
   String get kindAtm => 'หน้าจอ ATM';
@@ -1365,4 +1376,86 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get homeKeptSamples => 'รวมบันทึกตัวอย่าง';
+
+  @override
+  String priceSentenceHigh(String asked, String over, String percent) {
+    return '$asked แพงกว่าราคาปกติสูงสุด $over ราว $percent';
+  }
+
+  @override
+  String priceSentenceFair(String asked) {
+    return '$asked อยู่ในช่วงราคาปกติ';
+  }
+
+  @override
+  String priceSentenceLow(String asked) {
+    return '$asked ต่ำกว่าราคาปกติ ซื้อได้คุ้ม';
+  }
+
+  @override
+  String priceAsked(String amount) {
+    return 'เขาบอก $amount';
+  }
+
+  @override
+  String priceYouPaid(String amount) {
+    return 'คุณเคยจ่าย $amount';
+  }
+
+  @override
+  String get priceZoneCheap => 'ถูก';
+
+  @override
+  String priceZoneUsual(String unit) {
+    return 'ปกติ $unit';
+  }
+
+  @override
+  String get priceZoneHigh => 'แพง';
+
+  @override
+  String get priceZoneFarAbove => 'แพงมาก';
+
+  @override
+  String get priceZoneFarBelow => 'ถูกมาก';
+
+  @override
+  String priceSemanticsRange(String low, String high, String unit) {
+    return 'ราคาปกติ $low ถึง $high บาท $unit';
+  }
+
+  @override
+  String priceSemanticsCounter(String amount) {
+    return 'ราคาที่แนะนำให้ต่อ $amount';
+  }
+
+  @override
+  String get haggleShowSeller => 'ให้ผู้ขายดู';
+
+  @override
+  String get showSellerTurn => 'หันให้ผู้ขาย';
+
+  @override
+  String get showSellerTurnBack => 'หันกลับมาทางฉัน';
+
+  @override
+  String get showSellerClose => 'แตะข้อความเพื่อปิด';
+
+  @override
+  String showSellerAmount(String amount) {
+    return '$amount บาท';
+  }
+
+  @override
+  String haggleOfferMeaning(String amount) {
+    return 'ขอลดเหลือ $amount บาท';
+  }
+
+  @override
+  String haggleAcceptMeaning(String amount) {
+    return 'ตกลงที่ $amount บาท';
+  }
+
+  @override
+  String get haggleLeaveMeaning => 'ไม่เป็นไร ขอบคุณ';
 }

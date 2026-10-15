@@ -34,6 +34,10 @@ abstract final class AppFormat {
   static String rate(double value, {String locale = 'en'}) =>
       _number(value, 2, locale);
 
+  /// Whole percent with separators, for large estimates: "1,036%".
+  static String percentWhole(double value, {String locale = 'en'}) =>
+      '${_number(value.roundToDouble(), 0, locale)}%';
+
   /// One decimal, for estimates shown with "about": "1.5%".
   static String roundedPercent(double value, {String locale = 'en'}) =>
       '${_number(value, 1, locale)}%';
@@ -52,6 +56,15 @@ abstract final class AppFormat {
         NumberFormat.simpleCurrency(name: currency).decimalDigits ?? 2;
     return '${_number(value, digits, locale)}$_unitGap$currency';
   }
+
+  /// A rate as stated, never rounded away: 4.6935, 35.565, 33.58. At least
+  /// two decimals, at most four. For rates printed on a board, a fixed demo
+  /// rate or a mid rate, where the reader may check every digit.
+  static String preciseRate(double value, {String locale = 'en'}) =>
+      (NumberFormat.decimalPattern(locale)
+            ..minimumFractionDigits = 2
+            ..maximumFractionDigits = 4)
+          .format(value);
 
   /// A rate with enough significant digits to be useful, e.g. 41.62 or 0.0298.
   static String rateValue(double value, {String locale = 'en'}) {

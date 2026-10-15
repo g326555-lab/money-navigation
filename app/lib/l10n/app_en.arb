@@ -81,11 +81,12 @@
   },
   "atmEvenTitle": "Either choice costs about the same",
   "atmEvenBody": "The converted total matches the rate on the screen, so there is nothing to keep here.",
-  "stepFindAtmFailed": "No ATM conversion offer in this photo",
+  "stepFindAtmFailed": "No currency choice or rate board in this photo",
   "stepReadTextFailed": "No text found",
   "stepValuesFailed": "Some numbers couldn't be read",
   "scanTipNoText": "Move closer so the screen fills most of the photo.",
-  "scanTipNotAtm": "Point at the ATM screen that shows the amount in your home currency.",
+  "scanTipNotAtm": "Point straight at the screen that offers two currencies, or at a rate board.",
+  "scanTipLooksLikeBill": "This looks like a bill. You can check it here.",
   "scanTipMissingValues": "Hold the phone straight and avoid glare on the screen.",
   "atmBothTotals": "Both totals",
   "atmIfConvertDetail": "At the ATM's own rate",
@@ -536,7 +537,7 @@
   },
   "billDiscount": "Discount",
   "billService": "Service charge",
-  "billServicePercent": "Service charge {percent} %",
+  "billServicePercent": "Service charge {percent}%",
   "@billServicePercent": {
     "placeholders": {
       "percent": {
@@ -545,7 +546,7 @@
     }
   },
   "billVat": "VAT",
-  "billVatPercent": "VAT {percent} %",
+  "billVatPercent": "VAT {percent}%",
   "@billVatPercent": {
     "placeholders": {
       "percent": {
@@ -575,12 +576,12 @@
   "billOfflineTitle": "No connection",
   "billOfflineBody": "Reading Thai needs the internet. Connect and take the photo again.",
   "billTooLargeTitle": "That photo is too large",
-  "billTooLargeBody": "This photo is too big to send. Take it again from this screen, it sends a smaller copy.",
+  "billTooLargeBody": "Take it again from this screen and a smaller copy is sent.",
   "billNoTextTitle": "No text found",
   "billNoTextBody": "Fill the frame with the bill, in good light, and try again.",
-  "billNoMatchTitle": "Couldn't verify this bill",
-  "billNoMatchBody": "The text was read, but its figures don't add up in a way we can prove. Nothing is shown rather than a guess. Try a sharper photo of the whole bill.",
-  "billServiceTitle": "The reader didn't answer",
+  "billNoMatchTitle": "Couldn't verify this bill",
+  "billNoMatchBody": "The text was read, but its figures don't add up, so nothing is shown rather than a guess. Try a sharper photo of the whole bill.",
+  "billServiceTitle": "The bill reader didn't answer",
   "billServiceBody": "Try again in a moment.",
   "authWelcomeTitle": "See which way to pay",
   "authWelcomeBody": "Sign in to keep your trip records on any phone.",
@@ -782,7 +783,7 @@
       }
     }
   },
-  "dccReason": "The {home} price on this terminal adds about {percent} on top of the bank rate.",
+  "dccReason": "The {home} price on this terminal is about {percent} above the bank rate.",
   "@dccReason": {
     "placeholders": {
       "home": {
@@ -803,6 +804,14 @@
     }
   },
   "dccOptionHome": "Your home currency",
+  "dccOptionHomeMore": "Home currency · about {amount} more",
+  "@dccOptionHomeMore": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "dccOptionLocal": "Local currency",
   "dccFairHome": "Fair price in {currency}",
   "@dccFairHome": {
@@ -812,16 +821,9 @@
       }
     }
   },
-  "dccEvenTitle": "Either key is fine here, F{key} included",
-  "@dccEvenTitle": {
-    "placeholders": {
-      "key": {
-        "type": "int"
-      }
-    }
-  },
-  "dccEvenBody": "The home-currency price is not dearer than paying locally at today's rate.",
-  "rateDemoSource": "{pair} · fixed demo rate, {date}",
+  "dccEvenTitle": "Either key is fine here",
+  "dccEvenBody": "Paying in your home currency costs no more than paying locally at today's rate.",
+  "rateDemoSource": "{pair} · fixed demo rate, {date}",
   "@rateDemoSource": {
     "placeholders": {
       "pair": {
@@ -832,32 +834,29 @@
       }
     }
   },
-  "boardLossTitle": "Selling {code} here gets about {percent} less than the middle rate",
-  "@boardLossTitle": {
-    "placeholders": {
-      "code": {
-        "type": "String"
-      },
-      "percent": {
-        "type": "String"
-      }
-    }
-  },
-  "boardLossBody": "On {amount} that is about {loss} less in your hand.",
-  "@boardLossBody": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      },
-      "loss": {
-        "type": "String"
-      }
-    }
-  },
   "boardRates": "{code} on this board",
   "@boardRates": {
     "placeholders": {
       "code": {
+        "type": "String"
+      }
+    }
+  },
+  "boardHeroLabel": "Selling {code} here, below the middle rate",
+  "@boardHeroLabel": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "boardLossChip": "About {loss} less per {amount}",
+  "@boardLossChip": {
+    "placeholders": {
+      "loss": {
+        "type": "String"
+      },
+      "amount": {
         "type": "String"
       }
     }
@@ -874,7 +873,7 @@
   "boardSelling": "They sell at",
   "boardMid": "Middle rate",
   "boardSource": "From the numbers on this board",
-  "boardVsReference": "About {percent} below {source}",
+  "boardVsReference": "Buying rate about {percent} below {source}",
   "@boardVsReference": {
     "placeholders": {
       "percent": {
@@ -885,7 +884,18 @@
       }
     }
   },
-  "stepFindTerminalDone": "Card terminal with two currencies found",
+  "boardAboveReference": "Buying rate about {percent} above {source}",
+  "@boardAboveReference": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "stepFindTerminalDone": "Two-currency card terminal found",
   "stepFindBoardDone": "Exchange rate board found",
   "stepCompareDcc": "Paying locally keeps about {amount}",
   "@stepCompareDcc": {
@@ -918,7 +928,7 @@
   "authErrEmailRejected": "This email can't be used. Try another one.",
   "authErrEmailUndeliverable": "We can't send email to this address yet.",
   "billTimeoutTitle": "That took too long",
-  "billTimeoutBody": "That took too long. Try again in a moment.",
+  "billTimeoutBody": "The connection may be slow. Try again in a moment.",
   "scanKindLine": "{engine} sees {kind} ({confidence}) · {elapsed}",
   "scanCheckAsBill": "Check it as a bill",
   "kindAtm": "an ATM screen",
@@ -1190,5 +1200,114 @@
       }
     }
   },
-  "homeKeptSamples": "Includes sample records"
+  "homeKeptSamples": "Includes sample records",
+  "priceSentenceHigh": "{asked} is {over} above the usual top price, about {percent}",
+  "@priceSentenceHigh": {
+    "placeholders": {
+      "asked": {
+        "type": "String"
+      },
+      "over": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "priceSentenceFair": "{asked} is inside the usual price",
+  "@priceSentenceFair": {
+    "placeholders": {
+      "asked": {
+        "type": "String"
+      }
+    }
+  },
+  "priceSentenceLow": "{asked} is below the usual price, a good buy",
+  "@priceSentenceLow": {
+    "placeholders": {
+      "asked": {
+        "type": "String"
+      }
+    }
+  },
+  "priceAsked": "Asked {amount}",
+  "@priceAsked": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "priceYouPaid": "You paid {amount}",
+  "@priceYouPaid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "priceZoneCheap": "Cheap",
+  "priceZoneUsual": "Usual {unit}",
+  "@priceZoneUsual": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "priceZoneHigh": "High",
+  "priceZoneFarAbove": "Far above",
+  "priceZoneFarBelow": "Far below",
+  "priceSemanticsRange": "Usual price {low} to {high} baht {unit}",
+  "@priceSemanticsRange": {
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "priceSemanticsCounter": "Suggested offer {amount}",
+  "@priceSemanticsCounter": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleShowSeller": "Show the seller",
+  "showSellerTurn": "Turn to the seller",
+  "showSellerTurnBack": "Turn back to me",
+  "showSellerClose": "Tap the sentence to close",
+  "showSellerAmount": "{amount} บาท",
+  "@showSellerAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleOfferMeaning": "Could you do {amount} baht?",
+  "@haggleOfferMeaning": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleAcceptMeaning": "OK, {amount} baht. It's a deal.",
+  "@haggleAcceptMeaning": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleLeaveMeaning": "No thanks, maybe another time."
 }

@@ -107,7 +107,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'The converted total matches the rate on the screen, so there is nothing to keep here.';
 
   @override
-  String get stepFindAtmFailed => 'No ATM conversion offer in this photo';
+  String get stepFindAtmFailed =>
+      'No currency choice or rate board in this photo';
 
   @override
   String get stepReadTextFailed => 'No text found';
@@ -121,7 +122,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanTipNotAtm =>
-      'Point at the ATM screen that shows the amount in your home currency.';
+      'Point straight at the screen that offers two currencies, or at a rate board.';
+
+  @override
+  String get scanTipLooksLikeBill =>
+      'This looks like a bill. You can check it here.';
 
   @override
   String get scanTipMissingValues =>
@@ -659,7 +664,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String billServicePercent(String percent) {
-    return 'Service charge $percent %';
+    return 'Service charge $percent%';
   }
 
   @override
@@ -667,7 +672,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String billVatPercent(String percent) {
-    return 'VAT $percent %';
+    return 'VAT $percent%';
   }
 
   @override
@@ -703,7 +708,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get billTooLargeBody =>
-      'This photo is too big to send. Take it again from this screen, it sends a smaller copy.';
+      'Take it again from this screen and a smaller copy is sent.';
 
   @override
   String get billNoTextTitle => 'No text found';
@@ -713,14 +718,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Fill the frame with the bill, in good light, and try again.';
 
   @override
-  String get billNoMatchTitle => 'Couldn\'t verify this bill';
+  String get billNoMatchTitle => 'Couldn\'t verify this bill';
 
   @override
   String get billNoMatchBody =>
-      'The text was read, but its figures don\'t add up in a way we can prove. Nothing is shown rather than a guess. Try a sharper photo of the whole bill.';
+      'The text was read, but its figures don\'t add up, so nothing is shown rather than a guess. Try a sharper photo of the whole bill.';
 
   @override
-  String get billServiceTitle => 'The reader didn\'t answer';
+  String get billServiceTitle => 'The bill reader didn\'t answer';
 
   @override
   String get billServiceBody => 'Try again in a moment.';
@@ -1051,7 +1056,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dccReason(String home, String percent) {
-    return 'The $home price on this terminal adds about $percent on top of the bank rate.';
+    return 'The $home price on this terminal is about $percent above the bank rate.';
   }
 
   @override
@@ -1066,6 +1071,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dccOptionHome => 'Your home currency';
 
   @override
+  String dccOptionHomeMore(String amount) {
+    return 'Home currency · about $amount more';
+  }
+
+  @override
   String get dccOptionLocal => 'Local currency';
 
   @override
@@ -1074,32 +1084,30 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String dccEvenTitle(int key) {
-    return 'Either key is fine here, F$key included';
-  }
+  String get dccEvenTitle => 'Either key is fine here';
 
   @override
   String get dccEvenBody =>
-      'The home-currency price is not dearer than paying locally at today\'s rate.';
+      'Paying in your home currency costs no more than paying locally at today\'s rate.';
 
   @override
   String rateDemoSource(String pair, String date) {
-    return '$pair · fixed demo rate, $date';
-  }
-
-  @override
-  String boardLossTitle(String code, String percent) {
-    return 'Selling $code here gets about $percent less than the middle rate';
-  }
-
-  @override
-  String boardLossBody(String amount, String loss) {
-    return 'On $amount that is about $loss less in your hand.';
+    return '$pair · fixed demo rate, $date';
   }
 
   @override
   String boardRates(String code) {
     return '$code on this board';
+  }
+
+  @override
+  String boardHeroLabel(String code) {
+    return 'Selling $code here, below the middle rate';
+  }
+
+  @override
+  String boardLossChip(String loss, String amount) {
+    return 'About $loss less per $amount';
   }
 
   @override
@@ -1121,11 +1129,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String boardVsReference(String percent, String source) {
-    return 'About $percent below $source';
+    return 'Buying rate about $percent below $source';
   }
 
   @override
-  String get stepFindTerminalDone => 'Card terminal with two currencies found';
+  String boardAboveReference(String percent, String source) {
+    return 'Buying rate about $percent above $source';
+  }
+
+  @override
+  String get stepFindTerminalDone => 'Two-currency card terminal found';
 
   @override
   String get stepFindBoardDone => 'Exchange rate board found';
@@ -1170,7 +1183,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get billTimeoutTitle => 'That took too long';
 
   @override
-  String get billTimeoutBody => 'That took too long. Try again in a moment.';
+  String get billTimeoutBody =>
+      'The connection may be slow. Try again in a moment.';
 
   @override
   String scanKindLine(
@@ -1396,4 +1410,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeKeptSamples => 'Includes sample records';
+
+  @override
+  String priceSentenceHigh(String asked, String over, String percent) {
+    return '$asked is $over above the usual top price, about $percent';
+  }
+
+  @override
+  String priceSentenceFair(String asked) {
+    return '$asked is inside the usual price';
+  }
+
+  @override
+  String priceSentenceLow(String asked) {
+    return '$asked is below the usual price, a good buy';
+  }
+
+  @override
+  String priceAsked(String amount) {
+    return 'Asked $amount';
+  }
+
+  @override
+  String priceYouPaid(String amount) {
+    return 'You paid $amount';
+  }
+
+  @override
+  String get priceZoneCheap => 'Cheap';
+
+  @override
+  String priceZoneUsual(String unit) {
+    return 'Usual $unit';
+  }
+
+  @override
+  String get priceZoneHigh => 'High';
+
+  @override
+  String get priceZoneFarAbove => 'Far above';
+
+  @override
+  String get priceZoneFarBelow => 'Far below';
+
+  @override
+  String priceSemanticsRange(String low, String high, String unit) {
+    return 'Usual price $low to $high baht $unit';
+  }
+
+  @override
+  String priceSemanticsCounter(String amount) {
+    return 'Suggested offer $amount';
+  }
+
+  @override
+  String get haggleShowSeller => 'Show the seller';
+
+  @override
+  String get showSellerTurn => 'Turn to the seller';
+
+  @override
+  String get showSellerTurnBack => 'Turn back to me';
+
+  @override
+  String get showSellerClose => 'Tap the sentence to close';
+
+  @override
+  String showSellerAmount(String amount) {
+    return '$amount บาท';
+  }
+
+  @override
+  String haggleOfferMeaning(String amount) {
+    return 'Could you do $amount baht?';
+  }
+
+  @override
+  String haggleAcceptMeaning(String amount) {
+    return 'OK, $amount baht. It\'s a deal.';
+  }
+
+  @override
+  String get haggleLeaveMeaning => 'No thanks, maybe another time.';
 }
