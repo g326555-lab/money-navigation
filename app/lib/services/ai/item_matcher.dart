@@ -43,12 +43,15 @@ ItemMatch? matchItem(
   for (final text in alternatives) {
     if (text.trim().isEmpty) continue;
     final skeleton = thaiSkeleton(text);
+    // Cloud speech spaces Thai words apart ("น้ำ ปั่น"); Thai keywords are
+    // compared without spaces on both sides.
+    final compact = _compact(text);
     for (final item in items) {
       if (unit != null && item.unit != unit) continue;
 
       // Exact keyword; the longest keyword wins ties.
       for (final keyword in item.keywordsTh) {
-        if (!text.contains(keyword)) continue;
+        if (!compact.contains(_compact(keyword))) continue;
         if (best == null ||
             best.confidence < 1 ||
             keyword.length > bestKeywordLength) {
@@ -63,7 +66,7 @@ ItemMatch? matchItem(
 
       for (final alias in heardAs[item.key] ?? const <String>[]) {
         if (alias.isNotEmpty &&
-            text.contains(alias) &&
+            compact.contains(_compact(alias)) &&
             heardAsConfidence > (best?.confidence ?? 0)) {
           best = ItemMatch(
             item: item,
@@ -158,3 +161,5 @@ int _editDistance(List<String> a, List<String> b) {
   }
   return previous[b.length];
 }
+
+String _compact(String text) => text.replaceAll(RegExp(r'\s+'), '');
