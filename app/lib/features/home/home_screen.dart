@@ -16,17 +16,25 @@ import '../../data/market_price_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/exchange_rate.dart';
 import '../../rules/haggle.dart' show marketCurrency;
-import '../../rules/personal_context.dart';
 import '../../rules/trip_ledger.dart';
 import '../../shared/app_tab_bar.dart';
 import '../../shared/coin.dart';
 import '../../shared/odometer.dart';
 import '../../shared/pill.dart';
 import '../../shared/group.dart';
-import '../../shared/icon_tile.dart';
 import '../../shared/pressable.dart';
 import 'save_row.dart';
 import '../../shared/surface.dart';
+import '../../rules/trip_route.dart';
+import '../assistant/assistant_screen.dart' show arrivalWords;
+import '../briefing/arrival_alerts.dart';
+import '../briefing/briefing_controller.dart';
+import '../briefing/calendar_source.dart';
+import '../briefing/trip_context.dart';
+import 'briefing_card.dart';
+import 'home_metrics.dart';
+import 'nearby_card.dart';
+import 'route_line.dart';
 
 /// How many saves Home lists before "See all".
 const homeRecentCount = 3;
@@ -34,17 +42,26 @@ const homeRecentCount = 3;
 /// Trip summary: what this trip has kept so far, in baht and in the
 /// traveler's own currency, and the latest saves.
 ///
-/// Zones: hero (the green kept card), content (recent saves), action
-/// (the dark suggestion while nothing is saved). The tab bar floats above.
+/// Zones: hero (the green kept card and the trip's route), content (the
+/// morning briefing, the nearest trap, recent saves), action (the dark
+/// suggestion while nothing is saved). The tab bar floats above.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     required this.onScan,
     required this.onSeeAll,
     required this.onSettings,
+    required this.onOpenAssistant,
+    this.briefing,
+    this.alerts,
   });
 
   final VoidCallback onScan;
+  final VoidCallback onOpenAssistant;
+
+  /// Injected in tests; the app-wide ones otherwise.
+  final BriefingController? briefing;
+  final ArrivalAlerts? alerts;
   final VoidCallback onSeeAll;
   final VoidCallback onSettings;
 
@@ -82,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void dispose() {
     _fly.dispose();
     _bump.dispose();
+    _lifecycle.dispose();
     super.dispose();
   }
 
@@ -114,9 +132,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
+  BriefingController get _briefing =>
+      widget.briefing ?? BriefingController.instance;
+  ArrivalAlerts get _alerts => widget.alerts ?? ArrivalAlerts.instance;
+
+  /// The country the arrival check last ran for.
+  String? _checkedCountry;
+
+  late final _lifecycle = AppLifecycleListener(
+    onResume: () => _briefing.refreshIfStale(),
+  );
+
+  /// Alerts once when the phone's location shows a new country.
+  void _checkArrival(AppScope scope) {
+    final country = _briefing.country;
+    final facts = _briefing.facts;
+    if (country == null || facts == null || country == _checkedCountry) return;
+    // The demo state plays its arrival from the Assistant tab instead.
+    if (scope.settings.demoState) return;
+    _checkedCountry = country;
+    final l10n = AppLocalizations.of(context);
+    _alerts.checkArrival(
+      homeCurrency: scope.settings.homeCurrency,
+      country: country,
+      facts: facts,
+      words: (a) => arrivalWords(l10n, a),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    _lifecycle;
+    _briefing.start();
     _market.load().then((items) {
       if (!mounted) return;
       setState(() => _items = {for (final s in items) s.item.key: s});
@@ -127,7 +175,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final scope = AppScope.of(context);
     return ListenableBuilder(
-      listenable: Listenable.merge([scope.trip, scope.settings, scope.rates]),
+      listenable: Listenable.merge([
+        scope.trip,
+        scope.settings,
+        scope.rates,
+        _briefing,
+      ]),
       builder: (context, _) => _build(context, scope),
     );
   }
@@ -152,11 +205,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ? null
         : demoQuote ?? scope.rates.quoteFor(currency);
     final persona = scope.settings.demoPersona;
-    // Route preview: today's cash from the traveler's own past days.
-    final purchases = pastPurchasesFromSaves(saves);
-    final cash = scope.trip.loaded
-        ? morningCash(purchases, DateTime.now())
-        : null;
+    final trip = TripContext.of(scope, _briefing.facts);
+    final plan = scope.trip.loaded ? _briefing.cashPlan(trip.history) : null;
+    final traps = _briefing.traps(
+      countryCode: _briefing.country ?? trip.localFacts?.country,
+      homeCurrency: trip.homeCurrency,
+      limit: HomeMetrics.homeWarnings + 2,
+    );
+    final wide = MediaQuery.sizeOf(context).width >= HomeMetrics.routeWideFrom;
+    final route = tripRoute(
+      saves,
+      maxStops: wide
+          ? HomeMetrics.routeStopsWide
+          : HomeMetrics.routeStopsNarrow,
+    );
+    _checkArrival(scope);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
@@ -215,29 +278,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ),
                         ),
                 ),
-                if (currency != marketCurrency)
+                if (currency != marketCurrency || saves.any((x) => x.isSample))
                   GroupFooter(
-                    _rateLine(l10n, scope, currency, quote, demo: demoQuote),
-                  ),
-                if (cash != null) ...[
-                  SectionHeader(l10n.homeToday),
-                  GroupCard(
-                    children: [
-                      GroupRow(
-                        leading: const IconTile.orange(
-                          icon: Icons.payments_rounded,
+                    [
+                      if (saves.any((x) => x.isSample)) l10n.homeKeptSamples,
+                      if (currency != marketCurrency)
+                        _rateLine(
+                          l10n,
+                          scope,
+                          currency,
+                          quote,
+                          demo: demoQuote,
                         ),
-                        title: l10n.homeCashToday(
-                          AppFormat.roundedAmount(
-                            cash.amountThb,
-                            marketCurrency,
-                          ),
-                        ),
-                        subtitle: _cashBasis(l10n, cash, purchases),
-                      ),
-                    ],
+                    ].join(' · '),
                   ),
+                if (route.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xxl),
+                  RouteLine(stops: route),
                 ],
+                const SizedBox(height: AppSpacing.zoneGap),
+                BriefingCard(
+                  plan: plan,
+                  calendarConnected:
+                      _briefing.calendar.access == CalendarAccess.granted,
+                  onConnect: _briefing.connectCalendar,
+                  onOpen: widget.onOpenAssistant,
+                ),
+                const SizedBox(height: AppSpacing.groupGap),
+                NearbyCard(
+                  state: _briefing.nearbyState,
+                  traps: traps,
+                  onAskLocation: () => _briefing.refresh(askLocation: true),
+                  onOpen: widget.onOpenAssistant,
+                ),
                 const SizedBox(height: AppSpacing.zoneGap),
                 if (!scope.trip.loaded)
                   const SizedBox.shrink()
@@ -279,21 +352,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
     );
-  }
-
-  /// How many past days the estimate used, and whether they are samples.
-  static String _cashBasis(
-    AppLocalizations l10n,
-    CashEstimate cash,
-    List<PastPurchase> purchases,
-  ) {
-    if (cash.sampleRecords == 0) return l10n.homeCashBasis(cash.daysUsed);
-    bool used(PastPurchase p) => cash.days.any(
-      (d) => d.year == p.at.year && d.month == p.at.month && d.day == p.at.day,
-    );
-    return purchases.where(used).every((p) => p.isSample)
-        ? l10n.homeCashBasisSamples(cash.daysUsed)
-        : l10n.homeCashBasisMixed(cash.daysUsed);
   }
 
   String _rateLine(

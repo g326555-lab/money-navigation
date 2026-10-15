@@ -1,0 +1,42 @@
+{
+  "_comment": "Sourced payment facts per country, read by lib/rules/pay_facts.dart. Every fee names its source and the day it was read; a country without a sourced fee has none (never a typical guess). A fee printed on a scanned ATM screen always wins over this file. Research notes: side-session notes assist-research.md (15 Oct 2026).",
+  "countries": [
+    {
+      "country": "TH",
+      "currency": "THB",
+      "atmOffersConversion": true,
+      "atmConversionSource": "Portail Asie ATM guide",
+      "atmConversionChecked": "2026-10-15",
+      "atmConversionUrl": "https://portail-asie.com/en/withdraw-money-in-thailand/",
+      "foreignCardAtmFee": {
+        "value": 250,
+        "currency": "THB",
+        "isPercent": false,
+        "source": "Kasikorn Bank fee list (Visa)",
+        "_detail": "K-ATM cash withdrawal with an international card: Visa 250 THB, UnionPay 250 THB, Mastercard 350 THB, effective 20 May 2026.",
+        "url": "https://www.kasikornbank.com/en/rate/fee/feePDF/servicingfees-en-20052026.pdf",
+        "checked": "2026-10-15"
+      }
+    },
+    {
+      "country": "JP",
+      "currency": "JPY",
+      "atmOffersConversion": true,
+      "atmConversionSource": "Seven Bank",
+      "atmConversionChecked": "2026-10-15",
+      "atmConversionUrl": "https://www.sevenbank.co.jp/intlcard/service.html",
+      "_fee": "No official Japan ATM fee amount found (15 Oct 2026), so none is listed."
+    },
+    { "country": "US", "currency": "USD" },
+    { "country": "GB", "currency": "GBP" },
+    { "country": "KR", "currency": "KRW" },
+    { "country": "CN", "currency": "CNY" },
+    { "country": "HK", "currency": "HKD" },
+    { "country": "TW", "currency": "TWD" },
+    { "country": "SG", "currency": "SGD" },
+    { "country": "MY", "currency": "MYR" },
+    { "country": "VN", "currency": "VND" },
+    { "country": "IN", "currency": "INR" },
+    { "country": "AU", "currency": "AUD" }
+  ]
+}
