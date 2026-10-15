@@ -195,12 +195,11 @@ class ScanController extends ChangeNotifier {
     ];
     // Rows are rebuilt from the straightened lines, so a tilted photo still
     // lines each label up with its values.
-    final rows = rowsFromLines(
-      straightenLines([
-        for (var i = 0; i < read.quads.length; i++)
-          if (keep[i]) read.quads[i],
-      ]),
-    );
+    final straight = straightenLines([
+      for (var i = 0; i < read.quads.length; i++)
+        if (keep[i]) read.quads[i],
+    ]);
+    final rows = rowsFromLines(straight);
     if (kDebugMode) {
       // What OCR actually read, to diagnose misses on a real device.
       debugPrint('[scan] ${read.lines.length} lines, ${lines.length} in frame');
@@ -214,7 +213,7 @@ class ScanController extends ChangeNotifier {
         (lower.contains('without conversion') &&
             lower.contains('with conversion'));
     if (!looksLikeAtm) {
-      _scanPartB(rows, size: size, read: read, lines: lines);
+      _scanPartB(rows, straight, size: size, read: read, lines: lines);
       return;
     }
     _set(
@@ -269,7 +268,8 @@ class ScanController extends ChangeNotifier {
   /// Not an ATM: a card terminal asking which currency to pay in, or a money
   /// changer's board. Only what the photo proves is shown.
   void _scanPartB(
-    String rows, {
+    String rows,
+    List<OcrLine> straight, {
     required ui.Size? size,
     required TextReadResult read,
     required List<OcrLine> lines,
@@ -280,7 +280,9 @@ class ScanController extends ChangeNotifier {
       lines: lines,
     );
     final jpy = rateFor?.call('JPY');
-    final dcc = jpy == null ? null : judgeTerminal(rows, rate: jpy);
+    // Lines, not only rows: on an angled photo a label and its amount can
+    // land on different rows.
+    final dcc = jpy == null ? null : judgeTerminalLines(straight, rate: jpy);
     if (dcc != null) {
       _set(
         base.copyWith(
@@ -294,13 +296,13 @@ class ScanController extends ChangeNotifier {
       );
       return;
     }
-    final board = readExchangeBoard(rows, code: 'USD');
+    // A board is only read against a reference rate, which rules out
+    // misread rows (another currency's numbers, "3503 3610").
     final usd = rateFor?.call('USD');
-    // A live rate rules out misread boards ("3503 3610").
-    final plausible =
-        board != null &&
-        (usd == null || boardRatePlausible(board, usd, home: 'THB'));
-    if (plausible) {
+    final board = usd == null
+        ? null
+        : readCheckedBoardRate(rows, code: 'USD', reference: usd, home: 'THB');
+    if (board != null) {
       _set(
         base.copyWith(
           board: board,
