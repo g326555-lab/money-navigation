@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/app_tab_bar.dart';
 import '../../shared/group.dart';
 import '../../shared/pressable.dart';
+import '../auth/auth_gate.dart' show AuthScope;
 import '../home/save_row.dart';
 import '../trip_map/trip_map_screen.dart';
 
@@ -22,6 +23,18 @@ class RecordsScreen extends StatefulWidget {
 }
 
 class _RecordsScreenState extends State<RecordsScreen> {
+  /// Where these records live: the demo, the account, or only this phone.
+  String _footer(BuildContext context, AppLocalizations l10n) {
+    final scope = AppScope.of(context);
+    final auth = context.getInheritedWidgetOfExactType<AuthScope>();
+    final where = scope.settings.demoState
+        ? l10n.recordsSavedDemo
+        : (auth?.notifier?.isSignedIn ?? false)
+        ? l10n.recordsSavedAccount
+        : l10n.recordsSavedPhone;
+    return '${l10n.recordsSwipeHint} $where';
+  }
+
   final _market = MarketPriceRepository();
   Map<String, SourcedItem> _items = const {};
 
@@ -159,7 +172,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                       ),
                   ],
                 ),
-                GroupFooter(l10n.recordsFooter),
+                GroupFooter(_footer(context, l10n)),
               ],
             ],
           ),
