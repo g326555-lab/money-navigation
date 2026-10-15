@@ -5,7 +5,9 @@
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
 
 const VISION_URL = "https://vision.googleapis.com/v1/images:annotate";
-const TIMEOUT_MS = 6000;
+// Vision usually answers in 0.5-2 s, but 3 of 80 real receipt photos took
+// over 6 s (15 Oct). The app waits 10 s and retries a server error once.
+const TIMEOUT_MS = 9000;
 const MAX_BASE64 = 6_000_000;
 
 type Vertex = { x?: number; y?: number };

@@ -402,7 +402,13 @@ List<RoleRow> parseRoleRows(List<String> rows) {
   for (final row in rows) {
     final lower = row.toLowerCase();
     // Piece counts, dates and document numbers are not money.
-    if (_quantityRow.hasMatch(lower) || _metaRow.hasMatch(lower)) continue;
+    if (_metaRow.hasMatch(lower) || _unitOnlyRow.hasMatch(lower)) continue;
+    // "Total Qty 2" counts pieces; a column header "Qty Description ...
+    // 220.00" that OCR merged into an item row still carries its amount.
+    if (_quantityRow.hasMatch(lower) &&
+        !_amount.allMatches(row).any((m) => m[3] != null)) {
+      continue;
+    }
     final role = roleOf(row);
     final percent = double.tryParse(_percent.firstMatch(row)?[1] ?? '');
     final amounts = [
@@ -411,7 +417,7 @@ List<RoleRow> parseRoleRows(List<String> rows) {
         // Not another currency, and not an ID (no receipt total has more
         // than seven baht digits).
         if (!_foreignCode.hasMatch(row.substring(m.end)) &&
-            m[2]!.replaceAll(',', '').length <= 7)
+            m[2]!.replaceAll(RegExp('[,.]'), '').length <= 7)
           if (m[3] != null ||
               !decimal ||
               role == RowRole.payment ||
@@ -505,6 +511,10 @@ final _metaRow = RegExp(
   r'\bdate\b|\breceipt no\b|\btel\b|\btax id\b|เลขที่|เล่มที่|วันที่|โทร',
 );
 
+/// A row holding only "1 x 50.00": the quantity and unit price printed
+/// under an item whose line total is already counted.
+final _unitOnlyRow = RegExp(r'^\s*\d+\s*[x×]\s*[\d,.]+\s*$');
+
 /// Rows that count pieces, not money ("Total Qty 2").
 final _quantityRow = RegExp(r'\bqty\b');
 
@@ -519,11 +529,14 @@ final _foreignCode = RegExp(
 );
 
 final _amount = RegExp(
-  r'(?<![\d.,/:@#A-Za-z])(-?)฿?\s?(\d{1,3}(?:,\d{3})+|\d+)(?:[.,](\d{2}))?(?![\d@/:%]|[.,]\d)',
+  r'(?<![\d.,/:@#A-Za-z])(-?)฿?\s?(\d{1,3}(?:,\d{3})+|\d{1,3}(?:\.\d{3})+(?=\.\d{2})|\d+)'
+  r'(?:[.,](\d{2}))?(?![\d@/:]|[.,]\d|\s*%)',
 );
 
 int _cents(RegExpMatch m) {
-  final whole = int.parse(m[2]!.replaceAll(',', ''));
+  // Thousands grouped with commas, or with dots before two decimals as on
+  // a Boots receipt ("3.025.00").
+  final whole = int.parse(m[2]!.replaceAll(RegExp('[,.]'), ''));
   final cents = whole * 100 + (m[3] == null ? 0 : int.parse(m[3]!));
   return m[1] == '-' ? -cents : cents;
 }

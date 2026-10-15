@@ -29,11 +29,22 @@ class BillReader {
     final Map<String, dynamic> vision;
     final AiTrace visionTrace;
     try {
+      final body = {'imageBase64': base64Encode(jpeg)};
       final measured = await AiTrace.measure(
         AiEngine.cloudVision,
-        () => _functions.call('read-text', {
-          'imageBase64': base64Encode(jpeg),
-        }, timeout: timeout),
+        () async {
+          try {
+            return await _functions.call('read-text', body, timeout: timeout);
+          } on CloudFunctionError catch (e) {
+            // A server error is usually momentary (seen 3 times in 80 real
+            // photos, each fine on resend): try once more. No connection
+            // or a timeout is not retried.
+            if (e.reason == 'timeout' || e.reason.startsWith('offline')) {
+              rethrow;
+            }
+            return _functions.call('read-text', body, timeout: timeout);
+          }
+        },
         count: (json) =>
             json['lines'] is List ? (json['lines'] as List).length : null,
       );
