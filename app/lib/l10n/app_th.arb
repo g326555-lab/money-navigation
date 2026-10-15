@@ -552,5 +552,6 @@
   "nearbyDemoOffBody": "คำเตือนใกล้ตัวมาจากตำแหน่งจริงของโทรศัพท์",
   "payCompareNeedBank": "ใส่ค่าธรรมเนียมที่ธนาคารของคุณคิดเมื่อถอนที่ ATM ต่างประเทศ เพื่อเทียบกับเงินสด",
   "payCompareWithdrawalAssumed": "คิดเงินสดโดยถือว่าถอนเท่ากับยอดนี้พอดี",
-  "payCompareWithdrawalPlan": "คิดเงินสดโดยถือว่าถอนครั้งเดียวราว {amount} ตามยอดประมาณวันนี้"
+  "payCompareWithdrawalPlan": "คิดเงินสดโดยถือว่าถอนครั้งเดียวราว {amount} ตามยอดประมาณวันนี้",
+  "aiHeardBy": "ฟังโดย {engine} · {elapsed}"
 }

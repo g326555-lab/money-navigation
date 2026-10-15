@@ -2147,4 +2147,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String payCompareWithdrawalPlan(String amount) {
     return 'Cash assumes one withdrawal of about $amount, today\'s estimate';
   }
+
+  @override
+  String aiHeardBy(String engine, String elapsed) {
+    return 'Heard by $engine · $elapsed';
+  }
 }

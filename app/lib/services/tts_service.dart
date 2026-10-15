@@ -9,10 +9,9 @@ class TtsService {
   bool _ready = false;
   bool _thaiAvailable = false;
 
-  /// Sets up Thai speech. Returns false when no Thai voice is installed.
-  Future<bool> prepare() async {
-    if (_ready) return _thaiAvailable;
-    _ready = true;
+  /// Puts iOS audio back on the loudspeaker for speech. Recording a clip
+  /// (record package) changes the audio session, so call this after one.
+  Future<void> restoreSpeaker() async {
     if (Platform.isIOS) {
       // speech_to_text saves and restores the session category around each
       // listen. Setting playAndRecord + defaultToSpeaker first means the
@@ -29,6 +28,13 @@ class TtsService {
         IosTextToSpeechAudioMode.defaultMode,
       );
     }
+  }
+
+  /// Sets up Thai speech. Returns false when no Thai voice is installed.
+  Future<bool> prepare() async {
+    if (_ready) return _thaiAvailable;
+    _ready = true;
+    await restoreSpeaker();
     final available = await _tts.isLanguageAvailable(thaiTtsLanguage);
     _thaiAvailable = available == true || available == 1;
     if (!_thaiAvailable) return false;

@@ -3431,6 +3431,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cash assumes one withdrawal of about {amount}, today\'s estimate'**
   String payCompareWithdrawalPlan(String amount);
+
+  /// No description provided for @aiHeardBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Heard by {engine} · {elapsed}'**
+  String aiHeardBy(String engine, String elapsed);
 }
 
 class _AppLocalizationsDelegate

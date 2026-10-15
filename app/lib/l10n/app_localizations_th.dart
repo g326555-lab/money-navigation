@@ -2032,4 +2032,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String payCompareWithdrawalPlan(String amount) {
     return 'คิดเงินสดโดยถือว่าถอนครั้งเดียวราว $amount ตามยอดประมาณวันนี้';
   }
+
+  @override
+  String aiHeardBy(String engine, String elapsed) {
+    return 'ฟังโดย $engine · $elapsed';
+  }
 }

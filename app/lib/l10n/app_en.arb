@@ -1779,5 +1779,16 @@
         "type": "String"
       }
     }
+  },
+  "aiHeardBy": "Heard by {engine} · {elapsed}",
+  "@aiHeardBy": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
   }
 }
