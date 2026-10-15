@@ -1589,7 +1589,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBriefingOpen => 'Open the assistant';
 
   @override
-  String get homeBriefingNoNumber => 'Today\'s cash estimate goes here';
+  String get homeBriefingNoNumber => 'No cash estimate yet';
 
   @override
   String homeBriefingStops(int count) {

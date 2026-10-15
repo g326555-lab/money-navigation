@@ -1543,7 +1543,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get homeBriefingOpen => 'เปิดผู้ช่วย';
 
   @override
-  String get homeBriefingNoNumber => 'ยอดประมาณเงินสดของวันนี้จะแสดงที่นี่';
+  String get homeBriefingNoNumber => 'ยังไม่มียอดประมาณเงินสด';
 
   @override
   String homeBriefingStops(int count) {

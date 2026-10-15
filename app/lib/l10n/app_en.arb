@@ -1362,7 +1362,7 @@
   "homeRouteTerminal": "Card terminal",
   "homeBriefingLabel": "Morning briefing",
   "homeBriefingOpen": "Open the assistant",
-  "homeBriefingNoNumber": "Today's cash estimate goes here",
+  "homeBriefingNoNumber": "No cash estimate yet",
   "homeBriefingStops": "{count, plural, =1{1 stop on your calendar today} other{{count} stops on your calendar today}}",
   "@homeBriefingStops": {
     "placeholders": {

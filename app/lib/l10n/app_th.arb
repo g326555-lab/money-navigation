@@ -418,7 +418,7 @@
   "homeRouteTerminal": "เครื่องรูดบัตร",
   "homeBriefingLabel": "สรุปเช้านี้",
   "homeBriefingOpen": "เปิดผู้ช่วย",
-  "homeBriefingNoNumber": "ยอดประมาณเงินสดของวันนี้จะแสดงที่นี่",
+  "homeBriefingNoNumber": "ยังไม่มียอดประมาณเงินสด",
   "homeBriefingStops": "วันนี้มี {count} จุดในปฏิทิน",
   "homeBriefingMore": "อีก {count} จุด",
   "nearbyLabel": "ระวังแถวนี้",
