@@ -5,6 +5,7 @@ enum AiEngine {
   cloudVision('Google Cloud Vision'),
   googleMaps('Google Maps'),
   cloudTts('Google Cloud Text-to-Speech'),
+  cloudSpeech('Google Cloud Speech-to-Text'),
   gemini('Gemini');
 
   const AiEngine(this.displayName);

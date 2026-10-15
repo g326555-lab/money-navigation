@@ -16,9 +16,9 @@ const MODELS = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.1-flash-l
 // against the output limit.
 const FAST = { thinkingConfig: { thinkingLevel: "minimal" } };
 // The free Developer key often answers 503 or hangs, and every caller treats
-// Gemini as optional. The app waits 3 s, so the function gives up at 2.2 s
-// to leave room for the network and still deliver an answer that arrives.
-const DEADLINE_MS = 2200;
+// Gemini as optional. Each task gives up in time for its caller: the app
+// waits 3 s for an explanation and 5 s for an item name.
+const DEADLINES: Record<Task, number> = { explain: 2200, resolve_item: 4500, read_bill: 8000 };
 
 type Task = "read_bill" | "resolve_item" | "explain";
 
@@ -113,36 +113,40 @@ Deno.serve(async (req) => {
       return json({ error: "unknown task" }, 400);
     }
     const body = buildRequest(task as Task, input ?? {});
+    const deadline = DEADLINES[task as Task];
     const errors: string[] = [];
+    // The free key's latency swings from 1 s to over 10 s per model, so the
+    // models are asked at the same time and the first complete answer wins.
+    const one = async (path: string, call: typeof callDeveloperApi, model: string) => {
+      const left = deadline - (Date.now() - started);
+      if (left < 300) throw new Error("deadline");
+      const res = await call(model, body, left);
+      const data = await Promise.race([
+        res.json(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("deadline")), Math.max(0, deadline - (Date.now() - started)))
+        ),
+      ]) as Record<string, any>;
+      if (!res.ok) throw new Error(`${res.status}`);
+      const candidate = data?.candidates?.[0];
+      const text = candidate?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("").trim() ?? "";
+      // A cut-off or empty answer is a failure, not a result.
+      if (!text || candidate?.finishReason !== "STOP") {
+        throw new Error(candidate?.finishReason ?? "no candidate");
+      }
+      return { text, model, path };
+    };
     for (const [path, call] of [["vertex", callVertex], ["developer", callDeveloperApi]] as const) {
-      for (const model of MODELS) {
-        const left = DEADLINE_MS - (Date.now() - started);
-        if (left < 300) break;
-        try {
-          const res = await call(model, body, left);
-          // The fetch timer stops once headers arrive; bound the body too.
-          const data = await Promise.race([
-            res.json(),
-            new Promise((_, reject) =>
-              setTimeout(() => reject(new Error("deadline")), Math.max(0, DEADLINE_MS - (Date.now() - started)))
-            ),
-          ]) as Record<string, any>;
-          if (!res.ok) {
-            errors.push(`${path}/${model}: ${res.status}`);
-            continue;
-          }
-          const candidate = data?.candidates?.[0];
-          const text = candidate?.content?.parts?.map((p: { text?: string }) => p.text ?? "").join("").trim() ?? "";
-          // A cut-off or empty answer is a failure, not a result.
-          if (!text || candidate?.finishReason !== "STOP") {
-            errors.push(`${path}/${model}: ${candidate?.finishReason ?? "no candidate"}`);
-            continue;
-          }
-          return json({ text, model, path, ms: Date.now() - started });
-        } catch (e) {
-          errors.push(`${path}/${model}: ${e instanceof Error ? e.message : String(e)}`);
-          if (String(e).includes("not configured")) break;
-        }
+      try {
+        const won = await Promise.any(MODELS.map((m) =>
+          one(path, call, m).catch((e) => {
+            errors.push(`${path}/${m}: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+          })
+        ));
+        return json({ ...won, ms: Date.now() - started });
+      } catch {
+        // every model on this path failed; try the next path
       }
     }
     return json({ error: "all models failed", details: errors }, 502);
