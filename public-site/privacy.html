@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Money Navigation privacy policy</title>
+<style>
+  :root { --bg:#F2F4F6; --card:#FFFFFF; --text:#111418; --muted:#4E5968; --line:#E5E8EB; --green:#00A85A; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Thai", sans-serif; }
+  main { max-width:720px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font-size:30px; line-height:1.25; margin:0 0 4px; letter-spacing:-0.5px; }
+  h2 { font-size:18px; margin:32px 0 8px; }
+  p, li { color:var(--text); }
+  .muted { color:var(--muted); font-size:14px; }
+  section { background:var(--card); border-radius:20px; padding:4px 20px 16px; margin-top:16px; }
+  ul { padding-left:20px; }
+  a { color:var(--green); }
+  [lang="th"] { line-height:1.7; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Money Navigation privacy policy</h1>
+  <p class="muted">Effective 15 October 2026. Money Navigation is a travel money app made for U-Hackathon 2026 by Hyunjun Kim.</p>
+
+  <section>
+    <h2>What we keep when you have an account</h2>
+    <ul>
+      <li>Your account: email address, and the name Apple or Google gives us (or the name you type). Passwords are handled by our sign-in provider, Supabase Auth; we never see them.</li>
+      <li>Your answers in the app: the kind of traveler you are, the currency you think in, the currency your card bills in, your language, and, if you enter them, your card's foreign fee and your bank's ATM fee rule.</li>
+      <li>Results you choose to save: the kind of result (for example an ATM conversion offer or a market price), the amounts, the time, the item, and the place name and map position when the result came with one.</li>
+      <li>Receipts you check and save: the result only (shop name, total, how service charge and VAT were applied, a short item summary, place, time, the verdict and any correction you make). The receipt photo itself is never stored.</li>
+      <li>Haggling you choose to save: the seller's words as recognised text, the prices, our suggested reply and how it ended.</li>
+    </ul>
+    <p>Without an account ("Look around without an account"), what you save stays on your phone only.</p>
+    <p>We never store card numbers. We do not sell your data or use it for advertising.</p>
+  </section>
+
+  <section>
+    <h2>How the app handles photos, voice and location</h2>
+    <ul>
+      <li>Photos of ATM screens, card terminals and exchange boards are read on your phone (Google ML Kit, on device). They are not uploaded.</li>
+      <li>When you check a receipt, the photo is sent to Google Cloud Vision to read the text and the result comes back to the app. The photo is not stored by us.</li>
+      <li>Voice: speech is turned into text by your phone's speech service (Apple on iPhone, Google on Android). The app keeps the text only, never the audio.</li>
+      <li>Spoken replies in Thai: the sentence text is sent to Google Cloud Text-to-Speech and the audio is played, not stored.</li>
+      <li>Location, only while you use the app and only if you allow it: your position is sent to Google Places to find nearby markets. It is not stored unless you save a result with its place.</li>
+      <li>Explanations: some short explanations are written by Google Gemini. The app sends only the facts of the result (for example the amounts and the verdict) and, for advice based on your history, a summary with item names, rounded prices and counts. It never sends your email, name or photos.</li>
+      <li>The app does not read your calendar, contacts or photo library beyond the photo you pick.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Who processes your data</h2>
+    <ul>
+      <li>Supabase (database, sign-in and server functions), servers in Singapore.</li>
+      <li>Google Cloud (Vision, Text-to-Speech, Places) and Google Gemini, called from our server functions.</li>
+      <li>Apple and Google, if you sign in with them; they handle your sign-in under their own policies.</li>
+    </ul>
+    <p>Access to your saved data is limited to your own account by database rules (row level security).</p>
+  </section>
+
+  <section>
+    <h2>Deleting your data</h2>
+    <p>In the app, open Settings, then Account, then Delete account. This removes your account, your profile, your saved results and your haggling records straight away. You can also email us and we will delete them for you.</p>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p>Questions or deletion requests: <a href="mailto:[contact email]">[contact email]</a></p>
+  </section>
+
+  <section lang="th">
+    <h2>สรุปภาษาไทย</h2>
+    <ul>
+      <li>เมื่อมีบัญชี เราเก็บอีเมล ชื่อ ประเภทนักเดินทาง สกุลเงิน ภาษา และผลลัพธ์ การต่อราคา หรือผลตรวจใบเสร็จ (ไม่รวมรูป) ที่คุณเลือกบันทึกเท่านั้น ไม่เก็บหมายเลขบัตร ไม่ขายข้อมูล และไม่ใช้เพื่อโฆษณา</li>
+      <li>รูปหน้าจอ ATM เครื่องรูดบัตร และป้ายอัตราแลกเปลี่ยนอ่านบนเครื่องของคุณ รูปใบเสร็จส่งไปให้ Google Cloud Vision อ่านข้อความ และเราไม่เก็บรูปไว้</li>
+      <li>เสียงพูดเก็บเป็นข้อความเท่านั้น ตำแหน่งใช้เพื่อหาตลาดใกล้เคียงขณะใช้งานแอป</li>
+      <li>ผู้ประมวลผลข้อมูล: Supabase (เซิร์ฟเวอร์ในสิงคโปร์), Google Cloud และ Google Gemini</li>
+      <li>ลบบัญชีและข้อมูลทั้งหมดได้ที่ การตั้งค่า &gt; บัญชี &gt; ลบบัญชี หรืออีเมลถึงเรา</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
