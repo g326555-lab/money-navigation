@@ -7,6 +7,14 @@ import 'package:money_navigation/features/assistant/assistant_screen.dart';
 import 'package:money_navigation/features/assistant/card_profile_store.dart';
 import 'package:money_navigation/features/briefing/arrival_alerts.dart';
 import 'package:money_navigation/features/briefing/briefing_controller.dart';
+import 'package:money_navigation/features/briefing/calendar_source.dart';
+import 'package:money_navigation/features/briefing/country_locator.dart';
+import 'package:money_navigation/features/briefing/phone_location.dart';
+import 'package:money_navigation/features/briefing/places_client.dart';
+import 'package:money_navigation/rules/day_cash.dart';
+import 'package:money_navigation/rules/nearby_traps.dart';
+import 'package:money_navigation/rules/pay_route.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:money_navigation/rules/demo_personas.dart';
 import 'package:money_navigation/rules/pay_facts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,6 +47,84 @@ final personas = parseDemoPersonas(
     ],
   }),
 )!;
+
+const demoOff = 'Off in the demo state';
+
+/// A calendar that granted access and has one stop today.
+class FakeCalendar extends CalendarSource {
+  FakeCalendar(this.events) {
+    access = CalendarAccess.granted;
+  }
+
+  final List<DayEvent> events;
+
+  @override
+  Future<void> checkAccess() async => access = CalendarAccess.granted;
+
+  @override
+  Future<List<DayEvent>> eventsOn(DateTime day) async => events;
+}
+
+final phonePosition = Position(
+  latitude: 35.6812,
+  longitude: 139.7671,
+  timestamp: DateTime.utc(2026, 10, 15, 9),
+  accuracy: 10,
+  altitude: 0,
+  altitudeAccuracy: 0,
+  heading: 0,
+  headingAccuracy: 0,
+  speed: 0,
+  speedAccuracy: 0,
+);
+
+class FakeLocation extends PhoneLocation {
+  @override
+  Future<Position?> read({bool ask = false}) async => position = phonePosition;
+}
+
+class FakeCountry extends CountryLocator {
+  @override
+  Future<String?> countryAt(Position position) async => 'JP';
+}
+
+/// An ATM and a cash-only market near Tokyo Station.
+class FakePlaces extends PlacesClient {
+  @override
+  Future<List<NearbyPlaceFact>> nearby(Position position) async => const [
+    NearbyPlaceFact(
+      name: 'Seven Bank ATM',
+      kind: PlaceKind.atm,
+      payment: PlacePayment.unknown,
+      distanceM: 120,
+    ),
+    NearbyPlaceFact(
+      name: 'Ameyoko stall',
+      kind: PlaceKind.market,
+      payment: PlacePayment(cashOnly: true),
+      distanceM: 300,
+    ),
+  ];
+
+  @override
+  Future<LookedUpPlace?> lookup(String location, {Position? near}) async =>
+      null;
+}
+
+/// A briefing whose phone is in Tokyo with one calendar stop today.
+BriefingController tokyoBriefing() => BriefingController(
+  calendar: FakeCalendar([
+    DayEvent(
+      title: 'Lunch',
+      location: 'Ameyoko, Ueno',
+      start: DateTime.now().copyWith(hour: 12, minute: 0),
+    ),
+  ]),
+  places: FakePlaces(),
+  location: FakeLocation(),
+  countries: FakeCountry(),
+  card: CardProfileStore(prefs: SharedPreferencesAsync()),
+);
 
 /// The assistant's own list.
 Finder assistantList() => find
@@ -161,6 +247,57 @@ void main() {
       final next = CardProfileStore(prefs: SharedPreferencesAsync());
       await tester.runAsync(next.load);
       expect(next.profile.cardFeePercent, 2.5);
+    });
+  });
+
+  group('BriefingController in a demo state', () {
+    test(
+      'traps: real surroundings give warnings, the demo state none',
+      () async {
+        final briefing = tokyoBriefing();
+        await briefing.start();
+        expect(briefing.nearbyState, NearbyState.done);
+        expect(briefing.country, 'JP');
+
+        final real = briefing.traps(countryCode: 'JP', homeCurrency: 'THB');
+        expect(real, isNotEmpty);
+        expect([
+          for (final t in real) t.kind,
+        ], containsAll([TrapKind.atmConversion, TrapKind.cashOnlyMarket]));
+        expect(
+          briefing.traps(countryCode: 'JP', homeCurrency: 'THB', demo: true),
+          isEmpty,
+        );
+      },
+    );
+
+    test('cashPlan: the demo state leaves the phone calendar out', () async {
+      final briefing = tokyoBriefing();
+      await briefing.start();
+      expect(briefing.events, hasLength(1));
+
+      final real = briefing.cashPlan(const []);
+      expect(real, isNotNull);
+      expect(real!.stops, hasLength(1));
+      // No records and no calendar: nothing to estimate from.
+      expect(briefing.cashPlan(const [], demo: true), isNull);
+    });
+  });
+
+  group('near you in a demo state', () {
+    testWidgets('the Thai-in-Tokyo demo says nearby is off', (tester) async {
+      await pumpAssistant(tester, await stores(demo: 'thaiTokyo'));
+      await scrollTo(tester, find.text(demoOff));
+      expect(find.text(demoOff), findsOneWidget);
+      expect(find.text('See money traps near you'), findsNothing);
+      expect(find.text('Checking ATMs and markets nearby'), findsNothing);
+    });
+
+    testWidgets('outside the demo state nearby is not off', (tester) async {
+      await pumpAssistant(tester, await stores());
+      await scrollTo(tester, find.text('See money traps near you'));
+      expect(find.text('See money traps near you'), findsOneWidget);
+      expect(find.text(demoOff), findsNothing);
     });
   });
 

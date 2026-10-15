@@ -16,6 +16,8 @@ final CountryPayFacts thFacts = CountryPayFacts(
   currency: 'THB',
   foreignCardAtmFee: thAtmFee,
   atmOffersConversion: true,
+  atmConversionSource: 'Portail Asie, Withdraw money in Thailand',
+  atmConversionChecked: '2026-10-15',
 );
 
 NearbyPlaceFact place(
@@ -91,13 +93,50 @@ void main() {
   });
 
   group('atmConversion source', () {
-    test('without a conversion source it falls back to Google Maps', () {
+    test('TH facts: the conversion warning carries the facts source', () {
       final t = nearbyTraps([
         atm120,
       ], thFacts).firstWhere((t) => t.kind == TrapKind.atmConversion);
-      expect(t.source, 'Google Maps');
-      expect(t.source, googleMapsSource);
-      expect(t.checked, isNull);
+      expect(t.source, 'Portail Asie, Withdraw money in Thailand');
+      expect(t.source, isNot(googleMapsSource));
+      expect(t.checked, '2026-10-15');
+    });
+
+    test('offer flag without a source: no conversion warning', () {
+      final traps = nearbyTraps(
+        [atm120],
+        CountryPayFacts(
+          country: 'TH',
+          currency: 'THB',
+          foreignCardAtmFee: thAtmFee,
+          atmOffersConversion: true,
+        ),
+      );
+      expect([for (final t in traps) t.kind], [TrapKind.atmFee]);
+    });
+
+    test('a source without the offer flag: no conversion warning', () {
+      final traps = nearbyTraps(
+        [atm120],
+        CountryPayFacts(
+          country: 'TH',
+          currency: 'THB',
+          atmConversionSource: 'Portail Asie',
+        ),
+      );
+      expect(traps, isEmpty);
+    });
+
+    test('no facts source and no fee: an ATM alone gives nothing', () {
+      final traps = nearbyTraps(
+        [atm120],
+        CountryPayFacts(
+          country: 'TH',
+          currency: 'THB',
+          atmOffersConversion: true,
+        ),
+      );
+      expect(traps, isEmpty);
     });
 
     test('carries the facts file conversion source and checked date', () {
@@ -194,6 +233,7 @@ void main() {
           currency: 'THB',
           foreignCardAtmFee: null,
           atmOffersConversion: true,
+          atmConversionSource: 'Portail Asie',
         ),
       );
       expect([for (final t in traps) t.kind], [TrapKind.atmConversion]);

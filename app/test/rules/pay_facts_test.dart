@@ -7,6 +7,8 @@ Map<String, Object?> thEntry() => {
   'country': 'TH',
   'currency': 'THB',
   'atmOffersConversion': true,
+  'atmConversionSource': 'Portail Asie, Withdraw money in Thailand',
+  'atmConversionChecked': '2026-10-15',
   'foreignCardAtmFee': {
     'value': 220,
     'currency': 'THB',
@@ -167,7 +169,9 @@ void main() {
       Object? source = 'Portail Asie, Withdraw money in Thailand',
       Object? checked = '2026-10-15',
     }) {
-      final entry = thEntry();
+      final entry = thEntry()
+        ..remove('atmConversionSource')
+        ..remove('atmConversionChecked');
       if (source != null) entry['atmConversionSource'] = source;
       if (checked != null) entry['atmConversionChecked'] = checked;
       return entry;
@@ -186,29 +190,46 @@ void main() {
       expect(facts.atmOffersConversion, isTrue);
     });
 
-    test('no source: both null, the offer flag is kept', () {
-      final facts = th(thEntry());
+    test('no source, no claim: the offer flag is dropped', () {
+      final facts = th(withConversion(source: null, checked: null));
       expect(facts.atmConversionSource, isNull);
       expect(facts.atmConversionChecked, isNull);
-      expect(facts.atmOffersConversion, isTrue);
+      expect(facts.atmOffersConversion, isFalse);
     });
 
-    test('a checked date without a source is dropped', () {
+    test('a checked date without a source is dropped, and the claim', () {
       final facts = th(withConversion(source: null));
       expect(facts.atmConversionSource, isNull);
       expect(facts.atmConversionChecked, isNull);
+      expect(facts.atmOffersConversion, isFalse);
     });
 
     test('an empty or blank source counts as none', () {
-      expect(th(withConversion(source: '')).atmConversionSource, isNull);
-      expect(th(withConversion(source: '   ')).atmConversionSource, isNull);
-      expect(th(withConversion(source: '   ')).atmConversionChecked, isNull);
+      for (final blank in ['', '   ']) {
+        final facts = th(withConversion(source: blank));
+        expect(facts.atmConversionSource, isNull, reason: '"$blank"');
+        expect(facts.atmConversionChecked, isNull, reason: '"$blank"');
+        expect(facts.atmOffersConversion, isFalse, reason: '"$blank"');
+      }
     });
 
     test('a non-string source counts as none', () {
       final facts = th(withConversion(source: 42));
       expect(facts.atmConversionSource, isNull);
       expect(facts.atmConversionChecked, isNull);
+      expect(facts.atmOffersConversion, isFalse);
+    });
+
+    test('a source with the flag false or missing claims no offer', () {
+      final off = withConversion()..['atmOffersConversion'] = false;
+      expect(th(off).atmOffersConversion, isFalse);
+      final missing = withConversion()..remove('atmOffersConversion');
+      expect(th(missing).atmOffersConversion, isFalse);
+    });
+
+    test('the flag must be the boolean true', () {
+      final text = withConversion()..['atmOffersConversion'] = 'true';
+      expect(th(text).atmOffersConversion, isFalse);
     });
 
     test('source without a checked date keeps the source only', () {
@@ -231,6 +252,45 @@ void main() {
       expect(facts.atmConversionSource, isNull);
       expect(facts.atmConversionChecked, isNull);
       expect(facts.atmOffersConversion, isFalse);
+    });
+  });
+
+  group('parse: fee appliesTo', () {
+    SourcedFee fee(Object? appliesTo, {bool include = true}) {
+      final entry = thEntry();
+      final json = Map<String, Object?>.from(entry['foreignCardAtmFee'] as Map);
+      if (include) json['appliesTo'] = appliesTo;
+      entry['foreignCardAtmFee'] = json;
+      return PayFacts.parse(file([entry]))!.country('TH')!.foreignCardAtmFee!;
+    }
+
+    test('appliesTo is read', () {
+      expect(fee('Kasikorn K-ATM, Visa').appliesTo, 'Kasikorn K-ATM, Visa');
+    });
+
+    test('missing appliesTo is null and the fee is kept', () {
+      final f = fee(null, include: false);
+      expect(f.appliesTo, isNull);
+      expect(f.value, 220);
+    });
+
+    test('empty, blank or non-string appliesTo is null, fee kept', () {
+      for (final bad in <Object?>['', '   ', 42, null, true]) {
+        final f = fee(bad);
+        expect(f.appliesTo, isNull, reason: '$bad');
+        expect(f.value, 220, reason: '$bad');
+      }
+    });
+
+    test('constructor default is null', () {
+      const f = SourcedFee(
+        value: 1,
+        currency: 'THB',
+        isPercent: false,
+        source: 's',
+        checked: '2026-10-15',
+      );
+      expect(f.appliesTo, isNull);
     });
   });
 

@@ -26,7 +26,8 @@ void main() {
       expect(fee.value, 250);
       expect(fee.currency, 'THB');
       expect(fee.isPercent, isFalse);
-      expect(fee.source.trim(), isNotEmpty);
+      expect(fee.source, 'Kasikorn Bank fee list');
+      expect(fee.appliesTo, 'Kasikorn K-ATM, Visa');
       expect(isIsoDate(fee.checked), isTrue, reason: fee.checked);
     });
 

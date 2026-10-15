@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,10 +9,35 @@ import 'package:money_navigation/features/briefing/arrival_alerts.dart';
 import 'package:money_navigation/features/briefing/briefing_controller.dart';
 import 'package:money_navigation/features/home/home_screen.dart';
 import 'package:money_navigation/features/home/route_line.dart';
+import 'package:money_navigation/rules/demo_personas.dart';
 import 'package:money_navigation/rules/pay_facts.dart';
 import 'package:money_navigation/shared/odometer.dart';
 
 import 'harness.dart';
+
+Map<String, Object?> persona(
+  String key,
+  String language,
+  String home,
+  String local,
+) => {
+  'key': key,
+  'language': language,
+  'homeCurrency': home,
+  'localCurrency': local,
+  'samples': [
+    {'kind': 'terminalDcc', 'daysAgo': 1, 'time': '18:05', 'keptThb': 86.4},
+  ],
+};
+
+final personas = parseDemoPersonas(
+  jsonEncode({
+    'personas': [
+      persona('visitorBangkok', 'en', 'USD', 'THB'),
+      persona('thaiTokyo', 'th', 'THB', 'JPY'),
+    ],
+  }),
+)!;
 
 const startTitle = 'Scan the ATM screen before you press anything';
 
@@ -255,6 +282,24 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Checking ATMs and markets nearby'), findsNothing);
+    });
+
+    testWidgets('a demo state hides the nearby card', (tester) async {
+      final stores = Stores();
+      await stores.trip.load();
+      await stores.settings.load(personas: personas);
+      await stores.settings.setDemoPersona(personas.byKey('thaiTokyo'));
+      final briefing = BriefingController(card: CardProfileStore());
+      await tester.pumpWidget(home(stores, briefing));
+      await settleBriefing(tester, briefing);
+
+      // Scroll the whole list; none of the nearby card's states shows.
+      await tester.drag(homeList(), const Offset(0, -3000));
+      await pumpFrames(tester, frames: 5);
+      expect(find.text('See money traps near you'), findsNothing);
+      expect(find.text('Checking ATMs and markets nearby'), findsNothing);
+      expect(find.text('Watch out nearby'), findsNothing);
+      expect(find.text('Nothing to watch out for nearby'), findsNothing);
     });
 
     testWidgets('an empty trip still shows the briefing and nearby cards', (
