@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 
 import 'ai/ai_trace.dart';
+import 'location_service.dart';
 import 'ai/cloud_functions.dart';
 
 /// A rated place near the traveler, from Google Maps.
@@ -41,10 +42,10 @@ class PlacesEvidence {
   final double phoneLat;
   final double phoneLng;
 
-  /// Best location for a saved record: the market itself when known,
-  /// otherwise where the phone was.
-  double get lat => place.lat ?? phoneLat;
-  double get lng => place.lng ?? phoneLng;
+  /// Where a saved record goes on the map: where the phone was. The
+  /// busiest market nearby is evidence, not proof of where the haggle was.
+  double get lat => phoneLat;
+  double get lng => phoneLng;
 }
 
 /// Looks up rated markets around the phone through the `places-market`
@@ -62,7 +63,7 @@ class PlacesService {
   Future<PlacesEvidence?> nearbyMarket() async {
     if (!CloudFunctions.configured) return null;
     try {
-      final position = await _position();
+      final position = await LocationService.current();
       if (position == null) return null;
       final (places, trace) = await AiTrace.measure(
         AiEngine.googleMaps,
@@ -105,32 +106,5 @@ class PlacesService {
             lng: e['lng'] is num ? (e['lng'] as num).toDouble() : null,
           ),
     ];
-  }
-
-  /// The phone's position within [locationTimeout], asking for permission
-  /// once if it was never asked. Null when off, denied or too slow.
-  Future<Position?> _position() async {
-    if (!await Geolocator.isLocationServiceEnabled()) return null;
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever ||
-        permission == LocationPermission.unableToDetermine) {
-      return null;
-    }
-    final last = await Geolocator.getLastKnownPosition();
-    if (last != null) return last;
-    try {
-      return await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.medium,
-          timeLimit: locationTimeout,
-        ),
-      );
-    } on TimeoutException {
-      return null;
-    }
   }
 }

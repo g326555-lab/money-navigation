@@ -78,6 +78,7 @@ class _TripMapScreenState extends State<TripMapScreen> {
 
   @override
   void dispose() {
+    _recheck?.cancel();
     _map?.dispose();
     _scroll.dispose();
     super.dispose();
@@ -94,15 +95,20 @@ class _TripMapScreenState extends State<TripMapScreen> {
     } on Object {
       reachable = false;
     }
-    if (mounted && _offline == reachable) {
-      setState(() => _offline = !reachable);
-    }
+    if (!mounted) return;
+    if (_offline == reachable) setState(() => _offline = !reachable);
+    // While the map can't load, look again now and then, so the note goes
+    // away by itself when the connection comes back.
+    _recheck?.cancel();
+    if (!reachable) _recheck = Timer(_recheckEvery, _checkReach);
   }
+
+  Timer? _recheck;
+  static const _recheckEvery = Duration(seconds: 20);
 
   void _select(MapPin pin, {bool fromList = false}) {
     HapticFeedback.selectionClick();
     setState(() => _selected = pin.id);
-    if (!fromList) return;
     final still = MediaQuery.disableAnimationsOf(context);
     final target = CameraUpdate.newLatLng(LatLng(pin.lat, pin.lng));
     if (still) {
@@ -112,7 +118,7 @@ class _TripMapScreenState extends State<TripMapScreen> {
     }
     // The map sits above the list: bring it back into view so the tap has
     // a visible result.
-    if (_scroll.hasClients && _scroll.offset > 0) {
+    if (fromList && _scroll.hasClients && _scroll.offset > 0) {
       if (still) {
         _scroll.jumpTo(0);
       } else {
@@ -285,13 +291,15 @@ class _TripMapScreenState extends State<TripMapScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              kept > 0 ? l10n.tripMapKeptAt(keeping.length) : l10n.tripMapOnMap,
+              kept > 0
+                  ? l10n.tripMapKeptAt(placeCount(keeping))
+                  : l10n.tripMapOnMap,
               style: type.heroLabel,
             ),
             Text(
               kept > 0
                   ? AppFormat.roundedAmount(kept, marketCurrency)
-                  : l10n.tripMapPlaces(pins.length),
+                  : l10n.tripMapPlaces(placeCount(pins)),
               style: type.displayLg,
             ),
             if (kept > 0 && hasSamples) ...[
@@ -340,6 +348,11 @@ class _TripMapScreenState extends State<TripMapScreen> {
                     zoom: AppSizes.tripMapStartZoom,
                   ),
                   style: tripMapStyle,
+                  // The selected card covers the top of the map; centre
+                  // the pin in the part that stays visible.
+                  padding: EdgeInsets.only(
+                    top: _selected == null ? 0 : AppSizes.tripMapCardReserve,
+                  ),
                   onMapCreated: (controller) {
                     _map = controller;
                     // Frame every pin once the map knows its size.
@@ -457,7 +470,12 @@ class _TripMapScreenState extends State<TripMapScreen> {
                   haptic: _noHaptic,
                   child: GroupRow(
                     leading: _kindTile(p.kind),
-                    title: p.title ?? _kindName(l10n, p.kind),
+                    title: _title(l10n, p),
+                    // The row shown on the map reads as selected.
+                    titleStyle: p.id == _selected
+                        ? AppTypography.of(context).rowTitle
+                              .copyWith(color: AppColors.primaryText)
+                        : null,
                     subtitle: _meta(context, p),
                     value: _rowValue(p),
                     valueStyle: (p.keptThb ?? 0) > 0
@@ -474,6 +492,14 @@ class _TripMapScreenState extends State<TripMapScreen> {
   }
 
   static Future<void> _noHaptic() async {}
+
+  /// A haggle's place is the busiest market near the phone, so it reads
+  /// "Near …"; receipts carry their own printed shop name.
+  static String _title(AppLocalizations l10n, MapPin p) {
+    final title = p.title;
+    if (title == null) return _kindName(l10n, p.kind);
+    return p.kind == PinKind.haggle ? l10n.tripMapNear(title) : title;
+  }
 
   /// "Today", "Yesterday", then the weekday and date.
   String _dayName(BuildContext context, DateTime day) {
@@ -531,12 +557,6 @@ Widget _kindTile(PinKind kind) => switch (kind) {
   PinKind.terminal => const IconTile.blue(icon: Icons.credit_card_rounded),
 };
 
-Color pinKindColor(PinKind kind) => switch (kind) {
-  PinKind.haggle => AppColors.iconOrange,
-  PinKind.receipt => AppColors.iconYellow,
-  PinKind.atm || PinKind.terminal => AppColors.iconBlue,
-};
-
 /// The selected record, floating over the top of the map: what it was,
 /// when, what was paid and what it kept, with a way to close it.
 class _PinCard extends StatelessWidget {
@@ -572,7 +592,7 @@ class _PinCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    pin.title ?? _kindName(l10n, pin.kind),
+                    _TripMapScreenState._title(l10n, pin),
                     style: type.rowTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

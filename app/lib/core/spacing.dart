@@ -59,6 +59,9 @@ abstract final class AppSizes {
   static const double mapPin = 18;
   static const double mapPinSelected = 26;
   static const double mapPinRing = 3;
+
+  /// Map space kept clear at the top for the selected card.
+  static const double tripMapCardReserve = 120;
   static const double mapPinShadow = 4;
   static const double tripMapStartZoom = 13;
 

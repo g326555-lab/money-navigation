@@ -22,6 +22,7 @@ import '../../rules/receipt_record.dart';
 import '../../shared/app_button.dart';
 import '../../shared/surface.dart';
 import '../../shared/pressable.dart';
+import '../../services/location_service.dart';
 
 /// Checks a Thai restaurant bill: Google Cloud Vision reads the Thai text,
 /// then the phone proves the figures add up and says what was added on top
@@ -115,7 +116,20 @@ class _BillScreenState extends State<BillScreen> {
   Future<void> _save() async {
     final record = _record;
     if (record == null || _saved) return;
-    await _receipts.save(record);
+    // Where the bill was paid, so it has a place on the trip map; saved
+    // without one when location is off.
+    final here = await LocationService.current();
+    final located = here == null || record.lat != null
+        ? record
+        : ReceiptRecord.fromJson({
+                ...record.toJson(),
+                'lat': here.latitude,
+                'lng': here.longitude,
+              }) ??
+              record;
+    if (!mounted) return;
+    _record = located;
+    await _receipts.save(located);
     HapticFeedback.mediumImpact();
     if (mounted) setState(() => _saved = true);
   }

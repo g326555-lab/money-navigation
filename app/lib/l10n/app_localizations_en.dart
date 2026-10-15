@@ -2027,9 +2027,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Receipts and haggles you save with a place show up here.';
 
   @override
-  String get tripMapOsm => 'OpenStreetMap contributors';
-
-  @override
   String tripMapKeptDay(String amount) {
     return 'Kept $amount';
   }
@@ -2116,4 +2113,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tripMapShowOnMap => 'Shows it on the map';
+
+  @override
+  String tripMapNear(String place) {
+    return 'Near $place';
+  }
 }

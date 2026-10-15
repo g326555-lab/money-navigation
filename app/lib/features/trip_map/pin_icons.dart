@@ -6,7 +6,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../core/colors.dart';
 import '../../core/spacing.dart';
 import '../../rules/trip_map.dart';
-import 'trip_map_screen.dart' show pinKindColor;
 
 /// Pin images drawn once per screen density: a white-ringed dot in the
 /// record's colour (hollow for samples), larger when selected. The screen
@@ -89,3 +88,10 @@ class PinIcons {
     );
   }
 }
+
+/// The colour of a record kind, shared by pins and list tiles.
+Color pinKindColor(PinKind kind) => switch (kind) {
+  PinKind.haggle => AppColors.iconOrange,
+  PinKind.receipt => AppColors.iconYellow,
+  PinKind.atm || PinKind.terminal => AppColors.iconBlue,
+};

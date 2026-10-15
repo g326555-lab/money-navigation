@@ -142,6 +142,16 @@ const pinMinSpan = 0.01;
   );
 }
 
+/// Pins closer than this (in degrees, about 100 m) count as one place.
+const samePlaceDegrees = 0.001;
+
+/// How many distinct places [pins] stand for: two records at the same
+/// market are one place, not two.
+int placeCount(List<MapPin> pins) => {
+  for (final p in pins)
+    ((p.lat / samePlaceDegrees).round(), (p.lng / samePlaceDegrees).round()),
+}.length;
+
 /// Money kept on the pins of one day; receipts keep nothing.
 double keptOnDay(List<MapPin> pins) =>
     pins.fold(0, (sum, p) => sum + (p.keptThb ?? 0));

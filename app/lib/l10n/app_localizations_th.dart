@@ -1930,9 +1930,6 @@ class AppLocalizationsTh extends AppLocalizations {
       'ใบเสร็จและการต่อราคาที่บันทึกพร้อมสถานที่จะแสดงที่นี่';
 
   @override
-  String get tripMapOsm => 'ผู้ร่วมสร้าง OpenStreetMap';
-
-  @override
   String tripMapKeptDay(String amount) {
     return 'ประหยัด $amount';
   }
@@ -2001,4 +1998,9 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tripMapShowOnMap => 'แสดงบนแผนที่';
+
+  @override
+  String tripMapNear(String place) {
+    return 'ใกล้ $place';
+  }
 }

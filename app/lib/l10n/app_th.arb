@@ -525,7 +525,6 @@
   "billBrandServiceAdded": "บวกค่าบริการ",
   "tripMapTitle": "แผนที่ทริป",
   "tripMapEmpty": "ใบเสร็จและการต่อราคาที่บันทึกพร้อมสถานที่จะแสดงที่นี่",
-  "tripMapOsm": "ผู้ร่วมสร้าง OpenStreetMap",
   "tripMapKeptDay": "ประหยัด {amount}",
   "tripMapKept": "ประหยัด {amount}",
   "tripMapSample": "ตัวอย่าง",
@@ -544,5 +543,6 @@
   "tripMapOffline": "แผนที่ต้องใช้อินเทอร์เน็ต แต่ทุกแห่งยังอยู่ในรายการด้านล่าง",
   "tripMapEmptyAction": "สแกนใบเสร็จ",
   "tripMapMapLabel": "แผนที่ {count} แห่ง ทุกแห่งอยู่ในรายการด้านล่างด้วย",
-  "tripMapShowOnMap": "แสดงบนแผนที่"
+  "tripMapShowOnMap": "แสดงบนแผนที่",
+  "tripMapNear": "ใกล้ {place}"
 }

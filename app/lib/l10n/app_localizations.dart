@@ -3264,12 +3264,6 @@ abstract class AppLocalizations {
   /// **'Receipts and haggles you save with a place show up here.'**
   String get tripMapEmpty;
 
-  /// No description provided for @tripMapOsm.
-  ///
-  /// In en, this message translates to:
-  /// **'OpenStreetMap contributors'**
-  String get tripMapOsm;
-
   /// No description provided for @tripMapKeptDay.
   ///
   /// In en, this message translates to:
@@ -3383,6 +3377,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Shows it on the map'**
   String get tripMapShowOnMap;
+
+  /// No description provided for @tripMapNear.
+  ///
+  /// In en, this message translates to:
+  /// **'Near {place}'**
+  String tripMapNear(String place);
 }
 
 class _AppLocalizationsDelegate

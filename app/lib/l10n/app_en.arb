@@ -1679,7 +1679,6 @@
   "billBrandServiceAdded": "service charge added",
   "tripMapTitle": "Trip map",
   "tripMapEmpty": "Receipts and haggles you save with a place show up here.",
-  "tripMapOsm": "OpenStreetMap contributors",
   "tripMapKeptDay": "Kept {amount}",
   "@tripMapKeptDay": {
     "placeholders": {
@@ -1740,5 +1739,13 @@
       }
     }
   },
-  "tripMapShowOnMap": "Shows it on the map"
+  "tripMapShowOnMap": "Shows it on the map",
+  "tripMapNear": "Near {place}",
+  "@tripMapNear": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  }
 }

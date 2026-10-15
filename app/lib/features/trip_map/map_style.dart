@@ -23,7 +23,6 @@ final String tripMapStyle = jsonEncode([
   _rule('geometry', feature: 'poi', color: AppColors.surfaceSunken),
   _rule('all', feature: 'poi.business', visibility: 'off'),
   _rule('labels', feature: 'poi', visibility: 'off'),
-  _rule('labels', feature: 'administrative.locality', visibility: 'off'),
   _rule('labels', feature: 'administrative.province', visibility: 'off'),
   _rule('labels', feature: 'administrative.land_parcel', visibility: 'off'),
   _rule('labels', feature: 'road.local', visibility: 'off'),
