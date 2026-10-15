@@ -10,7 +10,6 @@ import 'package:money_navigation/services/ai/ai_trace.dart';
 import 'package:money_navigation/services/ai/cloud_speech.dart';
 import 'package:money_navigation/services/ai/gemini_item.dart';
 import 'package:money_navigation/rules/new_item.dart';
-import 'package:money_navigation/rules/haggle.dart';
 import 'package:money_navigation/services/clip_recorder.dart';
 
 import 'haggle_controller_test.dart'
