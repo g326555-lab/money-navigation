@@ -177,6 +177,46 @@ void main() {
     });
   });
 
+  group('is_sample', () {
+    test('row is_sample true reads as a sample', () {
+      expect(
+        tripSaveFromRow(mangoRow()..['is_sample'] = true)!.isSample,
+        isTrue,
+      );
+    });
+
+    test('missing, false or non-bool is_sample reads as not a sample', () {
+      expect(tripSaveFromRow(mangoRow())!.isSample, isFalse);
+      expect(
+        tripSaveFromRow(mangoRow()..['is_sample'] = false)!.isSample,
+        isFalse,
+      );
+      expect(
+        tripSaveFromRow(mangoRow()..['is_sample'] = null)!.isSample,
+        isFalse,
+      );
+      expect(
+        tripSaveFromRow(mangoRow()..['is_sample'] = 'true')!.isSample,
+        isFalse,
+      );
+    });
+
+    test('tripSaveToRow never writes is_sample', () {
+      final sample = TripSave(
+        id: 'sample-1',
+        kind: SaveKind.haggle,
+        keptThb: 40,
+        savedAt: t0,
+        itemKey: 'mango',
+        askedThb: 150,
+        paidThb: 110,
+        isSample: true,
+      );
+      expect(tripSaveToRow(sample).containsKey('is_sample'), isFalse);
+      expect(tripSaveToRow(mangoSave()).containsKey('is_sample'), isFalse);
+    });
+  });
+
   group('tripSavesFromRows', () {
     test('skips bad rows and sorts newest first', () {
       final rows = [
