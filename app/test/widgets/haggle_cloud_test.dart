@@ -420,15 +420,15 @@ void main() {
   test('an item outside the list is named and kept, with no verdict', () async {
     final c = build(
       answers: const [
-        ['ลาเต้วานิลลาแก้วละ 120'],
+        ['ร่มกันแดดคันละ 120'],
       ],
       guesser: FakeGuesser(
         (_) => const ItemGuess(
           newItem: NewItem(
-            nameTh: 'ลาเต้วานิลลา',
-            nameEn: 'Vanilla latte',
+            nameTh: 'ร่มกันแดด',
+            nameEn: 'Sun umbrella',
             unit: PriceUnit.each,
-            category: ItemCategory.drink,
+            category: ItemCategory.goods,
           ),
           confidence: 0.95,
           trace: guessTrace,
@@ -437,8 +437,8 @@ void main() {
     );
     await c.start();
     await settle();
-    expect(c.newItem?.nameEn, 'Vanilla latte');
-    expect(c.newItem?.key, 'new:ลาเต้วานิลลา');
+    expect(c.newItem?.nameEn, 'Sun umbrella');
+    expect(c.newItem?.key, 'new:ร่มกันแดด');
     expect(c.itemGuessTrace, same(guessTrace));
     expect(c.state.heard?.amount, 120);
     expect(c.state.verdict, isNull);

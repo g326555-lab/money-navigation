@@ -19,6 +19,7 @@ import '../../l10n/app_localizations.dart';
 import '../../rules/haggle.dart';
 import '../../rules/haggle_rounds.dart';
 import '../../rules/new_item.dart';
+import '../../rules/new_item_counter.dart';
 import '../../rules/personal_context.dart';
 import '../../rules/trip_ledger.dart';
 import '../../services/ai/ai_trace.dart';
@@ -764,22 +765,13 @@ class _HaggleScreenState extends State<HaggleScreen>
     final item = _haggle.newItem;
     final heard = state.heard;
     if (item == null || heard == null) return null;
-    final history = pastPurchasesFromSaves(AppScope.of(context).trip.saves);
-    final now = DateTime.now();
-    return counterFromHistory(item.key, heard.amount, history, now) ??
-        counterFromHistory(_anyItem, heard.amount, [
-          for (final p in history)
-            PastPurchase(
-              itemKey: _anyItem,
-              paidThb: p.paidThb,
-              askedThb: p.askedThb,
-              at: p.at,
-              isSample: p.isSample,
-            ),
-        ], now);
+    return counterForNewItem(
+      item.key,
+      heard.amount,
+      pastPurchasesFromSaves(AppScope.of(context).trip.saves),
+      DateTime.now(),
+    );
   }
-
-  static const _anyItem = 'any';
 
   List<Widget> _newItemContent(
     AppLocalizations l10n,
@@ -887,11 +879,11 @@ class _HaggleScreenState extends State<HaggleScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.haggleNo),
+            child: Text(l10n.authCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.haggleYes),
+            child: Text(l10n.speakTypeSubmit),
           ),
         ],
       ),

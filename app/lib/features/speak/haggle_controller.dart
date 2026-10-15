@@ -476,18 +476,21 @@ class HaggleController extends ChangeNotifier {
   void useTypedItem(String name, double amount) {
     final trimmed = name.trim();
     if (trimmed.isEmpty || amount <= 0) return;
+    // Keep the unit the seller said (per kilo, a plate); "each" only when
+    // none was heard.
+    final unit = _state.heard?.unit ?? PriceUnit.each;
     _resetHaggle();
     _clearGuess();
     _newItem = NewItem(
       nameTh: trimmed,
       nameEn: trimmed,
-      unit: PriceUnit.each,
+      unit: unit,
       category: ItemCategory.other,
     );
     _set(
       HaggleState(
         phase: HagglePhase.done,
-        heard: HeardPrice(amount: amount, unit: PriceUnit.each),
+        heard: HeardPrice(amount: amount, unit: unit),
         problem: HeardProblem.unknownItem,
         canSpeak: _state.canSpeak,
         typed: true,
