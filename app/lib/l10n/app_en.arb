@@ -1354,5 +1354,304 @@
       }
     }
   },
-  "billNoteNoService": "no service charge"
+  "billNoteNoService": "no service charge",
+  "tabAssistant": "Assistant",
+  "homeRouteNext": "Next stop",
+  "homeRouteAtm": "ATM",
+  "homeRouteMarket": "Market",
+  "homeRouteTerminal": "Card terminal",
+  "homeBriefingLabel": "Morning briefing",
+  "homeBriefingOpen": "Open the assistant",
+  "homeBriefingNoNumber": "Not enough records yet to say how much cash today needs",
+  "homeBriefingStops": "{count, plural, =1{1 stop on your calendar today} other{{count} stops on your calendar today}}",
+  "@homeBriefingStops": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeBriefingMore": "{count, plural, =1{1 more stop} other{{count} more stops}}",
+  "@homeBriefingMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nearbyLabel": "Watch out nearby",
+  "nearbyOpen": "See every warning nearby",
+  "nearbyMore": "{count, plural, =1{1 more warning nearby} other{{count} more warnings nearby}}",
+  "@nearbyMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nearbyNeedLocation": "See money traps near you",
+  "nearbyLocationPrivacy": "Uses your location only while the app is open",
+  "nearbyLooking": "Checking ATMs and markets nearby",
+  "nearbyClear": "Nothing to watch out for nearby",
+  "nearbyClearBasis": "From ATMs and markets Google Maps lists near you",
+  "trapAtmFeeTitle": "Foreign cards pay an ATM fee, for example {fee}",
+  "@trapAtmFeeTitle": {
+    "placeholders": {
+      "fee": {
+        "type": "String"
+      }
+    }
+  },
+  "trapAtmFeeBody": "Take out more at once so you pay the fee fewer times",
+  "trapAtmConversionTitle": "ATMs here may offer to convert",
+  "trapAtmConversionBody": "Choose the local currency, not your own",
+  "trapCashOnlyTitle": "Cash only",
+  "trapCashOnlyBody": "Bring cash before you go",
+  "briefingCashOnly": "Cash only",
+  "briefingCardsOk": "Takes cards",
+  "briefingPayUnknown": "Payment not listed on Google Maps",
+  "briefingLastSpent": "You spent {amount} here last time",
+  "@briefingLastSpent": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "briefingLastSpentSample": "Sample record · {amount} here last time",
+  "@briefingLastSpentSample": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "briefingPlaceDistance": "{place} · {meters} m",
+  "@briefingPlaceDistance": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      },
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "briefingSourceLive": "{source} · live",
+  "@briefingSourceLive": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "briefingSourceChecked": "{source} · checked {date}",
+  "@briefingSourceChecked": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "assistantTitle": "Assistant",
+  "assistantCashLabel": "Cash for today",
+  "assistantCashAbout": "About {amount}",
+  "@assistantCashAbout": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assistantCashUnknown": "Not enough to go on yet",
+  "assistantStops": "Today's stops",
+  "assistantPay": "Card, cash or QR",
+  "assistantPayFor": "Compared for {place}",
+  "@assistantPayFor": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "assistantCard": "Your card",
+  "assistantCardFooter": "Saved on this phone. Your bank's fee page has these numbers.",
+  "assistantCardFromAccount": "Card fee from your account profile",
+  "assistantNearby": "Near you",
+  "assistantArrival": "Arrival alert",
+  "cashBasisNone": "Save a few purchases or connect your calendar to get an estimate",
+  "cashBasisPattern": "{days, plural, =1{From your spending on 1 earlier day} other{From your spending on {days} earlier days}}",
+  "@cashBasisPattern": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "cashBasisPatternSamples": "{days, plural, =1{From sample records on 1 day} other{From sample records on {days} days}}",
+  "@cashBasisPatternSamples": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "cashBasisCashOnly": "{count, plural, =1{1 stop takes cash only (Google Maps)} other{{count} stops take cash only (Google Maps)}}",
+  "@cashBasisCashOnly": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cashBasisLastVisit": "includes what you spent there last time",
+  "calendarConnect": "Read today's calendar",
+  "calendarDenied": "Calendar access is off in Settings",
+  "calendarPrivacy": "Title, place and time only. Nothing is changed.",
+  "calendarReading": "Reading today's calendar",
+  "calendarNoStops": "No stops with a place on your calendar today",
+  "payCompareLabel": "Cheapest way to pay",
+  "payCompareAsk": "Type an amount to compare",
+  "payCompareAmountHint": "Amount",
+  "payCompareBestCard": "Pay by card",
+  "payCompareBestCash": "Pay in cash",
+  "payCompareBestQr": "Pay by QR",
+  "payCompareSame": "Card and cash cost about the same",
+  "payCompareCashOnly": "Cash only here",
+  "payCompareNeedCard": "Add your card's foreign fee to compare",
+  "payCompareNeedWithdrawal": "Cash depends on how much you take out at once",
+  "payCompareNoRate": "Waiting for today's {currency} rate",
+  "@payCompareNoRate": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "payCompareBreakEven": "Cash costs less than the card only when you take out {amount} or more at once",
+  "@payCompareBreakEven": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payCompareAtmFeeSource": "ATM fee {fee} from {source}",
+  "@payCompareAtmFeeSource": {
+    "placeholders": {
+      "fee": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "payCompareNoAtmFee": "No published ATM fee for foreign cards here, so cash is not priced",
+  "payCompareDemoRate": "fixed demo rate",
+  "payCard": "Card",
+  "payCash": "Cash from an ATM",
+  "payQr": "QR",
+  "payExtra": "+{amount}",
+  "@payExtra": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payNotTaken": "Not taken here",
+  "payNeedCardFee": "Add your card fee",
+  "payNeedWithdrawal": "Depends on the withdrawal",
+  "payNoQrFee": "No published fee",
+  "cardFeeRow": "Foreign transaction fee",
+  "cardFeeMissing": "Not added yet",
+  "cardAtmRow": "Your bank at foreign ATMs",
+  "cardAtmUnknown": "Not sure",
+  "cardAtmNoFee": "No fee",
+  "cardAtmRefunds": "Refunds ATM fees",
+  "cardAtmFixed": "Fixed fee in {currency}",
+  "@cardAtmFixed": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "cardAtmPercent": "Percent of the withdrawal",
+  "cardAtmFixedValue": "{amount} each time",
+  "@cardAtmFixedValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cardAtmPercentValue": "{percent} of each withdrawal",
+  "@cardAtmPercentValue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cardSheetTitle": "Your card",
+  "cardFeeLabel": "Foreign transaction fee",
+  "cardFeeHintThai": "Thai banks publish up to 2.5% (Kasikorn, ttb fee lists 2025-2026)",
+  "cardFeeHintOther": "Often between 0% and 3%. Your card's terms list the exact figure.",
+  "cardAtmLabel": "What your bank charges at a foreign ATM",
+  "cardFeeInvalid": "Use a number from 0 to 20",
+  "cardAtmValueInvalid": "Add the fee amount",
+  "cardSheetPrivacy": "Only these numbers are kept. Never your card number.",
+  "cardSheetSave": "Save card facts",
+  "arrivalOn": "On for your next arrival",
+  "arrivalOnBody": "When your phone lands in a country with another currency, you get one alert on which currency to pick",
+  "arrivalAllow": "Allow notifications",
+  "arrivalBlocked": "Notifications are off in Settings",
+  "arrivalDemoTrigger": "Demo · Land in Japan",
+  "arrivalDemoFooter": "Demo state only. Shows the same alert your phone's location would.",
+  "arrivalShownDemo": "Demo · {body}",
+  "@arrivalShownDemo": {
+    "placeholders": {
+      "body": {
+        "type": "String"
+      }
+    }
+  },
+  "arrivalTitle": "Landed in {country}",
+  "@arrivalTitle": {
+    "placeholders": {
+      "country": {
+        "type": "String"
+      }
+    }
+  },
+  "arrivalBody": "If a card machine asks {home} or {local}, pick {local}",
+  "@arrivalBody": {
+    "placeholders": {
+      "local": {
+        "type": "String"
+      },
+      "home": {
+        "type": "String"
+      }
+    }
+  },
+  "arrivalBodyAtm": "If a card machine or ATM asks {home} or {local}, pick {local}",
+  "@arrivalBodyAtm": {
+    "placeholders": {
+      "local": {
+        "type": "String"
+      },
+      "home": {
+        "type": "String"
+      }
+    }
+  },
+  "arrivalChannel": "Arrival alerts",
+  "countryJapan": "Japan",
+  "countryThailand": "Thailand"
 }

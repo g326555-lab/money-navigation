@@ -1520,4 +1520,392 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get billNoteNoService => 'ไม่มีค่าบริการ';
+
+  @override
+  String get tabAssistant => 'ผู้ช่วย';
+
+  @override
+  String get homeRouteNext => 'จุดต่อไป';
+
+  @override
+  String get homeRouteAtm => 'ตู้ ATM';
+
+  @override
+  String get homeRouteMarket => 'ตลาด';
+
+  @override
+  String get homeRouteTerminal => 'เครื่องรูดบัตร';
+
+  @override
+  String get homeBriefingLabel => 'สรุปเช้านี้';
+
+  @override
+  String get homeBriefingOpen => 'เปิดผู้ช่วย';
+
+  @override
+  String get homeBriefingNoNumber =>
+      'ยังมีบันทึกไม่พอจะบอกว่าวันนี้ต้องใช้เงินสดเท่าไร';
+
+  @override
+  String homeBriefingStops(int count) {
+    return 'วันนี้มี $count จุดในปฏิทิน';
+  }
+
+  @override
+  String homeBriefingMore(int count) {
+    return 'อีก $count จุด';
+  }
+
+  @override
+  String get nearbyLabel => 'ระวังแถวนี้';
+
+  @override
+  String get nearbyOpen => 'ดูคำเตือนทั้งหมดแถวนี้';
+
+  @override
+  String nearbyMore(int count) {
+    return 'มีคำเตือนอีก $count รายการแถวนี้';
+  }
+
+  @override
+  String get nearbyNeedLocation => 'ดูกับดักเรื่องเงินใกล้ตัว';
+
+  @override
+  String get nearbyLocationPrivacy => 'ใช้ตำแหน่งเฉพาะตอนเปิดแอป';
+
+  @override
+  String get nearbyLooking => 'กำลังดูตู้ ATM และตลาดแถวนี้';
+
+  @override
+  String get nearbyClear => 'แถวนี้ไม่มีอะไรต้องระวัง';
+
+  @override
+  String get nearbyClearBasis => 'จากตู้ ATM และตลาดใกล้คุณใน Google Maps';
+
+  @override
+  String trapAtmFeeTitle(String fee) {
+    return 'บัตรต่างประเทศเสียค่าธรรมเนียม ATM เช่น $fee';
+  }
+
+  @override
+  String get trapAtmFeeBody =>
+      'ถอนครั้งละมากขึ้น จะได้เสียค่าธรรมเนียมน้อยครั้ง';
+
+  @override
+  String get trapAtmConversionTitle => 'ตู้ ATM ที่นี่อาจเสนอแปลงสกุลเงิน';
+
+  @override
+  String get trapAtmConversionBody =>
+      'เลือกสกุลเงินท้องถิ่น ไม่ใช่สกุลเงินของคุณ';
+
+  @override
+  String get trapCashOnlyTitle => 'รับเฉพาะเงินสด';
+
+  @override
+  String get trapCashOnlyBody => 'เตรียมเงินสดไปก่อน';
+
+  @override
+  String get briefingCashOnly => 'เงินสดเท่านั้น';
+
+  @override
+  String get briefingCardsOk => 'รับบัตร';
+
+  @override
+  String get briefingPayUnknown => 'Google Maps ไม่ได้ระบุวิธีจ่าย';
+
+  @override
+  String briefingLastSpent(String amount) {
+    return 'ครั้งก่อนคุณใช้ที่นี่ $amount';
+  }
+
+  @override
+  String briefingLastSpentSample(String amount) {
+    return 'บันทึกตัวอย่าง · ครั้งก่อนใช้ที่นี่ $amount';
+  }
+
+  @override
+  String briefingPlaceDistance(String place, String meters) {
+    return '$place · $meters ม.';
+  }
+
+  @override
+  String briefingSourceLive(String source) {
+    return '$source · ข้อมูลล่าสุด';
+  }
+
+  @override
+  String briefingSourceChecked(String source, String date) {
+    return '$source · ตรวจเมื่อ $date';
+  }
+
+  @override
+  String get assistantTitle => 'ผู้ช่วย';
+
+  @override
+  String get assistantCashLabel => 'เงินสดสำหรับวันนี้';
+
+  @override
+  String assistantCashAbout(String amount) {
+    return 'ราว $amount';
+  }
+
+  @override
+  String get assistantCashUnknown => 'ยังมีข้อมูลไม่พอ';
+
+  @override
+  String get assistantStops => 'จุดแวะวันนี้';
+
+  @override
+  String get assistantPay => 'บัตร เงินสด หรือ QR';
+
+  @override
+  String assistantPayFor(String place) {
+    return 'เทียบสำหรับ $place';
+  }
+
+  @override
+  String get assistantCard => 'บัตรของคุณ';
+
+  @override
+  String get assistantCardFooter =>
+      'บันทึกไว้ในเครื่องนี้ ดูตัวเลขได้จากหน้าค่าธรรมเนียมของธนาคาร';
+
+  @override
+  String get assistantCardFromAccount =>
+      'ค่าธรรมเนียมบัตรจากโปรไฟล์บัญชีของคุณ';
+
+  @override
+  String get assistantNearby => 'ใกล้คุณ';
+
+  @override
+  String get assistantArrival => 'แจ้งเตือนเมื่อถึงปลายทาง';
+
+  @override
+  String get cashBasisNone =>
+      'บันทึกการซื้อสักหน่อยหรือเชื่อมปฏิทินเพื่อดูยอดประมาณ';
+
+  @override
+  String cashBasisPattern(int days) {
+    return 'จากการใช้จ่ายของคุณใน $days วันก่อนหน้า';
+  }
+
+  @override
+  String cashBasisPatternSamples(int days) {
+    return 'จากบันทึกตัวอย่างใน $days วัน';
+  }
+
+  @override
+  String cashBasisCashOnly(int count) {
+    return '$count จุดรับเฉพาะเงินสด (Google Maps)';
+  }
+
+  @override
+  String get cashBasisLastVisit => 'รวมยอดที่เคยใช้ที่นั่นครั้งก่อน';
+
+  @override
+  String get calendarConnect => 'อ่านปฏิทินวันนี้';
+
+  @override
+  String get calendarDenied => 'ปิดการเข้าถึงปฏิทินไว้ในการตั้งค่า';
+
+  @override
+  String get calendarPrivacy => 'อ่านเฉพาะชื่อ สถานที่ และเวลา ไม่แก้ไขอะไร';
+
+  @override
+  String get calendarReading => 'กำลังอ่านปฏิทินวันนี้';
+
+  @override
+  String get calendarNoStops => 'วันนี้ไม่มีนัดที่ระบุสถานที่ในปฏิทิน';
+
+  @override
+  String get payCompareLabel => 'วิธีจ่ายที่ถูกที่สุด';
+
+  @override
+  String get payCompareAsk => 'ใส่จำนวนเงินเพื่อเทียบ';
+
+  @override
+  String get payCompareAmountHint => 'จำนวนเงิน';
+
+  @override
+  String get payCompareBestCard => 'จ่ายด้วยบัตร';
+
+  @override
+  String get payCompareBestCash => 'จ่ายด้วยเงินสด';
+
+  @override
+  String get payCompareBestQr => 'จ่ายด้วย QR';
+
+  @override
+  String get payCompareSame => 'บัตรกับเงินสดเสียพอ ๆ กัน';
+
+  @override
+  String get payCompareCashOnly => 'ที่นี่รับเฉพาะเงินสด';
+
+  @override
+  String get payCompareNeedCard => 'ใส่ค่าธรรมเนียมต่างประเทศของบัตรเพื่อเทียบ';
+
+  @override
+  String get payCompareNeedWithdrawal => 'เงินสดขึ้นกับว่าถอนครั้งละเท่าไร';
+
+  @override
+  String payCompareNoRate(String currency) {
+    return 'รออัตรา $currency วันนี้';
+  }
+
+  @override
+  String payCompareBreakEven(String amount) {
+    return 'เงินสดถูกกว่าบัตรก็ต่อเมื่อถอนครั้งละ $amount ขึ้นไป';
+  }
+
+  @override
+  String payCompareAtmFeeSource(String fee, String source) {
+    return 'ค่าธรรมเนียม ATM $fee จาก $source';
+  }
+
+  @override
+  String get payCompareNoAtmFee =>
+      'ไม่พบค่าธรรมเนียม ATM สำหรับบัตรต่างประเทศที่เผยแพร่ จึงไม่คิดราคาเงินสด';
+
+  @override
+  String get payCompareDemoRate => 'อัตราสาธิตคงที่';
+
+  @override
+  String get payCard => 'บัตร';
+
+  @override
+  String get payCash => 'เงินสดจาก ATM';
+
+  @override
+  String get payQr => 'QR';
+
+  @override
+  String payExtra(String amount) {
+    return '+$amount';
+  }
+
+  @override
+  String get payNotTaken => 'ที่นี่ไม่รับ';
+
+  @override
+  String get payNeedCardFee => 'ใส่ค่าธรรมเนียมบัตร';
+
+  @override
+  String get payNeedWithdrawal => 'ขึ้นกับยอดที่ถอน';
+
+  @override
+  String get payNoQrFee => 'ไม่มีค่าธรรมเนียมที่เผยแพร่';
+
+  @override
+  String get cardFeeRow => 'ค่าธรรมเนียมใช้จ่ายต่างประเทศ';
+
+  @override
+  String get cardFeeMissing => 'ยังไม่ได้ใส่';
+
+  @override
+  String get cardAtmRow => 'ธนาคารของคุณเมื่อถอนที่ ATM ต่างประเทศ';
+
+  @override
+  String get cardAtmUnknown => 'ไม่แน่ใจ';
+
+  @override
+  String get cardAtmNoFee => 'ไม่มีค่าธรรมเนียม';
+
+  @override
+  String get cardAtmRefunds => 'คืนค่าธรรมเนียม ATM';
+
+  @override
+  String cardAtmFixed(String currency) {
+    return 'ค่าธรรมเนียมคงที่เป็น $currency';
+  }
+
+  @override
+  String get cardAtmPercent => 'เปอร์เซ็นต์ของยอดถอน';
+
+  @override
+  String cardAtmFixedValue(String amount) {
+    return 'ครั้งละ $amount';
+  }
+
+  @override
+  String cardAtmPercentValue(String percent) {
+    return '$percent ของแต่ละครั้งที่ถอน';
+  }
+
+  @override
+  String get cardSheetTitle => 'บัตรของคุณ';
+
+  @override
+  String get cardFeeLabel => 'ค่าธรรมเนียมใช้จ่ายต่างประเทศ';
+
+  @override
+  String get cardFeeHintThai =>
+      'ธนาคารไทยระบุไม่เกิน 2.5% (ตารางค่าธรรมเนียมกสิกรไทย ทีทีบี ปี 2025-2026)';
+
+  @override
+  String get cardFeeHintOther =>
+      'มักอยู่ระหว่าง 0% ถึง 3% ดูตัวเลขจริงในเงื่อนไขบัตร';
+
+  @override
+  String get cardAtmLabel => 'ธนาคารของคุณคิดเท่าไรเมื่อถอนที่ ATM ต่างประเทศ';
+
+  @override
+  String get cardFeeInvalid => 'ใส่ตัวเลข 0 ถึง 20';
+
+  @override
+  String get cardAtmValueInvalid => 'ใส่จำนวนค่าธรรมเนียม';
+
+  @override
+  String get cardSheetPrivacy => 'เก็บเฉพาะตัวเลขเหล่านี้ ไม่เก็บเลขบัตร';
+
+  @override
+  String get cardSheetSave => 'บันทึกข้อมูลบัตร';
+
+  @override
+  String get arrivalOn => 'เปิดไว้สำหรับการเดินทางครั้งต่อไป';
+
+  @override
+  String get arrivalOnBody =>
+      'เมื่อโทรศัพท์ถึงประเทศที่ใช้สกุลเงินอื่น จะแจ้งเตือนครั้งเดียวว่าควรเลือกสกุลเงินไหน';
+
+  @override
+  String get arrivalAllow => 'อนุญาตการแจ้งเตือน';
+
+  @override
+  String get arrivalBlocked => 'ปิดการแจ้งเตือนไว้ในการตั้งค่า';
+
+  @override
+  String get arrivalDemoTrigger => 'สาธิต · ถึงญี่ปุ่น';
+
+  @override
+  String get arrivalDemoFooter =>
+      'เฉพาะโหมดสาธิต แสดงการแจ้งเตือนเดียวกับที่ตำแหน่งจริงจะส่ง';
+
+  @override
+  String arrivalShownDemo(String body) {
+    return 'สาธิต · $body';
+  }
+
+  @override
+  String arrivalTitle(String country) {
+    return 'ถึง$countryแล้ว';
+  }
+
+  @override
+  String arrivalBody(String local, String home) {
+    return 'ถ้าเครื่องรูดบัตรถามว่าจ่ายเป็น $home หรือ $local ให้เลือก $local';
+  }
+
+  @override
+  String arrivalBodyAtm(String local, String home) {
+    return 'ถ้าเครื่องรูดบัตรหรือตู้ ATM ถามว่าจ่ายเป็น $home หรือ $local ให้เลือก $local';
+  }
+
+  @override
+  String get arrivalChannel => 'แจ้งเตือนเมื่อถึงปลายทาง';
+
+  @override
+  String get countryJapan => 'ญี่ปุ่น';
+
+  @override
+  String get countryThailand => 'ไทย';
 }

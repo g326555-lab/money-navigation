@@ -2579,6 +2579,660 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'no service charge'**
   String get billNoteNoService;
+
+  /// No description provided for @tabAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant'**
+  String get tabAssistant;
+
+  /// No description provided for @homeRouteNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next stop'**
+  String get homeRouteNext;
+
+  /// No description provided for @homeRouteAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM'**
+  String get homeRouteAtm;
+
+  /// No description provided for @homeRouteMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Market'**
+  String get homeRouteMarket;
+
+  /// No description provided for @homeRouteTerminal.
+  ///
+  /// In en, this message translates to:
+  /// **'Card terminal'**
+  String get homeRouteTerminal;
+
+  /// No description provided for @homeBriefingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning briefing'**
+  String get homeBriefingLabel;
+
+  /// No description provided for @homeBriefingOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the assistant'**
+  String get homeBriefingOpen;
+
+  /// No description provided for @homeBriefingNoNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough records yet to say how much cash today needs'**
+  String get homeBriefingNoNumber;
+
+  /// No description provided for @homeBriefingStops.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 stop on your calendar today} other{{count} stops on your calendar today}}'**
+  String homeBriefingStops(int count);
+
+  /// No description provided for @homeBriefingMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 more stop} other{{count} more stops}}'**
+  String homeBriefingMore(int count);
+
+  /// No description provided for @nearbyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch out nearby'**
+  String get nearbyLabel;
+
+  /// No description provided for @nearbyOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'See every warning nearby'**
+  String get nearbyOpen;
+
+  /// No description provided for @nearbyMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 more warning nearby} other{{count} more warnings nearby}}'**
+  String nearbyMore(int count);
+
+  /// No description provided for @nearbyNeedLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'See money traps near you'**
+  String get nearbyNeedLocation;
+
+  /// No description provided for @nearbyLocationPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses your location only while the app is open'**
+  String get nearbyLocationPrivacy;
+
+  /// No description provided for @nearbyLooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking ATMs and markets nearby'**
+  String get nearbyLooking;
+
+  /// No description provided for @nearbyClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to watch out for nearby'**
+  String get nearbyClear;
+
+  /// No description provided for @nearbyClearBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'From ATMs and markets Google Maps lists near you'**
+  String get nearbyClearBasis;
+
+  /// No description provided for @trapAtmFeeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign cards pay an ATM fee, for example {fee}'**
+  String trapAtmFeeTitle(String fee);
+
+  /// No description provided for @trapAtmFeeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Take out more at once so you pay the fee fewer times'**
+  String get trapAtmFeeBody;
+
+  /// No description provided for @trapAtmConversionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ATMs here may offer to convert'**
+  String get trapAtmConversionTitle;
+
+  /// No description provided for @trapAtmConversionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the local currency, not your own'**
+  String get trapAtmConversionBody;
+
+  /// No description provided for @trapCashOnlyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash only'**
+  String get trapCashOnlyTitle;
+
+  /// No description provided for @trapCashOnlyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring cash before you go'**
+  String get trapCashOnlyBody;
+
+  /// No description provided for @briefingCashOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash only'**
+  String get briefingCashOnly;
+
+  /// No description provided for @briefingCardsOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Takes cards'**
+  String get briefingCardsOk;
+
+  /// No description provided for @briefingPayUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment not listed on Google Maps'**
+  String get briefingPayUnknown;
+
+  /// No description provided for @briefingLastSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'You spent {amount} here last time'**
+  String briefingLastSpent(String amount);
+
+  /// No description provided for @briefingLastSpentSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample record · {amount} here last time'**
+  String briefingLastSpentSample(String amount);
+
+  /// No description provided for @briefingPlaceDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'{place} · {meters} m'**
+  String briefingPlaceDistance(String place, String meters);
+
+  /// No description provided for @briefingSourceLive.
+  ///
+  /// In en, this message translates to:
+  /// **'{source} · live'**
+  String briefingSourceLive(String source);
+
+  /// No description provided for @briefingSourceChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'{source} · checked {date}'**
+  String briefingSourceChecked(String source, String date);
+
+  /// No description provided for @assistantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant'**
+  String get assistantTitle;
+
+  /// No description provided for @assistantCashLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash for today'**
+  String get assistantCashLabel;
+
+  /// No description provided for @assistantCashAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount}'**
+  String assistantCashAbout(String amount);
+
+  /// No description provided for @assistantCashUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough to go on yet'**
+  String get assistantCashUnknown;
+
+  /// No description provided for @assistantStops.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s stops'**
+  String get assistantStops;
+
+  /// No description provided for @assistantPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Card, cash or QR'**
+  String get assistantPay;
+
+  /// No description provided for @assistantPayFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Compared for {place}'**
+  String assistantPayFor(String place);
+
+  /// No description provided for @assistantCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Your card'**
+  String get assistantCard;
+
+  /// No description provided for @assistantCardFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone. Your bank\'s fee page has these numbers.'**
+  String get assistantCardFooter;
+
+  /// No description provided for @assistantCardFromAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Card fee from your account profile'**
+  String get assistantCardFromAccount;
+
+  /// No description provided for @assistantNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Near you'**
+  String get assistantNearby;
+
+  /// No description provided for @assistantArrival.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival alert'**
+  String get assistantArrival;
+
+  /// No description provided for @cashBasisNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a few purchases or connect your calendar to get an estimate'**
+  String get cashBasisNone;
+
+  /// No description provided for @cashBasisPattern.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{From your spending on 1 earlier day} other{From your spending on {days} earlier days}}'**
+  String cashBasisPattern(int days);
+
+  /// No description provided for @cashBasisPatternSamples.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{From sample records on 1 day} other{From sample records on {days} days}}'**
+  String cashBasisPatternSamples(int days);
+
+  /// No description provided for @cashBasisCashOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 stop takes cash only (Google Maps)} other{{count} stops take cash only (Google Maps)}}'**
+  String cashBasisCashOnly(int count);
+
+  /// No description provided for @cashBasisLastVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'includes what you spent there last time'**
+  String get cashBasisLastVisit;
+
+  /// No description provided for @calendarConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Read today\'s calendar'**
+  String get calendarConnect;
+
+  /// No description provided for @calendarDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar access is off in Settings'**
+  String get calendarDenied;
+
+  /// No description provided for @calendarPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Title, place and time only. Nothing is changed.'**
+  String get calendarPrivacy;
+
+  /// No description provided for @calendarReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading today\'s calendar'**
+  String get calendarReading;
+
+  /// No description provided for @calendarNoStops.
+  ///
+  /// In en, this message translates to:
+  /// **'No stops with a place on your calendar today'**
+  String get calendarNoStops;
+
+  /// No description provided for @payCompareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheapest way to pay'**
+  String get payCompareLabel;
+
+  /// No description provided for @payCompareAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Type an amount to compare'**
+  String get payCompareAsk;
+
+  /// No description provided for @payCompareAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get payCompareAmountHint;
+
+  /// No description provided for @payCompareBestCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay by card'**
+  String get payCompareBestCard;
+
+  /// No description provided for @payCompareBestCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay in cash'**
+  String get payCompareBestCash;
+
+  /// No description provided for @payCompareBestQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay by QR'**
+  String get payCompareBestQr;
+
+  /// No description provided for @payCompareSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Card and cash cost about the same'**
+  String get payCompareSame;
+
+  /// No description provided for @payCompareCashOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash only here'**
+  String get payCompareCashOnly;
+
+  /// No description provided for @payCompareNeedCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your card\'s foreign fee to compare'**
+  String get payCompareNeedCard;
+
+  /// No description provided for @payCompareNeedWithdrawal.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash depends on how much you take out at once'**
+  String get payCompareNeedWithdrawal;
+
+  /// No description provided for @payCompareNoRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for today\'s {currency} rate'**
+  String payCompareNoRate(String currency);
+
+  /// No description provided for @payCompareBreakEven.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash costs less than the card only when you take out {amount} or more at once'**
+  String payCompareBreakEven(String amount);
+
+  /// No description provided for @payCompareAtmFeeSource.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM fee {fee} from {source}'**
+  String payCompareAtmFeeSource(String fee, String source);
+
+  /// No description provided for @payCompareNoAtmFee.
+  ///
+  /// In en, this message translates to:
+  /// **'No published ATM fee for foreign cards here, so cash is not priced'**
+  String get payCompareNoAtmFee;
+
+  /// No description provided for @payCompareDemoRate.
+  ///
+  /// In en, this message translates to:
+  /// **'fixed demo rate'**
+  String get payCompareDemoRate;
+
+  /// No description provided for @payCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get payCard;
+
+  /// No description provided for @payCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash from an ATM'**
+  String get payCash;
+
+  /// No description provided for @payQr.
+  ///
+  /// In en, this message translates to:
+  /// **'QR'**
+  String get payQr;
+
+  /// No description provided for @payExtra.
+  ///
+  /// In en, this message translates to:
+  /// **'+{amount}'**
+  String payExtra(String amount);
+
+  /// No description provided for @payNotTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Not taken here'**
+  String get payNotTaken;
+
+  /// No description provided for @payNeedCardFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your card fee'**
+  String get payNeedCardFee;
+
+  /// No description provided for @payNeedWithdrawal.
+  ///
+  /// In en, this message translates to:
+  /// **'Depends on the withdrawal'**
+  String get payNeedWithdrawal;
+
+  /// No description provided for @payNoQrFee.
+  ///
+  /// In en, this message translates to:
+  /// **'No published fee'**
+  String get payNoQrFee;
+
+  /// No description provided for @cardFeeRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign transaction fee'**
+  String get cardFeeRow;
+
+  /// No description provided for @cardFeeMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not added yet'**
+  String get cardFeeMissing;
+
+  /// No description provided for @cardAtmRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bank at foreign ATMs'**
+  String get cardAtmRow;
+
+  /// No description provided for @cardAtmUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sure'**
+  String get cardAtmUnknown;
+
+  /// No description provided for @cardAtmNoFee.
+  ///
+  /// In en, this message translates to:
+  /// **'No fee'**
+  String get cardAtmNoFee;
+
+  /// No description provided for @cardAtmRefunds.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunds ATM fees'**
+  String get cardAtmRefunds;
+
+  /// No description provided for @cardAtmFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed fee in {currency}'**
+  String cardAtmFixed(String currency);
+
+  /// No description provided for @cardAtmPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Percent of the withdrawal'**
+  String get cardAtmPercent;
+
+  /// No description provided for @cardAtmFixedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} each time'**
+  String cardAtmFixedValue(String amount);
+
+  /// No description provided for @cardAtmPercentValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} of each withdrawal'**
+  String cardAtmPercentValue(String percent);
+
+  /// No description provided for @cardSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your card'**
+  String get cardSheetTitle;
+
+  /// No description provided for @cardFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign transaction fee'**
+  String get cardFeeLabel;
+
+  /// No description provided for @cardFeeHintThai.
+  ///
+  /// In en, this message translates to:
+  /// **'Thai banks publish up to 2.5% (Kasikorn, ttb fee lists 2025-2026)'**
+  String get cardFeeHintThai;
+
+  /// No description provided for @cardFeeHintOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Often between 0% and 3%. Your card\'s terms list the exact figure.'**
+  String get cardFeeHintOther;
+
+  /// No description provided for @cardAtmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'What your bank charges at a foreign ATM'**
+  String get cardAtmLabel;
+
+  /// No description provided for @cardFeeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a number from 0 to 20'**
+  String get cardFeeInvalid;
+
+  /// No description provided for @cardAtmValueInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the fee amount'**
+  String get cardAtmValueInvalid;
+
+  /// No description provided for @cardSheetPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Only these numbers are kept. Never your card number.'**
+  String get cardSheetPrivacy;
+
+  /// No description provided for @cardSheetSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save card facts'**
+  String get cardSheetSave;
+
+  /// No description provided for @arrivalOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On for your next arrival'**
+  String get arrivalOn;
+
+  /// No description provided for @arrivalOnBody.
+  ///
+  /// In en, this message translates to:
+  /// **'When your phone lands in a country with another currency, you get one alert on which currency to pick'**
+  String get arrivalOnBody;
+
+  /// No description provided for @arrivalAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get arrivalAllow;
+
+  /// No description provided for @arrivalBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off in Settings'**
+  String get arrivalBlocked;
+
+  /// No description provided for @arrivalDemoTrigger.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo · Land in Japan'**
+  String get arrivalDemoTrigger;
+
+  /// No description provided for @arrivalDemoFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo state only. Shows the same alert your phone\'s location would.'**
+  String get arrivalDemoFooter;
+
+  /// No description provided for @arrivalShownDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo · {body}'**
+  String arrivalShownDemo(String body);
+
+  /// No description provided for @arrivalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Landed in {country}'**
+  String arrivalTitle(String country);
+
+  /// No description provided for @arrivalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If a card machine asks {home} or {local}, pick {local}'**
+  String arrivalBody(String local, String home);
+
+  /// No description provided for @arrivalBodyAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'If a card machine or ATM asks {home} or {local}, pick {local}'**
+  String arrivalBodyAtm(String local, String home);
+
+  /// No description provided for @arrivalChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival alerts'**
+  String get arrivalChannel;
+
+  /// No description provided for @countryJapan.
+  ///
+  /// In en, this message translates to:
+  /// **'Japan'**
+  String get countryJapan;
+
+  /// No description provided for @countryThailand.
+  ///
+  /// In en, this message translates to:
+  /// **'Thailand'**
+  String get countryThailand;
 }
 
 class _AppLocalizationsDelegate

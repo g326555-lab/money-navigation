@@ -1565,4 +1565,431 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get billNoteNoService => 'no service charge';
+
+  @override
+  String get tabAssistant => 'Assistant';
+
+  @override
+  String get homeRouteNext => 'Next stop';
+
+  @override
+  String get homeRouteAtm => 'ATM';
+
+  @override
+  String get homeRouteMarket => 'Market';
+
+  @override
+  String get homeRouteTerminal => 'Card terminal';
+
+  @override
+  String get homeBriefingLabel => 'Morning briefing';
+
+  @override
+  String get homeBriefingOpen => 'Open the assistant';
+
+  @override
+  String get homeBriefingNoNumber =>
+      'Not enough records yet to say how much cash today needs';
+
+  @override
+  String homeBriefingStops(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stops on your calendar today',
+      one: '1 stop on your calendar today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeBriefingMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more stops',
+      one: '1 more stop',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nearbyLabel => 'Watch out nearby';
+
+  @override
+  String get nearbyOpen => 'See every warning nearby';
+
+  @override
+  String nearbyMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more warnings nearby',
+      one: '1 more warning nearby',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nearbyNeedLocation => 'See money traps near you';
+
+  @override
+  String get nearbyLocationPrivacy =>
+      'Uses your location only while the app is open';
+
+  @override
+  String get nearbyLooking => 'Checking ATMs and markets nearby';
+
+  @override
+  String get nearbyClear => 'Nothing to watch out for nearby';
+
+  @override
+  String get nearbyClearBasis =>
+      'From ATMs and markets Google Maps lists near you';
+
+  @override
+  String trapAtmFeeTitle(String fee) {
+    return 'Foreign cards pay an ATM fee, for example $fee';
+  }
+
+  @override
+  String get trapAtmFeeBody =>
+      'Take out more at once so you pay the fee fewer times';
+
+  @override
+  String get trapAtmConversionTitle => 'ATMs here may offer to convert';
+
+  @override
+  String get trapAtmConversionBody => 'Choose the local currency, not your own';
+
+  @override
+  String get trapCashOnlyTitle => 'Cash only';
+
+  @override
+  String get trapCashOnlyBody => 'Bring cash before you go';
+
+  @override
+  String get briefingCashOnly => 'Cash only';
+
+  @override
+  String get briefingCardsOk => 'Takes cards';
+
+  @override
+  String get briefingPayUnknown => 'Payment not listed on Google Maps';
+
+  @override
+  String briefingLastSpent(String amount) {
+    return 'You spent $amount here last time';
+  }
+
+  @override
+  String briefingLastSpentSample(String amount) {
+    return 'Sample record · $amount here last time';
+  }
+
+  @override
+  String briefingPlaceDistance(String place, String meters) {
+    return '$place · $meters m';
+  }
+
+  @override
+  String briefingSourceLive(String source) {
+    return '$source · live';
+  }
+
+  @override
+  String briefingSourceChecked(String source, String date) {
+    return '$source · checked $date';
+  }
+
+  @override
+  String get assistantTitle => 'Assistant';
+
+  @override
+  String get assistantCashLabel => 'Cash for today';
+
+  @override
+  String assistantCashAbout(String amount) {
+    return 'About $amount';
+  }
+
+  @override
+  String get assistantCashUnknown => 'Not enough to go on yet';
+
+  @override
+  String get assistantStops => 'Today\'s stops';
+
+  @override
+  String get assistantPay => 'Card, cash or QR';
+
+  @override
+  String assistantPayFor(String place) {
+    return 'Compared for $place';
+  }
+
+  @override
+  String get assistantCard => 'Your card';
+
+  @override
+  String get assistantCardFooter =>
+      'Saved on this phone. Your bank\'s fee page has these numbers.';
+
+  @override
+  String get assistantCardFromAccount => 'Card fee from your account profile';
+
+  @override
+  String get assistantNearby => 'Near you';
+
+  @override
+  String get assistantArrival => 'Arrival alert';
+
+  @override
+  String get cashBasisNone =>
+      'Save a few purchases or connect your calendar to get an estimate';
+
+  @override
+  String cashBasisPattern(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'From your spending on $days earlier days',
+      one: 'From your spending on 1 earlier day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cashBasisPatternSamples(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'From sample records on $days days',
+      one: 'From sample records on 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cashBasisCashOnly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stops take cash only (Google Maps)',
+      one: '1 stop takes cash only (Google Maps)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cashBasisLastVisit => 'includes what you spent there last time';
+
+  @override
+  String get calendarConnect => 'Read today\'s calendar';
+
+  @override
+  String get calendarDenied => 'Calendar access is off in Settings';
+
+  @override
+  String get calendarPrivacy =>
+      'Title, place and time only. Nothing is changed.';
+
+  @override
+  String get calendarReading => 'Reading today\'s calendar';
+
+  @override
+  String get calendarNoStops => 'No stops with a place on your calendar today';
+
+  @override
+  String get payCompareLabel => 'Cheapest way to pay';
+
+  @override
+  String get payCompareAsk => 'Type an amount to compare';
+
+  @override
+  String get payCompareAmountHint => 'Amount';
+
+  @override
+  String get payCompareBestCard => 'Pay by card';
+
+  @override
+  String get payCompareBestCash => 'Pay in cash';
+
+  @override
+  String get payCompareBestQr => 'Pay by QR';
+
+  @override
+  String get payCompareSame => 'Card and cash cost about the same';
+
+  @override
+  String get payCompareCashOnly => 'Cash only here';
+
+  @override
+  String get payCompareNeedCard => 'Add your card\'s foreign fee to compare';
+
+  @override
+  String get payCompareNeedWithdrawal =>
+      'Cash depends on how much you take out at once';
+
+  @override
+  String payCompareNoRate(String currency) {
+    return 'Waiting for today\'s $currency rate';
+  }
+
+  @override
+  String payCompareBreakEven(String amount) {
+    return 'Cash costs less than the card only when you take out $amount or more at once';
+  }
+
+  @override
+  String payCompareAtmFeeSource(String fee, String source) {
+    return 'ATM fee $fee from $source';
+  }
+
+  @override
+  String get payCompareNoAtmFee =>
+      'No published ATM fee for foreign cards here, so cash is not priced';
+
+  @override
+  String get payCompareDemoRate => 'fixed demo rate';
+
+  @override
+  String get payCard => 'Card';
+
+  @override
+  String get payCash => 'Cash from an ATM';
+
+  @override
+  String get payQr => 'QR';
+
+  @override
+  String payExtra(String amount) {
+    return '+$amount';
+  }
+
+  @override
+  String get payNotTaken => 'Not taken here';
+
+  @override
+  String get payNeedCardFee => 'Add your card fee';
+
+  @override
+  String get payNeedWithdrawal => 'Depends on the withdrawal';
+
+  @override
+  String get payNoQrFee => 'No published fee';
+
+  @override
+  String get cardFeeRow => 'Foreign transaction fee';
+
+  @override
+  String get cardFeeMissing => 'Not added yet';
+
+  @override
+  String get cardAtmRow => 'Your bank at foreign ATMs';
+
+  @override
+  String get cardAtmUnknown => 'Not sure';
+
+  @override
+  String get cardAtmNoFee => 'No fee';
+
+  @override
+  String get cardAtmRefunds => 'Refunds ATM fees';
+
+  @override
+  String cardAtmFixed(String currency) {
+    return 'Fixed fee in $currency';
+  }
+
+  @override
+  String get cardAtmPercent => 'Percent of the withdrawal';
+
+  @override
+  String cardAtmFixedValue(String amount) {
+    return '$amount each time';
+  }
+
+  @override
+  String cardAtmPercentValue(String percent) {
+    return '$percent of each withdrawal';
+  }
+
+  @override
+  String get cardSheetTitle => 'Your card';
+
+  @override
+  String get cardFeeLabel => 'Foreign transaction fee';
+
+  @override
+  String get cardFeeHintThai =>
+      'Thai banks publish up to 2.5% (Kasikorn, ttb fee lists 2025-2026)';
+
+  @override
+  String get cardFeeHintOther =>
+      'Often between 0% and 3%. Your card\'s terms list the exact figure.';
+
+  @override
+  String get cardAtmLabel => 'What your bank charges at a foreign ATM';
+
+  @override
+  String get cardFeeInvalid => 'Use a number from 0 to 20';
+
+  @override
+  String get cardAtmValueInvalid => 'Add the fee amount';
+
+  @override
+  String get cardSheetPrivacy =>
+      'Only these numbers are kept. Never your card number.';
+
+  @override
+  String get cardSheetSave => 'Save card facts';
+
+  @override
+  String get arrivalOn => 'On for your next arrival';
+
+  @override
+  String get arrivalOnBody =>
+      'When your phone lands in a country with another currency, you get one alert on which currency to pick';
+
+  @override
+  String get arrivalAllow => 'Allow notifications';
+
+  @override
+  String get arrivalBlocked => 'Notifications are off in Settings';
+
+  @override
+  String get arrivalDemoTrigger => 'Demo · Land in Japan';
+
+  @override
+  String get arrivalDemoFooter =>
+      'Demo state only. Shows the same alert your phone\'s location would.';
+
+  @override
+  String arrivalShownDemo(String body) {
+    return 'Demo · $body';
+  }
+
+  @override
+  String arrivalTitle(String country) {
+    return 'Landed in $country';
+  }
+
+  @override
+  String arrivalBody(String local, String home) {
+    return 'If a card machine asks $home or $local, pick $local';
+  }
+
+  @override
+  String arrivalBodyAtm(String local, String home) {
+    return 'If a card machine or ATM asks $home or $local, pick $local';
+  }
+
+  @override
+  String get arrivalChannel => 'Arrival alerts';
+
+  @override
+  String get countryJapan => 'Japan';
+
+  @override
+  String get countryThailand => 'Thailand';
 }
