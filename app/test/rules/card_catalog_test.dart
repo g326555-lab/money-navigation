@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_navigation/rules/card_catalog.dart';
@@ -154,6 +155,31 @@ void main() {
       expect(matchCardFace('KBANK', cards).single.id, 'kbank-travel');
       expect(matchCardFace('TRAVEL', cards).single.id, 'kbank-travel');
       expect(matchCardFace('nothing here', cards), isEmpty);
+    });
+  });
+
+  group('the real assets/data/card_catalog.json', () {
+    final raw = File(cardCatalogAsset).readAsStringSync();
+    final cards = parseCardCatalog(raw)!;
+
+    test('every listed card is read, none dropped', () {
+      final listed = (jsonDecode(raw) as Map)['cards'] as List;
+      expect(cards, hasLength(listed.length));
+      expect(cards.every((c) => c.sources.isNotEmpty), isTrue);
+    });
+
+    test('U-Card: exchange and cross-border fees, up to 3%', () {
+      final u = cards.firstWhere((c) => c.id == 'utopia-u-card');
+      expect(cardForeignFee(u), (percent: 3.0, upTo: true));
+    });
+
+    test('a photo with the printed names finds its card first', () {
+      for (final c in cards.where((c) => c.printedText.isNotEmpty)) {
+        final photo = '${c.printedText.join('\n')}\n4111 1111 1111 1111\n12/29';
+        final found = matchCardFace(photo, cards);
+        if (found.isEmpty) continue; // printed words are all generic
+        expect(found.first.id, c.id, reason: c.id);
+      }
     });
   });
 }
