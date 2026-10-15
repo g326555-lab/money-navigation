@@ -8,10 +8,17 @@ import '../../services/ai/cloud_functions.dart';
 
 /// A calendar place as Google Maps knows it.
 class LookedUpPlace {
-  const LookedUpPlace({required this.name, required this.payment});
+  const LookedUpPlace({
+    required this.name,
+    required this.payment,
+    this.lat,
+    this.lng,
+  });
 
   final String name;
   final PlacePayment payment;
+  final double? lat;
+  final double? lng;
 }
 
 /// Places facts for the briefing, through the project's Places functions.
@@ -30,24 +37,29 @@ class PlacesClient {
   final Map<String, LookedUpPlace?> _lookups = {};
 
   /// ATMs and markets around [position] with their payment options.
-  Future<List<NearbyPlaceFact>> nearby(Position position) async {
+  Future<List<NearbyPlaceFact>> nearby(Position position) =>
+      nearbyAt(position.latitude, position.longitude);
+
+  /// The same around any point (a demo stop, never the real phone).
+  Future<List<NearbyPlaceFact>> nearbyAt(double lat, double lng) async {
     if (!CloudFunctions.configured) return const [];
     final results = await Future.wait([
-      _nearby(position, PlaceKind.atm, const ['atm']),
-      _nearby(position, PlaceKind.market, const ['market']),
+      _nearby(lat, lng, PlaceKind.atm, const ['atm']),
+      _nearby(lat, lng, PlaceKind.market, const ['market']),
     ]);
     return [for (final list in results) ...list];
   }
 
   Future<List<NearbyPlaceFact>> _nearby(
-    Position position,
+    double lat,
+    double lng,
     PlaceKind kind,
     List<String> types,
   ) async {
     try {
       final json = await _functions.call('places-market', {
-        'lat': position.latitude,
-        'lng': position.longitude,
+        'lat': lat,
+        'lng': lng,
         'types': types,
         'withPayment': true,
         'languageCode': ?languageCode,
@@ -63,7 +75,7 @@ class PlacesClient {
               name: p['name'] as String,
               kind: kind,
               payment: paymentFromJson(p['payment']),
-              distanceM: _distance(position, p['lat'], p['lng']),
+              distanceM: _distance(lat, lng, p['lat'], p['lng']),
             ),
       ];
     } on CloudFunctionError {
@@ -88,6 +100,12 @@ class PlacesClient {
           ? LookedUpPlace(
               name: place['name'] as String,
               payment: paymentFromJson(place['payment']),
+              lat: place['lat'] is num
+                  ? (place['lat'] as num).toDouble()
+                  : null,
+              lng: place['lng'] is num
+                  ? (place['lng'] as num).toDouble()
+                  : null,
             )
           : null;
       return _lookups[key] = found;
@@ -97,11 +115,16 @@ class PlacesClient {
     }
   }
 
-  static double? _distance(Position from, Object? lat, Object? lng) {
+  static double? _distance(
+    double fromLat,
+    double fromLng,
+    Object? lat,
+    Object? lng,
+  ) {
     if (lat is! num || lng is! num) return null;
     return Geolocator.distanceBetween(
-      from.latitude,
-      from.longitude,
+      fromLat,
+      fromLng,
       lat.toDouble(),
       lng.toDouble(),
     );

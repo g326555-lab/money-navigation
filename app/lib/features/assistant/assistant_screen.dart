@@ -81,6 +81,16 @@ class _AssistantScreenState extends State<AssistantScreen> {
     final l10n = AppLocalizations.of(context);
     final type = AppTypography.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
+    _briefing.markDemo(scope.settings.demoState);
+    final demoKey = scope.settings.demoPersona?.key;
+    if (demoKey != _briefing.demoKey) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _briefing.useDemo(
+          demoKey,
+          currency: scope.settings.demoPersona?.localCurrency,
+        ),
+      );
+    }
     final trip = TripContext.of(
       scope,
       // The demo state keeps the facts it shipped with.
@@ -124,6 +134,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
               _CashHero(plan: plan),
               SectionHeader(l10n.assistantStops),
               _stops(l10n, plan, selected, demo: scope.settings.demoState),
+              if (scope.settings.demoState) GroupFooter(l10n.calendarSample),
               const SizedBox(height: AppSpacing.zoneGap),
               PayCompareCard(
                 trip: trip,
@@ -164,20 +175,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
     StopCash? selected, {
     required bool demo,
   }) {
-    // A demo traveler is somewhere else: the phone's calendar is not
-    // theirs, so say it is off rather than "no stops".
-    if (demo) {
-      return GroupCard(
-        children: [
-          GroupRow(
-            leading: const IconTile.blue(icon: Icons.event_rounded),
-            title: l10n.nearbyDemoOff,
-            subtitle: l10n.calendarPrivacy,
-          ),
-        ],
-      );
-    }
-    final access = _briefing.calendar.access;
+    final access = demo ? CalendarAccess.granted : _briefing.calendar.access;
     if (access != CalendarAccess.granted) {
       return GroupCard(
         children: [
@@ -273,18 +271,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
     List<TrapWarning> traps, {
     required bool demo,
   }) {
-    if (demo) {
-      return GroupCard(
-        children: [
-          GroupRow(
-            leading: const IconTile.blue(icon: Icons.near_me_rounded),
-            title: l10n.nearbyDemoOff,
-            subtitle: l10n.nearbyDemoOffBody,
-          ),
-        ],
-      );
-    }
-    switch (_briefing.nearbyState) {
+    switch (demo ? _briefing.demoNearbyState : _briefing.nearbyState) {
       case NearbyState.noLocation:
         return GroupCard(
           children: [

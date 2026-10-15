@@ -15,6 +15,7 @@ import 'package:money_navigation/rules/day_cash.dart';
 import 'package:money_navigation/rules/nearby_traps.dart';
 import 'package:money_navigation/rules/pay_route.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:money_navigation/rules/demo_calendar.dart';
 import 'package:money_navigation/rules/demo_personas.dart';
 import 'package:money_navigation/rules/pay_facts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -161,6 +162,7 @@ void main() {
     await warmMarketPrices();
     // Load the facts file once in real async; rootBundle caches the future.
     await rootBundle.loadString(payFactsAsset);
+    await rootBundle.loadString(demoCalendarAsset);
   });
   setUp(resetPreferences);
 
@@ -191,6 +193,23 @@ void main() {
     );
     await settle(tester, briefing);
     return (briefing, card);
+  }
+
+  /// Like [pumpAssistant], then lets the demo calendar load (rootBundle
+  /// answers outside fake async) and the controller finish.
+  Future<void> pumpDemoAssistant(WidgetTester tester, Stores s) async {
+    final (briefing, _) = await pumpAssistant(tester, s);
+    for (
+      var i = 0;
+      i < 20 && briefing.cashPlan(const [], demo: true) == null;
+      i++
+    ) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await pumpFrames(tester, frames: 5);
+    }
+    await pumpFrames(tester, frames: 5);
   }
 
   testWidgets('shows the Assistant title', (tester) async {
@@ -286,13 +305,52 @@ void main() {
     });
   });
 
+  group('demo sample calendar in the controller', () {
+    test('cashPlan: demo uses the sample stops, real ignores none', () async {
+      final briefing = BriefingController(
+        calendar: FakeCalendar([
+          DayEvent(
+            title: 'Lunch',
+            location: 'Ameyoko, Ueno',
+            start: DateTime.now().copyWith(hour: 12, minute: 0),
+          ),
+        ]),
+        places: FakePlaces(),
+        location: FakeLocation(),
+        countries: FakeCountry(),
+        card: CardProfileStore(prefs: SharedPreferencesAsync()),
+      );
+      await briefing.useDemo('visitorBangkok', currency: 'THB');
+      final demo = briefing.cashPlan(const [], demo: true);
+      expect(demo, isNotNull);
+      expect(demo!.stops, hasLength(3));
+      // The phone calendar was never read, so the real plan has no stops.
+      final real = briefing.cashPlan(const [], demo: false);
+      expect(real?.stops ?? const [], isEmpty);
+    });
+  });
+
   group('near you in a demo state', () {
-    testWidgets('the Thai-in-Tokyo demo says nearby is off', (tester) async {
-      await pumpAssistant(tester, await stores(demo: 'thaiTokyo'));
-      await scrollTo(tester, find.text(demoOff));
-      expect(find.text(demoOff), findsOneWidget);
+    testWidgets('the Thai-in-Tokyo demo shows the sample calendar', (
+      tester,
+    ) async {
+      await pumpDemoAssistant(tester, await stores(demo: 'thaiTokyo'));
+      await scrollTo(tester, find.text('Sample calendar'));
+      expect(find.text('Sample calendar'), findsOneWidget);
       expect(find.text('See money traps near you'), findsNothing);
       expect(find.text('Checking ATMs and markets nearby'), findsNothing);
+      expect(find.text(demoOff), findsNothing);
+    });
+
+    testWidgets('the visitor in Bangkok demo lists the sample stops', (
+      tester,
+    ) async {
+      await pumpDemoAssistant(tester, await stores(demo: 'visitorBangkok'));
+      await scrollTo(tester, find.text('Terminal 21 Asok'));
+      expect(find.text('Terminal 21 Asok'), findsOneWidget);
+      expect(find.text('Jim Thompson House Museum'), findsOneWidget);
+      expect(find.text('Sample calendar'), findsOneWidget);
+      expect(find.text('Read today\'s calendar'), findsNothing);
     });
 
     testWidgets('outside the demo state nearby is not off', (tester) async {

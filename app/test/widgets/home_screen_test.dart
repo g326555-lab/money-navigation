@@ -9,6 +9,7 @@ import 'package:money_navigation/features/briefing/arrival_alerts.dart';
 import 'package:money_navigation/features/briefing/briefing_controller.dart';
 import 'package:money_navigation/features/home/home_screen.dart';
 import 'package:money_navigation/features/home/route_line.dart';
+import 'package:money_navigation/rules/demo_calendar.dart';
 import 'package:money_navigation/rules/demo_personas.dart';
 import 'package:money_navigation/rules/pay_facts.dart';
 import 'package:money_navigation/shared/odometer.dart';
@@ -96,6 +97,7 @@ void main() {
     // rootBundle caches the first load; doing it here, in real async, keeps
     // a later test from awaiting a load started inside another fake zone.
     await rootBundle.loadString(payFactsAsset);
+    await rootBundle.loadString(demoCalendarAsset);
   });
   setUp(resetPreferences);
 
@@ -296,6 +298,34 @@ void main() {
       expect(find.text('Checking ATMs and markets nearby'), findsNothing);
       expect(find.text('Watch out nearby'), findsNothing);
       expect(find.text('Nothing to watch out for nearby'), findsNothing);
+    });
+
+    testWidgets('a demo state lists the sample stops, not a calendar prompt', (
+      tester,
+    ) async {
+      final stores = Stores();
+      await stores.trip.load();
+      await stores.settings.load(personas: personas);
+      await stores.settings.setDemoPersona(personas.byKey('visitorBangkok'));
+      final briefing = BriefingController(card: CardProfileStore());
+      await tester.pumpWidget(home(stores, briefing));
+      await settleBriefing(tester, briefing);
+      for (
+        var i = 0;
+        i < 40 && find.text('Sample calendar').evaluate().isEmpty;
+        i++
+      ) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 100)),
+        );
+        await pumpFrames(tester, frames: 5);
+      }
+      await pumpFrames(tester, frames: 5);
+
+      expect(find.text('Sample calendar'), findsOneWidget);
+      expect(find.text('Jim Thompson House'), findsOneWidget);
+      expect(find.text('Lunch and shopping'), findsOneWidget);
+      expect(find.text('Read today\'s calendar'), findsNothing);
     });
 
     testWidgets('an empty trip still shows the briefing and nearby cards', (

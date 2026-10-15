@@ -21,12 +21,16 @@ class BriefingCard extends StatelessWidget {
     super.key,
     required this.plan,
     required this.calendarConnected,
+    this.sample = false,
     required this.onConnect,
     required this.onOpen,
   });
 
   final DayCashPlan? plan;
   final bool calendarConnected;
+
+  /// The stops come from the demo's sample calendar.
+  final bool sample;
   final VoidCallback onConnect;
   final VoidCallback onOpen;
 
@@ -96,6 +100,7 @@ class BriefingCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               for (final s in stops.take(HomeMetrics.homeEvents))
                 _StopLine(stop: s, locale: locale),
+              if (sample) Text(l10n.calendarSample, style: type.footer),
               if (stops.length > HomeMetrics.homeEvents)
                 Text(
                   l10n.homeBriefingMore(stops.length - HomeMetrics.homeEvents),

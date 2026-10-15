@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../rules/day_cash.dart';
+import '../../rules/demo_calendar.dart';
 import '../../rules/facts_cache.dart';
 import '../../rules/nearby_traps.dart';
 import '../../rules/pay_facts.dart';
@@ -114,6 +115,7 @@ class BriefingController extends ChangeNotifier {
   /// Re-reads today's events and the nearby places. Called on start and on
   /// pull to refresh; retries the facts file if it failed to load.
   Future<void> refresh({bool askLocation = false}) async {
+    if (_demoActive) return;
     if (_facts == null) await _loadFacts();
     await Future.wait([_loadEvents(), _loadNearby(ask: askLocation)]);
   }
@@ -126,6 +128,7 @@ class BriefingController extends ChangeNotifier {
   /// (throttled), so a landing is noticed the same day; the calendar only
   /// on a new day.
   Future<void> refreshIfStale() async {
+    if (_demoActive) return;
     final now = DateTime.now();
     final day = DateTime(now.year, now.month, now.day);
     final last = _nearbyAt;
@@ -137,12 +140,14 @@ class BriefingController extends ChangeNotifier {
   }
 
   Future<void> connectCalendar() async {
+    if (_demoActive) return;
     final granted = await calendar.requestAccess();
     notifyListeners();
     if (granted) await _loadEvents();
   }
 
   Future<void> _loadEvents() async {
+    if (_demoActive) return;
     final today = DateTime.now();
     _loadedDay = DateTime(today.year, today.month, today.day);
     if (calendar.access != CalendarAccess.granted) {
@@ -174,6 +179,7 @@ class BriefingController extends ChangeNotifier {
   }
 
   Future<void> _loadNearby({bool ask = false}) async {
+    if (_demoActive) return;
     _nearbyAt = DateTime.now();
     // Keep showing what was found while it refreshes.
     if (_nearbyState != NearbyState.done) {
@@ -196,13 +202,93 @@ class BriefingController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // The demo state's own calendar and surroundings. The phone's real
+  // calendar and location are never read for it.
+  String? _demoKey;
+  List<DayEvent> _demoEvents = const [];
+  List<NearbyPlaceFact> _demoNearby = const [];
+  String? _demoCountry;
+  NearbyState _demoNearbyState = NearbyState.idle;
+  NearbyState get demoNearbyState => _demoNearbyState;
+  String? get demoKey => _demoKey;
+
+  /// While true the phone's real calendar, location and country are never
+  /// read. Screens set it on every build, before anything loads.
+  bool _demoActive = false;
+  bool get demoActive => _demoActive;
+
+  void markDemo(bool on) {
+    if (on == _demoActive) return;
+    _demoActive = on;
+    // Back from the demo: load the real state once.
+    if (!on) Future.microtask(refresh);
+  }
+
+  /// Bumped on every switch so a load that finished late is dropped.
+  int _demoGeneration = 0;
+
+  /// Switches the sample calendar to [personaKey]'s (null leaves the demo).
+  /// The same pipeline as the real one: place lookup, then payment facts,
+  /// then what is nearby the first stop.
+  Future<void> useDemo(String? personaKey, {required String? currency}) async {
+    if (personaKey == _demoKey) return;
+    _demoKey = personaKey;
+    final generation = ++_demoGeneration;
+    bool stale() => generation != _demoGeneration;
+    _demoEvents = const [];
+    _demoNearby = const [];
+    _demoCountry = null;
+    _demoNearbyState = NearbyState.idle;
+    notifyListeners();
+    if (personaKey == null) return;
+    try {
+      final text = await (_bundle ?? rootBundle).loadString(demoCalendarAsset);
+      final raw =
+          demoCalendarEvents(text, personaKey, DateTime.now()) ?? const [];
+      if (stale()) return;
+      _demoEvents = raw;
+      _demoNearbyState = NearbyState.loading;
+      notifyListeners();
+      // No real position: the lookup is not biased towards the phone.
+      final looked = await Future.wait([
+        for (final e in raw) places.lookup(e.location!),
+      ]);
+      if (stale()) return;
+      _demoEvents = [
+        for (final (i, e) in raw.indexed)
+          looked[i] == null
+              ? e
+              : e.withPlace(looked[i]!.payment, looked[i]!.name),
+      ];
+      final first = looked.firstWhere(
+        (p) => p?.lat != null && p?.lng != null,
+        orElse: () => null,
+      );
+      if (first != null) {
+        final nearby = await places.nearbyAt(first.lat!, first.lng!);
+        if (stale()) return;
+        _demoNearby = nearby;
+      }
+      for (final c in _facts?.countries.values ?? const <CountryPayFacts>[]) {
+        if (c.currency == currency) _demoCountry = c.country;
+      }
+    } on Object {
+      // Whatever loaded stays; the rest is simply not shown.
+    } finally {
+      if (!stale()) {
+        _demoNearbyState = NearbyState.done;
+        notifyListeners();
+      }
+    }
+  }
+
   /// The cash plan for today from [history] (the ledger in view). A demo
   /// state is a prepared traveler somewhere else, so the phone's real
   /// calendar is left out of it.
   DayCashPlan? cashPlan(List<PastPurchase> history, {bool demo = false}) =>
       dayCash(
         history: history,
-        events: demo ? const [] : _events,
+        events: demo ? _demoEvents : _events,
         now: DateTime.now(),
       );
 
@@ -215,8 +301,14 @@ class BriefingController extends ChangeNotifier {
     bool demo = false,
     int limit = 3,
   }) {
-    // The phone's real surroundings do not belong to a demo traveler.
-    if (demo) return const [];
+    if (demo) {
+      // A demo traveler is where the sample calendar is, not where the phone is.
+      final sample = _demoCountry == null
+          ? null
+          : bundledFacts?.country(_demoCountry!);
+      final foreign = sample != null && sample.currency != homeCurrency;
+      return nearbyTraps(_demoNearby, foreign ? sample : null, limit: limit);
+    }
     final facts = countryCode == null ? null : this.facts?.country(countryCode);
     final foreign = facts != null && facts.currency != homeCurrency;
     return nearbyTraps(_nearby, foreign ? facts : null, limit: limit);

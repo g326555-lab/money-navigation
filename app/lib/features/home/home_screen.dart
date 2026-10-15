@@ -232,6 +232,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _briefing.places.languageCode = Localizations.localeOf(context)
         .languageCode;
     _checkArrival(scope);
+    // The demo reads its own sample calendar, never the phone's.
+    _briefing.markDemo(scope.settings.demoState);
+    final demoKey = persona?.key;
+    if (demoKey != _briefing.demoKey) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _briefing.useDemo(demoKey, currency: persona?.localCurrency),
+      );
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
@@ -314,14 +322,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   BriefingCard(
                     plan: plan,
                     calendarConnected:
+                        scope.settings.demoState ||
                         _briefing.calendar.access == CalendarAccess.granted,
+                    sample: scope.settings.demoState,
                     onConnect: _briefing.connectCalendar,
                     onOpen: widget.onOpenAssistant,
                   ),
                 NearbyCard(
                   // A demo traveler is not where the phone is.
                   state: scope.settings.demoState
-                      ? NearbyState.idle
+                      ? _briefing.demoNearbyState
                       : _briefing.nearbyState,
                   traps: traps,
                   onAskLocation: () => _briefing.refresh(askLocation: true),
