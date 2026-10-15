@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../core/colors.dart';
 import '../../core/elevation.dart';
+import '../../core/motion.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/nearby_traps.dart';
-import '../../shared/icon_tile.dart';
 import '../../shared/pressable.dart';
 import '../../shared/surface.dart';
 import '../briefing/briefing_controller.dart';
@@ -32,36 +32,51 @@ class NearbyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final type = AppTypography.of(context);
+    // The gap above lives here, so nothing is left behind while hidden.
+    final Widget? shown;
     if (state == NearbyState.noLocation) {
-      return Pressable(
+      // A quiet link, not another card: Home keeps one shape per job.
+      shown = Pressable(
         onPressed: onAskLocation,
         semanticLabel: l10n.nearbyNeedLocation,
-        child: Surface(
-          radius: AppRadius.lg,
-          color: AppColors.surface,
-          shadows: AppElevation.e0,
-          padding: const EdgeInsets.all(AppSpacing.lg),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppSizes.minTouchTarget),
           child: Row(
             children: [
-              const IconTile.blue(icon: Icons.near_me_rounded),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.nearbyNeedLocation, style: type.rowTitle),
-                    Text(l10n.nearbyLocationPrivacy, style: type.rowSubtitle),
-                  ],
-                ),
+              const Icon(
+                Icons.near_me_rounded,
+                size: AppSizes.pillIcon,
+                color: AppColors.onSurfaceTertiary,
               ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(child: Text(l10n.nearbyNeedLocation, style: type.link)),
             ],
           ),
         ),
       );
+    } else if (state == NearbyState.done && traps.isNotEmpty) {
+      shown = _warning(context);
+    } else {
+      shown = null;
     }
-    if (state != NearbyState.done || traps.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    return AnimatedSize(
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : AppMotion.standard,
+      curve: AppMotion.enter,
+      alignment: Alignment.topCenter,
+      child: shown == null
+          ? const SizedBox(width: double.infinity)
+          : Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.groupGap),
+              child: shown,
+            ),
+    );
+  }
+
+  Widget _warning(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final type = AppTypography.of(context);
     final more = traps.length - 1;
     return Pressable(
       onPressed: onOpen,

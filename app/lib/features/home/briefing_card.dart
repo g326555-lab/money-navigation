@@ -41,10 +41,16 @@ class BriefingCard extends StatelessWidget {
       onPressed: onOpen,
       semanticLabel: l10n.homeBriefingOpen,
       child: Surface(
-        radius: AppRadius.lg,
+        radius: AppRadius.xl,
         color: AppColors.surface,
         shadows: AppElevation.e0,
-        padding: const EdgeInsets.all(AppSpacing.cardPadding),
+        // The link row brings its own 48 of height at the bottom.
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.cardPadding,
+          AppSpacing.cardPadding,
+          AppSpacing.cardPadding,
+          calendarConnected ? AppSpacing.cardPadding : AppSpacing.xs,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -58,7 +64,7 @@ class BriefingCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Text(
-                    l10n.homeBriefingLabel,
+                    l10n.homeToday,
                     style: type.label.copyWith(
                       color: AppColors.onSurfaceSecondary,
                     ),
@@ -97,7 +103,7 @@ class BriefingCard extends StatelessWidget {
                 ),
             ],
             if (!calendarConnected) ...[
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.sm),
               Pressable(
                 onPressed: onConnect,
                 semanticLabel: l10n.calendarConnect,

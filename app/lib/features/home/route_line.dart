@@ -125,7 +125,7 @@ class _RouteLineState extends State<RouteLine>
                       l10n.homeRouteNext,
                       maxLines: 2,
                       style: type.label.copyWith(
-                        color: AppColors.onSurfaceTertiary,
+                        color: AppColors.onSurfaceSecondary,
                       ),
                     ),
                   ),

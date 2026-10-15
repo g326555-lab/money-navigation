@@ -318,7 +318,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     onConnect: _briefing.connectCalendar,
                     onOpen: widget.onOpenAssistant,
                   ),
-                const SizedBox(height: AppSpacing.groupGap),
                 NearbyCard(
                   // A demo traveler is not where the phone is.
                   state: scope.settings.demoState
@@ -632,15 +631,19 @@ class _SettingsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Pressable(
-      onPressed: onPressed,
-      semanticLabel: label,
-      child: const SizedBox.square(
-        dimension: AppSizes.minTouchTarget,
-        child: Icon(
-          Icons.tune_rounded,
-          size: AppSizes.tabIcon,
-          color: AppColors.onSurface,
+    // Sized outside the Pressable so only the icon's 48 x 48 square taps,
+    // not the whole top row.
+    return SizedBox.square(
+      dimension: AppSizes.minTouchTarget,
+      child: Pressable(
+        onPressed: onPressed,
+        semanticLabel: label,
+        child: const Center(
+          child: Icon(
+            Icons.tune_rounded,
+            size: AppSizes.tabIcon,
+            color: AppColors.onSurface,
+          ),
         ),
       ),
     );

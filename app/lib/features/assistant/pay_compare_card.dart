@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../core/elevation.dart';
 import '../../core/formatters.dart';
+import '../../core/motion.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/haggle.dart' show marketCurrency;
 import '../../rules/pay_route.dart';
 import '../../rules/personal_context.dart';
+import '../../shared/pressable.dart';
 import '../../shared/surface.dart';
 import '../briefing/trip_context.dart';
 
@@ -54,6 +56,15 @@ class _PayCompareCardState extends State<PayCompareCard> {
     super.dispose();
   }
 
+  /// The last way named cheapest, so a new answer clicks once.
+  PayMethod? _lastBest;
+
+  void _clickOnNewBest(PayRoute? route) {
+    final best = route?.best;
+    if (best != null && best != _lastBest) HapticFeedback.selectionClick();
+    _lastBest = best;
+  }
+
   double? get _typed {
     final v = double.tryParse(_amount.text.replaceAll(',', '').trim());
     return v == null || v <= 0 ? null : v;
@@ -78,6 +89,7 @@ class _PayCompareCardState extends State<PayCompareCard> {
             homeToThb: trip.homeToThb,
           );
 
+    _clickOnNewBest(route);
     return Surface(
       radius: AppRadius.xl,
       padding: const EdgeInsets.all(AppSpacing.cardPadding),
@@ -96,9 +108,22 @@ class _PayCompareCardState extends State<PayCompareCard> {
             style: type.label.copyWith(color: AppColors.primaryOnDark),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            _verdict(l10n, route),
-            style: type.title.copyWith(color: AppColors.onSurfaceDark),
+          // The answer changes as the amount is typed: let it move.
+          AnimatedSwitcher(
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero
+                : AppMotion.standard,
+            switchInCurve: AppMotion.enter,
+            switchOutCurve: AppMotion.exit,
+            layoutBuilder: (current, previous) => Stack(
+              alignment: Alignment.topLeft,
+              children: [...previous, ?current],
+            ),
+            child: Text(
+              _verdict(l10n, route),
+              key: ValueKey(_verdict(l10n, route)),
+              style: type.title.copyWith(color: AppColors.onSurfaceDark),
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
           _AmountField(
@@ -216,6 +241,8 @@ class _AmountField extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              // Keep the verdict and the three ways above the keyboard.
+              scrollPadding: const EdgeInsets.all(AppSizes.scanSheetReserve),
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
@@ -308,27 +335,27 @@ class _OptionLine extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: type.rowSubtitle.copyWith(
+              style: (best ? type.rowTitle : type.rowSubtitle).copyWith(
                 color: best ? color : AppColors.onSurfaceDarkSecondary,
                 fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ),
+          // The winner is marked by shape too, not only by colour.
+          if (best) ...[
+            const SizedBox(width: AppSpacing.xs),
+            Icon(Icons.check_rounded, size: AppSizes.pillIcon, color: color),
+          ],
         ],
       ),
     );
     if (method == PayMethod.card && !cardFeeKnown) {
-      return Semantics(
-        button: true,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: onEditCard,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              minHeight: AppSizes.minTouchTarget,
-            ),
-            child: Align(alignment: Alignment.centerLeft, child: line),
-          ),
+      return Pressable(
+        onPressed: onEditCard,
+        semanticLabel: l10n.payNeedCardFee,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppSizes.minTouchTarget),
+          child: Align(alignment: Alignment.centerLeft, child: line),
         ),
       );
     }

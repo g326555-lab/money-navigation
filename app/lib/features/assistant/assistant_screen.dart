@@ -124,7 +124,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
               _CashHero(plan: plan),
               SectionHeader(l10n.assistantStops),
               _stops(l10n, plan, selected),
-              SectionHeader(l10n.assistantPay),
+              const SizedBox(height: AppSpacing.zoneGap),
               PayCompareCard(
                 trip: trip,
                 profile: profile,
@@ -170,7 +170,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
                 : l10n.calendarConnect,
             subtitle: l10n.calendarPrivacy,
             onPressed: access == CalendarAccess.denied
-                ? null
+                ? AppSettings.openAppSettings
                 : _briefing.connectCalendar,
           ),
         ],
@@ -194,8 +194,10 @@ class _AssistantScreenState extends State<AssistantScreen> {
       children: [
         for (final s in stops)
           Pressable(
-            onPressed: () =>
-                setState(() => _selected = s == selected ? null : _key(s)),
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              setState(() => _selected = s == selected ? null : _key(s));
+            },
             semanticLabel: l10n.assistantPayFor(
               s.event.matchedPlace ?? s.event.location!,
             ),
