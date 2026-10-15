@@ -2212,4 +2212,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String factSourceLine(String host, String time) {
     return '$host · checked $time';
   }
+
+  @override
+  String get recordsSwipeHint => 'Swipe a row left to remove it.';
+
+  @override
+  String get recordsSavedPhone => 'Saved only on this phone.';
+
+  @override
+  String get recordsSavedAccount => 'Saved to your account too.';
+
+  @override
+  String get recordsSavedDemo =>
+      'Demo records stay in the demo and never reach your account.';
 }

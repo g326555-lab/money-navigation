@@ -69,6 +69,9 @@ class _PressableState extends State<Pressable>
   Widget build(BuildContext context) {
     final enabled = widget.onPressed != null;
     return Semantics(
+      // Its own node, so TalkBack / VoiceOver find this control instead of
+      // merging it into the row around it.
+      container: true,
       button: true,
       enabled: enabled,
       label: widget.semanticLabel,

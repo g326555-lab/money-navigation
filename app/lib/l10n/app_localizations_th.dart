@@ -2096,4 +2096,17 @@ class AppLocalizationsTh extends AppLocalizations {
   String factSourceLine(String host, String time) {
     return '$host · ตรวจเมื่อ $time';
   }
+
+  @override
+  String get recordsSwipeHint => 'ปัดแถวไปทางซ้ายเพื่อลบ';
+
+  @override
+  String get recordsSavedPhone => 'บันทึกไว้ในเครื่องนี้เท่านั้น';
+
+  @override
+  String get recordsSavedAccount => 'บันทึกไว้ในบัญชีของคุณด้วย';
+
+  @override
+  String get recordsSavedDemo =>
+      'บันทึกสาธิตอยู่ในโหมดสาธิตเท่านั้น ไม่ถูกส่งไปยังบัญชีของคุณ';
 }

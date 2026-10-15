@@ -3539,6 +3539,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{host} · checked {time}'**
   String factSourceLine(String host, String time);
+
+  /// No description provided for @recordsSwipeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe a row left to remove it.'**
+  String get recordsSwipeHint;
+
+  /// No description provided for @recordsSavedPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved only on this phone.'**
+  String get recordsSavedPhone;
+
+  /// No description provided for @recordsSavedAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to your account too.'**
+  String get recordsSavedAccount;
+
+  /// No description provided for @recordsSavedDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo records stay in the demo and never reach your account.'**
+  String get recordsSavedDemo;
 }
 
 class _AppLocalizationsDelegate

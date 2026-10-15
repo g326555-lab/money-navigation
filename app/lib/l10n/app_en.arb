@@ -1840,5 +1840,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "recordsSwipeHint": "Swipe a row left to remove it.",
+  "recordsSavedPhone": "Saved only on this phone.",
+  "recordsSavedAccount": "Saved to your account too.",
+  "recordsSavedDemo": "Demo records stay in the demo and never reach your account."
 }
