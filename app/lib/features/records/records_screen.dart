@@ -62,30 +62,39 @@ class _RecordsScreenState extends State<RecordsScreen> {
                     Expanded(
                       child: Text(l10n.recordsTitle, style: type.headline),
                     ),
-                    // Where each save happened, on a map.
-                    Pressable(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const TripMapScreen(),
+                    // Where each save happened, on a map. Its own node, so a
+                    // screen reader reaches it apart from the title.
+                    Semantics(
+                      container: true,
+                      child: Pressable(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const TripMapScreen(),
+                          ),
                         ),
-                      ),
-                      semanticLabel: l10n.tripMapTitle,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minHeight: AppSizes.minTouchTarget,
-                          minWidth: AppSizes.minTouchTarget,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.map_outlined,
-                              size: AppSizes.buttonIcon,
-                              color: AppColors.primaryText,
-                            ),
-                            const SizedBox(width: AppSpacing.xs),
-                            Text(l10n.tripMapTitle, style: type.link),
-                          ],
+                        semanticLabel: l10n.tripMapTitle,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: AppSizes.minTouchTarget,
+                            minWidth: AppSizes.minTouchTarget,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.map_outlined,
+                                size: AppSizes.buttonIcon,
+                                color: AppColors.primaryText,
+                              ),
+                              const SizedBox(width: AppSpacing.xs),
+                              ExcludeSemantics(
+                                child: Text(
+                                  l10n.tripMapTitle,
+                                  style: type.link,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

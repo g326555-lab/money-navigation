@@ -12,8 +12,8 @@ import 'haggle_controller.dart';
 
 /// For a market too loud to hear: the Thai sentence and the price, as large
 /// as the screen allows, for the seller to read. One tap turns the words
-/// to face the seller across the stall while the buttons stay facing the
-/// traveler; a tap on the words closes it.
+/// to face the seller across the stall while the meaning and the buttons
+/// stay facing the traveler; only the Close button closes it.
 class ShowSellerScreen extends StatefulWidget {
   const ShowSellerScreen({
     super.key,
@@ -76,95 +76,119 @@ class _ShowSellerScreenState extends State<ShowSellerScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // A dedicated close: a seller pointing at the price must
+                // never dismiss it.
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    tooltip: l10n.showSellerClose,
+                    constraints: const BoxConstraints(
+                      minWidth: AppSizes.minTouchTarget,
+                      minHeight: AppSizes.minTouchTarget,
+                    ),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: AppSizes.tabIcon,
+                      color: AppColors.onSurface,
+                    ),
+                  ),
+                ),
                 Expanded(
-                  child: Semantics(
-                    button: true,
-                    label: l10n.showSellerClose,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => Navigator.of(context).pop(),
-                      child: AnimatedRotation(
-                        turns: _turned ? 0.5 : 0,
-                        duration: AppMotion.of(context, AppMotion.emphasized),
-                        curve: AppMotion.move,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (widget.amount case final amount?)
-                                FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    amount,
-                                    maxLines: 1,
-                                    style: thai.displayXl.copyWith(
-                                      color: AppColors.onSurface,
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(height: AppSpacing.lg),
-                              Text(
-                                widget.sentence,
-                                textAlign: TextAlign.center,
-                                style: thai.headline.copyWith(
+                  child: AnimatedRotation(
+                    turns: _turned ? 0.5 : 0,
+                    duration: AppMotion.of(context, AppMotion.emphasized),
+                    curve: AppMotion.move,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (widget.amount case final amount?)
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                amount,
+                                maxLines: 1,
+                                // Thai glyphs need room: no tight tracking,
+                                // line height for Thai.
+                                style: thai.displayXl.copyWith(
                                   color: AppColors.onSurface,
+                                  height: thaiMinLineHeight,
+                                  letterSpacing: 0,
                                 ),
                               ),
-                              if (widget.meaning case final meaning?) ...[
-                                const SizedBox(height: AppSpacing.md),
-                                Text(
-                                  meaning,
-                                  textAlign: TextAlign.center,
-                                  style: type.bodyMd.copyWith(
-                                    color: AppColors.onSurfaceTertiary,
-                                  ),
-                                ),
-                              ],
-                            ],
+                            ),
+                          const SizedBox(height: AppSpacing.lg),
+                          Text(
+                            widget.sentence,
+                            textAlign: TextAlign.center,
+                            style: thai.headline.copyWith(
+                              color: AppColors.onSurface,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                Text(
-                  l10n.showSellerClose,
-                  textAlign: TextAlign.center,
-                  style: type.caption.copyWith(color: AppColors.onSurfaceMuted),
-                ),
-                const SizedBox(height: AppSpacing.md),
+                // The meaning is for the traveler: it never turns away.
+                if (widget.meaning case final meaning?) ...[
+                  Text(
+                    meaning,
+                    textAlign: TextAlign.center,
+                    style: type.bodyMd.copyWith(
+                      color: AppColors.onSurfaceSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                ],
                 ListenableBuilder(
                   listenable: widget.haggle,
                   builder: (context, _) {
                     final state = widget.haggle.state;
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: AppButton.secondary(
-                            label: _turned
-                                ? l10n.showSellerTurnBack
-                                : l10n.showSellerTurn,
-                            icon: Icons.screen_rotation_rounded,
-                            onPressed: _turn,
-                          ),
-                        ),
-                        if (state.canSpeak) ...[
-                          const SizedBox(width: AppSpacing.md),
-                          Expanded(
-                            child: AppButton.green(
-                              label: state.speaking
-                                  ? l10n.speakSpeaking
-                                  : l10n.speakSayIt,
-                              icon: state.speaking
-                                  ? Icons.graphic_eq_rounded
-                                  : Icons.volume_up_rounded,
-                              busy: state.speaking,
-                              onPressed: () =>
-                                  widget.haggle.speakCounter(widget.sentence),
+                    final turn = AppButton.secondary(
+                      label: _turned
+                          ? l10n.showSellerTurnBack
+                          : l10n.showSellerTurn,
+                      icon: Icons.screen_rotation_rounded,
+                      onPressed: _turn,
+                    );
+                    final say = state.canSpeak
+                        ? AppButton.green(
+                            label: state.speaking
+                                ? l10n.speakSpeaking
+                                : l10n.speakSayIt,
+                            icon: state.speaking
+                                ? Icons.graphic_eq_rounded
+                                : Icons.volume_up_rounded,
+                            busy: state.speaking,
+                            onPressed: () =>
+                                widget.haggle.speakCounter(widget.sentence),
+                          )
+                        : null;
+                    // The Fold cover screen is too narrow for two labels
+                    // side by side: stack them there.
+                    return LayoutBuilder(
+                      builder: (context, constraints) =>
+                          constraints.maxWidth < AppSizes.dockStackBelow
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                ?say,
+                                if (say != null)
+                                  const SizedBox(height: AppSpacing.md),
+                                turn,
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                Expanded(child: turn),
+                                if (say != null) ...[
+                                  const SizedBox(width: AppSpacing.md),
+                                  Expanded(child: say),
+                                ],
+                              ],
                             ),
-                          ),
-                        ],
-                      ],
                     );
                   },
                 ),

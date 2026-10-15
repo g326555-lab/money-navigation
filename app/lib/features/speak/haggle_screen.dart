@@ -234,7 +234,12 @@ class _HaggleScreenState extends State<HaggleScreen>
                         AppSpacing.screenMargin,
                         AppSpacing.sm,
                         AppSpacing.screenMargin,
-                        AppSpacing.zoneGap + ActionDock.heightOf(context),
+                        AppSpacing.zoneGap +
+                            ActionDock.heightOf(context) +
+                            // The reply chips sit in the dock while haggling.
+                            (_stillHaggling
+                                ? AppSizes.minTouchTarget + AppSpacing.md
+                                : 0),
                       ),
                       sliver: SliverList.list(children: _content(l10n, state)),
                     ),
@@ -261,12 +266,19 @@ class _HaggleScreenState extends State<HaggleScreen>
                   _ =>
                     canSave
                         ? (_stillHaggling
-                              ? DockPair(
-                                  secondaryLabel: l10n.haggleNewPrice,
-                                  onSecondary: () => _haggle.listen(),
-                                  primaryIcon: Icons.mic_rounded,
-                                  primaryLabel: l10n.haggleHearAnswer,
-                                  onPrimary: _haggle.listenForReply,
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _replyChips(l10n),
+                                    const SizedBox(height: AppSpacing.md),
+                                    DockPair(
+                                      secondaryLabel: l10n.haggleNewPrice,
+                                      onSecondary: () => _haggle.listen(),
+                                      primaryIcon: Icons.mic_rounded,
+                                      primaryLabel: l10n.haggleHearAnswer,
+                                      onPrimary: _haggle.listenForReply,
+                                    ),
+                                  ],
                                 )
                               : DockPair(
                                   secondaryLabel: l10n.haggleNewPrice,
@@ -470,7 +482,10 @@ class _HaggleScreenState extends State<HaggleScreen>
       GroupFooter(_sourcesLine(l10n, match)),
       if (paidBefore != null)
         GroupFooter(_paidBeforeLine(l10n, paidBefore, place)),
-      if (_explained case (final sentence, final trace)?) ...[
+      // It words the first verdict; once the haggle moves on it would be
+      // about an old offer.
+      if (_explained case (final sentence, final trace)?
+          when _haggle.exchanges.isEmpty) ...[
         const SizedBox(height: AppSpacing.groupGap),
         GroupCard(
           children: [
@@ -587,32 +602,6 @@ class _HaggleScreenState extends State<HaggleScreen>
               ? l10n.aiVoiceCached(voice.engine.displayName)
               : l10n.aiTrace(voice.engine.displayName, voice.elapsedLabel),
         ),
-      if (kind == MoveKind.offer) ...[
-        SectionHeader(l10n.haggleTheyAnswered),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            _ItemChip(
-              label: l10n.haggleTheyAgreed,
-              selected: false,
-              onPressed: () =>
-                  _haggle.replyByHand(const SellerReply(ReplyKind.accept)),
-            ),
-            _ItemChip(
-              label: l10n.haggleTheySaidNo,
-              selected: false,
-              onPressed: () =>
-                  _haggle.replyByHand(const SellerReply(ReplyKind.refuse)),
-            ),
-            _ItemChip(
-              label: l10n.haggleTheyOffered,
-              selected: false,
-              onPressed: _enterSellerPrice,
-            ),
-          ],
-        ),
-      ],
       if (exchanges.isNotEmpty) ...[
         SectionHeader(l10n.haggleSoFar),
         GroupCard(
@@ -691,6 +680,33 @@ class _HaggleScreenState extends State<HaggleScreen>
       ),
     );
   }
+
+  /// What the seller answered, one tap each. Lives in the dock while an
+  /// offer is on the table, so it is never hidden under it.
+  Widget _replyChips(AppLocalizations l10n) => Wrap(
+    spacing: AppSpacing.sm,
+    runSpacing: AppSpacing.sm,
+    alignment: WrapAlignment.center,
+    children: [
+      _ItemChip(
+        label: l10n.haggleTheyAgreed,
+        selected: false,
+        onPressed: () =>
+            _haggle.replyByHand(const SellerReply(ReplyKind.accept)),
+      ),
+      _ItemChip(
+        label: l10n.haggleTheySaidNo,
+        selected: false,
+        onPressed: () =>
+            _haggle.replyByHand(const SellerReply(ReplyKind.refuse)),
+      ),
+      _ItemChip(
+        label: l10n.haggleTheyOffered,
+        selected: false,
+        onPressed: _enterSellerPrice,
+      ),
+    ],
+  );
 
   /// "You paid 90 THB here 2 days ago · from your 2 past records".
   static String _paidBeforeLine(

@@ -224,43 +224,82 @@ class _CreditsScreenState extends State<CreditsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final type = AppTypography.of(context);
-    return _Page(
-      title: l10n.settingsCredits,
-      child: FutureBuilder(
-        future: _credits,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const SizedBox.shrink();
-          }
-          final credits = snapshot.data;
-          if (credits == null || snapshot.hasError) {
-            return GroupFooter(l10n.creditsUnavailable);
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              GroupFooter(l10n.settingsCreditsHint(credits.length)),
-              const SizedBox(height: AppSpacing.groupGap),
-              GroupCard(
-                children: [
-                  for (final c in credits)
-                    GroupRow(
-                      title: c.title,
-                      // Title, author, source and licence: what CC BY and
-                      // CC BY-SA ask a credit to carry.
-                      subtitle:
-                          '${l10n.creditsRow(c.author, c.license)}\n${c.source}',
-                      titleStyle: type.rowSubtitle.copyWith(
-                        color: AppColors.onSurface,
-                      ),
-                    ),
-                ],
-              ),
-              GroupFooter(l10n.creditsFooter),
-            ],
+    return FutureBuilder(
+      future: _credits,
+      builder: (context, snapshot) {
+        final done = snapshot.connectionState == ConnectionState.done;
+        final credits = snapshot.data;
+        if (!done || credits == null || snapshot.hasError) {
+          return _Page(
+            title: l10n.settingsCredits,
+            child: done
+                ? GroupFooter(l10n.creditsUnavailable)
+                : const SizedBox.shrink(),
           );
-        },
+        }
+        // 442 rows: built only as they scroll into view.
+        return _Page(
+          title: l10n.settingsCredits,
+          header: GroupFooter(l10n.settingsCreditsHint(credits.length)),
+          itemCount: credits.length,
+          itemBuilder: (context, i) => _CreditRow(
+            credit: credits[i],
+            first: i == 0,
+            last: i == credits.length - 1,
+          ),
+          child: GroupFooter(l10n.creditsFooter),
+        );
+      },
+    );
+  }
+}
+
+/// One credit as a row of a grouped card, the card drawn row by row so the
+/// list can be lazy.
+class _CreditRow extends StatelessWidget {
+  const _CreditRow({
+    required this.credit,
+    required this.first,
+    required this.last,
+  });
+
+  final PhotoCredit credit;
+  final bool first;
+  final bool last;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final type = AppTypography.of(context);
+    const corner = Radius.circular(AppRadius.lg);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.vertical(
+          top: first ? corner : Radius.zero,
+          bottom: last ? corner : Radius.zero,
+        ),
+      ),
+      child: Column(
+        children: [
+          GroupRow(
+            title: credit.title,
+            // Title, author, source and licence: what CC BY and CC BY-SA
+            // ask a credit to carry.
+            subtitle:
+                '${l10n.creditsRow(credit.author, credit.license)}\n${credit.source}',
+            titleStyle: type.rowSubtitle.copyWith(color: AppColors.onSurface),
+          ),
+          if (!last)
+            const Padding(
+              padding: EdgeInsets.only(left: AppSpacing.groupPaddingH),
+              child: Divider(
+                height: AppSizes.hairline,
+                thickness: AppSizes.hairline,
+                color: AppColors.divider,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -268,10 +307,25 @@ class _CreditsScreenState extends State<CreditsScreen> {
 
 /// An everyday page: grey background, back button, large title.
 class _Page extends StatelessWidget {
-  const _Page({required this.title, required this.child});
+  const _Page({
+    required this.title,
+    required this.child,
+    this.header,
+    this.itemCount = 0,
+    this.itemBuilder,
+  });
 
   final String title;
+
+  /// Below the rows (or alone when there are none).
   final Widget child;
+
+  /// Above the rows.
+  final Widget? header;
+
+  /// Rows built lazily as they scroll into view.
+  final int itemCount;
+  final IndexedWidgetBuilder? itemBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -282,39 +336,50 @@ class _Page extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: ContentWidth(
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.screenMargin,
-              MediaQuery.paddingOf(context).top,
-              AppSpacing.screenMargin,
-              MediaQuery.paddingOf(context).bottom + AppSpacing.zoneGap,
-            ),
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Pressable(
-                  onPressed: () => Navigator.of(context).pop(),
-                  semanticLabel: l10n.back,
-                  child: const SizedBox.square(
-                    dimension: AppSizes.minTouchTarget,
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      size: AppSizes.tabIcon,
-                      color: AppColors.onSurface,
+          child: Builder(
+            builder: (context) {
+              final top = <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Pressable(
+                    onPressed: () => Navigator.of(context).pop(),
+                    semanticLabel: l10n.back,
+                    child: const SizedBox.square(
+                      dimension: AppSizes.minTouchTarget,
+                      child: Icon(
+                        Icons.arrow_back_rounded,
+                        size: AppSizes.tabIcon,
+                        color: AppColors.onSurface,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sectionHeaderInset,
+                const SizedBox(height: AppSpacing.sm),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sectionHeaderInset,
+                  ),
+                  child: Text(title, style: type.headline),
                 ),
-                child: Text(title, style: type.headline),
-              ),
-              const SizedBox(height: AppSpacing.zoneGap),
-              child,
-            ],
+                const SizedBox(height: AppSpacing.zoneGap),
+                ?header,
+              ];
+              return ListView.builder(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.screenMargin,
+                  MediaQuery.paddingOf(context).top,
+                  AppSpacing.screenMargin,
+                  MediaQuery.paddingOf(context).bottom + AppSpacing.zoneGap,
+                ),
+                itemCount: top.length + itemCount + 1,
+                itemBuilder: (context, i) {
+                  if (i < top.length) return top[i];
+                  final row = i - top.length;
+                  if (row < itemCount) return itemBuilder!(context, row);
+                  return child;
+                },
+              );
+            },
           ),
         ),
       ),

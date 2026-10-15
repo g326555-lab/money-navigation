@@ -124,7 +124,7 @@ void main() {
     expect(find.text(amount), findsOneWidget);
     expect(find.text(sentence), findsOneWidget);
     expect(find.text(meaning), findsOneWidget);
-    expect(find.text('Tap the sentence to close'), findsOneWidget);
+    expect(find.byTooltip('Close'), findsOneWidget);
     expect(find.text('Turn to the seller'), findsOneWidget);
   });
 
@@ -149,7 +149,9 @@ void main() {
     expect(find.text(amount), findsNothing);
   });
 
-  testWidgets('tapping the sentence closes the screen', (tester) async {
+  testWidgets('only Close closes it; a seller tapping the words does not', (
+    tester,
+  ) async {
     mockWakelock();
     final c = await controller(tester);
     await tester.pumpWidget(host(c));
@@ -157,8 +159,28 @@ void main() {
 
     await tester.tap(find.text(sentence));
     await pumpFrames(tester, frames: 20);
+    expect(find.byType(ShowSellerScreen), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Close'));
+    await pumpFrames(tester, frames: 20);
     expect(find.byType(ShowSellerScreen), findsNothing);
     expect(find.text('open'), findsOneWidget);
+  });
+
+  testWidgets('the meaning stays facing the traveler when turned', (
+    tester,
+  ) async {
+    mockWakelock();
+    final c = await controller(tester);
+    await tester.pumpWidget(host(c));
+    await open(tester);
+    expect(
+      find.descendant(
+        of: find.byType(AnimatedRotation),
+        matching: find.text(meaning),
+      ),
+      findsNothing,
+    );
   });
 
   testWidgets('turning rotates the words but not the buttons', (tester) async {
@@ -272,7 +294,7 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text(sentence), findsOneWidget);
 
-    await tester.tap(find.text(sentence));
+    await tester.tap(find.byTooltip('Close'));
     await pumpFrames(tester, frames: 20);
     expect(tester.takeException(), isNull);
     expect(find.byType(ShowSellerScreen), findsNothing);
@@ -287,7 +309,7 @@ void main() {
     await open(tester);
     expect(calls.count, 1);
 
-    await tester.tap(find.text(sentence));
+    await tester.tap(find.byTooltip('Close'));
     await pumpFrames(tester, frames: 20);
     expect(calls.count, 2);
   });
