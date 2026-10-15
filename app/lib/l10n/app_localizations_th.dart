@@ -2109,4 +2109,41 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get recordsSavedDemo =>
       'บันทึกสาธิตอยู่ในโหมดสาธิตเท่านั้น ไม่ถูกส่งไปยังบัญชีของคุณ';
+
+  @override
+  String get haggleNoRange =>
+      'ยังไม่มีช่วงราคาที่มีแหล่งอ้างอิงสำหรับสินค้านี้';
+
+  @override
+  String haggleNewItemHeard(String item, String amount, String unit) {
+    return '$item $amount $unit';
+  }
+
+  @override
+  String get haggleUsualDiscountRow => 'ส่วนลดที่คุณมักได้';
+
+  @override
+  String haggleDidTheyMean(String item) {
+    return 'หมายถึง$itemใช่ไหม';
+  }
+
+  @override
+  String get haggleYes => 'ใช่';
+
+  @override
+  String get haggleNo => 'ไม่ใช่';
+
+  @override
+  String aiNewItemLine(String engine, String elapsed) {
+    return '$engine ระบุสินค้าจากสิ่งที่ได้ยิน · $elapsed';
+  }
+
+  @override
+  String get haggleSomethingElse => 'อย่างอื่น';
+
+  @override
+  String get haggleTypeItem => 'เขาขายอะไร';
+
+  @override
+  String get haggleTypeItemHint => 'เช่น ลาเต้วานิลลา';
 }

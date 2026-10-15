@@ -574,5 +574,15 @@
   "recordsSwipeHint": "ปัดแถวไปทางซ้ายเพื่อลบ",
   "recordsSavedPhone": "บันทึกไว้ในเครื่องนี้เท่านั้น",
   "recordsSavedAccount": "บันทึกไว้ในบัญชีของคุณด้วย",
-  "recordsSavedDemo": "บันทึกสาธิตอยู่ในโหมดสาธิตเท่านั้น ไม่ถูกส่งไปยังบัญชีของคุณ"
+  "recordsSavedDemo": "บันทึกสาธิตอยู่ในโหมดสาธิตเท่านั้น ไม่ถูกส่งไปยังบัญชีของคุณ",
+  "haggleNoRange": "ยังไม่มีช่วงราคาที่มีแหล่งอ้างอิงสำหรับสินค้านี้",
+  "haggleNewItemHeard": "{item} {amount} {unit}",
+  "haggleUsualDiscountRow": "ส่วนลดที่คุณมักได้",
+  "haggleDidTheyMean": "หมายถึง{item}ใช่ไหม",
+  "haggleYes": "ใช่",
+  "haggleNo": "ไม่ใช่",
+  "aiNewItemLine": "{engine} ระบุสินค้าจากสิ่งที่ได้ยิน · {elapsed}",
+  "haggleSomethingElse": "อย่างอื่น",
+  "haggleTypeItem": "เขาขายอะไร",
+  "haggleTypeItemHint": "เช่น ลาเต้วานิลลา"
 }

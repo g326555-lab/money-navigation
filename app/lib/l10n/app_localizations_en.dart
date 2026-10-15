@@ -2225,4 +2225,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recordsSavedDemo =>
       'Demo records stay in the demo and never reach your account.';
+
+  @override
+  String get haggleNoRange => 'No sourced price range for this item yet';
+
+  @override
+  String haggleNewItemHeard(String item, String amount, String unit) {
+    return '$item, $amount $unit';
+  }
+
+  @override
+  String get haggleUsualDiscountRow => 'Your usual discount';
+
+  @override
+  String haggleDidTheyMean(String item) {
+    return 'Did they mean $item?';
+  }
+
+  @override
+  String get haggleYes => 'Yes';
+
+  @override
+  String get haggleNo => 'No';
+
+  @override
+  String aiNewItemLine(String engine, String elapsed) {
+    return '$engine named the item from what was heard · $elapsed';
+  }
+
+  @override
+  String get haggleSomethingElse => 'Something else';
+
+  @override
+  String get haggleTypeItem => 'What are they selling?';
+
+  @override
+  String get haggleTypeItemHint => 'e.g. Vanilla latte';
 }

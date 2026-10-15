@@ -1844,5 +1844,45 @@
   "recordsSwipeHint": "Swipe a row left to remove it.",
   "recordsSavedPhone": "Saved only on this phone.",
   "recordsSavedAccount": "Saved to your account too.",
-  "recordsSavedDemo": "Demo records stay in the demo and never reach your account."
+  "recordsSavedDemo": "Demo records stay in the demo and never reach your account.",
+  "haggleNoRange": "No sourced price range for this item yet",
+  "haggleNewItemHeard": "{item}, {amount} {unit}",
+  "@haggleNewItemHeard": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleUsualDiscountRow": "Your usual discount",
+  "haggleDidTheyMean": "Did they mean {item}?",
+  "@haggleDidTheyMean": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleYes": "Yes",
+  "haggleNo": "No",
+  "aiNewItemLine": "{engine} named the item from what was heard · {elapsed}",
+  "@aiNewItemLine": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "elapsed": {
+        "type": "String"
+      }
+    }
+  },
+  "haggleSomethingElse": "Something else",
+  "haggleTypeItem": "What are they selling?",
+  "haggleTypeItemHint": "e.g. Vanilla latte"
 }

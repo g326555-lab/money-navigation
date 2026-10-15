@@ -3563,6 +3563,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Demo records stay in the demo and never reach your account.'**
   String get recordsSavedDemo;
+
+  /// No description provided for @haggleNoRange.
+  ///
+  /// In en, this message translates to:
+  /// **'No sourced price range for this item yet'**
+  String get haggleNoRange;
+
+  /// No description provided for @haggleNewItemHeard.
+  ///
+  /// In en, this message translates to:
+  /// **'{item}, {amount} {unit}'**
+  String haggleNewItemHeard(String item, String amount, String unit);
+
+  /// No description provided for @haggleUsualDiscountRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your usual discount'**
+  String get haggleUsualDiscountRow;
+
+  /// No description provided for @haggleDidTheyMean.
+  ///
+  /// In en, this message translates to:
+  /// **'Did they mean {item}?'**
+  String haggleDidTheyMean(String item);
+
+  /// No description provided for @haggleYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get haggleYes;
+
+  /// No description provided for @haggleNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get haggleNo;
+
+  /// No description provided for @aiNewItemLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{engine} named the item from what was heard · {elapsed}'**
+  String aiNewItemLine(String engine, String elapsed);
+
+  /// No description provided for @haggleSomethingElse.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get haggleSomethingElse;
+
+  /// No description provided for @haggleTypeItem.
+  ///
+  /// In en, this message translates to:
+  /// **'What are they selling?'**
+  String get haggleTypeItem;
+
+  /// No description provided for @haggleTypeItemHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Vanilla latte'**
+  String get haggleTypeItemHint;
 }
 
 class _AppLocalizationsDelegate
