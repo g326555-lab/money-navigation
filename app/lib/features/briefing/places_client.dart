@@ -113,9 +113,12 @@ class PlacesClient {
 PlacePayment paymentFromJson(Object? json) {
   if (json is! Map) return PlacePayment.unknown;
   bool? flag(String key) => json[key] is bool ? json[key] as bool : null;
-  return PlacePayment(
-    cashOnly: flag('cashOnly'),
-    cards: flag('cards'),
-    nfc: flag('nfc'),
-  );
+  final cards = flag('cards');
+  final nfc = flag('nfc');
+  // Google sometimes says "cash only" and "takes cards" for the same place
+  // (seen for a Bangkok hotel). Conflicting evidence is no evidence.
+  final cashOnly = flag('cashOnly') == true && (cards == true || nfc == true)
+      ? null
+      : flag('cashOnly');
+  return PlacePayment(cashOnly: cashOnly, cards: cards, nfc: nfc);
 }

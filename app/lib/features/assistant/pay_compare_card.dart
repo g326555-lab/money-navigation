@@ -165,7 +165,9 @@ class _PayCompareCardState extends State<PayCompareCard> {
             [
               _basis(l10n, trip),
               if (route?.option(PayMethod.cash).extraThb != null)
-                widget.withdrawalThb == null
+                // The rule takes the purchase itself when it is bigger.
+                widget.withdrawalThb == null ||
+                        route!.amountThb > widget.withdrawalThb!
                     ? l10n.payCompareWithdrawalAssumed
                     : l10n.payCompareWithdrawalPlan(
                         AppFormat.roundedAmount(
