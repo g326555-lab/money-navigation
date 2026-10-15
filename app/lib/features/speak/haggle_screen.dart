@@ -18,6 +18,7 @@ import '../../data/market_price_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/haggle.dart';
 import '../../rules/haggle_rounds.dart';
+import '../../rules/personal_context.dart';
 import '../../rules/trip_ledger.dart';
 import '../../shared/action_dock.dart';
 import '../../shared/app_button.dart';
@@ -353,6 +354,13 @@ class _HaggleScreenState extends State<HaggleScreen>
     final item = match.item;
     final unit = _unitLabel(l10n, item.unit);
     final offer = verdict.counterOffer;
+    // What the traveler's own records say about this item; nothing when
+    // there are none.
+    final history = pastPurchasesFromSaves(AppScope.of(context).trip.saves);
+    final now = DateTime.now();
+    final place = _haggle.places?.place.name;
+    final paidBefore = priceMemory(item.key, history, now, placeName: place);
+    final counter = counterFromHistory(item.key, heard.amount, history, now);
     return [
       _VerdictHero(
         amount: heard.amount,
@@ -404,9 +412,23 @@ class _HaggleScreenState extends State<HaggleScreen>
                       .copyWith(color: AppColors.errorText)
                 : null,
           ),
+          if (counter != null)
+            GroupRow(
+              title: l10n.memoryCounterRow,
+              subtitle: _recordsBasis(
+                l10n,
+                counter.recordsUsed,
+                counter.sampleRecords,
+              ),
+              value: l10n.memoryAbout(
+                AppFormat.roundedAmount(counter.offerThb, marketCurrency),
+              ),
+            ),
         ],
       ),
       GroupFooter(_sourcesLine(l10n, match)),
+      if (paidBefore != null)
+        GroupFooter(_paidBeforeLine(l10n, paidBefore, place)),
       if (_haggle.places case final places?)
         GroupFooter(
           l10n.aiPlacesLine(
@@ -581,6 +603,33 @@ class _HaggleScreenState extends State<HaggleScreen>
         trace.elapsedLabel,
       ),
     );
+  }
+
+  /// "You paid 90 THB here 2 days ago · from your 2 past records".
+  static String _paidBeforeLine(
+    AppLocalizations l10n,
+    PriceMemory memory,
+    String? placeNow,
+  ) {
+    final amount = AppFormat.roundedAmount(memory.lastPaidThb, marketCurrency);
+    final when = l10n.memoryDaysAgo(memory.daysAgo);
+    final last = memory.lastPlaceName;
+    final fact = switch (last) {
+      null => l10n.memoryPaid(amount, when),
+      _ when last == placeNow => l10n.memoryPaidHere(amount, when),
+      _ => l10n.memoryPaidAt(amount, last, when),
+    };
+    return l10n.memoryLine(
+      fact,
+      _recordsBasis(l10n, memory.recordsUsed, memory.sampleRecords),
+    );
+  }
+
+  /// How many records a personal line used; demo samples say so.
+  static String _recordsBasis(AppLocalizations l10n, int count, int samples) {
+    if (samples == 0) return l10n.memoryFromRecords(count);
+    if (samples == count) return l10n.memoryFromSamples(count);
+    return l10n.memoryFromMixed(count, samples);
   }
 
   String _sourcesLine(AppLocalizations l10n, SourcedItem match) {

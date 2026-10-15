@@ -1129,14 +1129,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get settingsDemo => 'สาธิต';
 
   @override
-  String get settingsDemoOn => 'ใช้อัตราคงที่สำหรับสาธิต';
-
-  @override
-  String get settingsDemoOnHint => 'อัตราจากไฟล์สาธิต ไม่ใช่อัตราวันนี้';
-
-  @override
   String get settingsDemoFooter =>
-      'ใช้ตอนนำเสนอเท่านั้น ผลลัพธ์จะไม่เปลี่ยนบนเวที ปิดเพื่อใช้อัตราของวันนี้';
+      'ใช้ตอนนำเสนอ ภาษา สกุลเงิน และบันทึกจะเปลี่ยนพร้อมกัน ใช้อัตราคงที่ บันทึกของคุณยังอยู่และจะกลับมาเมื่อปิด';
 
   @override
   String billCheckedTrace(String elapsed) {
@@ -1188,4 +1182,152 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get kindOther => 'อย่างอื่น';
+
+  @override
+  String get demoLabel => 'สาธิต';
+
+  @override
+  String get demoVisitorBangkok => 'นักท่องเที่ยวอเมริกันในกรุงเทพฯ';
+
+  @override
+  String get demoThaiTokyo => 'นักท่องเที่ยวไทยในโตเกียว';
+
+  @override
+  String demoPersonaDetail(String language, String currency) {
+    return '$language · $currency';
+  }
+
+  @override
+  String demoPill(String name) {
+    return 'สาธิต · $name';
+  }
+
+  @override
+  String demoSwitchTo(String name) {
+    return 'สลับเป็น$name';
+  }
+
+  @override
+  String get settingsDemoOff => 'ปิด';
+
+  @override
+  String get settingsDemoOffHint => 'อัตราวันนี้และบันทึกของคุณเอง';
+
+  @override
+  String settingsDemoPersonaHint(String detail) {
+    return '$detail · อัตราคงที่ บันทึกตัวอย่าง';
+  }
+
+  @override
+  String saveSampleWhen(String when) {
+    return 'ตัวอย่าง · $when';
+  }
+
+  @override
+  String homeRateDemo(String pair, String date) {
+    return '$pair · อัตราคงที่สำหรับสาธิต วันที่ $date';
+  }
+
+  @override
+  String get homeToday => 'วันนี้';
+
+  @override
+  String homeCashToday(String amount) {
+    return 'วันนี้น่าจะใช้เงินสดราว $amount';
+  }
+
+  @override
+  String homeCashBasis(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'ประมาณจาก $days วันล่าสุดของคุณ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeCashBasisSamples(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'ประมาณจากบันทึกตัวอย่าง $days วัน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeCashBasisMixed(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'ประมาณจาก $days วันล่าสุด รวมบันทึกตัวอย่าง',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'เมื่อ $days วันก่อน',
+      one: 'เมื่อวาน',
+      zero: 'วันนี้',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryPaidHere(String amount, String when) {
+    return 'คุณจ่าย $amount ที่นี่$when';
+  }
+
+  @override
+  String memoryPaidAt(String amount, String place, String when) {
+    return 'คุณจ่าย $amount ที่ $place $when';
+  }
+
+  @override
+  String memoryPaid(String amount, String when) {
+    return 'คุณจ่าย $amount $when';
+  }
+
+  @override
+  String memoryFromRecords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'จากบันทึกของคุณ $count รายการ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryFromSamples(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'จากบันทึกตัวอย่าง $count รายการ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryFromMixed(int count, int samples) {
+    return 'จากบันทึก $count รายการ เป็นตัวอย่าง $samples รายการ';
+  }
+
+  @override
+  String memoryLine(String fact, String basis) {
+    return '$fact · $basis';
+  }
+
+  @override
+  String get memoryCounterRow => 'จากการต่อราคาครั้งก่อน';
+
+  @override
+  String memoryAbout(String amount) {
+    return 'ราว $amount';
+  }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,14 +25,30 @@ class TripStore extends ChangeNotifier {
     : _prefs = prefs ?? SharedPreferencesAsync();
 
   static const _key = 'trip_saves_v1';
+  static const _demoKey = 'demo_trips_v1';
 
   final SharedPreferencesAsync _prefs;
   List<TripSave> _saves = const [];
   bool _loaded = false;
 
-  /// Newest first.
-  List<TripSave> get saves => _saves;
+  /// Newest first. While a demo state is shown, its own ledger instead.
+  List<TripSave> get saves {
+    final key = _demoShown;
+    if (key == null) return _saves;
+    return _demoLedgers[key] ?? _demoSamples;
+  }
+
   bool get loaded => _loaded;
+
+  /// The demo state whose ledger [saves] shows, if any.
+  String? _demoShown;
+  List<TripSave> _demoSamples = const [];
+
+  /// Each demo state's saves once something was saved or removed in it,
+  /// kept apart from the traveler's own and never sent to the account.
+  Map<String, List<TripSave>> _demoLedgers = {};
+
+  bool get showingDemo => _demoShown != null;
 
   /// The most recent save made in this session, so Home can welcome it.
   TripSave? get lastAdded => _lastAdded;
@@ -42,11 +60,52 @@ class TripStore extends ChangeNotifier {
 
   Future<void> _load() async {
     _saves = newestFirst(decodeSaves(await _prefs.getString(_key)));
+    _demoLedgers = _decodeLedgers(await _prefs.getString(_demoKey));
     _loaded = true;
     notifyListeners();
   }
 
+  /// Shows the demo state [key]: what was saved in it before, or
+  /// [samples] when nothing was. The traveler's own saves stay as they are.
+  void showDemo(String key, List<TripSave> samples) {
+    _demoShown = key;
+    _demoSamples = samples;
+    _lastAdded = null;
+    notifyListeners();
+  }
+
+  /// Back to the traveler's own saves.
+  void showReal() {
+    if (_demoShown == null) return;
+    _demoShown = null;
+    _demoSamples = const [];
+    _lastAdded = null;
+    notifyListeners();
+  }
+
+  /// Forgets what was saved in every demo state, so each starts again from
+  /// its samples.
+  Future<void> resetDemo() async {
+    await load();
+    _demoLedgers = {};
+    notifyListeners();
+    await _prefs.remove(_demoKey);
+  }
+
+  Future<void> _changeDemo(List<TripSave> Function(List<TripSave>) change) {
+    final key = _demoShown!;
+    _demoLedgers = {..._demoLedgers, key: newestFirst(change(saves))};
+    notifyListeners();
+    return _prefs.setString(_demoKey, _encodeLedgers(_demoLedgers));
+  }
+
   Future<void> add(TripSave save) async {
+    if (_demoShown != null) {
+      _lastAdded = save;
+      return _changeDemo(
+        (saves) => [save, ...saves.where((s) => s.id != save.id)],
+      );
+    }
     _saves = newestFirst([save, ..._saves.where((s) => s.id != save.id)]);
     _lastAdded = save;
     notifyListeners();
@@ -59,6 +118,9 @@ class TripStore extends ChangeNotifier {
   }
 
   Future<void> remove(String id) async {
+    if (_demoShown != null) {
+      return _changeDemo((saves) => saves.where((s) => s.id != id).toList());
+    }
     _saves = _saves.where((s) => s.id != id).toList();
     notifyListeners();
     await _prefs.setString(_key, encodeSaves(_saves));
@@ -122,8 +184,30 @@ class TripStore extends ChangeNotifier {
     }
   }
 
-  bool contains(String id) => _saves.any((s) => s.id == id);
+  bool contains(String id) => saves.any((s) => s.id == id);
 
   /// A fresh id for a new save.
   static String newId(DateTime now) => now.microsecondsSinceEpoch.toString();
+}
+
+String _encodeLedgers(Map<String, List<TripSave>> ledgers) => jsonEncode({
+  for (final e in ledgers.entries) e.key: [for (final s in e.value) s.toJson()],
+});
+
+Map<String, List<TripSave>> _decodeLedgers(String? raw) {
+  if (raw == null || raw.isEmpty) return {};
+  final Object? decoded;
+  try {
+    decoded = jsonDecode(raw);
+  } on FormatException {
+    return {};
+  }
+  if (decoded is! Map) return {};
+  return {
+    for (final e in decoded.entries)
+      if (e.key is String && e.value is List)
+        e.key as String: newestFirst([
+          for (final entry in e.value as List) ?TripSave.fromJson(entry),
+        ]),
+  };
 }

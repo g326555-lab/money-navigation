@@ -127,6 +127,15 @@ abstract final class AppMotion {
   /// The Press card lands as the hero amount settles.
   static const pressCardDelay = Duration(milliseconds: 300);
 
+  /// Demo switch: a curtain covers the app, the language, currency and
+  /// records change under it, the new traveler's name shows, the curtain
+  /// lifts. One transition, so the three never change one by one.
+  static const demoCurtainIn = Duration(milliseconds: 220);
+  static const demoNameIn = Duration(milliseconds: 280);
+  static const demoNameHold = Duration(milliseconds: 650);
+  static const demoCurtainOut = Duration(milliseconds: 420);
+  static const demoNameRise = Offset(0, 0.3);
+
   /// A selection check grows in from this scale.
   static const checkFrom = 0.6;
 

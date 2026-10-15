@@ -1144,14 +1144,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDemo => 'Demo';
 
   @override
-  String get settingsDemoOn => 'Use fixed demo rates';
-
-  @override
-  String get settingsDemoOnHint => 'Rates from the demo file, not today\'s';
-
-  @override
   String get settingsDemoFooter =>
-      'For presenting only: results stay the same on stage. Turn it off to use today\'s rates.';
+      'For presenting. Language, currency and records change together, with fixed rates. Your own records are kept and come back when you turn it off.';
 
   @override
   String billCheckedTrace(String elapsed) {
@@ -1205,4 +1199,154 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kindOther => 'something else';
+
+  @override
+  String get demoLabel => 'Demo';
+
+  @override
+  String get demoVisitorBangkok => 'US visitor in Bangkok';
+
+  @override
+  String get demoThaiTokyo => 'Thai traveler in Tokyo';
+
+  @override
+  String demoPersonaDetail(String language, String currency) {
+    return '$language · $currency';
+  }
+
+  @override
+  String demoPill(String name) {
+    return 'Demo · $name';
+  }
+
+  @override
+  String demoSwitchTo(String name) {
+    return 'Switch to $name';
+  }
+
+  @override
+  String get settingsDemoOff => 'Off';
+
+  @override
+  String get settingsDemoOffHint => 'Today\'s rates and your own records';
+
+  @override
+  String settingsDemoPersonaHint(String detail) {
+    return '$detail · fixed rates, sample records';
+  }
+
+  @override
+  String saveSampleWhen(String when) {
+    return 'Sample · $when';
+  }
+
+  @override
+  String homeRateDemo(String pair, String date) {
+    return '$pair · fixed demo rate, $date';
+  }
+
+  @override
+  String get homeToday => 'Today';
+
+  @override
+  String homeCashToday(String amount) {
+    return 'About $amount in cash today';
+  }
+
+  @override
+  String homeCashBasis(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Estimate from your last $days days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeCashBasisSamples(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Estimate from $days days of sample records',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeCashBasisMixed(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Estimate from your last $days days, sample records included',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days ago',
+      one: 'yesterday',
+      zero: 'today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryPaidHere(String amount, String when) {
+    return 'You paid $amount here $when';
+  }
+
+  @override
+  String memoryPaidAt(String amount, String place, String when) {
+    return 'You paid $amount at $place $when';
+  }
+
+  @override
+  String memoryPaid(String amount, String when) {
+    return 'You paid $amount $when';
+  }
+
+  @override
+  String memoryFromRecords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'from your $count past records',
+      one: 'from your 1 past record',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryFromSamples(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'from $count sample records',
+      one: 'from 1 sample record',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryFromMixed(int count, int samples) {
+    return 'from $count past records, $samples of them samples';
+  }
+
+  @override
+  String memoryLine(String fact, String basis) {
+    return '$fact · $basis';
+  }
+
+  @override
+  String get memoryCounterRow => 'Your past haggles suggest';
+
+  @override
+  String memoryAbout(String amount) {
+    return 'About $amount';
+  }
 }

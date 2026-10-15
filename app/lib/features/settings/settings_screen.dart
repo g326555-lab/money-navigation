@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../app/app_scope.dart';
+import '../../app/demo_switch.dart';
 import '../../core/colors.dart';
 import '../../core/motion.dart';
 import '../../core/spacing.dart';
@@ -70,18 +71,30 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
               GroupFooter(l10n.settingsSpeakingFooter),
-              SectionHeader(l10n.settingsDemo),
-              GroupCard(
-                children: [
-                  _ChoiceRow(
-                    title: l10n.settingsDemoOn,
-                    subtitle: l10n.settingsDemoOnHint,
-                    selected: settings.demoState,
-                    onPressed: () => settings.setDemoState(!settings.demoState),
-                  ),
-                ],
-              ),
-              GroupFooter(l10n.settingsDemoFooter),
+              // Offered only when the demo file could be read.
+              if (scope.demoPersonas case final demo?) ...[
+                SectionHeader(l10n.settingsDemo),
+                GroupCard(
+                  children: [
+                    _ChoiceRow(
+                      title: l10n.settingsDemoOff,
+                      subtitle: l10n.settingsDemoOffHint,
+                      selected: !settings.demoState,
+                      onPressed: () => DemoSwitch.to(context, null),
+                    ),
+                    for (final persona in demo.personas)
+                      _ChoiceRow(
+                        title: demoPersonaName(l10n, persona),
+                        subtitle: l10n.settingsDemoPersonaHint(
+                          demoPersonaDetail(l10n, persona),
+                        ),
+                        selected: settings.demoPersona?.key == persona.key,
+                        onPressed: () => DemoSwitch.to(context, persona),
+                      ),
+                  ],
+                ),
+                GroupFooter(l10n.settingsDemoFooter),
+              ],
             ],
           );
         },

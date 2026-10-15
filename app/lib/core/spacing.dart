@@ -88,6 +88,9 @@ abstract final class AppSizes {
   static const double tabBarInsetBottom = 8;
   static const double tabIndicatorHeight = 56;
   static const double tabIcon = 24;
+
+  /// A glyph inside a pill, e.g. the demo switch's swap arrows.
+  static const double pillIcon = 16;
   static const double tabBlur = 24;
   static const double dockBlur = 20;
   static const double rowMinHeight = 56;

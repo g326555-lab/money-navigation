@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../rules/demo_personas.dart';
+
 /// How a spoken Thai request ends. Thai speakers soften requests with a
 /// particle that depends on the speaker.
 enum PoliteEnding { male, female, none }
@@ -13,7 +15,7 @@ class SettingsStore extends ChangeNotifier {
 
   static const _currencyKey = 'home_currency_v1';
   static const _endingKey = 'polite_ending_v1';
-  static const _demoKey = 'demo_state_v1';
+  static const _demoKey = 'demo_persona_v1';
 
   final SharedPreferencesAsync _prefs;
 
@@ -21,25 +23,34 @@ class SettingsStore extends ChangeNotifier {
   PoliteEnding _ending = PoliteEnding.male;
   bool _currencyChosen = false;
 
-  /// ISO 4217 code of the currency the traveler thinks in.
-  String get homeCurrency => _homeCurrency;
+  /// ISO 4217 code of the currency the traveler thinks in: the demo
+  /// persona's while the demo state is on, otherwise the traveler's own.
+  String get homeCurrency => _demoPersona?.homeCurrency ?? _homeCurrency;
 
   /// False while [homeCurrency] is only the guess from the phone's region.
   bool get currencyChosen => _currencyChosen;
   PoliteEnding get politeEnding => _ending;
 
-  /// The demo state: fixed exchange rates from assets/data/demo_rates.json
-  /// so results never change on stage. Off in normal use.
-  bool get demoState => _demoState;
-  bool _demoState = false;
+  /// The demo state: one of the two prepared travelers from
+  /// assets/data/demo_personas.json, with fixed exchange rates from
+  /// assets/data/demo_rates.json so results never change on stage. Null in
+  /// normal use.
+  DemoPersona? get demoPersona => _demoPersona;
+  DemoPersona? _demoPersona;
+  bool get demoState => _demoPersona != null;
 
-  Future<void> setDemoState(bool on) async {
-    _demoState = on;
+  Future<void> setDemoPersona(DemoPersona? persona) async {
+    _demoPersona = persona;
     notifyListeners();
-    await _prefs.setBool(_demoKey, on);
+    if (persona == null) {
+      await _prefs.remove(_demoKey);
+    } else {
+      await _prefs.setString(_demoKey, persona.key);
+    }
   }
 
-  Future<void> load() async {
+  /// [personas] lets a demo state chosen before the app closed come back.
+  Future<void> load({DemoPersonas? personas}) async {
     final currency = await _prefs.getString(_currencyKey);
     if (currency != null && currency.length == 3) {
       _homeCurrency = currency;
@@ -48,7 +59,8 @@ class SettingsStore extends ChangeNotifier {
     final ending = PoliteEnding.values
         .asNameMap()[await _prefs.getString(_endingKey)];
     if (ending != null) _ending = ending;
-    _demoState = await _prefs.getBool(_demoKey) ?? false;
+    final demo = await _prefs.getString(_demoKey);
+    _demoPersona = demo == null ? null : personas?.byKey(demo);
     notifyListeners();
   }
 

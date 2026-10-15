@@ -904,9 +904,7 @@
     }
   },
   "settingsDemo": "Demo",
-  "settingsDemoOn": "Use fixed demo rates",
-  "settingsDemoOnHint": "Rates from the demo file, not today's",
-  "settingsDemoFooter": "For presenting only: results stay the same on stage. Turn it off to use today's rates.",
+  "settingsDemoFooter": "For presenting. Language, currency and records change together, with fixed rates. Your own records are kept and come back when you turn it off.",
   "billCheckedTrace": "Figures checked on this phone · {elapsed}",
   "@billCheckedTrace": {
     "placeholders": {
@@ -940,6 +938,189 @@
         "type": "String"
       },
       "elapsed": {
+        "type": "String"
+      }
+    }
+  },
+  "demoLabel": "Demo",
+  "demoVisitorBangkok": "US visitor in Bangkok",
+  "demoThaiTokyo": "Thai traveler in Tokyo",
+  "demoPersonaDetail": "{language} · {currency}",
+  "@demoPersonaDetail": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "demoPill": "Demo · {name}",
+  "@demoPill": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "demoSwitchTo": "Switch to {name}",
+  "@demoSwitchTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsDemoOff": "Off",
+  "settingsDemoOffHint": "Today's rates and your own records",
+  "settingsDemoPersonaHint": "{detail} · fixed rates, sample records",
+  "@settingsDemoPersonaHint": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "saveSampleWhen": "Sample · {when}",
+  "@saveSampleWhen": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "homeRateDemo": "{pair} · fixed demo rate, {date}",
+  "@homeRateDemo": {
+    "placeholders": {
+      "pair": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeToday": "Today",
+  "homeCashToday": "About {amount} in cash today",
+  "@homeCashToday": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCashBasis": "{days, plural, other{Estimate from your last {days} days}}",
+  "@homeCashBasis": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "homeCashBasisSamples": "{days, plural, other{Estimate from {days} days of sample records}}",
+  "@homeCashBasisSamples": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "homeCashBasisMixed": "{days, plural, other{Estimate from your last {days} days, sample records included}}",
+  "@homeCashBasisMixed": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryDaysAgo": "{days, plural, =0{today} =1{yesterday} other{{days} days ago}}",
+  "@memoryDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryPaidHere": "You paid {amount} here {when}",
+  "@memoryPaidHere": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "memoryPaidAt": "You paid {amount} at {place} {when}",
+  "@memoryPaidAt": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "place": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "memoryPaid": "You paid {amount} {when}",
+  "@memoryPaid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "memoryFromRecords": "{count, plural, =1{from your 1 past record} other{from your {count} past records}}",
+  "@memoryFromRecords": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryFromSamples": "{count, plural, =1{from 1 sample record} other{from {count} sample records}}",
+  "@memoryFromSamples": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryFromMixed": "from {count} past records, {samples} of them samples",
+  "@memoryFromMixed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "samples": {
+        "type": "int"
+      }
+    }
+  },
+  "memoryLine": "{fact} · {basis}",
+  "@memoryLine": {
+    "placeholders": {
+      "fact": {
+        "type": "String"
+      },
+      "basis": {
+        "type": "String"
+      }
+    }
+  },
+  "memoryCounterRow": "Your past haggles suggest",
+  "memoryAbout": "About {amount}",
+  "@memoryAbout": {
+    "placeholders": {
+      "amount": {
         "type": "String"
       }
     }

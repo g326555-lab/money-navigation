@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../data/account_trip_remote.dart';
 import '../data/settings_store.dart';
@@ -7,9 +8,13 @@ import '../services/auth/account_models.dart';
 import '../services/auth/auth_controller.dart';
 import '../data/trip_store.dart';
 import '../l10n/app_localizations.dart';
+import '../rules/demo_personas.dart';
+import '../rules/demo_rates.dart';
 import '../services/rate_service.dart';
 import 'app_scope.dart';
 import 'app_shell.dart';
+import 'demo_switch.dart';
+import '../features/scan/scan_screen.dart' show demoRatesAsset;
 import 'theme.dart';
 
 class MoneyNavigationApp extends StatefulWidget {
@@ -38,7 +43,12 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _trip.load();
-    _settings.load().then((_) => _rates.ensure(_settings.homeCurrency));
+    _settings.addListener(_onSettings);
+    _loadDemoFiles().then(
+      (personas) => _settings
+          .load(personas: personas)
+          .then((_) => _rates.ensure(_settings.homeCurrency)),
+    );
     _rates.loadCurrencies();
     _auth.addListener(_onAuth);
     // Without accounts the controller settles at once; settle it before the
@@ -46,9 +56,47 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
     if (!_auth.accountsAvailable) _auth.start();
   }
 
-  /// The app language: the account's once signed in, English otherwise
-  /// until the demo switch (scene 4) owns it. The device language never
-  /// decides.
+  /// The demo files: the two prepared states with their sample records,
+  /// and the fixed rates. Null when a file cannot be read; the demo state
+  /// is then simply not offered.
+  DemoPersonas? _demoPersonas;
+  DemoRates? _demoRates;
+
+  Future<DemoPersonas?> _loadDemoFiles() async {
+    final (personas, rates) = await (
+      rootBundle.loadString(demoPersonasAsset).then(parseDemoPersonas),
+      rootBundle.loadString(demoRatesAsset).then(parseDemoRates),
+    ).wait;
+    if (mounted) {
+      setState(() {
+        _demoPersonas = personas;
+        _demoRates = rates;
+      });
+    }
+    return personas;
+  }
+
+  /// The demo state on screen, so the records follow it exactly once.
+  String? _demoShown;
+
+  /// Demo state changes: the records follow the persona here; the language
+  /// follows in [build]; the currency comes from [SettingsStore.homeCurrency].
+  void _onSettings() {
+    final persona = _settings.demoPersona;
+    if (persona?.key == _demoShown) return;
+    _demoShown = persona?.key;
+    if (persona == null) {
+      _trip.showReal();
+    } else {
+      _trip.showDemo(persona.key, persona.samplesAt(DateTime.now()));
+    }
+    _rates.ensure(_settings.homeCurrency);
+    setState(() {});
+  }
+
+  /// The app language: the demo persona's in the demo state, otherwise the
+  /// account's once signed in, English when signed out. The device
+  /// language never decides.
   Locale _locale = const Locale('en');
 
   /// Signed in with a profile: records follow the account, and the
@@ -90,6 +138,7 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _settings.removeListener(_onSettings);
     _auth
       ..removeListener(_onAuth)
       ..dispose();
@@ -111,17 +160,24 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
       trip: _trip,
       settings: _settings,
       rates: _rates,
+      demoPersonas: _demoPersonas,
+      demoRates: _demoRates,
       child: MaterialApp(
         // AuthScope reaches every route, including pages pushed above the
-        // gate (Settings, email sign-in).
-        builder: (context, child) =>
-            AuthScope(controller: _auth, child: child!),
+        // gate (Settings, email sign-in); the demo switch covers them all.
+        builder: (context, child) => AuthScope(
+          controller: _auth,
+          child: DemoSwitch(child: child!),
+        ),
         onGenerateTitle: (context) => AppLocalizations.of(context).appName,
         debugShowCheckedModeBanner: false,
         theme: buildAppTheme(),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: _locale,
+        locale: switch (_settings.demoPersona) {
+          final persona? => Locale(persona.language),
+          null => _locale,
+        },
         home: AuthGate(controller: _auth, child: const AppShell()),
       ),
     );

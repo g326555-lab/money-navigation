@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'atm_conversion.dart';
+import 'personal_context.dart';
 import 'terminal_dcc.dart';
 
 /// What kind of result a save came from.
@@ -26,6 +27,7 @@ class TripSave {
     this.placeName,
     this.sellerPrices,
     this.ourOffers,
+    this.isSample = false,
   });
 
   final String id;
@@ -52,6 +54,10 @@ class TripSave {
   final List<double>? sellerPrices;
   final List<double>? ourOffers;
 
+  /// A sample record of the demo state (assets/data/demo_personas.json),
+  /// never one the traveler made. Shown as a sample.
+  final bool isSample;
+
   Map<String, Object?> toJson() => {
     'id': id,
     'kind': kind.name,
@@ -63,6 +69,7 @@ class TripSave {
     if (placeName != null) 'placeName': placeName,
     if (sellerPrices != null) 'sellerPrices': sellerPrices,
     if (ourOffers != null) 'ourOffers': ourOffers,
+    if (isSample) 'isSample': true,
   };
 
   /// Null when [json] is not a well-formed save.
@@ -90,6 +97,7 @@ class TripSave {
           : null,
       sellerPrices: _numbers(json['sellerPrices']),
       ourOffers: _numbers(json['ourOffers']),
+      isSample: json['isSample'] == true,
     );
   }
 }
@@ -116,6 +124,25 @@ Map<SaveKind, double> keptByKind(Iterable<TripSave> saves) {
   }
   return totals;
 }
+
+/// The finished haggles among [saves], as the evidence the traveler's own
+/// records give a verdict (lib/rules/personal_context.dart).
+List<PastPurchase> pastPurchasesFromSaves(Iterable<TripSave> saves) => [
+  for (final s in saves)
+    if (s.kind == SaveKind.haggle &&
+        s.itemKey != null &&
+        s.paidThb != null &&
+        s.paidThb! > 0)
+      PastPurchase(
+        itemKey: s.itemKey!,
+        paidThb: s.paidThb!,
+        askedThb: s.askedThb,
+        placeName: s.placeName,
+        // Day counts are calendar days where the traveler is.
+        at: s.savedAt.toLocal(),
+        isSample: s.isSample,
+      ),
+];
 
 List<TripSave> newestFirst(Iterable<TripSave> saves) =>
     saves.toList()..sort((a, b) => b.savedAt.compareTo(a.savedAt));

@@ -2005,22 +2005,10 @@ abstract class AppLocalizations {
   /// **'Demo'**
   String get settingsDemo;
 
-  /// No description provided for @settingsDemoOn.
-  ///
-  /// In en, this message translates to:
-  /// **'Use fixed demo rates'**
-  String get settingsDemoOn;
-
-  /// No description provided for @settingsDemoOnHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Rates from the demo file, not today\'s'**
-  String get settingsDemoOnHint;
-
   /// No description provided for @settingsDemoFooter.
   ///
   /// In en, this message translates to:
-  /// **'For presenting only: results stay the same on stage. Turn it off to use today\'s rates.'**
+  /// **'For presenting. Language, currency and records change together, with fixed rates. Your own records are kept and come back when you turn it off.'**
   String get settingsDemoFooter;
 
   /// No description provided for @billCheckedTrace.
@@ -2111,6 +2099,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'something else'**
   String get kindOther;
+
+  /// No description provided for @demoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo'**
+  String get demoLabel;
+
+  /// No description provided for @demoVisitorBangkok.
+  ///
+  /// In en, this message translates to:
+  /// **'US visitor in Bangkok'**
+  String get demoVisitorBangkok;
+
+  /// No description provided for @demoThaiTokyo.
+  ///
+  /// In en, this message translates to:
+  /// **'Thai traveler in Tokyo'**
+  String get demoThaiTokyo;
+
+  /// No description provided for @demoPersonaDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{language} · {currency}'**
+  String demoPersonaDetail(String language, String currency);
+
+  /// No description provided for @demoPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo · {name}'**
+  String demoPill(String name);
+
+  /// No description provided for @demoSwitchTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to {name}'**
+  String demoSwitchTo(String name);
+
+  /// No description provided for @settingsDemoOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get settingsDemoOff;
+
+  /// No description provided for @settingsDemoOffHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s rates and your own records'**
+  String get settingsDemoOffHint;
+
+  /// No description provided for @settingsDemoPersonaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{detail} · fixed rates, sample records'**
+  String settingsDemoPersonaHint(String detail);
+
+  /// No description provided for @saveSampleWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample · {when}'**
+  String saveSampleWhen(String when);
+
+  /// No description provided for @homeRateDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'{pair} · fixed demo rate, {date}'**
+  String homeRateDemo(String pair, String date);
+
+  /// No description provided for @homeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get homeToday;
+
+  /// No description provided for @homeCashToday.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount} in cash today'**
+  String homeCashToday(String amount);
+
+  /// No description provided for @homeCashBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{Estimate from your last {days} days}}'**
+  String homeCashBasis(int days);
+
+  /// No description provided for @homeCashBasisSamples.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{Estimate from {days} days of sample records}}'**
+  String homeCashBasisSamples(int days);
+
+  /// No description provided for @homeCashBasisMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{Estimate from your last {days} days, sample records included}}'**
+  String homeCashBasisMixed(int days);
+
+  /// No description provided for @memoryDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{today} =1{yesterday} other{{days} days ago}}'**
+  String memoryDaysAgo(int days);
+
+  /// No description provided for @memoryPaidHere.
+  ///
+  /// In en, this message translates to:
+  /// **'You paid {amount} here {when}'**
+  String memoryPaidHere(String amount, String when);
+
+  /// No description provided for @memoryPaidAt.
+  ///
+  /// In en, this message translates to:
+  /// **'You paid {amount} at {place} {when}'**
+  String memoryPaidAt(String amount, String place, String when);
+
+  /// No description provided for @memoryPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'You paid {amount} {when}'**
+  String memoryPaid(String amount, String when);
+
+  /// No description provided for @memoryFromRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{from your 1 past record} other{from your {count} past records}}'**
+  String memoryFromRecords(int count);
+
+  /// No description provided for @memoryFromSamples.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{from 1 sample record} other{from {count} sample records}}'**
+  String memoryFromSamples(int count);
+
+  /// No description provided for @memoryFromMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'from {count} past records, {samples} of them samples'**
+  String memoryFromMixed(int count, int samples);
+
+  /// No description provided for @memoryLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{fact} · {basis}'**
+  String memoryLine(String fact, String basis);
+
+  /// No description provided for @memoryCounterRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your past haggles suggest'**
+  String get memoryCounterRow;
+
+  /// No description provided for @memoryAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount}'**
+  String memoryAbout(String amount);
 }
 
 class _AppLocalizationsDelegate

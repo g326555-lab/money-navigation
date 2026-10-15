@@ -25,9 +25,11 @@ class SaveRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
     final type = AppTypography.of(context);
-    final when = DateFormat.MMMd(locale)
+    final date = DateFormat.MMMd(locale)
         .add_Hm()
         .format(save.savedAt.toLocal());
+    // A demo sample says so wherever it is listed.
+    final when = save.isSample ? l10n.saveSampleWhen(date) : date;
     final kept = l10n.saveKeptValue(
       AppFormat.roundedAmount(save.keptThb, marketCurrency),
     );

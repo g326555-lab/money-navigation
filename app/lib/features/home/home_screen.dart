@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../../app/app_scope.dart';
+import '../../app/demo_switch.dart';
 import '../../core/colors.dart';
 import '../../core/elevation.dart';
 import '../../core/formatters.dart';
@@ -15,12 +16,14 @@ import '../../data/market_price_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/exchange_rate.dart';
 import '../../rules/haggle.dart' show marketCurrency;
+import '../../rules/personal_context.dart';
 import '../../rules/trip_ledger.dart';
 import '../../shared/app_tab_bar.dart';
 import '../../shared/coin.dart';
 import '../../shared/odometer.dart';
 import '../../shared/pill.dart';
 import '../../shared/group.dart';
+import '../../shared/icon_tile.dart';
 import '../../shared/pressable.dart';
 import 'save_row.dart';
 import '../../shared/surface.dart';
@@ -131,9 +134,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final visible = ModalRoute.isCurrentOf(context) ?? true;
     _sync(total, scope.trip.loaded, visible);
     final currency = scope.settings.homeCurrency;
+    // The demo state keeps the stage figure fixed with the demo rate.
+    final demoQuote = scope.settings.demoState
+        ? scope.demoRates?.quoteFor(marketCurrency, currency)
+        : null;
     final quote = currency == marketCurrency
         ? null
-        : scope.rates.quoteFor(currency);
+        : demoQuote ?? scope.rates.quoteFor(currency);
+    final persona = scope.settings.demoPersona;
+    // Route preview: today's cash from the traveler's own past days.
+    final purchases = pastPurchasesFromSaves(saves);
+    final cash = scope.trip.loaded
+        ? morningCash(purchases, DateTime.now())
+        : null;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
@@ -150,12 +163,30 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 AppTabBar.contentPadding(context),
               ),
               children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: _SettingsButton(
-                    label: l10n.settingsTitle,
-                    onPressed: widget.onSettings,
-                  ),
+                Row(
+                  children: [
+                    if (persona != null && scope.demoPersonas != null)
+                      Flexible(
+                        child: _DemoPill(
+                          label: l10n.demoPill(demoPersonaName(l10n, persona)),
+                          semanticLabel: l10n.demoSwitchTo(
+                            demoPersonaName(
+                              l10n,
+                              scope.demoPersonas!.other(persona),
+                            ),
+                          ),
+                          onPressed: () => DemoSwitch.to(
+                            context,
+                            scope.demoPersonas!.other(persona),
+                          ),
+                        ),
+                      ),
+                    const Spacer(),
+                    _SettingsButton(
+                      label: l10n.settingsTitle,
+                      onPressed: widget.onSettings,
+                    ),
+                  ],
                 ),
                 _KeptCard(
                   coinKey: _coinKey,
@@ -174,7 +205,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                 ),
                 if (currency != marketCurrency)
-                  GroupFooter(_rateLine(l10n, scope, currency, quote)),
+                  GroupFooter(
+                    _rateLine(l10n, scope, currency, quote, demo: demoQuote),
+                  ),
+                if (cash != null) ...[
+                  SectionHeader(l10n.homeToday),
+                  GroupCard(
+                    children: [
+                      GroupRow(
+                        leading: const IconTile.orange(
+                          icon: Icons.payments_rounded,
+                        ),
+                        title: l10n.homeCashToday(
+                          AppFormat.roundedAmount(
+                            cash.amountThb,
+                            marketCurrency,
+                          ),
+                        ),
+                        subtitle: _cashBasis(l10n, cash, purchases),
+                      ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.zoneGap),
                 if (!scope.trip.loaded)
                   const SizedBox.shrink()
@@ -218,12 +270,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  /// How many past days the estimate used, and whether they are samples.
+  static String _cashBasis(
+    AppLocalizations l10n,
+    CashEstimate cash,
+    List<PastPurchase> purchases,
+  ) {
+    if (cash.sampleRecords == 0) return l10n.homeCashBasis(cash.daysUsed);
+    bool used(PastPurchase p) => cash.days.any(
+      (d) => d.year == p.at.year && d.month == p.at.month && d.day == p.at.day,
+    );
+    return purchases.where(used).every((p) => p.isSample)
+        ? l10n.homeCashBasisSamples(cash.daysUsed)
+        : l10n.homeCashBasisMixed(cash.daysUsed);
+  }
+
   String _rateLine(
     AppLocalizations l10n,
     AppScope scope,
     String currency,
-    RateQuote? quote,
-  ) {
+    RateQuote? quote, {
+    RateQuote? demo,
+  }) {
     if (quote == null) {
       return scope.rates.unavailable(currency)
           ? l10n.homeRateUnavailable(currency)
@@ -243,6 +311,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             AppFormat.rateValue(inverseRate(quote)),
             marketCurrency,
           );
+    if (demo != null) return l10n.homeRateDemo(pair, date);
     return scope.rates.refreshFailed(currency)
         ? l10n.homeRateCached(pair, date)
         : l10n.homeRateSource(pair, date);
@@ -400,6 +469,69 @@ class _StartCard extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Says the demo state is on, and swaps to the other prepared traveler.
+class _DemoPill extends StatelessWidget {
+  const _DemoPill({
+    required this.label,
+    required this.semanticLabel,
+    required this.onPressed,
+  });
+
+  final String label;
+  final String semanticLabel;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = AppTypography.of(context);
+    return Pressable(
+      onPressed: onPressed,
+      semanticLabel: semanticLabel,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: AppSizes.minTouchTarget),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          widthFactor: 1,
+          child: DecoratedBox(
+            decoration: ShapeDecoration(
+              shape: const StadiumBorder(),
+              color: AppColors.surface,
+              shadows: AppElevation.e1,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.chipPadding,
+                AppSpacing.sm,
+                AppSpacing.chipPadding,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: type.label.copyWith(color: AppColors.onSurface),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  const Icon(
+                    Icons.swap_horiz_rounded,
+                    size: AppSizes.pillIcon,
+                    color: AppColors.onSurfaceTertiary,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

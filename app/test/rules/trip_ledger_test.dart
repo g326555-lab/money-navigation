@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_navigation/rules/atm_conversion.dart';
 import 'package:money_navigation/rules/exchange_rate.dart';
+import 'package:money_navigation/rules/personal_context.dart';
 import 'package:money_navigation/rules/trip_ledger.dart';
 
 /// The exact demo values printed on the ATM prop (CLAUDE.md "Demo data").
@@ -251,6 +252,134 @@ void main() {
     });
     test('bad date gives null', () {
       expect(TripSave.fromJson(valid()..['savedAt'] = 'yesterday'), isNull);
+    });
+  });
+
+  group('TripSave.isSample', () {
+    TripSave sample({bool isSample = true}) => TripSave(
+      id: 'demo-visitorBangkok-0',
+      kind: SaveKind.haggle,
+      keptThb: 40,
+      savedAt: t0,
+      itemKey: 'mango',
+      askedThb: 140,
+      paidThb: 100,
+      isSample: isSample,
+    );
+
+    test('defaults to false', () {
+      expect(mangoSave().isSample, isFalse);
+      expect(atmSave().isSample, isFalse);
+    });
+
+    test('toJson writes isSample only when true', () {
+      expect(sample().toJson()['isSample'], true);
+      expect(sample(isSample: false).toJson().containsKey('isSample'), isFalse);
+      expect(mangoSave().toJson().containsKey('isSample'), isFalse);
+    });
+
+    test('round trip keeps isSample true and false', () {
+      final back = decodeSaves(encodeSaves([sample(), mangoSave(id: 'own-1')]));
+      expect(back.map((s) => s.id), ['demo-visitorBangkok-0', 'own-1']);
+      expect(back[0].isSample, isTrue);
+      expect(back[1].isSample, isFalse);
+    });
+
+    test('missing or non-bool isSample reads as false', () {
+      final base = sample().toJson();
+      expect(TripSave.fromJson(base..remove('isSample'))!.isSample, isFalse);
+      for (final v in ['true', 1, null, const <Object>[]]) {
+        final j = sample().toJson()..['isSample'] = v;
+        final s = TripSave.fromJson(j);
+        expect(s, isNotNull, reason: 'isSample=$v');
+        expect(s!.isSample, isFalse, reason: 'isSample=$v');
+      }
+    });
+  });
+
+  group('pastPurchasesFromSaves', () {
+    final at = DateTime(2026, 10, 13, 11, 5);
+    final sampleHaggle = TripSave(
+      id: 'demo-visitorBangkok-2',
+      kind: SaveKind.haggle,
+      keptThb: 60,
+      savedAt: at,
+      itemKey: 'mango',
+      askedThb: 150,
+      paidThb: 90,
+      placeName: 'Chatuchak Weekend Market',
+      isSample: true,
+    );
+    final ownHaggle = mangoSave(id: 'own-mango', at: t0);
+    final skipped = [
+      atmSave(),
+      TripSave(
+        id: 'dcc-1',
+        kind: SaveKind.terminalDcc,
+        keptThb: 86.4,
+        savedAt: t0,
+        placeName: 'Convenience store, Shinjuku',
+      ),
+      TripSave(
+        id: 'no-item',
+        kind: SaveKind.haggle,
+        keptThb: 10,
+        savedAt: t0,
+        askedThb: 60,
+        paidThb: 50,
+      ),
+      TripSave(
+        id: 'no-paid',
+        kind: SaveKind.haggle,
+        keptThb: 0,
+        savedAt: t0,
+        itemKey: 'coconut',
+        askedThb: 60,
+      ),
+      TripSave(
+        id: 'paid-zero',
+        kind: SaveKind.haggle,
+        keptThb: 60,
+        savedAt: t0,
+        itemKey: 'coconut',
+        askedThb: 60,
+        paidThb: 0,
+      ),
+    ];
+
+    test('keeps only haggles with itemKey and paidThb > 0', () {
+      final out = pastPurchasesFromSaves([...skipped, sampleHaggle, ownHaggle]);
+      expect(out, hasLength(2));
+      expect(out.map((p) => p.paidThb), unorderedEquals(<double>[90, 110]));
+    });
+
+    test('nothing usable gives an empty list', () {
+      expect(pastPurchasesFromSaves(skipped), isEmpty);
+      expect(pastPurchasesFromSaves(const []), isEmpty);
+    });
+
+    test('copies itemKey, paid, asked, place, at and isSample', () {
+      final out = pastPurchasesFromSaves([sampleHaggle, ownHaggle]);
+      final sample = out.singleWhere((p) => p.isSample);
+      expect(sample.itemKey, 'mango');
+      expect(sample.paidThb, 90);
+      expect(sample.askedThb, 150);
+      expect(sample.placeName, 'Chatuchak Weekend Market');
+      expect(sample.at.isAtSameMomentAs(at), isTrue);
+      final own = out.singleWhere((p) => !p.isSample);
+      expect(own.itemKey, 'mango');
+      expect(own.paidThb, 110);
+      expect(own.askedThb, 150);
+      expect(own.placeName, isNull);
+      expect(own.at.isAtSameMomentAs(t0), isTrue);
+    });
+
+    test('result feeds priceMemory with the sample counted', () {
+      final history = pastPurchasesFromSaves([sampleHaggle]);
+      final m = priceMemory('mango', history, DateTime(2026, 10, 15, 16))!;
+      expect(m.recordsUsed, 1);
+      expect(m.sampleRecords, 1);
+      expect(m.lastPlaceName, 'Chatuchak Weekend Market');
     });
   });
 }
