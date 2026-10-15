@@ -20,6 +20,8 @@ import '../../rules/haggle.dart';
 import '../../rules/haggle_rounds.dart';
 import '../../rules/personal_context.dart';
 import '../../rules/trip_ledger.dart';
+import '../../services/ai/ai_trace.dart';
+import '../../services/ai/gemini_explainer.dart';
 import '../../shared/action_dock.dart';
 import '../../shared/app_button.dart';
 import '../../shared/group.dart';
@@ -52,6 +54,12 @@ class _HaggleScreenState extends State<HaggleScreen>
     with WidgetsBindingObserver {
   late final _haggle = widget.controller ?? HaggleController();
   HaggleVerdict? _lastVerdict;
+
+  /// Gemini's plain-English wording of the verdict, when it answers in
+  /// time. Optional: the verified figures never wait for it.
+  final _explainer = GeminiExplainer();
+  String? _explainedFor;
+  (String, AiTrace)? _explained;
 
   @override
   void initState() {
@@ -88,7 +96,38 @@ class _HaggleScreenState extends State<HaggleScreen>
           : HapticFeedback.lightImpact();
     }
     _lastVerdict = verdict;
+    _explain();
     setState(() {});
+  }
+
+  /// Asks Gemini once per heard price to reword the verified facts.
+  /// English only: the sentence comes back in English.
+  void _explain() {
+    final state = _haggle.state;
+    final verdict = state.verdict;
+    final match = state.match;
+    final heard = state.heard;
+    if (verdict == null || match == null || heard == null) return;
+    if (Localizations.localeOf(context).languageCode != 'en') return;
+    final key = '${match.item.key}:${heard.amount}';
+    if (key == _explainedFor) return;
+    _explainedFor = key;
+    _explained = null;
+    final item = match.item;
+    _explainer
+        .explain({
+          'item': item.nameEn,
+          'askedThb': heard.amount,
+          'usualLowThb': item.low,
+          'usualHighThb': item.high,
+          'verdict': verdict.verdict.name,
+          if (verdict.overBy > 0) 'overByThb': verdict.overBy,
+          'counterOfferThb': ?verdict.counterOffer,
+        })
+        .then((answer) {
+          if (!mounted || _explainedFor != key) return;
+          setState(() => _explained = answer);
+        });
   }
 
   /// For when the market is too loud: pick the item and key in the price.
@@ -429,6 +468,20 @@ class _HaggleScreenState extends State<HaggleScreen>
       GroupFooter(_sourcesLine(l10n, match)),
       if (paidBefore != null)
         GroupFooter(_paidBeforeLine(l10n, paidBefore, place)),
+      if (_explained case (final sentence, final trace)?) ...[
+        const SizedBox(height: AppSpacing.groupGap),
+        GroupCard(
+          children: [
+            GroupRow(
+              title: sentence,
+              subtitle: l10n.aiWordedBy(
+                trace.engine.displayName,
+                trace.elapsedLabel,
+              ),
+            ),
+          ],
+        ),
+      ],
       if (_haggle.places case final places?)
         GroupFooter(
           l10n.aiPlacesLine(

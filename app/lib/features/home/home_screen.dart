@@ -63,6 +63,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _sawLoaded = false;
   bool _arriving = false;
 
+  /// Whose records the total is: the traveler's own (null) or a demo
+  /// state's. Switching ledgers is not a save, so nothing flies.
+  String? _ledger;
+
   final _stackKey = GlobalKey();
   final _coinKey = GlobalKey();
   late final _fly = AnimationController(
@@ -83,10 +87,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   /// Decides what the card shows for [total], starting the arrival when a
   /// save has just raised it.
-  void _sync(double total, bool loaded, bool visible) {
+  void _sync(double total, bool loaded, bool visible, String? ledger) {
     if (!loaded) return;
-    if (!_sawLoaded) {
+    if (!_sawLoaded || ledger != _ledger) {
       _sawLoaded = true;
+      _ledger = ledger;
       _shownTotal = total;
       return;
     }
@@ -132,7 +137,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final saves = scope.trip.saves;
     final total = keptTotalThb(saves);
     final visible = ModalRoute.isCurrentOf(context) ?? true;
-    _sync(total, scope.trip.loaded, visible);
+    _sync(
+      total,
+      scope.trip.loaded,
+      visible,
+      scope.trip.showingDemo ? scope.settings.demoPersona?.key : null,
+    );
     final currency = scope.settings.homeCurrency;
     // The demo state keeps the stage figure fixed with the demo rate.
     final demoQuote = scope.settings.demoState
@@ -166,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Row(
                   children: [
                     if (persona != null && scope.demoPersonas != null)
-                      Flexible(
+                      Expanded(
                         child: _DemoPill(
                           label: l10n.demoPill(demoPersonaName(l10n, persona)),
                           semanticLabel: l10n.demoSwitchTo(
@@ -181,7 +191,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ),
                         ),
                       ),
-                    const Spacer(),
+                    if (persona == null || scope.demoPersonas == null)
+                      const Spacer(),
                     _SettingsButton(
                       label: l10n.settingsTitle,
                       onPressed: widget.onSettings,

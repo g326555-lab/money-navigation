@@ -42,13 +42,14 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _trip.load();
     _settings.addListener(_onSettings);
-    _loadDemoFiles().then(
-      (personas) => _settings
-          .load(personas: personas)
-          .then((_) => _rates.ensure(_settings.homeCurrency)),
-    );
+    // Records first, so a demo state restored from the last run shows its
+    // own ledger at once instead of replacing the samples a moment later.
+    (_trip.load(), _loadDemoFiles()).wait.then((r) async {
+      await _settings.load(personas: r.$2);
+      _demoSettled = true;
+      _rates.ensure(_settings.homeCurrency);
+    });
     _rates.loadCurrencies();
     _auth.addListener(_onAuth);
     // Without accounts the controller settles at once; settle it before the
@@ -63,9 +64,11 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
   DemoRates? _demoRates;
 
   Future<DemoPersonas?> _loadDemoFiles() async {
+    Future<T?> read<T>(String asset, T? Function(String) parse) =>
+        rootBundle.loadString(asset).then(parse, onError: (Object _) => null);
     final (personas, rates) = await (
-      rootBundle.loadString(demoPersonasAsset).then(parseDemoPersonas),
-      rootBundle.loadString(demoRatesAsset).then(parseDemoRates),
+      read(demoPersonasAsset, parseDemoPersonas),
+      read(demoRatesAsset, parseDemoRates),
     ).wait;
     if (mounted) {
       setState(() {
@@ -79,16 +82,25 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
   /// The demo state on screen, so the records follow it exactly once.
   String? _demoShown;
 
+  /// False until settings first loaded; tells a restored demo state from
+  /// one switched to.
+  bool _demoSettled = false;
+
   /// Demo state changes: the records follow the persona here; the language
   /// follows in [build]; the currency comes from [SettingsStore.homeCurrency].
   void _onSettings() {
     final persona = _settings.demoPersona;
     if (persona?.key == _demoShown) return;
+    // A demo state that comes back with the app (not switched to now) starts
+    // again from its samples, so dates like "2 days ago" stay true and a
+    // rehearsal's saves never reach the stage.
+    final restored = !_demoSettled && persona != null;
     _demoShown = persona?.key;
     if (persona == null) {
       _trip.showReal();
     } else {
       _trip.showDemo(persona.key, persona.samplesAt(DateTime.now()));
+      if (restored) _trip.resetDemo();
     }
     _rates.ensure(_settings.homeCurrency);
     setState(() {});

@@ -14,6 +14,7 @@ import '../../shared/pressable.dart';
 import '../../shared/content_width.dart';
 import '../auth/account_section.dart';
 import '../auth/auth_gate.dart' show AuthScope;
+import 'photo_credits.dart';
 
 /// The traveler's own currency and how the app speaks Thai for them.
 class SettingsScreen extends StatelessWidget {
@@ -95,6 +96,19 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 GroupFooter(l10n.settingsDemoFooter),
               ],
+              SectionHeader(l10n.settingsAbout),
+              GroupCard(
+                children: [
+                  _TapRow(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const CreditsScreen(),
+                      ),
+                    ),
+                    child: GroupRow(title: l10n.settingsCredits),
+                  ),
+                ],
+              ),
             ],
           );
         },
@@ -185,6 +199,64 @@ class _CurrencyPickerScreenState extends State<CurrencyPickerScreen> {
                 ],
               ),
               GroupFooter(l10n.currencySource),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Authors and licences of the photos the photo-kind model learned from.
+class CreditsScreen extends StatefulWidget {
+  const CreditsScreen({super.key});
+
+  @override
+  State<CreditsScreen> createState() => _CreditsScreenState();
+}
+
+class _CreditsScreenState extends State<CreditsScreen> {
+  late final Future<List<PhotoCredit>?> _credits = DefaultAssetBundle.of(
+    context,
+  ).loadString(photoCreditsAsset).then(parsePhotoCredits);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final type = AppTypography.of(context);
+    return _Page(
+      title: l10n.settingsCredits,
+      child: FutureBuilder(
+        future: _credits,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const SizedBox.shrink();
+          }
+          final credits = snapshot.data;
+          if (credits == null || snapshot.hasError) {
+            return GroupFooter(l10n.creditsUnavailable);
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              GroupFooter(l10n.settingsCreditsHint(credits.length)),
+              const SizedBox(height: AppSpacing.groupGap),
+              GroupCard(
+                children: [
+                  for (final c in credits)
+                    GroupRow(
+                      title: c.title,
+                      // Title, author, source and licence: what CC BY and
+                      // CC BY-SA ask a credit to carry.
+                      subtitle:
+                          '${l10n.creditsRow(c.author, c.license)}\n${c.source}',
+                      titleStyle: type.rowSubtitle.copyWith(
+                        color: AppColors.onSurface,
+                      ),
+                    ),
+                ],
+              ),
+              GroupFooter(l10n.creditsFooter),
             ],
           );
         },
