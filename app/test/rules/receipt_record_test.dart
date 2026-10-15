@@ -188,7 +188,8 @@ void main() {
       expect(c.lng, _lng);
       expect(c.kind, BillKind.serviceCharge);
       expect(c.subtotalThb, 300.00);
-      expect(c.serviceThb, 30.00);
+      // A new total makes the proven service amount stale.
+      expect(c.serviceThb, isNull);
       expect(c.servicePercent, 10);
       expect(c.itemCount, 1);
       expect(c.category, SpendCategory.food);
@@ -208,6 +209,66 @@ void main() {
       expect(c.vatOnTop, isTrue);
       expect(c.userCorrected, isTrue);
       expect(c.verified, isFalse);
+    });
+
+    final withVat = ReceiptRecord.fromCheck(
+      const BillCheck(
+        kind: BillKind.serviceCharge,
+        total: 233.00,
+        subtotal: 225.00,
+        discount: 13.00,
+        serviceCharge: 21.00,
+        servicePercent: 10,
+        vat: 15.24,
+        vatPercent: 7,
+        beforeVat: 217.76,
+      ),
+      id: 'c2',
+      savedAt: DateTime(2026, 10, 14, 21),
+    );
+
+    test('a new total clears both proven service and VAT amounts', () {
+      final c = withVat.corrected(totalThb: 240.00);
+      expect(c.serviceThb, isNull);
+      expect(c.vatThb, isNull);
+      expect(c.subtotalThb, 225.00);
+      expect(c.discountThb, 13.00);
+      expect(c.servicePercent, 10);
+    });
+
+    test('a new service percent clears service only', () {
+      final c = withVat.corrected(servicePercent: 0);
+      expect(c.serviceThb, isNull);
+      expect(c.vatThb, 15.24);
+      expect(c.totalThb, 233.00);
+    });
+
+    test('a new service-included flag clears service only', () {
+      final c = withVat.corrected(serviceIncluded: true);
+      expect(c.serviceThb, isNull);
+      expect(c.vatThb, 15.24);
+      expect(c.serviceIncluded, isTrue);
+    });
+
+    test('a new VAT format clears VAT only', () {
+      final c = withVat.corrected(vatOnTop: true);
+      expect(c.vatThb, isNull);
+      expect(c.serviceThb, 21.00);
+      expect(c.vatOnTop, isTrue);
+      expect(c.totalThb, 233.00);
+    });
+
+    test('a record cannot be both verified and user-corrected', () {
+      expect(
+        () => ReceiptRecord(
+          id: 'bad',
+          savedAt: DateTime(2026, 10, 14),
+          totalThb: 100,
+          verified: true,
+          userCorrected: true,
+        ),
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('does not change the original', () {
@@ -242,9 +303,7 @@ void main() {
         userCorrected: true,
         isSample: true,
       );
-      final back = ReceiptRecord.fromJson(
-        jsonDecode(jsonEncode(r.toJson())),
-      );
+      final back = ReceiptRecord.fromJson(jsonDecode(jsonEncode(r.toJson())));
       expect(back, isNotNull);
       final b = back!;
       expect(b.id, 'j1');
@@ -346,6 +405,59 @@ void main() {
       expect(ReceiptRecord.fromJson({'verified': true}), isNull);
     });
 
+    test('stored verified with userCorrected loads as unverified', () {
+      final json = {...valid(), 'verified': true, 'userCorrected': true};
+      final r = ReceiptRecord.fromJson(json)!;
+      expect(r.verified, isFalse);
+      expect(r.userCorrected, isTrue);
+    });
+
+    test('verified loads only when stored as true', () {
+      expect(ReceiptRecord.fromJson(valid())!.verified, isTrue);
+      expect(
+        ReceiptRecord.fromJson({...valid(), 'verified': 'true'})!.verified,
+        isFalse,
+      );
+      final without = valid()..remove('verified');
+      expect(ReceiptRecord.fromJson(without)!.verified, isFalse);
+    });
+
+    test('NaN and infinite totals return null', () {
+      for (final bad in <Object>[
+        'NaN',
+        'Infinity',
+        '-Infinity',
+        double.nan,
+        double.infinity,
+      ]) {
+        expect(
+          ReceiptRecord.fromJson({...valid(), 'totalThb': bad}),
+          isNull,
+          reason: 'total $bad',
+        );
+      }
+    });
+
+    test('out-of-range coordinates are dropped, the record kept', () {
+      final r = ReceiptRecord.fromJson({
+        ...valid(),
+        'lat': 91.0,
+        'lng': -180.5,
+      })!;
+      expect(r.lat, isNull);
+      expect(r.lng, isNull);
+      expect(r.totalThb, 100);
+      final edge = ReceiptRecord.fromJson({
+        ...valid(),
+        'lat': -90.0,
+        'lng': 180.0,
+      })!;
+      expect(edge.lat, -90.0);
+      expect(edge.lng, 180.0);
+      final nan = ReceiptRecord.fromJson({...valid(), 'lat': 'NaN'})!;
+      expect(nan.lat, isNull);
+    });
+
     test('total of zero or below returns null', () {
       final base = ReceiptRecord(
         id: 'm2',
@@ -419,10 +531,7 @@ void main() {
         categorize(placeTypes: ['convenience_store']),
         SpendCategory.shopping,
       );
-      expect(
-        categorize(placeTypes: ['shopping_mall']),
-        SpendCategory.shopping,
-      );
+      expect(categorize(placeTypes: ['shopping_mall']), SpendCategory.shopping);
       expect(categorize(placeTypes: ['pharmacy']), SpendCategory.shopping);
     });
 
@@ -502,10 +611,7 @@ void main() {
         merchantFromRows(['RECEIPT/TAX INVOICE (ABB.)', 'Ta Kri Rest.']),
         'Ta Kri Rest.',
       );
-      expect(
-        merchantFromRows(['ใบเสร็จรับเงิน', 'ร้านป้าแดง']),
-        'ร้านป้าแดง',
-      );
+      expect(merchantFromRows(['ใบเสร็จรับเงิน', 'ร้านป้าแดง']), 'ร้านป้าแดง');
       expect(
         merchantFromRows(['ใบกำกับภาษีอย่างย่อ', 'VAT Included', 'Somboon']),
         'Somboon',
@@ -533,15 +639,7 @@ void main() {
 
     test('only the first six rows are looked at', () {
       expect(
-        merchantFromRows([
-          '1',
-          '2',
-          '3',
-          '4',
-          '5',
-          '6',
-          'Late Name',
-        ]),
+        merchantFromRows(['1', '2', '3', '4', '5', '6', 'Late Name']),
         isNull,
       );
     });
@@ -579,6 +677,25 @@ void main() {
       expect(m.lastTotalThb, 95);
       expect(m.dates, [_daysAgo(1), _daysAgo(3)]);
       expect(m.correctedRecords, 0);
+      expect(m.sampleRecords, 0);
+      expect(m.lastVerified, isTrue);
+    });
+
+    test('counts sample records among the visits', () {
+      final history = [
+        ReceiptRecord(
+          id: 's',
+          savedAt: _daysAgo(2),
+          totalThb: 75,
+          verified: true,
+          merchantName: '7-Eleven Sukhumvit 11',
+          isSample: true,
+        ),
+        _rec('real', _daysAgo(1), 90, merchant: '7-Eleven Sukhumvit 11'),
+      ];
+      final m = merchantMemory(current, history, _now)!;
+      expect(m.visits, 2);
+      expect(m.sampleRecords, 1);
     });
 
     test('matches an unnamed record within 100 m, not one 300 m away', () {
@@ -600,8 +717,12 @@ void main() {
 
     test('future records and the current moment are ignored', () {
       final history = [
-        _rec('future', _now.add(const Duration(hours: 1)), 999,
-            merchant: '7-Eleven Sukhumvit 11'),
+        _rec(
+          'future',
+          _now.add(const Duration(hours: 1)),
+          999,
+          merchant: '7-Eleven Sukhumvit 11',
+        ),
         _rec('same', _now, 888, merchant: '7-Eleven Sukhumvit 11'),
         _rec('past', _daysAgo(4), 60, merchant: '7-Eleven Sukhumvit 11'),
       ];
@@ -613,15 +734,24 @@ void main() {
 
     test('carries the newest record format and counts corrections', () {
       final history = [
-        _rec('old', _daysAgo(5), 330,
-            merchant: '7-Eleven Sukhumvit 11', servicePercent: 10),
-        _rec('new', _daysAgo(1), 214,
-            merchant: '7-Eleven Sukhumvit 11',
-            servicePercent: 0,
-            serviceIncluded: true,
-            vatOnTop: true,
-            userCorrected: true,
-            verified: false),
+        _rec(
+          'old',
+          _daysAgo(5),
+          330,
+          merchant: '7-Eleven Sukhumvit 11',
+          servicePercent: 10,
+        ),
+        _rec(
+          'new',
+          _daysAgo(1),
+          214,
+          merchant: '7-Eleven Sukhumvit 11',
+          servicePercent: 0,
+          serviceIncluded: true,
+          vatOnTop: true,
+          userCorrected: true,
+          verified: false,
+        ),
       ];
       final m = merchantMemory(current, history, _now)!;
       expect(m.visits, 2);
@@ -630,6 +760,7 @@ void main() {
       expect(m.lastServiceIncluded, isTrue);
       expect(m.lastVatOnTop, isTrue);
       expect(m.correctedRecords, 1);
+      expect(m.lastVerified, isFalse);
     });
 
     test('no name and no location gives null', () {
@@ -651,29 +782,47 @@ void main() {
 
     test('null when the merchant was never corrected', () {
       final history = [
-        _rec('a', _daysAgo(2), 330,
-            merchant: 'Som Tam Nua', servicePercent: 10),
+        _rec(
+          'a',
+          _daysAgo(2),
+          330,
+          merchant: 'Som Tam Nua',
+          servicePercent: 10,
+        ),
       ];
       expect(formatHint(current, history, _now), isNull);
     });
 
     test('uses only corrected records, newest correction wins', () {
       final history = [
-        _rec('c-old', _daysAgo(6), 300,
-            merchant: 'som tam  nua',
-            servicePercent: 5,
-            userCorrected: true,
-            verified: false),
-        _rec('c-new', _daysAgo(3), 321,
-            merchant: 'Som Tam Nua',
-            servicePercent: 0,
-            serviceIncluded: true,
-            vatOnTop: true,
-            userCorrected: true,
-            verified: false),
+        _rec(
+          'c-old',
+          _daysAgo(6),
+          300,
+          merchant: 'som tam  nua',
+          servicePercent: 5,
+          userCorrected: true,
+          verified: false,
+        ),
+        _rec(
+          'c-new',
+          _daysAgo(3),
+          321,
+          merchant: 'Som Tam Nua',
+          servicePercent: 0,
+          serviceIncluded: true,
+          vatOnTop: true,
+          userCorrected: true,
+          verified: false,
+        ),
         // Newer but not corrected: must not override the user's fix.
-        _rec('plain', _daysAgo(1), 330,
-            merchant: 'Som Tam Nua', servicePercent: 10),
+        _rec(
+          'plain',
+          _daysAgo(1),
+          330,
+          merchant: 'Som Tam Nua',
+          servicePercent: 10,
+        ),
       ];
       final h = formatHint(current, history, _now);
       expect(h, isNotNull);
@@ -682,18 +831,51 @@ void main() {
       expect(h.vatOnTop, isTrue);
       expect(h.fromRecords, 2);
       expect(h.lastCorrectedAt, _daysAgo(3));
+      expect(h.fromSample, isFalse);
+    });
+
+    test('fromSample is true when the last correction is a sample', () {
+      final history = [
+        ReceiptRecord(
+          id: 'demo',
+          savedAt: _daysAgo(1),
+          totalThb: 233,
+          verified: false,
+          merchantName: 'Som Tam Nua',
+          servicePercent: 10,
+          userCorrected: true,
+          isSample: true,
+        ),
+      ];
+      final h = formatHint(current, history, _now)!;
+      expect(h.fromSample, isTrue);
+      expect(h.fromRecords, 1);
     });
 
     test('a correction 50 m away counts, 300 m away does not', () {
       final near = [
-        _rec('n', _daysAgo(2), 200,
-            lat: _lat50m, lng: _lng, servicePercent: 10,
-            userCorrected: true, verified: false),
+        _rec(
+          'n',
+          _daysAgo(2),
+          200,
+          lat: _lat50m,
+          lng: _lng,
+          servicePercent: 10,
+          userCorrected: true,
+          verified: false,
+        ),
       ];
       final far = [
-        _rec('f', _daysAgo(2), 200,
-            lat: _lat300m, lng: _lng, servicePercent: 10,
-            userCorrected: true, verified: false),
+        _rec(
+          'f',
+          _daysAgo(2),
+          200,
+          lat: _lat300m,
+          lng: _lng,
+          servicePercent: 10,
+          userCorrected: true,
+          verified: false,
+        ),
       ];
       final h = formatHint(current, near, _now);
       expect(h, isNotNull);
@@ -704,10 +886,22 @@ void main() {
 
     test('future corrections and other merchants are ignored', () {
       final history = [
-        _rec('future', _now.add(const Duration(minutes: 5)), 200,
-            merchant: 'Som Tam Nua', userCorrected: true, verified: false),
-        _rec('other', _daysAgo(1), 200,
-            merchant: 'Baan Khanitha', userCorrected: true, verified: false),
+        _rec(
+          'future',
+          _now.add(const Duration(minutes: 5)),
+          200,
+          merchant: 'Som Tam Nua',
+          userCorrected: true,
+          verified: false,
+        ),
+        _rec(
+          'other',
+          _daysAgo(1),
+          200,
+          merchant: 'Baan Khanitha',
+          userCorrected: true,
+          verified: false,
+        ),
       ];
       expect(formatHint(current, history, _now), isNull);
     });
@@ -725,14 +919,26 @@ void main() {
         _rec('t1', _daysAgo(1), 45, category: SpendCategory.transport),
         _rec('l1', _daysAgo(3), 1200, category: SpendCategory.lodging),
         // Day 7 (today is day 1): first minute is inside the window.
-        _rec('s1', _daysAgo(6, hour: 0, minute: 1), 85,
-            category: SpendCategory.shopping),
+        _rec(
+          's1',
+          _daysAgo(6, hour: 0, minute: 1),
+          85,
+          category: SpendCategory.shopping,
+        ),
         // Day 8: outside.
-        _rec('old', _daysAgo(7, hour: 23, minute: 59), 5000,
-            category: SpendCategory.shopping),
+        _rec(
+          'old',
+          _daysAgo(7, hour: 23, minute: 59),
+          5000,
+          category: SpendCategory.shopping,
+        ),
         // Later today: not yet happened.
-        _rec('future', _now.add(const Duration(hours: 2)), 9000,
-            category: SpendCategory.food),
+        _rec(
+          'future',
+          _now.add(const Duration(hours: 2)),
+          9000,
+          category: SpendCategory.food,
+        ),
       ];
       final out = spendByCategory(history, _now);
       expect(out.map((c) => c.category).toList(), [
@@ -751,11 +957,37 @@ void main() {
       expect(out[3].records, 1);
     });
 
+    test('counts sample records per category', () {
+      final history = [
+        ReceiptRecord(
+          id: 's1',
+          savedAt: _daysAgo(1),
+          totalThb: 233,
+          verified: true,
+          category: SpendCategory.food,
+          isSample: true,
+        ),
+        _rec('f', _daysAgo(2), 100, category: SpendCategory.food),
+        _rec('t', _daysAgo(2), 40, category: SpendCategory.transport),
+      ];
+      final out = spendByCategory(history, _now);
+      expect(out[0].category, SpendCategory.food);
+      expect(out[0].totalThb, 333);
+      expect(out[0].records, 2);
+      expect(out[0].sampleRecords, 1);
+      expect(out[1].category, SpendCategory.transport);
+      expect(out[1].sampleRecords, 0);
+    });
+
     test('custom window of 1 day is today only', () {
       final history = [
         _rec('a', _daysAgo(0, hour: 8), 60, category: SpendCategory.food),
-        _rec('b', _daysAgo(1, hour: 23, minute: 59), 999,
-            category: SpendCategory.food),
+        _rec(
+          'b',
+          _daysAgo(1, hour: 23, minute: 59),
+          999,
+          category: SpendCategory.food,
+        ),
       ];
       final out = spendByCategory(history, _now, days: 1);
       expect(out.length, 1);
@@ -782,15 +1014,13 @@ void main() {
       expect(d, isNotNull);
       expect(d!.medianThb, 900);
       expect(d.daysUsed, 3);
+      expect(d.sampleRecords, 0);
       expect(d.isEstimate, isTrue);
-      expect(
-        d.days.map((x) => DateTime(x.year, x.month, x.day)).toSet(),
-        {
-          DateTime(2026, 10, 14),
-          DateTime(2026, 10, 13),
-          DateTime(2026, 10, 11),
-        },
-      );
+      expect(d.days.map((x) => DateTime(x.year, x.month, x.day)).toSet(), {
+        DateTime(2026, 10, 14),
+        DateTime(2026, 10, 13),
+        DateTime(2026, 10, 11),
+      });
     });
 
     test('even count uses the mean of the middle two, then rounds up', () {
@@ -809,6 +1039,27 @@ void main() {
         _rec('b', _daysAgo(2), 400),
       ];
       expect(dailySpend(history, _now)!.medianThb, 400);
+    });
+
+    test('counts sample records on the days used, not today', () {
+      ReceiptRecord sample(String id, DateTime at, double total) =>
+          ReceiptRecord(
+            id: id,
+            savedAt: at,
+            totalThb: total,
+            verified: true,
+            isSample: true,
+          );
+      final history = [
+        sample('s1', _daysAgo(1, hour: 9), 200),
+        sample('s2', _daysAgo(1, hour: 19), 100),
+        _rec('r', _daysAgo(2), 300),
+        sample('today', _daysAgo(0, hour: 8), 50),
+      ];
+      final d = dailySpend(history, _now)!;
+      expect(d.daysUsed, 2);
+      expect(d.medianThb, 300);
+      expect(d.sampleRecords, 2);
     });
 
     test('today is excluded', () {

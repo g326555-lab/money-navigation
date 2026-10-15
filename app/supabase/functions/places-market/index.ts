@@ -3,7 +3,7 @@
 // level). The field mask is strict: reviews would bill the call at the
 // Atmosphere SKU, so they are not requested.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
-import { paymentOf } from "../_shared/places.ts";
+import { paymentOf, validLatLng } from "../_shared/places.ts";
 
 const PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby";
 const FIELD_MASK = [
@@ -28,8 +28,12 @@ Deno.serve(async (req) => {
   try {
     const { lat, lng, types, withPayment } = await req.json();
     const payment = withPayment === true;
-    if (typeof lat !== "number" || typeof lng !== "number") {
-      return json({ error: "lat and lng are required numbers" }, 400);
+    if (!validLatLng(lat, lng)) {
+      return json({ error: "lat and lng are required numbers in range" }, 400);
+    }
+    if (types !== undefined && !(Array.isArray(types) && types.length <= 10 &&
+        types.every((t: unknown) => typeof t === "string" && /^[a-z_]{2,40}$/.test(t)))) {
+      return json({ error: "types must be up to 10 Google place type names" }, 400);
     }
     const res = await fetchWithTimeout(PLACES_URL, {
       method: "POST",

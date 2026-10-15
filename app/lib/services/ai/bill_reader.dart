@@ -38,12 +38,11 @@ class BillReader {
           try {
             return await _functions.call('read-text', body, timeout: timeout);
           } on CloudFunctionError catch (e) {
-            // A server error is usually momentary (seen 3 times in 80 real
-            // photos, each fine on resend): try once more. No connection
-            // or a timeout is not retried.
-            if (e.reason == 'timeout' || e.reason.startsWith('offline')) {
-              rethrow;
-            }
+            // A momentary server error (seen 3 times in 80 real photos,
+            // each fine on resend) is tried once more. A timeout on either
+            // side, no connection or a rejected request is not.
+            final status = int.tryParse(e.reason.split(':').first);
+            if (status == null || status < 500 || status == 504) rethrow;
             return _functions.call('read-text', body, timeout: timeout);
           }
         },

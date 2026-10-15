@@ -32,7 +32,10 @@ class ReceiptRecord {
     this.category = SpendCategory.other,
     this.userCorrected = false,
     this.isSample = false,
-  });
+  }) : assert(
+         !(verified && userCorrected),
+         'a corrected record is never verified',
+       );
 
   /// A record of a receipt whose figures [check] proved.
   factory ReceiptRecord.fromCheck(
@@ -109,10 +112,14 @@ class ReceiptRecord {
     kind: kind,
     subtotalThb: subtotalThb,
     discountThb: discountThb,
-    serviceThb: serviceThb,
+    // A changed format or total makes the proven amounts stale.
+    serviceThb:
+        servicePercent == null && serviceIncluded == null && totalThb == null
+        ? serviceThb
+        : null,
     servicePercent: servicePercent ?? this.servicePercent,
     serviceIncluded: serviceIncluded ?? this.serviceIncluded,
-    vatThb: vatThb,
+    vatThb: vatOnTop == null && totalThb == null ? vatThb : null,
     vatOnTop: vatOnTop ?? this.vatOnTop,
     itemCount: itemCount,
     category: category,
@@ -169,11 +176,12 @@ class ReceiptRecord {
       id: id,
       savedAt: savedAt,
       totalThb: total,
-      verified: json['verified'] == true,
+      // A typed-in correction is never proven, whatever was stored.
+      verified: json['verified'] == true && json['userCorrected'] != true,
       merchantName: _str(json['merchantName']),
       placeName: _str(json['placeName']),
-      lat: _num(json['lat']),
-      lng: _num(json['lng']),
+      lat: _inRange(_num(json['lat']), 90),
+      lng: _inRange(_num(json['lng']), 180),
       kind: BillKind.values.asNameMap()[json['kind']],
       subtotalThb: _num(json['subtotalThb']),
       discountThb: _num(json['discountThb']),
@@ -312,6 +320,8 @@ class MerchantMemory {
     required this.lastServiceIncluded,
     required this.lastVatOnTop,
     required this.correctedRecords,
+    required this.sampleRecords,
+    required this.lastVerified,
     required this.dates,
   });
 
@@ -324,6 +334,12 @@ class MerchantMemory {
 
   /// Records among [visits] whose figures the traveler fixed by hand.
   final int correctedRecords;
+
+  /// Demo sample records among [visits], to be labelled as such.
+  final int sampleRecords;
+
+  /// The last visit's figures were proven by arithmetic (not typed in).
+  final bool lastVerified;
   final List<DateTime> dates;
 }
 
@@ -346,6 +362,8 @@ MerchantMemory? merchantMemory(
     lastServiceIncluded: last.serviceIncluded,
     lastVatOnTop: last.vatOnTop,
     correctedRecords: same.where((r) => r.userCorrected).length,
+    sampleRecords: same.where((r) => r.isSample).length,
+    lastVerified: last.verified,
     dates: [for (final r in same) r.savedAt],
   );
 }
@@ -358,6 +376,7 @@ class FormatHint {
     required this.vatOnTop,
     required this.fromRecords,
     required this.lastCorrectedAt,
+    required this.fromSample,
   });
 
   final double? servicePercent;
@@ -365,6 +384,9 @@ class FormatHint {
   final bool vatOnTop;
   final int fromRecords;
   final DateTime lastCorrectedAt;
+
+  /// The correction is on a demo sample record.
+  final bool fromSample;
 }
 
 /// The traveler's last correction at this merchant, or null. It is shown
@@ -387,6 +409,7 @@ FormatHint? formatHint(
     vatOnTop: last.vatOnTop,
     fromRecords: fixed.length,
     lastCorrectedAt: last.savedAt,
+    fromSample: last.isSample,
   );
 }
 
@@ -395,11 +418,15 @@ class CategorySpend {
     required this.category,
     required this.totalThb,
     required this.records,
+    required this.sampleRecords,
   });
 
   final SpendCategory category;
   final double totalThb;
   final int records;
+
+  /// Demo sample receipts among [records].
+  final int sampleRecords;
 }
 
 /// Receipt totals per category over the last [days] calendar days (today
@@ -412,12 +439,14 @@ List<CategorySpend> spendByCategory(
   final first = _dayOf(now).subtract(Duration(days: days - 1));
   final totals = <SpendCategory, double>{};
   final counts = <SpendCategory, int>{};
+  final samples = <SpendCategory, int>{};
   for (final r in history) {
     if (!r.savedAt.isBefore(now) || _dayOf(r.savedAt).isBefore(first)) {
       continue;
     }
     totals[r.category] = (totals[r.category] ?? 0) + r.totalThb;
     counts[r.category] = (counts[r.category] ?? 0) + 1;
+    if (r.isSample) samples[r.category] = (samples[r.category] ?? 0) + 1;
   }
   return [
     for (final c in totals.keys)
@@ -425,6 +454,7 @@ List<CategorySpend> spendByCategory(
         category: c,
         totalThb: (totals[c]! * 100).round() / 100,
         records: counts[c]!,
+        sampleRecords: samples[c] ?? 0,
       ),
   ]..sort((a, b) => b.totalThb.compareTo(a.totalThb));
 }
@@ -434,11 +464,15 @@ class DailySpend {
   const DailySpend({
     required this.medianThb,
     required this.daysUsed,
+    required this.sampleRecords,
     required this.days,
   });
 
   final double medianThb;
   final int daysUsed;
+
+  /// Demo sample receipts on the days used.
+  final int sampleRecords;
   final List<DateTime> days;
 
   bool get isEstimate => true;
@@ -452,10 +486,12 @@ const dailySpendDays = 7;
 DailySpend? dailySpend(List<ReceiptRecord> history, DateTime now) {
   final today = _dayOf(now);
   final byDay = <DateTime, double>{};
+  final samplesByDay = <DateTime, int>{};
   for (final r in history) {
     final day = _dayOf(r.savedAt);
     if (!day.isBefore(today)) continue;
     byDay[day] = (byDay[day] ?? 0) + r.totalThb;
+    if (r.isSample) samplesByDay[day] = (samplesByDay[day] ?? 0) + 1;
   }
   final days = byDay.keys.toList()..sort((a, b) => b.compareTo(a));
   final recent = days.take(dailySpendDays).toList();
@@ -468,6 +504,7 @@ DailySpend? dailySpend(List<ReceiptRecord> history, DateTime now) {
   return DailySpend(
     medianThb: (median / 100).ceil() * 100.0,
     daysUsed: recent.length,
+    sampleRecords: recent.fold(0, (n, d) => n + (samplesByDay[d] ?? 0)),
     days: recent,
   );
 }
@@ -508,10 +545,16 @@ bool _near(ReceiptRecord a, ReceiptRecord b) {
 /// Calendar day as a UTC date, so day counts stay whole across DST.
 DateTime _dayOf(DateTime t) => DateTime.utc(t.year, t.month, t.day);
 
-double? _num(Object? v) => switch (v) {
-  final num n => n.toDouble(),
-  final String s => double.tryParse(s),
-  _ => null,
-};
+double? _num(Object? v) {
+  final d = switch (v) {
+    final num n => n.toDouble(),
+    final String s => double.tryParse(s),
+    _ => null,
+  };
+  return d != null && d.isFinite ? d : null;
+}
+
+double? _inRange(double? v, double limit) =>
+    v != null && v.abs() <= limit ? v : null;
 
 String? _str(Object? v) => v is String && v.isNotEmpty ? v : null;

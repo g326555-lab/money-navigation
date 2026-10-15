@@ -15,13 +15,18 @@ export function paymentOf(options: PaymentOptions | undefined) {
   return {
     cashOnly: options.acceptsCashOnly ?? null,
     // True if either card kind is accepted; false only when Google says
-    // both are not; null when it says nothing about cards.
+    // both are not; null otherwise (one unknown kind is not a "no").
     cards: credit === true || debit === true
       ? true
-      : credit === false && (debit === false || debit === undefined) ||
-          debit === false && credit === undefined
+      : credit === false && debit === false
       ? false
       : null,
     nfc: options.acceptsNfc ?? null,
   };
+}
+
+export function validLatLng(lat: unknown, lng: unknown): boolean {
+  return typeof lat === "number" && typeof lng === "number" &&
+    Number.isFinite(lat) && Number.isFinite(lng) &&
+    Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
 }

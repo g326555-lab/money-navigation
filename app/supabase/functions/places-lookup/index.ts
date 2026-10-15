@@ -2,7 +2,7 @@
 // "Chatuchak Weekend Market"), with how it accepts payment, from Google
 // Places Text Search (New). Payment facts are Google's own; absent stays null.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
-import { paymentOf } from "../_shared/places.ts";
+import { paymentOf, validLatLng } from "../_shared/places.ts";
 
 const SEARCH_URL = "https://places.googleapis.com/v1/places:searchText";
 const FIELD_MASK = [
@@ -23,7 +23,10 @@ Deno.serve(async (req) => {
     if (typeof query !== "string" || !query.trim() || query.length > MAX_QUERY) {
       return json({ error: `query is required, at most ${MAX_QUERY} characters` }, 400);
     }
-    const near = typeof lat === "number" && typeof lng === "number";
+    if ((lat !== undefined || lng !== undefined) && !validLatLng(lat, lng)) {
+      return json({ error: "lat and lng must be numbers in range" }, 400);
+    }
+    const near = lat !== undefined;
     const res = await fetchWithTimeout(SEARCH_URL, {
       method: "POST",
       headers: {
