@@ -718,7 +718,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get authWelcomeBody =>
-      'ส่องกล้องที่หน้าจอ ATM หรือเครื่องรูดบัตร แล้วดูว่าตัวเลือกไหนเสียเงินน้อยกว่า เข้าสู่ระบบเพื่อเก็บบันทึกการเดินทางไว้ใช้ได้ทุกเครื่อง';
+      'เข้าสู่ระบบเพื่อเก็บบันทึกการเดินทางไว้ใช้ได้ทุกเครื่อง';
 
   @override
   String get authContinueApple => 'ดำเนินการต่อด้วย Apple';
@@ -1329,5 +1329,47 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String memoryAbout(String amount) {
     return 'ราว $amount';
+  }
+
+  @override
+  String get authWelcomeExample => 'ตัวอย่าง';
+
+  @override
+  String get authWelcomeExampleLabel => 'ตู้ ATM เสนอให้แปลงสกุลเงิน';
+
+  @override
+  String get authWelcomeExampleChip => 'ประหยัดได้เพราะไม่รับการแปลงสกุลเงิน';
+
+  @override
+  String authWelcomeExampleSemantics(String amount) {
+    return 'ตัวอย่าง ตู้ ATM เสนอให้แปลงสกุลเงิน การไม่รับช่วยประหยัด $amount';
+  }
+
+  @override
+  String get settingsAbout => 'เกี่ยวกับ';
+
+  @override
+  String get settingsCredits => 'เครดิตภาพ';
+
+  @override
+  String get creditsUnavailable => 'เปิดรายการเครดิตไม่ได้';
+
+  @override
+  String settingsCreditsHint(int count) {
+    return 'โมเดลแยกประเภทรูปในเครื่องเรียนรู้จากรูป $count รูปที่แบ่งปันภายใต้สัญญาอนุญาตครีเอทีฟคอมมอนส์ รายชื่อผู้ถ่ายอยู่ด้านล่าง';
+  }
+
+  @override
+  String creditsRow(String author, String license) {
+    return '$author · $license';
+  }
+
+  @override
+  String get creditsFooter =>
+      'รูปจาก Wikimedia Commons ใช้ตามสัญญาอนุญาตที่ระบุในแต่ละแถว';
+
+  @override
+  String aiWordedBy(String engine, String elapsed) {
+    return '$engine เรียบเรียงจากตัวเลขด้านบน · $elapsed';
   }
 }

@@ -730,7 +730,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authWelcomeBody =>
-      'Point the camera at an ATM or a card terminal and see which choice keeps your money. Sign in to keep your trip records on any phone.';
+      'Sign in to keep your trip records on any phone.';
 
   @override
   String get authContinueApple => 'Continue with Apple';
@@ -1348,5 +1348,47 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String memoryAbout(String amount) {
     return 'About $amount';
+  }
+
+  @override
+  String get authWelcomeExample => 'Example';
+
+  @override
+  String get authWelcomeExampleLabel => 'ATM offered to convert';
+
+  @override
+  String get authWelcomeExampleChip => 'Kept by declining the conversion';
+
+  @override
+  String authWelcomeExampleSemantics(String amount) {
+    return 'Example. An ATM offered to convert. Declining kept $amount.';
+  }
+
+  @override
+  String get settingsAbout => 'About';
+
+  @override
+  String get settingsCredits => 'Photo credits';
+
+  @override
+  String get creditsUnavailable => 'The credits list couldn\'t be opened.';
+
+  @override
+  String settingsCreditsHint(int count) {
+    return 'The on-device photo model learned from $count photos shared under Creative Commons licences. Their authors are credited below.';
+  }
+
+  @override
+  String creditsRow(String author, String license) {
+    return '$author · $license';
+  }
+
+  @override
+  String get creditsFooter =>
+      'Photos from Wikimedia Commons, used under the licence named on each row.';
+
+  @override
+  String aiWordedBy(String engine, String elapsed) {
+    return 'Worded by $engine from the figures above · $elapsed';
   }
 }

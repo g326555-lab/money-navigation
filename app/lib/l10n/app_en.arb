@@ -583,7 +583,7 @@
   "billServiceTitle": "The reader didn't answer",
   "billServiceBody": "Try again in a moment.",
   "authWelcomeTitle": "See which way to pay",
-  "authWelcomeBody": "Point the camera at an ATM or a card terminal and see which choice keeps your money. Sign in to keep your trip records on any phone.",
+  "authWelcomeBody": "Sign in to keep your trip records on any phone.",
   "authContinueApple": "Continue with Apple",
   "authContinueGoogle": "Continue with Google",
   "authContinueEmail": "Continue with email",
@@ -1121,6 +1121,51 @@
   "@memoryAbout": {
     "placeholders": {
       "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "authWelcomeExample": "Example",
+  "authWelcomeExampleLabel": "ATM offered to convert",
+  "authWelcomeExampleChip": "Kept by declining the conversion",
+  "authWelcomeExampleSemantics": "Example. An ATM offered to convert. Declining kept {amount}.",
+  "@authWelcomeExampleSemantics": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsAbout": "About",
+  "settingsCredits": "Photo credits",
+  "creditsUnavailable": "The credits list couldn't be opened.",
+  "settingsCreditsHint": "The on-device photo model learned from {count} photos shared under Creative Commons licences. Their authors are credited below.",
+  "@settingsCreditsHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "creditsRow": "{author} · {license}",
+  "@creditsRow": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "license": {
+        "type": "String"
+      }
+    }
+  },
+  "creditsFooter": "Photos from Wikimedia Commons, used under the licence named on each row.",
+  "aiWordedBy": "Worded by {engine} from the figures above · {elapsed}",
+  "@aiWordedBy": {
+    "placeholders": {
+      "engine": {
+        "type": "String"
+      },
+      "elapsed": {
         "type": "String"
       }
     }

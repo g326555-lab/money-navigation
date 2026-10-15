@@ -198,7 +198,7 @@
   "billServiceTitle": "ตัวอ่านไม่ตอบ",
   "billServiceBody": "ลองใหม่อีกครั้งในอีกสักครู่",
   "authWelcomeTitle": "รู้ก่อนจ่ายว่าควรจ่ายทางไหน",
-  "authWelcomeBody": "ส่องกล้องที่หน้าจอ ATM หรือเครื่องรูดบัตร แล้วดูว่าตัวเลือกไหนเสียเงินน้อยกว่า เข้าสู่ระบบเพื่อเก็บบันทึกการเดินทางไว้ใช้ได้ทุกเครื่อง",
+  "authWelcomeBody": "เข้าสู่ระบบเพื่อเก็บบันทึกการเดินทางไว้ใช้ได้ทุกเครื่อง",
   "authContinueApple": "ดำเนินการต่อด้วย Apple",
   "authContinueGoogle": "ดำเนินการต่อด้วย Google",
   "authContinueEmail": "ดำเนินการต่อด้วยอีเมล",
@@ -356,5 +356,16 @@
   "memoryFromMixed": "จากบันทึก {count} รายการ เป็นตัวอย่าง {samples} รายการ",
   "memoryLine": "{fact} · {basis}",
   "memoryCounterRow": "จากการต่อราคาครั้งก่อน",
-  "memoryAbout": "ราว {amount}"
+  "memoryAbout": "ราว {amount}",
+  "authWelcomeExample": "ตัวอย่าง",
+  "authWelcomeExampleLabel": "ตู้ ATM เสนอให้แปลงสกุลเงิน",
+  "authWelcomeExampleChip": "ประหยัดได้เพราะไม่รับการแปลงสกุลเงิน",
+  "authWelcomeExampleSemantics": "ตัวอย่าง ตู้ ATM เสนอให้แปลงสกุลเงิน การไม่รับช่วยประหยัด {amount}",
+  "settingsAbout": "เกี่ยวกับ",
+  "settingsCredits": "เครดิตภาพ",
+  "creditsUnavailable": "เปิดรายการเครดิตไม่ได้",
+  "settingsCreditsHint": "โมเดลแยกประเภทรูปในเครื่องเรียนรู้จากรูป {count} รูปที่แบ่งปันภายใต้สัญญาอนุญาตครีเอทีฟคอมมอนส์ รายชื่อผู้ถ่ายอยู่ด้านล่าง",
+  "creditsRow": "{author} · {license}",
+  "creditsFooter": "รูปจาก Wikimedia Commons ใช้ตามสัญญาอนุญาตที่ระบุในแต่ละแถว",
+  "aiWordedBy": "{engine} เรียบเรียงจากตัวเลขด้านบน · {elapsed}"
 }

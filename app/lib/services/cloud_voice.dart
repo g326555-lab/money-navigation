@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 
 import 'ai/ai_trace.dart';
 import 'ai/cloud_functions.dart';
@@ -28,6 +29,9 @@ class CloudVoice {
   /// fetch step (zero-length when cached), or null when the cloud voice was
   /// not used.
   Future<AiTrace?> speak(String text) async {
+    if (kDebugMode) {
+      debugPrint('[voice] cloud speak configured=${CloudFunctions.configured}');
+    }
     if (!CloudFunctions.configured) return null;
     AiTrace? trace;
     var file = _cache[text];
@@ -41,15 +45,19 @@ class CloudVoice {
         file = fetched;
         trace = measured;
         _cache[text] = file;
-      } on CloudFunctionError {
+      } on CloudFunctionError catch (e) {
+        if (kDebugMode) debugPrint('[voice] cloud fetch failed: $e');
         return null;
       }
     }
     try {
       await _player.setAudioContext(_context);
       await _player.play(DeviceFileSource(file.path));
+      if (kDebugMode) debugPrint('[voice] cloud playing');
       await _player.onPlayerComplete.first.timeout(playLimit);
-    } catch (_) {
+      if (kDebugMode) debugPrint('[voice] cloud done');
+    } catch (e) {
+      if (kDebugMode) debugPrint('[voice] cloud play failed: $e');
       // Stopped, disposed or failed mid-play: the caller falls back.
       return null;
     }

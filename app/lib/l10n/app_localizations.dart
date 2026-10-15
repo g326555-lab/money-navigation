@@ -1300,7 +1300,7 @@ abstract class AppLocalizations {
   /// No description provided for @authWelcomeBody.
   ///
   /// In en, this message translates to:
-  /// **'Point the camera at an ATM or a card terminal and see which choice keeps your money. Sign in to keep your trip records on any phone.'**
+  /// **'Sign in to keep your trip records on any phone.'**
   String get authWelcomeBody;
 
   /// No description provided for @authContinueApple.
@@ -2255,6 +2255,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'About {amount}'**
   String memoryAbout(String amount);
+
+  /// No description provided for @authWelcomeExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Example'**
+  String get authWelcomeExample;
+
+  /// No description provided for @authWelcomeExampleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM offered to convert'**
+  String get authWelcomeExampleLabel;
+
+  /// No description provided for @authWelcomeExampleChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept by declining the conversion'**
+  String get authWelcomeExampleChip;
+
+  /// No description provided for @authWelcomeExampleSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Example. An ATM offered to convert. Declining kept {amount}.'**
+  String authWelcomeExampleSemantics(String amount);
+
+  /// No description provided for @settingsAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAbout;
+
+  /// No description provided for @settingsCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo credits'**
+  String get settingsCredits;
+
+  /// No description provided for @creditsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The credits list couldn\'t be opened.'**
+  String get creditsUnavailable;
+
+  /// No description provided for @settingsCreditsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The on-device photo model learned from {count} photos shared under Creative Commons licences. Their authors are credited below.'**
+  String settingsCreditsHint(int count);
+
+  /// No description provided for @creditsRow.
+  ///
+  /// In en, this message translates to:
+  /// **'{author} · {license}'**
+  String creditsRow(String author, String license);
+
+  /// No description provided for @creditsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos from Wikimedia Commons, used under the licence named on each row.'**
+  String get creditsFooter;
+
+  /// No description provided for @aiWordedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Worded by {engine} from the figures above · {elapsed}'**
+  String aiWordedBy(String engine, String elapsed);
 }
 
 class _AppLocalizationsDelegate

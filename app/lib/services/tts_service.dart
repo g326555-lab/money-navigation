@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 /// Reads Thai sentences aloud for the seller to hear.
@@ -60,7 +61,9 @@ class TtsService {
   /// Speaks [text] and completes when it has finished.
   Future<void> speak(String text) async {
     await _tts.stop();
-    await _tts.speak(text);
+    if (kDebugMode) debugPrint('[voice] phone speak');
+    final result = await _tts.speak(text);
+    if (kDebugMode) debugPrint('[voice] phone done result=$result');
   }
 
   Future<void> stop() => _tts.stop();
