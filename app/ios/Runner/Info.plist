@@ -16,6 +16,8 @@
 	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>GMSApiKey</key>
+	<string>$(MAPS_IOS_KEY)</string>
 	<key>GIDClientID</key>
 	<string>928755686938-q3vtgd55rncd5a7efmeh1c3ehbkrecmg.apps.googleusercontent.com</string>
 	<key>GIDServerClientID</key>

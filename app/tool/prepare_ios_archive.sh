@@ -20,6 +20,7 @@ for arg in "$@"; do
   esac
 done
 out="ios/Flutter/ReleaseOverrides.xcconfig"
+"$(dirname "$0")/write_maps_xcconfig.sh"
 python3 - "$src" "$out" <<'PY'
 import base64, json, re, sys
 src, out = sys.argv[1], sys.argv[2]

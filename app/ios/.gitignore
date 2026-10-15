@@ -35,3 +35,6 @@ Runner/GeneratedPluginRegistrant.*
 
 # Release pin with Supabase keys (tool/prepare_ios_archive.sh)
 Flutter/ReleaseOverrides.xcconfig
+
+# Google Maps iOS key (tool/write_maps_xcconfig.sh)
+Flutter/Maps.xcconfig

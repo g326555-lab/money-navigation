@@ -4,6 +4,15 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Google Maps keys live in env/maps.json (gitignored); empty when the file is missing.
+val mapsKeys: Map<String, String> = rootProject.file("../env/maps.json")
+    .takeIf { it.exists() }
+    ?.readText()
+    ?.let { text ->
+        Regex("\"(\\w+)\"\\s*:\\s*\"([^\"]*)\"").findAll(text)
+            .associate { it.groupValues[1] to it.groupValues[2] }
+    } ?: emptyMap()
+
 android {
     namespace = "com.hyunjunkim.money_navigation"
     compileSdk = flutter.compileSdkVersion
@@ -28,6 +37,7 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["mapsApiKey"] = mapsKeys["MAPS_ANDROID_KEY"] ?: ""
     }
 
     buildTypes {
