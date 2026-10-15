@@ -1,5 +1,5 @@
 {
-  "_comment": "Demo state only. The two prepared states of the demo switch and their sample records. Every record here is a sample: it is marked as one on screen and is never mixed with a traveler's own records, never sent to an account and never read outside the demo state. Dates are relative (daysAgo + local time) so 'two days ago' stays true on stage. Haggle savings are computed from asked and paid, not stored. Prices sit inside the usual ranges of market_prices.json.",
+  "_comment": "Demo state only. The two prepared states of the demo switch and their sample records. Every record here is a sample: it is marked as one on screen and is never mixed with a traveler's own records, never sent to an account and never read outside the demo state. Dates are relative (daysAgo + local time) so 'two days ago' stays true on stage. Haggle savings are computed from asked and paid, not stored. Coordinates are the places' public map locations, rounded to about 10 m. Prices sit inside the usual ranges of market_prices.json.",
   "personas": [
     {
       "key": "visitorBangkok",
@@ -14,7 +14,9 @@
           "itemKey": "mango",
           "askedThb": 140,
           "paidThb": 100,
-          "placeName": "Or Tor Kor Market"
+          "placeName": "Or Tor Kor Market",
+          "placeLat": 13.7983,
+          "placeLng": 100.5488
         },
         {
           "kind": "haggle",
@@ -23,7 +25,9 @@
           "itemKey": "coconut",
           "askedThb": 70,
           "paidThb": 60,
-          "placeName": "Or Tor Kor Market"
+          "placeName": "Or Tor Kor Market",
+          "placeLat": 13.7983,
+          "placeLng": 100.5488
         },
         {
           "kind": "haggle",
@@ -32,7 +36,9 @@
           "itemKey": "mango",
           "askedThb": 150,
           "paidThb": 90,
-          "placeName": "Chatuchak Weekend Market"
+          "placeName": "Chatuchak Weekend Market",
+          "placeLat": 13.7999,
+          "placeLng": 100.5503
         },
         {
           "kind": "haggle",
@@ -41,7 +47,9 @@
           "itemKey": "pad_thai",
           "askedThb": 90,
           "paidThb": 80,
-          "placeName": "Chatuchak Weekend Market"
+          "placeName": "Chatuchak Weekend Market",
+          "placeLat": 13.7999,
+          "placeLng": 100.5503
         }
       ]
     },
@@ -56,14 +64,18 @@
           "daysAgo": 2,
           "time": "15:10",
           "keptThb": 152.10,
-          "placeName": "Drugstore, Shibuya"
+          "placeName": "Drugstore, Shibuya",
+          "placeLat": 35.6595,
+          "placeLng": 139.7005
         },
         {
           "kind": "terminalDcc",
           "daysAgo": 1,
           "time": "18:05",
           "keptThb": 86.40,
-          "placeName": "Convenience store, Shinjuku"
+          "placeName": "Convenience store, Shinjuku",
+          "placeLat": 35.6909,
+          "placeLng": 139.7003
         }
       ]
     }

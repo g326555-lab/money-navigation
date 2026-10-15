@@ -32,13 +32,14 @@ class SettingsScreen extends StatelessWidget {
           final settings = scope.settings;
           final code = settings.homeCurrency;
           final name = scope.rates.currencies[code];
+          // Only under the sign-in gate (absent in previews and tests).
+          final account =
+              context.getInheritedWidgetOfExactType<AuthScope>() != null;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Only under the sign-in gate (absent in previews and tests).
-              if (context.getInheritedWidgetOfExactType<AuthScope>() != null)
-                const AccountSection(),
-              SectionHeader(l10n.settingsCurrency, first: true),
+              if (account) const AccountSection(first: true),
+              SectionHeader(l10n.settingsCurrency, first: !account),
               GroupCard(
                 children: [
                   _TapRow(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../features/assistant/assistant_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/records/records_screen.dart';
 import '../features/scan/scan_screen.dart';
@@ -9,7 +10,7 @@ import '../l10n/app_localizations.dart';
 import '../shared/app_tab_bar.dart';
 import '../shared/content_width.dart';
 
-/// Home and Records live under the floating tab bar. Scan and Speak are
+/// Home, Assistant and Records live under the floating tab bar. Scan and Speak are
 /// full-screen flows, so their tabs open them on top instead of switching.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -18,7 +19,7 @@ class AppShell extends StatefulWidget {
   State<AppShell> createState() => _AppShellState();
 }
 
-enum _Tab { home, scan, speak, records }
+enum _Tab { home, scan, speak, assistant, records }
 
 class _AppShellState extends State<AppShell> {
   _Tab _page = _Tab.home;
@@ -44,7 +45,11 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       extendBody: true,
       body: IndexedStack(
-        index: _page == _Tab.records ? 1 : 0,
+        index: switch (_page) {
+          _Tab.assistant => 1,
+          _Tab.records => 2,
+          _ => 0,
+        },
         children: [
           ContentWidth(
             child: HomeScreen(
@@ -53,8 +58,10 @@ class _AppShellState extends State<AppShell> {
               onSettings: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
               ),
+              onOpenAssistant: () => setState(() => _page = _Tab.assistant),
             ),
           ),
+          const ContentWidth(child: AssistantScreen()),
           const ContentWidth(child: RecordsScreen()),
         ],
       ),
@@ -76,6 +83,11 @@ class _AppShellState extends State<AppShell> {
             label: l10n.tabSpeak,
             icon: Icons.mic_none_rounded,
             activeIcon: Icons.mic_rounded,
+          ),
+          AppTab(
+            label: l10n.tabAssistant,
+            icon: Icons.navigation_outlined,
+            activeIcon: Icons.navigation_rounded,
           ),
           AppTab(
             label: l10n.tabRecords,

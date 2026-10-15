@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../data/account_receipt_remote.dart';
 import '../data/account_trip_remote.dart';
+import '../data/receipt_store.dart';
 import '../data/settings_store.dart';
 import '../features/auth/auth_gate.dart';
 import '../services/auth/account_models.dart';
@@ -128,9 +130,11 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
     if (signedIn && !_attached) {
       _attached = true;
       _trip.attach(AccountTripRemote(_auth.repository));
+      ReceiptStore.shared.attach(AccountReceiptRemote(_auth.repository));
     } else if (!signedIn && _attached) {
       _attached = false;
       _trip.detach();
+      ReceiptStore.shared.detach();
     }
     final profile = _auth.profile;
     final currency = profile?.homeCurrency;
@@ -172,6 +176,7 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
       trip: _trip,
       settings: _settings,
       rates: _rates,
+      receipts: ReceiptStore.shared,
       demoPersonas: _demoPersonas,
       demoRates: _demoRates,
       child: MaterialApp(

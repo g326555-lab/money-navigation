@@ -175,6 +175,8 @@ class _HaggleScreenState extends State<HaggleScreen>
       askedThb: heard.amount,
       paidThb: paid,
       placeName: _haggle.places?.place.name,
+      placeLat: _haggle.places?.lat,
+      placeLng: _haggle.places?.lng,
       sellerPrices: _haggle.history?.sellerPrices,
       ourOffers: _haggle.history?.ourOffers,
     );

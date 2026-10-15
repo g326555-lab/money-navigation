@@ -239,6 +239,8 @@ void main() {
           ratingCount: 12000,
         ),
         trace: const AiTrace(AiEngine.googleMaps, Duration(milliseconds: 300)),
+        phoneLat: 13.7983,
+        phoneLng: 100.5488,
       );
       final c = build(withPlaces: FakePlaces(evidence));
       await c.start();

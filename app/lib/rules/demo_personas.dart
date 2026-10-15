@@ -68,6 +68,8 @@ class _Sample {
     this.askedThb,
     this.paidThb,
     this.placeName,
+    this.placeLat,
+    this.placeLng,
   });
 
   final SaveKind kind;
@@ -79,6 +81,8 @@ class _Sample {
   final double? askedThb;
   final double? paidThb;
   final String? placeName;
+  final double? placeLat;
+  final double? placeLng;
 
   TripSave toSave(String id, DateTime now) {
     final at = DateTime(now.year, now.month, now.day - daysAgo, hour, minute);
@@ -94,6 +98,8 @@ class _Sample {
       askedThb: askedThb,
       paidThb: paidThb,
       placeName: placeName,
+      placeLat: placeLat,
+      placeLng: placeLng,
       isSample: true,
     );
   }
@@ -162,10 +168,18 @@ _Sample? _sample(Object? entry) {
   if (hm == null) return null;
   final place = entry['placeName'];
   if (place != null && (place is! String || place.isEmpty)) return null;
+  // A map position is optional but comes as a pair, in range.
+  final lat = entry['placeLat'];
+  final lng = entry['placeLng'];
+  if ((lat == null) != (lng == null)) return null;
+  if (lat != null && (lat is! num || lat < -90 || lat > 90)) return null;
+  if (lng != null && (lng is! num || lng < -180 || lng > 180)) return null;
   final common = (
     hour: int.parse(hm.group(1)!),
     minute: int.parse(hm.group(2)!),
     place: place as String?,
+    lat: (lat as num?)?.toDouble(),
+    lng: (lng as num?)?.toDouble(),
   );
   if (kind == SaveKind.haggle) {
     final item = entry['itemKey'];
@@ -183,6 +197,8 @@ _Sample? _sample(Object? entry) {
       askedThb: asked,
       paidThb: paid,
       placeName: common.place,
+      placeLat: common.lat,
+      placeLng: common.lng,
     );
   }
   final kept = _number(entry['keptThb']);
@@ -194,6 +210,8 @@ _Sample? _sample(Object? entry) {
     minute: common.minute,
     keptThb: kept,
     placeName: common.place,
+    placeLat: common.lat,
+    placeLng: common.lng,
   );
 }
 

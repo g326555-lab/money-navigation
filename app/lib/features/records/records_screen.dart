@@ -9,7 +9,9 @@ import '../../data/market_price_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/app_tab_bar.dart';
 import '../../shared/group.dart';
+import '../../shared/pressable.dart';
 import '../home/save_row.dart';
+import '../trip_map/trip_map_screen.dart';
 
 /// Every save on this trip, newest first. Swipe a row left to remove it.
 class RecordsScreen extends StatefulWidget {
@@ -55,7 +57,40 @@ class _RecordsScreenState extends State<RecordsScreen> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sectionHeaderInset,
                 ),
-                child: Text(l10n.recordsTitle, style: type.headline),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(l10n.recordsTitle, style: type.headline),
+                    ),
+                    // Where each save happened, on a map.
+                    Pressable(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const TripMapScreen(),
+                        ),
+                      ),
+                      semanticLabel: l10n.tripMapTitle,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minHeight: AppSizes.minTouchTarget,
+                          minWidth: AppSizes.minTouchTarget,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.map_outlined,
+                              size: AppSizes.buttonIcon,
+                              color: AppColors.primaryText,
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Text(l10n.tripMapTitle, style: type.link),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: AppSpacing.zoneGap),
               if (trip.loaded && trip.saves.isEmpty)
