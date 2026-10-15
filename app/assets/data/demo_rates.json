@@ -1,0 +1,8 @@
+{
+  "_comment": "Fixed exchange rates for the demo state only, so stage results never change. Normal use takes live Frankfurter rates. Never read these outside the demo state.",
+  "source": "Fixed demo rate",
+  "date": "2026-10-15",
+  "rates": [
+    { "base": "THB", "quote": "JPY", "rate": 4.6935 }
+  ]
+}
