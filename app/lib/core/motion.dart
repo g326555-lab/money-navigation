@@ -136,6 +136,10 @@ abstract final class AppMotion {
   static const demoCurtainOut = Duration(milliseconds: 420);
   static const demoNameRise = Offset(0, 0.3);
 
+  /// Trip map: the selected-place card drops in from just above its place
+  /// (a fraction of its own height) while it fades in.
+  static const mapCardDrop = Offset(0, -0.15);
+
   /// A selection check grows in from this scale.
   static const checkFrom = 0.6;
 

@@ -9,11 +9,15 @@ import '../../rules/trip_map.dart';
 import 'trip_map_screen.dart' show pinKindColor;
 
 /// Pin images drawn once per screen density: a white-ringed dot in the
-/// record's colour (hollow for samples), larger when selected. Until they
-/// are ready, markers use Google's default.
+/// record's colour (hollow for samples), larger when selected. The screen
+/// shows no markers until [ready], never Google's default for a frame.
 class PinIcons {
   final Map<String, BitmapDescriptor> _icons = {};
   double? _ratio;
+  bool _ready = false;
+
+  /// Every pin image is drawn for the current density.
+  bool get ready => _ready;
 
   Future<void> prepare(double ratio) async {
     if (_ratio == ratio) return;
@@ -30,6 +34,7 @@ class PinIcons {
         }
       }
     }
+    _ready = true;
   }
 
   BitmapDescriptor of(

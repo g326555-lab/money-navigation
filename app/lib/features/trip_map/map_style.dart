@@ -10,6 +10,11 @@ String _hex(Color c) =>
 /// page grey, roads white, water a shade darker, labels muted, businesses
 /// and transit icons hidden, so the trip's own pins carry the colour.
 /// Applied locally (no cloud map ID).
+///
+/// Label language follows the phone (the Maps SDKs have no language
+/// option), so the style keeps only the labels that orient: neighbourhoods
+/// and roads. City, place, park and province names are hidden; Google's logo and
+/// legal text are not part of the style and always stay.
 final String tripMapStyle = jsonEncode([
   _rule('geometry', color: AppColors.background),
   _rule('labels.icon', visibility: 'off'),
@@ -17,6 +22,11 @@ final String tripMapStyle = jsonEncode([
   _rule('labels.text.stroke', color: AppColors.surface),
   _rule('geometry', feature: 'poi', color: AppColors.surfaceSunken),
   _rule('all', feature: 'poi.business', visibility: 'off'),
+  _rule('labels', feature: 'poi', visibility: 'off'),
+  _rule('labels', feature: 'administrative.locality', visibility: 'off'),
+  _rule('labels', feature: 'administrative.province', visibility: 'off'),
+  _rule('labels', feature: 'administrative.land_parcel', visibility: 'off'),
+  _rule('labels', feature: 'road.local', visibility: 'off'),
   _rule('geometry', feature: 'poi.park', color: AppColors.surfaceDim),
   _rule('geometry', feature: 'road', color: AppColors.surface),
   _rule('geometry.stroke', feature: 'road', color: AppColors.divider),

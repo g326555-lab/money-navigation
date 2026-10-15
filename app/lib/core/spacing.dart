@@ -43,8 +43,19 @@ abstract final class AppSizes {
   /// Icon tile inside a group row; the hairline then starts at 72.
   static const double rowIconTile = 40;
 
-  /// Trip map: card height and pins (with their white ring).
-  static const double tripMapHeight = 320;
+  /// Trip map: the map card takes this share of the screen height, kept
+  /// between the bounds (Fold cover 737 -> 295, unfolded 704 -> 282,
+  /// 844 phone -> 338), and pins (with their white ring).
+  static const double tripMapHeightFraction = 0.4;
+  static const double tripMapMinHeight = 240;
+  static const double tripMapMaxHeight = 360;
+
+  /// Inset of the selected-place card from the map card's edge; its radius
+  /// follows the concentric rule (20 - 8 = 12).
+  static const double tripMapCardInset = 8;
+
+  /// Close glyph on the selected-place card.
+  static const double tripMapCloseIcon = 20;
   static const double mapPin = 18;
   static const double mapPinSelected = 26;
   static const double mapPinRing = 3;
