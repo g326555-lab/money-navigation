@@ -51,8 +51,14 @@ function buildRequest(task: Task, input: Record<string, unknown>) {
               "A Thai seller's sentence was transcribed by speech recognition and may be misheard. " +
               `Transcripts (best first): ${JSON.stringify(input.alternatives ?? [])}. ` +
               `Known items: ${JSON.stringify(input.items ?? [])}. ` +
-              'Return JSON only: {"key": string|null, "confidence": number}. ' +
-              "key must be one of the known item keys or null if none fits. Never invent a key.",
+              'Return JSON only: {"key": string|null, "confidence": number, ' +
+              '"newItem": {"nameTh": string, "nameEn": string, "unit": "each"|"perKg"|"perPlate"|"perHour"|"perRide", ' +
+              '"category": "food"|"drink"|"transport"|"service"|"goods"|"other"}|null}. ' +
+              "key must be one of the known item keys or null if none fits. Never invent a key. " +
+              "If no known item fits but the seller clearly names a product or service, set newItem: " +
+              "nameTh copied exactly from a transcript (the product words only, without numbers, " +
+              "price words or units such as บาท, กิโลละ, แก้วละ), nameEn its plain English name. " +
+              "Otherwise newItem is null.",
           }],
         }],
         generationConfig: { responseMimeType: "application/json", temperature: 0, ...FAST },

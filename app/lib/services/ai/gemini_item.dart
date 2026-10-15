@@ -1,14 +1,32 @@
 import 'dart:convert';
 
 import '../../rules/haggle.dart';
+import '../../rules/new_item.dart';
 import 'ai_trace.dart';
 import 'cloud_functions.dart';
 
+/// What Gemini made of the seller's words: one of our items, or a new item
+/// whose name is literally in the transcripts (no sourced price range).
+class ItemGuess {
+  const ItemGuess({
+    this.known,
+    this.newItem,
+    required this.confidence,
+    required this.trace,
+  });
+
+  final MarketItem? known;
+  final NewItem? newItem;
+  final double confidence;
+  final AiTrace trace;
+}
+
 /// Last-resort item naming by Gemini (function `gemini`, task
 /// `resolve_item`) when the on-device matcher found nothing. It gets every
-/// transcript the recognizers produced (on-device and cloud) and may only
-/// answer with one of our item keys; anything else is dropped. Optional:
-/// null on any failure, after at most [timeout].
+/// transcript the recognizers produced (on-device and cloud). A known item
+/// must be one of our keys; a new item must pass [acceptNewItem] (its Thai
+/// name copied from a transcript). Optional: null on any failure, after at
+/// most [timeout].
 class GeminiItemResolver {
   GeminiItemResolver({CloudFunctions? functions})
     : _functions = functions ?? CloudFunctions();
@@ -24,10 +42,9 @@ class GeminiItemResolver {
   /// "Did they mean …?" rather than judging.
   static const minConfidence = 0.9;
 
-  /// The item Gemini picked from [items] for [alternatives] (best first),
-  /// its confidence and a measured trace; null when it is unsure, names
-  /// something else, or contradicts the heard [unit].
-  Future<(MarketItem, double, AiTrace)?> resolve(
+  /// Gemini's reading of [alternatives] (best first); null when it is
+  /// unsure, names something not heard, or contradicts the heard [unit].
+  Future<ItemGuess?> resolve(
     List<String> alternatives,
     List<MarketItem> items, {
     PriceUnit? unit,
@@ -57,11 +74,25 @@ class GeminiItemResolver {
       if (answer is! Map) return null;
       final key = answer['key'];
       final confidence = answer['confidence'];
-      if (key is! String || confidence is! num) return null;
-      if (confidence < minConfidence) return null;
-      final item = items.where((i) => i.key == key).firstOrNull;
-      if (item == null || (unit != null && item.unit != unit)) return null;
-      return (item, confidence.toDouble(), trace);
+      final score = confidence is num ? confidence.toDouble() : 0.0;
+      if (key is String) {
+        if (score < minConfidence) return null;
+        final item = items.where((i) => i.key == key).firstOrNull;
+        if (item == null || (unit != null && item.unit != unit)) return null;
+        return ItemGuess(known: item, confidence: score, trace: trace);
+      }
+      final proposed = answer['newItem'];
+      if (proposed is! Map) return null;
+      final created = acceptNewItem(
+        nameTh: '${proposed['nameTh'] ?? ''}',
+        nameEn: '${proposed['nameEn'] ?? ''}',
+        unit: '${proposed['unit'] ?? ''}',
+        category: '${proposed['category'] ?? ''}',
+        transcripts: transcripts,
+        heardUnit: unit,
+      );
+      if (created == null) return null;
+      return ItemGuess(newItem: created, confidence: score, trace: trace);
     } on CloudFunctionError {
       return null;
     } on FormatException {
