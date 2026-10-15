@@ -152,6 +152,11 @@ BillCheck? readByRoles(List<String> rows, {double vatPercent = 7}) {
       ...printedSubtotals,
     ].any((v) => !known.contains(v));
     if (stray) return null;
+    // Printed payments must give back exactly this total: a rounding line
+    // or a discount the reading missed shows up here.
+    if (payments.isNotEmpty && !_paysExactly(t, payments, changes)) {
+      return null;
+    }
     return reading;
   }
   return null;
@@ -329,12 +334,16 @@ List<RoleRow> parseRoleRows(List<String> rows) {
   );
   final out = <RoleRow>[];
   for (final row in rows) {
+    if (_quantityRow.hasMatch(row.toLowerCase())) continue;
     final role = roleOf(row);
     final percent = double.tryParse(_percent.firstMatch(row)?[1] ?? '');
     final amounts = [
       for (final m in _amount.allMatches(row))
         // An amount tagged with another currency is not a baht figure.
-        if (!_foreignCode.hasMatch(row.substring(m.end)))
+        // Not another currency, and not an ID (no receipt total has more
+        // than seven baht digits).
+        if (!_foreignCode.hasMatch(row.substring(m.end)) &&
+            m[2]!.replaceAll(',', '').length <= 7)
           if (m[3] != null ||
               !decimal ||
               role == RowRole.payment ||
@@ -361,77 +370,48 @@ List<RoleRow> parseRoleRows(List<String> rows) {
   return out;
 }
 
-/// The role of one printed row, from its words.
+/// The role of one printed row, from its words. English words match whole
+/// words only ("Cashew chicken" is not cash, "Bottle" is not a total).
 RowRole roleOf(String row) {
   final t = row.toLowerCase();
-  bool has(List<String> words) => words.any(t.contains);
-  final cash = has(_paymentWords);
-  final change = has(_changeWords);
+  final cash = _payment.hasMatch(t);
+  final change = _change.hasMatch(t);
   if (cash && change) return RowRole.cashAndChange;
   if (change) return RowRole.change;
-  if (has(_vatableWords)) return RowRole.vatable;
-  if (has(_subtotalWords)) return RowRole.subtotal;
-  if (has(_vatWords) && !has(_totalWords)) return RowRole.vat;
-  if (has(_vatWords) && t.contains('vat ttl')) return RowRole.vat;
-  // รวม alone means total only as the row's first word: ผลไม้รวม is
-  // "mixed fruit".
-  if (has(_totalWords) || t.trimLeft().startsWith('รวม')) {
-    return RowRole.total;
-  }
-  if (has(_serviceWords)) return RowRole.service;
-  if (has(_discountWords)) return RowRole.discount;
+  if (_vatable.hasMatch(t)) return RowRole.vatable;
+  if (_subtotal.hasMatch(t)) return RowRole.subtotal;
+  final vat = _vat.hasMatch(t);
+  final total = _total.hasMatch(t);
+  if (vat && (!total || t.contains('vat ttl'))) return RowRole.vat;
+  if (total) return RowRole.total;
+  if (_service.hasMatch(t)) return RowRole.service;
+  if (_discount.hasMatch(t)) return RowRole.discount;
   if (cash) return RowRole.payment;
   return RowRole.item;
 }
 
-const _changeWords = ['change', 'ทอน'];
-const _paymentWords = [
-  'cash',
-  'เงินสด',
-  'tend',
-  'payment',
-  'received',
-  'visa',
-  'master',
-  'wallet',
-  'วอลเล็ท',
-  'redeem',
-  'cpn',
-  'coupon',
-  'voucher',
-  'ชำระเงิน',
-];
-const _vatableWords = [
-  'vatable',
-  'before vat',
-  'ก่อนภาษี',
-  'net ttl',
-  'net total',
-];
-const _subtotalWords = [
-  'sub total',
-  'subtotal',
-  'sub-total',
-  'ยอดรวม',
-  'order amt',
-];
-const _vatWords = ['vat', 'ภาษี', 'tax'];
-const _totalWords = [
-  'total',
-  'ttl',
-  'สุทธิ',
-  'ยอดชำระ',
-  'ชำระ',
-  'คงเหลือ',
-  'grand',
-  'amount due',
-  'รวมเงิน',
-  'รวมทั้งหมด',
-  'รวมสุทธิ',
-  'รวมจำนวนเงิน',
-];
-const _serviceWords = ['service', 'ค่าบริการ', 'svc', 's/c'];
-const _discountWords = ['discount', 'ส่วนลด', 'ลด', 'ฟรี'];
+final _change = RegExp(r'\bchange\b|ทอน');
+final _payment = RegExp(
+  r'\b(?:cash|tend(?:er(?:ed)?)?|payments?|paid|received|visa|mastercard|'
+  r'wallet|redeem|cpn|coupon|voucher)\b|เงินสด|วอลเล็ท|ชำระเงิน|'
+  r'(?<!ยอด)ชำระ',
+);
+final _vatable = RegExp(r'\bvatable\b|\bbefore vat\b|ก่อนภาษี');
+final _subtotal = RegExp(r'\bsub[\s-]?total\b|ยอดรวม|\border amt\b');
+final _vat = RegExp(r'\bvat\b|\btax\b|ภาษี');
+// รวม alone means total only as the row's first word: ผลไม้รวม is "mixed
+// fruit" and รวมมิตร a dessert.
+final _total = RegExp(
+  r'\btotal\b|\bttl\b|\bnet\b|\bgrand total\b|\bamount due\b|สุทธิ|ยอดชำระ|'
+  r'คงเหลือ|รวมเงิน|รวมทั้งหมด|รวมสุทธิ|รวมจำนวนเงิน|^\s*รวม(?=[\s\d:]|$)',
+);
+final _service = RegExp(r'\bservice\b|\bsvc\b|\bs/c\b|ค่าบริการ');
+final _discount = RegExp(
+  r'\bdiscount\b|\bround(?:ing)?\b|ส่วนลด|ลด|ฟรี|ปัดเศษ',
+);
+
+/// Rows that count pieces, not money ("Total Qty 2").
+final _quantityRow = RegExp(r'\bqty\b');
 
 /// Money in a row: optional minus and baht sign, digits with or without
 /// thousands commas, optional two decimals (dot, or OCR's comma). Numbers

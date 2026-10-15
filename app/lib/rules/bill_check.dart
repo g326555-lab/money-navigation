@@ -127,6 +127,8 @@ BillCheck? checkBill(
   // Rows that print a percent: an amount there is a charge or discount
   // line, so its percent tells which.
   final rowPercents = <Set<double>>[];
+  // The role each amount's row reads as, from its words.
+  final rowRoles = <RowRole>[];
   for (final row in text.split('\n')) {
     final start = cents.length;
     final inRow = {
@@ -139,6 +141,7 @@ BillCheck? checkBill(
       cents.add(c);
       lineTotal.add(false);
       rowPercents.add(inRow);
+      rowRoles.add(roleOf(row));
     }
     if (cents.length > start) lineTotal[cents.length - 1] = true;
   }
@@ -302,8 +305,11 @@ BillCheck? checkBill(
       break;
     }
     for (var d = t - 1; d > 0 && reading == null; d--) {
-      // The VAT line is never a discount.
+      // The VAT line is never a discount, and a plain item or total line
+      // is not one either (two receipts in one photo would otherwise read
+      // as "100.00 less 50.00").
       if (rowPercents[d].contains(vatPercent)) continue;
+      if (rowRoles[d] != RowRole.discount) continue;
       final subtotal = cents[t] + cents[d];
       if (floor == d) {
         // Discount below a verified subtotal line.

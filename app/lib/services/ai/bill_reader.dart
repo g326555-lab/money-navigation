@@ -23,27 +23,28 @@ class BillReader {
   static const maxBytes = 4 * 1024 * 1024;
 
   Future<BillReading> read(Uint8List jpeg) async {
-    if (jpeg.length > maxBytes) return const BillReading.failed(BillFailure.tooLarge);
+    if (jpeg.length > maxBytes) {
+      return const BillReading.failed(BillFailure.tooLarge);
+    }
     final Map<String, dynamic> vision;
     final AiTrace visionTrace;
     try {
       final measured = await AiTrace.measure(
         AiEngine.cloudVision,
-        () => _functions.call(
-          'read-text',
-          {'imageBase64': base64Encode(jpeg)},
-          timeout: timeout,
-        ),
-        count: (json) => json['lines'] is List ? (json['lines'] as List).length : null,
+        () => _functions.call('read-text', {
+          'imageBase64': base64Encode(jpeg),
+        }, timeout: timeout),
+        count: (json) =>
+            json['lines'] is List ? (json['lines'] as List).length : null,
       );
       vision = measured.$1;
       visionTrace = measured.$2;
     } on CloudFunctionError catch (e) {
-      return BillReading.failed(
-        e.reason == 'timeout' || e.reason.startsWith('offline')
-            ? BillFailure.offline
-            : BillFailure.service,
-      );
+      return BillReading.failed(switch (e.reason) {
+        'timeout' => BillFailure.timeout,
+        final r when r.startsWith('offline') => BillFailure.offline,
+        _ => BillFailure.service,
+      });
     }
     final lines = vision['lines'];
     if (lines is! List || lines.isEmpty) {
@@ -62,8 +63,11 @@ class BillReader {
 }
 
 enum BillFailure {
-  /// No connection or Vision did not answer in time.
+  /// No connection.
   offline,
+
+  /// Connected, but Vision did not answer within [BillReader.timeout].
+  timeout,
 
   /// The function answered with an error.
   service,
