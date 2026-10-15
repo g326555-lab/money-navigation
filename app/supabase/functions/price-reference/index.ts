@@ -6,7 +6,9 @@
 // `facts` (one search per item); otherwise the answer is "no sourced range".
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
 
-const CACHE_DAYS = 30;
+// Prices move; a range older than this is looked up again.
+const CACHE_DAYS = 7;
+const CITY = "bangkok";
 const SEARCH_TIMEOUT_MS = 6000;
 const PAGE_TIMEOUT_MS = 4000;
 const GEMINI_TIMEOUT_MS = 8000;
@@ -138,6 +140,8 @@ function verify(
     if (!page || quote.length < 10 || quote.length > 300 || !page.text.includes(quote)) continue;
     // The quote must be about this item, not another dish on the page.
     if (words.length && !words.some((w) => quote.toLowerCase().includes(w))) continue;
+    // Wholesale and bulk prices are not what a traveler pays for one.
+    if (/wholesale|bulk|per (?:box|carton|case|dozen)|ขายส่ง|ยกลัง|ยกโหล|ยกแพ็ค/i.test(quote)) continue;
     if (!pricesIn(quote).length || sources.some((s) => s.url === url && s.quote === quote)) continue;
     sources.push({ url, quote, date: today, dateKind: "fetched" });
   }
@@ -191,7 +195,7 @@ Deno.serve(async (req) => {
       return json({ error: "nameEn is required: plain English words, up to 40 characters" }, 400);
     }
     const item = nameEn.trim();
-    const slug = item.toLowerCase().replace(/[^a-z]+/g, "_");
+    const slug = `${CITY}.${item.toLowerCase().replace(/[^a-z]+/g, "_")}`;
     const hit = await cached(slug);
     if (hit) return json({ item, ...hit, cached: true, source: "Tavily search + Gemini", ms: Date.now() - started });
     if (Date.now() - (misses.get(slug) ?? 0) < MISS_TTL_MS) {

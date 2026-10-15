@@ -38,15 +38,17 @@ class PriceReference {
 /// Asks function `price-reference` (Tavily search, our own page fetch,
 /// Gemini reading, verbatim-quote check, cached in `facts`). Null means no
 /// sourced range: show "No usual price on record for this yet". A new
-/// item takes 5-10 s the first time, about 0.3 s once cached; on the 10
-/// everyday items it found a verified range for 5.
+/// item takes 4-10 s the first time, about 0.3 s once cached (7 days); on
+/// 10 everyday items plus vanilla latte it found a verified range for 5.
 class PriceReferenceService {
   PriceReferenceService({CloudFunctions? functions})
     : _functions = functions ?? CloudFunctions();
 
   final CloudFunctions _functions;
 
-  static const timeout = Duration(seconds: 25);
+  /// A first lookup takes 4-10 s; the screen shows its verdict meanwhile
+  /// and fills the range in if it arrives in time.
+  static const timeout = Duration(seconds: 10);
 
   Future<PriceReference?> lookup(String nameEn) async {
     try {

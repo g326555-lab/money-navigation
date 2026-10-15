@@ -13,6 +13,12 @@ const MAX_BASE64 = 700_000;
 const ENCODINGS = ["LINEAR16", "OGG_OPUS", "WEBM_OPUS", "AMR_WB", "FLAC"];
 const MAX_PHRASES = 100;
 const BOOST = 15;
+// Price words every seller uses, added to the caller's item words: a loud
+// market turned "มะม่วงกิโลละร้อยห้าสิบ" into "ร้อยปั่นโลละร้อย" without them.
+const PRICE_PHRASES = [
+  "กิโลละ", "ลูกละ", "จานละ", "แก้วละ", "ชั่วโมงละ", "เที่ยวละ", "ตัวละ", "หลอดละ", "ไม้ละ",
+  "ร้อยห้าสิบ", "ร้อยห้า", "สามร้อยห้าสิบ", "บาท",
+];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -28,9 +34,10 @@ Deno.serve(async (req) => {
         sampleRateHertz >= 8000 && sampleRateHertz <= 48000
       ? sampleRateHertz
       : 16000;
-    const hints = Array.isArray(phrases)
-      ? phrases.filter((p: unknown) => typeof p === "string" && p.length > 0 && p.length <= 40).slice(0, MAX_PHRASES)
+    const asked = Array.isArray(phrases)
+      ? phrases.filter((p: unknown) => typeof p === "string" && p.length > 0 && p.length <= 40)
       : [];
+    const hints = [...new Set([...asked, ...PRICE_PHRASES])].slice(0, MAX_PHRASES);
     const res = await fetchWithTimeout(SPEECH_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": requireSecret("GOOGLE_SPEECH_API_KEY") },
