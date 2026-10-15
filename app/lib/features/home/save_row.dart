@@ -62,6 +62,12 @@ class SaveRow extends StatelessWidget {
   }
 
   String _itemName(BuildContext context) {
+    // An item outside the price list keeps the name the seller used.
+    const newPrefix = 'new:';
+    final key = save.itemKey;
+    if (key != null && key.startsWith(newPrefix)) {
+      return key.substring(newPrefix.length);
+    }
     final item = items[save.itemKey]?.item;
     if (item == null) return AppLocalizations.of(context).saveHaggleUnknownItem;
     return Localizations.localeOf(context).languageCode == 'th'
