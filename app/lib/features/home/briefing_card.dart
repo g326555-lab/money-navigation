@@ -3,16 +3,13 @@ import 'package:intl/intl.dart';
 
 import '../../core/colors.dart';
 import '../../core/elevation.dart';
-import '../../core/formatters.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
 import '../../rules/day_cash.dart';
-import '../../rules/haggle.dart' show marketCurrency;
 import '../../shared/icon_tile.dart';
 import '../../shared/pressable.dart';
 import '../../shared/surface.dart';
-import '../assistant/assistant_screen.dart' show cashBasis;
 import 'home_metrics.dart';
 
 /// "Route preview": today's cash and the day's stops as a small timetable.
@@ -39,7 +36,6 @@ class BriefingCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final type = AppTypography.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final amount = plan?.amountThb;
     final stops = plan?.stops ?? const <StopCash>[];
     return Pressable(
       onPressed: onOpen,
@@ -84,18 +80,11 @@ class BriefingCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              amount == null
-                  ? (stops.isEmpty
-                        ? l10n.homeBriefingNoNumber
-                        : l10n.homeBriefingStops(stops.length))
-                  : l10n.homeCashToday(
-                      AppFormat.roundedAmount(amount, marketCurrency),
-                    ),
-              // The figure is the headline; without one the line stays quiet.
-              style: amount == null ? type.rowTitle : type.title,
+              stops.isEmpty
+                  ? l10n.homeBriefingEmpty
+                  : l10n.homeBriefingStops(stops.length),
+              style: type.rowTitle,
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(cashBasis(l10n, plan), style: type.footer),
             if (stops.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.lg),
               for (final s in stops.take(HomeMetrics.homeEvents))

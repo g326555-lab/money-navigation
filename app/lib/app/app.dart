@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../data/account_receipt_remote.dart';
 import '../data/account_trip_remote.dart';
+import '../data/cash_wallet_store.dart';
 import '../data/receipt_store.dart';
 import '../data/settings_store.dart';
 import '../features/auth/auth_gate.dart';
@@ -29,6 +30,7 @@ class MoneyNavigationApp extends StatefulWidget {
 class _MoneyNavigationAppState extends State<MoneyNavigationApp>
     with WidgetsBindingObserver {
   final _trip = TripStore();
+  final _cashWallet = CashWalletStore();
   final _settings = SettingsStore();
   final _rates = RateService();
   final _auth = AuthController();
@@ -47,8 +49,8 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
     _settings.addListener(_onSettings);
     // Records first, so a demo state restored from the last run shows its
     // own ledger at once instead of replacing the samples a moment later.
-    (_trip.load(), _loadDemoFiles()).wait.then((r) async {
-      await _settings.load(personas: r.$2);
+    (_trip.load(), _cashWallet.load(), _loadDemoFiles()).wait.then((r) async {
+      await _settings.load(personas: r.$3);
       _demoSettled = true;
       _rates.ensure(_settings.homeCurrency);
     });
@@ -102,13 +104,19 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
     if (persona == null) {
       _trip.showReal();
       receipts.showReal();
+      _cashWallet.showReal();
     } else {
       final now = DateTime.now();
       _trip.showDemo(persona.key, persona.samplesAt(now));
       receipts.showDemo(persona.key, persona.receiptsAt(now));
+      _cashWallet.showDemo(
+        persona.key,
+        sampleMovements: persona.cashMovementsAt(now),
+      );
       if (restored) {
         _trip.resetDemo();
         receipts.resetDemo();
+        _cashWallet.resetDemo();
       }
     }
     _rates.ensure(_settings.homeCurrency);
@@ -183,6 +191,7 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
       trip: _trip,
       settings: _settings,
       rates: _rates,
+      cashWallet: _cashWallet,
       receipts: ReceiptStore.shared,
       demoPersonas: _demoPersonas,
       demoRates: _demoRates,

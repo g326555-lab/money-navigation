@@ -1,5 +1,5 @@
 {
-  "_comment": "Demo state only. The two prepared states of the demo switch and their sample records. Every record here is a sample: it is marked as one on screen, never mixed with a traveler's own records, never sent to an account and never read outside the demo state. Dates are relative (daysAgo + local time) so the trip always reads as the last three days. Savings are computed by the app's rules, not stored: haggles from asked and paid, ATM results from the screen figures with the same rule as the ATM scan. Receipt figures must add up (checked when the file is read) or the file is refused. The visitor's trip follows the plan four itinerary guides agree on (Nomadic Matt 2026, Going Awesome Places 2026, ThePlanetD 2023, TourScanner 2024; see NOTES.md): arrival and ATM at Suvarnabhumi, a Sukhumvit Soi 12 base, Grand Palace and Wat Pho then Khao San Road, then Or Tor Kor Market (open daily; Chatuchak next door opens only at weekends) and MBK. Coordinates are OpenStreetMap positions. Haggle prices sit inside the usual ranges of market_prices.json. Each persona's 'calendar' holds sample events for today (time, title, a place Google Maps can find) for the morning briefing; they are samples too and only read in the demo state. Chatuchak is not on today's visitor plan because the demo day is a weekday and it opens at weekends.",
+  "_comment": "Demo state only. The two prepared states of the demo switch and their sample records. Every record here is a sample: it is marked as one on screen, never mixed with a traveler's own records, never sent to an account and never read outside the demo state. Dates are relative (daysAgo + local time) so the trip always reads as the last three days. Savings are computed by the app's rules, not stored: haggles from asked and paid, ATM results from the screen figures with the same rule as the ATM scan. Receipt figures must add up (checked when the file is read) or the file is refused. The visitor's trip follows the plan four itinerary guides agree on (Nomadic Matt 2026, Going Awesome Places 2026, ThePlanetD 2023, TourScanner 2024; see NOTES.md): arrival and ATM at Suvarnabhumi, a Sukhumvit Soi 12 base, Grand Palace and Wat Pho then Khao San Road, then Or Tor Kor Market (open daily; Chatuchak next door opens only at weekends) and MBK. Coordinates are OpenStreetMap positions. Haggle prices sit inside the usual ranges of market_prices.json. Each persona's 'calendar' holds sample events for today (time, title, a place Google Maps can find) for the morning briefing; they are samples too and only read in the demo state. Chatuchak is not on today's visitor plan because the demo day is a weekday and it opens at weekends. Cash: each sample says how it was paid ('paidWith': cash or card). The sample cash balance is computed from these records by the same ledger rules as a traveler's own (ATM withdrawal adds the amount taken out, cash-paid haggles and receipts subtract what was paid, card payments leave cash alone); 'cashMovements' lists only cash activity that has no record of its own, such as a currency exchange.",
   "personas": [
     {
       "key": "visitorBangkok",
@@ -30,6 +30,7 @@
           "itemKey": "tuk_tuk",
           "askedThb": 300,
           "paidThb": 200,
+          "paidWith": "cash",
           "placeName": "Wat Pho",
           "placeLat": 13.7463,
           "placeLng": 100.4927
@@ -41,6 +42,7 @@
           "itemKey": "mango",
           "askedThb": 140,
           "paidThb": 100,
+          "paidWith": "cash",
           "placeName": "Khao San Road",
           "placeLat": 13.7589,
           "placeLng": 100.4973
@@ -52,6 +54,7 @@
           "itemKey": "massage",
           "askedThb": 500,
           "paidThb": 400,
+          "paidWith": "cash",
           "placeName": "Khao San Road",
           "placeLat": 13.7589,
           "placeLng": 100.4973
@@ -63,6 +66,7 @@
           "itemKey": "mango",
           "askedThb": 150,
           "paidThb": 90,
+          "paidWith": "cash",
           "placeName": "Or Tor Kor Market",
           "placeLat": 13.7983,
           "placeLng": 100.5488
@@ -74,6 +78,7 @@
           "itemKey": "coconut",
           "askedThb": 70,
           "paidThb": 60,
+          "paidWith": "cash",
           "placeName": "Or Tor Kor Market",
           "placeLat": 13.7983,
           "placeLng": 100.5488
@@ -90,6 +95,7 @@
           "kind": "itemsOnly",
           "subtotalThb": 89.0,
           "totalThb": 89.0,
+          "paidWith": "cash",
           "itemCount": 3,
           "category": "shopping"
         },
@@ -103,6 +109,7 @@
           "kind": "itemsOnly",
           "subtotalThb": 76.0,
           "totalThb": 76.0,
+          "paidWith": "cash",
           "itemCount": 2,
           "category": "shopping"
         },
@@ -119,6 +126,7 @@
           "serviceThb": 40.0,
           "vatThb": 28.79,
           "totalThb": 440.0,
+          "paidWith": "card",
           "category": "food"
         },
         {
@@ -131,6 +139,7 @@
           "kind": "itemsOnly",
           "subtotalThb": 165.0,
           "totalThb": 165.0,
+          "paidWith": "cash",
           "itemCount": 2,
           "category": "food"
         },
@@ -147,6 +156,7 @@
           "serviceThb": 38.0,
           "vatThb": 27.35,
           "totalThb": 418.0,
+          "paidWith": "card",
           "category": "food"
         }
       ],
@@ -209,6 +219,32 @@
           "time": "18:00",
           "title": "ช้อปปิ้ง",
           "location": "Don Quijote Shibuya"
+        }
+      ],
+      "cashMovements": [
+        {
+          "kind": "exchange",
+          "amount": 20000,
+          "currency": "JPY",
+          "daysAgo": 2,
+          "time": "14:00",
+          "description": "แลกเงินเยน · สนามบินฮาเนดะ"
+        },
+        {
+          "kind": "cashSpend",
+          "amount": 1800,
+          "currency": "JPY",
+          "daysAgo": 1,
+          "time": "12:20",
+          "description": "ราเม็ง · ชิบูย่า"
+        },
+        {
+          "kind": "cashSpend",
+          "amount": 1200,
+          "currency": "JPY",
+          "daysAgo": 1,
+          "time": "16:40",
+          "description": "ตลาดปลาซึกิจิ"
         }
       ]
     }

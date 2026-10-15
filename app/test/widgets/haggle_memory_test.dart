@@ -177,6 +177,7 @@ void main() {
 
     final button = find.text('Show the seller');
     expect(button, findsOneWidget);
+    expect(find.text('Could you do 110 baht?'), findsOneWidget);
     await tester.ensureVisible(button);
     await pumpFrames(tester, frames: 5);
     await tester.tap(button);

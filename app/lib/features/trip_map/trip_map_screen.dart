@@ -222,12 +222,24 @@ class _TripMapScreenState extends State<TripMapScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
+                SizedBox(
+                  height:
+                      MediaQuery.sizeOf(context).height <=
+                          AppSizes.compactHeight
+                      ? AppSpacing.sm
+                      : AppSpacing.lg,
+                ),
                 if (pins.isEmpty) ...[
                   if (loaded) _empty(context),
                 ] else ...[
                   _hero(context, pins),
-                  const SizedBox(height: AppSpacing.zoneGap),
+                  SizedBox(
+                    height:
+                        MediaQuery.sizeOf(context).height <=
+                            AppSizes.compactHeight
+                        ? AppSpacing.xl
+                        : AppSpacing.zoneGap,
+                  ),
                   _mapCard(context, pins, selected),
                   if (_offline) GroupFooter(l10n.tripMapOffline),
                   for (final (i, d) in days.indexed)
@@ -468,20 +480,27 @@ class _TripMapScreenState extends State<TripMapScreen> {
                   onPressed: () => _select(p, fromList: true),
                   // _select plays the selection click itself.
                   haptic: _noHaptic,
-                  child: GroupRow(
-                    leading: _kindTile(p.kind),
-                    title: _title(l10n, p),
-                    // The row shown on the map reads as selected.
-                    titleStyle: p.id == _selected
-                        ? AppTypography.of(context).rowTitle
-                              .copyWith(color: AppColors.primaryText)
-                        : null,
-                    subtitle: _meta(context, p),
-                    value: _rowValue(p),
-                    valueStyle: (p.keptThb ?? 0) > 0
-                        ? AppTypography.of(context).rowTitle
-                              .copyWith(color: AppColors.primaryText)
-                        : null,
+                  child: AnimatedContainer(
+                    duration: AppMotion.of(context, AppMotion.quick),
+                    curve: AppMotion.enter,
+                    color: p.id == _selected
+                        ? AppColors.surfaceSunken
+                        : AppColors.surface,
+                    child: GroupRow(
+                      leading: _kindTile(p.kind),
+                      title: _title(l10n, p),
+                      // The row shown on the map reads as selected.
+                      titleStyle: p.id == _selected
+                          ? AppTypography.of(context).rowTitle
+                                .copyWith(color: AppColors.primaryText)
+                          : null,
+                      subtitle: _meta(context, p),
+                      value: _rowValue(p),
+                      valueStyle: (p.keptThb ?? 0) > 0
+                          ? AppTypography.of(context).rowTitle
+                                .copyWith(color: AppColors.primaryText)
+                          : null,
+                    ),
                   ),
                 ),
               ),

@@ -274,6 +274,7 @@
   "tabSpeak": "Speak",
   "tabRecords": "Records",
   "back": "Back",
+  "homeKeptOpenRecords": "Open trip records",
   "homeKeptLabel": "Kept on this trip",
   "homeKeptApprox": "About {amount}",
   "@homeKeptApprox": {
@@ -329,6 +330,10 @@
     }
   },
   "homeRecent": "Recent saves",
+  "homeRecentReceipts": "Recent receipts",
+  "receiptChecked": "Figures checked against the saved receipt data.",
+  "receiptNotChecked": "Receipt data saved, but the figures were not verified.",
+  "receiptPhotoMissing": "The receipt details saved here do not include a photo.",
   "homeSeeAll": "See all",
   "homeEmptyLabel": "Before you withdraw",
   "homeEmptyTitle": "Scan the ATM screen before you press anything",
@@ -342,6 +347,8 @@
     }
   },
   "saveAtmTitle": "ATM conversion avoided",
+  "saveDetailsAsked": "Seller asked",
+  "saveDetailsPaid": "You paid",
   "saveHaggleTitle": "{item} haggled down",
   "@saveHaggleTitle": {
     "placeholders": {
@@ -1012,50 +1019,90 @@
     }
   },
   "homeToday": "Today",
-  "homeCashToday": "About {amount} in cash today",
-  "@homeCashToday": {
+  "cashWalletTitle": "Cash on hand",
+  "cashWalletUpdate": "Update",
+  "cashWalletNotSet": "Add your cash balance to start tracking",
+  "cashWalletCurrent": "Current balance: {amount}",
+  "@cashWalletCurrent": {
     "placeholders": {
       "amount": {
         "type": "String"
       }
     }
   },
-  "homeCashBasis": "{count, plural, =1{Estimate from 1 of your records over the last {days} days} other{Estimate from {count} of your records over the last {days} days}}",
-  "@homeCashBasis": {
+  "cashWalletSetBalance": "Set balance",
+  "cashWalletAddCash": "Add cash",
+  "cashWalletSpendCash": "Record cash spent",
+  "cashWalletBalanceField": "Cash you have now",
+  "cashWalletAddField": "Cash added",
+  "cashWalletSpendField": "Cash spent",
+  "cashWalletSave": "Save balance",
+  "cashWalletAdded": "Cash added",
+  "cashWalletSpent": "Cash spent",
+  "cashWalletAtm": "ATM withdrawal",
+  "cashWalletHaggle": "Market purchase",
+  "cashWalletBill": "Receipt payment",
+  "cashWalletBillCash": "Paid in cash · wallet updated",
+  "cashWalletBillCard": "Paid by card · cash balance unchanged",
+  "cashWalletExchange": "Cash exchange",
+  "exchangeTitle": "Find a better exchange rate",
+  "exchangeSubtitle": "Nearby counters · rates from their published boards",
+  "exchangeAmount": "Foreign cash to exchange",
+  "exchangeCurrency": "Currency you have",
+  "exchangeDenomination": "Banknote rate tier",
+  "exchangeChooseDenomination": "Choose the notes you have",
+  "exchangeFind": "Compare nearby rates",
+  "exchangeLoading": "Checking current published rates",
+  "exchangeNoLocation": "Turn on location to compare nearby counters",
+  "exchangeNoData": "Live exchange rates are unavailable right now",
+  "exchangeNoNearby": "No current rates found within {distance} km",
+  "exchangeNoRates": "No current quote for this currency and note tier",
+  "exchangeRateLine": "{rate} {payoutCurrency} per 1 {currency}",
+  "@exchangeRateLine": {
     "placeholders": {
-      "days": {
-        "type": "int"
-      },
-      "count": {
-        "type": "int"
-      }
+      "rate": {},
+      "payoutCurrency": {},
+      "currency": {}
     }
   },
-  "homeCashBasisSamples": "{count, plural, =1{Estimate from 1 sample record over {days} days} other{Estimate from {count} sample records over {days} days}}",
-  "@homeCashBasisSamples": {
+  "exchangePayout": "About {amount}",
+  "@exchangePayout": {
     "placeholders": {
-      "days": {
-        "type": "int"
-      },
-      "count": {
-        "type": "int"
-      }
+      "amount": {}
     }
   },
-  "homeCashBasisMixed": "Estimate from {count} records over the last {days} days, {samples} of them samples",
-  "@homeCashBasisMixed": {
+  "exchangeDistance": "{distance} km away",
+  "@exchangeDistance": {
     "placeholders": {
-      "days": {
-        "type": "int"
-      },
-      "count": {
-        "type": "int"
-      },
-      "samples": {
-        "type": "int"
-      }
+      "distance": {}
     }
   },
+  "exchangeUpdated": "Rate source updated {time}",
+  "@exchangeUpdated": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "exchangeFreshness": "Only current published rates are ranked",
+  "exchangeAttribution": "Rates collected from published shop boards by ThaiRate · CC BY 4.0",
+  "exchangeCounterNote": "Rates can change at the counter. Confirm before exchanging.",
+  "exchangeMap": "Open map",
+  "exchangeAddToCash": "Add received cash to balance",
+  "exchangeConfirmTitle": "Confirm the counter payout",
+  "exchangeConfirmBody": "The estimate was about {amount}. Enter the amount you actually received.",
+  "@exchangeConfirmBody": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "exchangeUseActual": "Add actual amount",
+  "exchangeCancel": "Cancel",
+  "exchangeRecorded": "Exchange added to Cash on hand",
+  "exchangeMixedDenomination": "Compare one banknote tier at a time. Enter only cash in that tier.",
+  "cashPaymentMethod": "How did you pay?",
+  "cashPaymentCash": "Cash",
+  "cashPaymentCard": "Card",
+  "cashPaymentExplainer": "Choose the payment method so your cash balance stays accurate.",
   "memoryDaysAgo": "{days, plural, =0{today} =1{yesterday} other{{days} days ago}}",
   "@memoryDaysAgo": {
     "placeholders": {
@@ -1311,6 +1358,16 @@
   },
   "haggleLeaveMeaning": "No thanks, maybe another time.",
   "billShop": "Shop",
+  "billCategory": "Suggested category",
+  "billCategoryGoogle": "Based on this place's category in Google Maps",
+  "billCategoryName": "No place type matched; the shop-name guess may be wrong",
+  "billCategoryManual": "Category chosen by you",
+  "billCategoryEdit": "Choose a category",
+  "spendFood": "Food and drink",
+  "spendTransport": "Transport",
+  "spendShopping": "Shopping",
+  "spendLodging": "Lodging",
+  "spendOther": "Other",
   "billShopUnknown": "Not read",
   "billYourRecord": "Your record",
   "billSave": "Save to my records",
@@ -1362,7 +1419,7 @@
   "homeRouteTerminal": "Card terminal",
   "homeBriefingLabel": "Morning briefing",
   "homeBriefingOpen": "Open the assistant",
-  "homeBriefingNoNumber": "No cash estimate yet",
+  "homeBriefingEmpty": "No stops planned today",
   "homeBriefingStops": "{count, plural, =1{1 stop on your calendar today} other{{count} stops on your calendar today}}",
   "@homeBriefingStops": {
     "placeholders": {
@@ -1381,6 +1438,7 @@
   },
   "nearbyLabel": "Watch out nearby",
   "nearbyOpen": "See every warning nearby",
+  "nearbyMapLabel": "Open ATM map",
   "nearbyMore": "{count, plural, =1{1 more warning nearby} other{{count} more warnings nearby}}",
   "@nearbyMore": {
     "placeholders": {
@@ -1450,16 +1508,6 @@
     }
   },
   "assistantTitle": "Assistant",
-  "assistantCashLabel": "Cash for today",
-  "assistantCashAbout": "About {amount}",
-  "@assistantCashAbout": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "assistantCashUnknown": "Not enough to go on yet",
   "assistantStops": "Today's stops",
   "assistantPay": "Card, cash or QR",
   "assistantPayFor": "Compared for {place}",
@@ -1475,32 +1523,6 @@
   "assistantCardFromAccount": "Card fee from your account profile",
   "assistantNearby": "Near you",
   "assistantArrival": "Arrival alert",
-  "cashBasisNone": "Needs a day or two of saved spending",
-  "cashBasisPattern": "{days, plural, =1{From your spending on 1 earlier day} other{From your spending on {days} earlier days}}",
-  "@cashBasisPattern": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "cashBasisPatternSamples": "{days, plural, =1{From sample records on 1 day} other{From sample records on {days} days}}",
-  "@cashBasisPatternSamples": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "cashBasisCashOnly": "{count, plural, =1{1 stop takes cash only (Google Maps)} other{{count} stops take cash only (Google Maps)}}",
-  "@cashBasisCashOnly": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "cashBasisLastVisit": "includes what you spent there last time",
   "calendarConnect": "Read today's calendar",
   "calendarDenied": "Calendar access is off in Settings",
   "calendarPrivacy": "Title, place and time only. Nothing is changed.",
@@ -1592,6 +1614,14 @@
     }
   },
   "cardSheetTitle": "Your card",
+  "cardCatalogTitle": "Choose a card",
+  "cardCatalogOther": "Other card / enter details yourself",
+  "cardCatalogUtopia": "U-topia U-Card · Visa",
+  "cardCatalogUtopiaFacts": "U-topia describes virtual and physical Visa cards, spending alerts, freeze/unfreeze, and custom spending limits.",
+  "cardCatalogUtopiaFeeNote": "Its card terms dated May 20, 2026 list up to 1.5% foreign-exchange and up to 1.5% cross-border fees. These are separate fees, so they are not copied into the single fee field below.",
+  "cardCatalogUtopiaIssuerNote": "U-topia's public documents name different card providers: the May 20 card terms say Third National, while the privacy policy updated October 6 names Rain. Check the current terms in your U-topia account before using fee comparisons.",
+  "cardCatalogSource": "Open U-topia card terms",
+  "cardCatalogProductSource": "Open U-topia product page",
   "cardFeeLabel": "Foreign transaction fee",
   "cardFeeHintThai": "Thai banks publish up to 2.5% (Kasikorn, ttb fee lists 2025-2026)",
   "cardFeeHintOther": "Your card's terms list the exact fee.",
@@ -1922,5 +1952,96 @@
         "type": "String"
       }
     }
-  }
+  },
+  "atmMapTitle": "ATMs nearby",
+  "atmMapNearest": "Nearest ATM",
+  "atmMapMeters": "{meters} m",
+  "@atmMapMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "atmMapAway": "{meters} m away",
+  "@atmMapAway": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "atmMapMapLabel": "Map with {count, plural, =1{1 ATM} other{{count} ATMs}}. Each one is also in the list below.",
+  "@atmMapMapLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "atmMapDirections": "Directions",
+  "atmMapDirectionsTo": "Walking directions to {place}",
+  "@atmMapDirectionsTo": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "atmMapLooking": "Looking for ATMs near you",
+  "atmMapNeedLocation": "Allow location to see ATMs near you",
+  "atmMapLocationSettings": "Location is off for this app. Turn it on in Settings.",
+  "atmMapEmpty": "Google Maps returned no ATMs here. Check the connection, or search in Google Maps.",
+  "atmMapSearchMaps": "Search in Google Maps",
+  "atmMapSource": "Places from Google Maps · distances in a straight line",
+  "atmMapDemoOrigin": "Around the first stop of the sample calendar, not where your phone is",
+  "atmMapList": "Nearest first",
+  "atmMapRetry": "Search again",
+  "cashWalletNegative": "More cash was recorded as spent than you had. Update your balance.",
+  "cashWalletLastMove": "Last: {what} {amount} · {when}",
+  "@cashWalletLastMove": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "recordKeptHero": "Kept by this choice",
+  "recordReceiptHero": "Receipt total",
+  "recordCashAdded": "Added to cash on hand",
+  "recordCashSpent": "Paid from cash on hand",
+  "recordCashNone": "Cash on hand did not change",
+  "recordCashNoneBody": "Paid by card, or saved without a payment method",
+  "recordCashNow": "Cash on hand now: {amount}",
+  "@recordCashNow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recordOpenInMaps": "Open in Google Maps",
+  "recordNoFigures": "This record was saved before the screen's figures were kept.",
+  "recordSellerPrices": "Seller's prices",
+  "recordYourOffers": "Your offers",
+  "recordItem": "Item",
+  "recordSample": "Sample record of the demo traveler",
+  "recordPhoto": "Receipt photo",
+  "recordPhotoOpen": "Open the receipt photo full screen",
+  "recordWhere": "Where",
+  "recordChecks": "What was read",
+  "@exchangeNoNearby": {
+    "placeholders": {
+      "distance": {}
+    }
+  },
+  "exchangeRefresh": "Refresh rates",
+  "exchangeEnterAmount": "Enter an amount to compare nearby counters",
+  "exchangeRecordFailed": "Couldn't add this to Cash on hand. Try again."
 }

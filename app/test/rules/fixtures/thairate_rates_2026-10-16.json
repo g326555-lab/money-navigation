@@ -1,0 +1,654 @@
+{
+ "generatedAt": "2026-10-15T21:24:23.183Z",
+ "sources": {
+  "spr": {
+   "ok": true,
+   "fetchedAt": "2026-10-15T20:57:22.534Z",
+   "updatedAt": "2026-10-15T13:22:46.208Z"
+  },
+  "srt": {
+   "ok": true,
+   "fetchedAt": "2026-10-15T20:54:22.433Z",
+   "updatedAt": null
+  },
+  "tt": {
+   "ok": true,
+   "fetchedAt": "2026-10-15T21:12:22.702Z",
+   "updatedAt": "2026-10-15T12:34:39.919Z"
+  },
+  "vp": {
+   "ok": true,
+   "fetchedAt": "2026-10-15T20:36:34.291Z",
+   "updatedAt": null
+  }
+ },
+ "stores": [
+  {
+   "id": "tt-12",
+   "brand": "tt",
+   "city": "pattaya",
+   "name": "AA Pattaya Hotel Branch",
+   "address": "182 AA Hotel Pattaya Building, 1st Floor, Room No. 2, Moo 10, Beach Road, Pattaya, Nong Prue Subdistrict, Banglamung District, Chonburi 20150",
+   "lat": 12.9313554,
+   "lng": 100.8790707,
+   "status": "closed"
+  },
+  {
+   "id": "srt-29",
+   "brand": "srt",
+   "city": "bangkok",
+   "name": "Superrich Thailand — Central Chidlom G Floor (Nearby Tops Food Hall)",
+   "address": "Central Chidlom G Floor (Nearby Tops Food Hall)",
+   "lat": 13.744492,
+   "lng": 100.54442,
+   "status": "active"
+  },
+  {
+   "id": "srt-19",
+   "brand": "srt",
+   "city": "bangkok",
+   "name": "Superrich Thailand — Central Ladprao, 2nd Floor, Banking Zone, near Aeon",
+   "address": "Central Ladprao, 2nd Floor, Banking Zone, near Aeon",
+   "lat": 13.816838,
+   "lng": 100.561361,
+   "status": "active"
+  },
+  {
+   "id": "spr-27",
+   "brand": "spr",
+   "city": "bangkok",
+   "name": "SuperRich 1965 — Bangkok Hospital",
+   "address": "85, 1st Floor, Room F01-03, Watthanothai Hospital Building, Soi Research 7, Bangkapi Subdistrict, Huai Khwang District, Bangkok 10310",
+   "lat": 13.748465,
+   "lng": 100.582548,
+   "status": "active"
+  },
+  {
+   "id": "spr-50",
+   "brand": "spr",
+   "city": "bangkok",
+   "name": "SuperRich 1965 — Big C Place Ratchadapisek",
+   "address": "125 Room 2CR2209, 2nd Floor, Big C Supercenter Shopping Mall, Big C Ratchadaphisek Branch, Ratchadapisek Road, Din Daeng Subdistrict, Din Daeng District, Bangkok 10400",
+   "lat": 13.769004,
+   "lng": 100.571955,
+   "status": "active"
+  },
+  {
+   "id": "vp-centralworld",
+   "brand": "vp",
+   "city": "bangkok",
+   "name": "Value Plus — CentralWorld (1st floor, Hug Thai zone)",
+   "address": "4, 4/1-4/2, 4/4 CentralWorld Bldg., Room K112/1, 1st Floor, Rajdamri Rd., Pathum Wan, Bangkok 10330",
+   "lat": 13.746775,
+   "lng": 100.539112,
+   "status": "active"
+  },
+  {
+   "id": "vp-emquartier",
+   "brand": "vp",
+   "city": "bangkok",
+   "name": "Value Plus — EmQuartier (BM floor, Helix Quartier)",
+   "address": "693 The EmQuartier, BM Floor, Room BMA01, Sukhumvit Rd., Khlong Tan Nuea, Watthana, Bangkok 10110",
+   "lat": 13.731371,
+   "lng": 100.569588,
+   "status": "active"
+  }
+ ],
+ "rates": {
+  "tt-12": {
+   "USD": {
+    "buy": 33.32,
+    "sell": 34,
+    "denom": "100-50",
+    "tiers": [
+     {
+      "denom": "100-50",
+      "buy": 33.32,
+      "sell": 34
+     },
+     {
+      "denom": "20-5",
+      "buy": 32.85,
+      "sell": 34
+     },
+     {
+      "denom": "2-1",
+      "buy": 32.35,
+      "sell": 34
+     }
+    ]
+   },
+   "EUR": {
+    "buy": 37.27,
+    "sell": 38,
+    "denom": "500",
+    "tiers": [
+     {
+      "denom": "500",
+      "buy": 37.27,
+      "sell": 38
+     },
+     {
+      "denom": "200-100",
+      "buy": 37.27,
+      "sell": 38
+     },
+     {
+      "denom": "50-5",
+      "buy": 37.27,
+      "sell": 38
+     }
+    ]
+   },
+   "JPY": {
+    "buy": 0.209,
+    "sell": 0.2175,
+    "denom": "10000-1000",
+    "tiers": [
+     {
+      "denom": "10000-1000",
+      "buy": 0.209,
+      "sell": 0.2175
+     }
+    ]
+   },
+   "KRW": {
+    "buy": 0.0246,
+    "sell": 0.0265,
+    "denom": "50000-5000",
+    "tiers": [
+     {
+      "denom": "50000-5000",
+      "buy": 0.0246,
+      "sell": 0.0265
+     },
+     {
+      "denom": "1000",
+      "buy": 0.018,
+      "sell": 0.0265
+     }
+    ]
+   }
+  },
+  "srt-29": {
+   "USD": {
+    "buy": 33.36,
+    "sell": 33.5,
+    "denom": "100",
+    "tiers": [
+     {
+      "denom": "100",
+      "buy": 33.36,
+      "sell": 33.5
+     },
+     {
+      "denom": "50",
+      "buy": 33.36,
+      "sell": 33.5
+     },
+     {
+      "denom": "20 - 10",
+      "buy": 33.28,
+      "sell": 33.45
+     },
+     {
+      "denom": "5",
+      "buy": 33.18,
+      "sell": 33.45
+     },
+     {
+      "denom": "1",
+      "buy": 32.83,
+      "sell": 33.35
+     }
+    ]
+   },
+   "EUR": {
+    "buy": 37.35,
+    "sell": 37.6,
+    "denom": "500-100",
+    "tiers": [
+     {
+      "denom": "500-100",
+      "buy": 37.35,
+      "sell": 37.6
+     },
+     {
+      "denom": "50-5",
+      "buy": 37.3,
+      "sell": 37.6
+     }
+    ]
+   },
+   "JPY": {
+    "buy": 0.2115,
+    "sell": 0.2135,
+    "denom": "10000 - 5000",
+    "tiers": [
+     {
+      "denom": "10000 - 5000",
+      "buy": 0.2115,
+      "sell": 0.2135
+     },
+     {
+      "denom": "2000 - 1000",
+      "buy": 0.2115,
+      "sell": 0.2135
+     }
+    ]
+   },
+   "KRW": {
+    "buy": 0.0248,
+    "sell": 0.0254,
+    "denom": "50000 - 5000",
+    "tiers": [
+     {
+      "denom": "50000 - 5000",
+      "buy": 0.0248,
+      "sell": 0.0254
+     },
+     {
+      "denom": "1000",
+      "buy": 0.0244,
+      "sell": 0.0249
+     }
+    ]
+   }
+  },
+  "srt-19": {
+   "USD": {
+    "buy": 33.36,
+    "sell": 33.5,
+    "denom": "100",
+    "tiers": [
+     {
+      "denom": "100",
+      "buy": 33.36,
+      "sell": 33.5
+     },
+     {
+      "denom": "50",
+      "buy": 33.36,
+      "sell": 33.5
+     },
+     {
+      "denom": "20 - 10",
+      "buy": 33.28,
+      "sell": 33.45
+     },
+     {
+      "denom": "5",
+      "buy": 33.18,
+      "sell": 33.45
+     },
+     {
+      "denom": "1",
+      "buy": 32.83,
+      "sell": 33.35
+     }
+    ]
+   },
+   "EUR": {
+    "buy": 37.35,
+    "sell": 37.6,
+    "denom": "500-100",
+    "tiers": [
+     {
+      "denom": "500-100",
+      "buy": 37.35,
+      "sell": 37.6
+     },
+     {
+      "denom": "50-5",
+      "buy": 37.3,
+      "sell": 37.6
+     }
+    ]
+   },
+   "JPY": {
+    "buy": 0.2115,
+    "sell": 0.2135,
+    "denom": "10000 - 5000",
+    "tiers": [
+     {
+      "denom": "10000 - 5000",
+      "buy": 0.2115,
+      "sell": 0.2135
+     },
+     {
+      "denom": "2000 - 1000",
+      "buy": 0.2115,
+      "sell": 0.2135
+     }
+    ]
+   },
+   "KRW": {
+    "buy": 0.0248,
+    "sell": 0.0254,
+    "denom": "50000 - 5000",
+    "tiers": [
+     {
+      "denom": "50000 - 5000",
+      "buy": 0.0248,
+      "sell": 0.0254
+     },
+     {
+      "denom": "1000",
+      "buy": 0.0244,
+      "sell": 0.0249
+     }
+    ]
+   }
+  },
+  "spr-27": {
+   "USD": {
+    "buy": 33.27,
+    "sell": 33.5,
+    "denom": "100-50",
+    "tiers": [
+     {
+      "denom": "100-50",
+      "buy": 33.27,
+      "sell": 33.5
+     },
+     {
+      "denom": "20-10",
+      "buy": 33.14,
+      "sell": 33.45
+     },
+     {
+      "denom": "5",
+      "buy": 33.04,
+      "sell": 33.45
+     },
+     {
+      "denom": "2-1",
+      "buy": 32.69,
+      "sell": 33.35
+     }
+    ]
+   },
+   "EUR": {
+    "buy": 37.3,
+    "sell": 37.6,
+    "denom": "500-100",
+    "tiers": [
+     {
+      "denom": "500-100",
+      "buy": 37.3,
+      "sell": 37.6
+     },
+     {
+      "denom": "50",
+      "buy": 37.25,
+      "sell": 37.6
+     },
+     {
+      "denom": "20-5",
+      "buy": 37.2,
+      "sell": 37.6
+     }
+    ]
+   },
+   "JPY": {
+    "buy": 0.211,
+    "sell": 0.2135,
+    "denom": "10000-1000",
+    "tiers": [
+     {
+      "denom": "10000-1000",
+      "buy": 0.211,
+      "sell": 0.2135
+     }
+    ]
+   },
+   "KRW": {
+    "buy": 0.0248,
+    "sell": 0.0254,
+    "denom": "50000-5000",
+    "tiers": [
+     {
+      "denom": "50000-5000",
+      "buy": 0.0248,
+      "sell": 0.0254
+     },
+     {
+      "denom": "1000",
+      "buy": 0.02,
+      "sell": 0.0249
+     }
+    ]
+   }
+  },
+  "spr-50": {
+   "USD": {
+    "buy": 33.35,
+    "sell": 33.5,
+    "denom": "100-50",
+    "tiers": [
+     {
+      "denom": "100-50",
+      "buy": 33.35,
+      "sell": 33.5
+     },
+     {
+      "denom": "20-10",
+      "buy": 33.22,
+      "sell": 33.45
+     },
+     {
+      "denom": "5",
+      "buy": 33.12,
+      "sell": 33.45
+     },
+     {
+      "denom": "2-1",
+      "buy": 32.77,
+      "sell": 33.35
+     }
+    ]
+   },
+   "EUR": {
+    "buy": 37.35,
+    "sell": 37.6,
+    "denom": "500-100",
+    "tiers": [
+     {
+      "denom": "500-100",
+      "buy": 37.35,
+      "sell": 37.6
+     },
+     {
+      "denom": "50",
+      "buy": 37.3,
+      "sell": 37.6
+     },
+     {
+      "denom": "20-5",
+      "buy": 37.25,
+      "sell": 37.6
+     }
+    ]
+   },
+   "JPY": {
+    "buy": 0.2115,
+    "sell": 0.2135,
+    "denom": "10000-1000",
+    "tiers": [
+     {
+      "denom": "10000-1000",
+      "buy": 0.2115,
+      "sell": 0.2135
+     }
+    ]
+   },
+   "KRW": {
+    "buy": 0.0248,
+    "sell": 0.0254,
+    "denom": "50000-5000",
+    "tiers": [
+     {
+      "denom": "50000-5000",
+      "buy": 0.0248,
+      "sell": 0.0254
+     },
+     {
+      "denom": "1000",
+      "buy": 0.02,
+      "sell": 0.0249
+     }
+    ]
+   }
+  },
+  "vp-centralworld": {
+   "USD": {
+    "buy": 33.36,
+    "sell": 33.5,
+    "denom": "100-50",
+    "tiers": [
+     {
+      "denom": "100-50",
+      "buy": 33.36,
+      "sell": 33.5
+     },
+     {
+      "denom": "20-10",
+      "buy": 33.28,
+      "sell": 33.45
+     },
+     {
+      "denom": "5",
+      "buy": 33.18,
+      "sell": 33.45
+     },
+     {
+      "denom": "2-1",
+      "buy": 32,
+      "sell": 33.35
+     }
+    ]
+   },
+   "EUR": {
+    "buy": 37.35,
+    "sell": 37.6,
+    "denom": "500-200-100",
+    "tiers": [
+     {
+      "denom": "500-200-100",
+      "buy": 37.35,
+      "sell": 37.6
+     },
+     {
+      "denom": "50-20-10-5",
+      "buy": 37.25,
+      "sell": 37.6
+     }
+    ]
+   },
+   "JPY": {
+    "buy": 0.212,
+    "sell": 0.2135,
+    "denom": "10000-5000-2000-1000",
+    "tiers": [
+     {
+      "denom": "10000-5000-2000-1000",
+      "buy": 0.212,
+      "sell": 0.2135
+     }
+    ]
+   },
+   "KRW": {
+    "buy": 0.0248,
+    "sell": 0.0254,
+    "denom": "50000-10000-5000",
+    "tiers": [
+     {
+      "denom": "50000-10000-5000",
+      "buy": 0.0248,
+      "sell": 0.0254
+     },
+     {
+      "denom": "1000",
+      "buy": 0.0244,
+      "sell": 0.0249
+     }
+    ]
+   }
+  },
+  "vp-emquartier": {
+   "USD": {
+    "buy": 33.36,
+    "sell": 33.5,
+    "denom": "100-50",
+    "tiers": [
+     {
+      "denom": "100-50",
+      "buy": 33.36,
+      "sell": 33.5
+     },
+     {
+      "denom": "20-10",
+      "buy": 33.28,
+      "sell": 33.45
+     },
+     {
+      "denom": "5",
+      "buy": 33.18,
+      "sell": 33.45
+     },
+     {
+      "denom": "2-1",
+      "buy": 32.83,
+      "sell": 33.35
+     }
+    ]
+   },
+   "EUR": {
+    "buy": 37.35,
+    "sell": 37.6,
+    "denom": "500-200-100",
+    "tiers": [
+     {
+      "denom": "500-200-100",
+      "buy": 37.35,
+      "sell": 37.6
+     },
+     {
+      "denom": "50-20-10-5",
+      "buy": 37.25,
+      "sell": 37.6
+     }
+    ]
+   },
+   "JPY": {
+    "buy": 0.212,
+    "sell": 0.2135,
+    "denom": "10000-5000-2000-1000",
+    "tiers": [
+     {
+      "denom": "10000-5000-2000-1000",
+      "buy": 0.212,
+      "sell": 0.2135
+     }
+    ]
+   },
+   "KRW": {
+    "buy": 0.0248,
+    "sell": 0.0254,
+    "denom": "50000-10000-5000",
+    "tiers": [
+     {
+      "denom": "50000-10000-5000",
+      "buy": 0.0248,
+      "sell": 0.0254
+     },
+     {
+      "denom": "1000",
+      "buy": 0.0218,
+      "sell": 0.0249
+     }
+    ]
+   }
+  }
+ }
+}

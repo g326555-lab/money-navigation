@@ -343,11 +343,29 @@ class _OptionLine extends StatelessWidget {
               ),
             ),
           ),
-          // The winner is marked by shape too, not only by colour.
-          if (best) ...[
-            const SizedBox(width: AppSpacing.xs),
-            Icon(Icons.check_rounded, size: AppSizes.pillIcon, color: color),
-          ],
+          // The winner is marked by shape too, not only by colour, settling in
+          // with the same spring as a chosen setting row.
+          AnimatedSize(
+            duration: AppMotion.of(context, AppMotion.quick),
+            curve: AppMotion.enter,
+            child: best
+                ? Padding(
+                    padding: const EdgeInsets.only(left: AppSpacing.xs),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(begin: AppMotion.checkFrom, end: 1),
+                      duration: AppMotion.of(context, AppMotion.standard),
+                      curve: AppMotion.settle,
+                      builder: (context, scale, child) =>
+                          Transform.scale(scale: scale, child: child),
+                      child: Icon(
+                        Icons.check_rounded,
+                        size: AppSizes.pillIcon,
+                        color: color,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
         ],
       ),
     );

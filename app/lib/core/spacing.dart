@@ -69,6 +69,9 @@ abstract final class AppSizes {
   static const double mapPinShadow = 4;
   static const double tripMapStartZoom = 13;
 
+  /// How far a receipt photo can be pinched in.
+  static const double photoMaxZoom = 5;
+
   /// Widest a row's amount may get, as a share of the row.
   static const double rowValueMaxFraction = 0.55;
 

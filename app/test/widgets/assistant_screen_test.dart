@@ -108,8 +108,12 @@ class FakePlaces extends PlacesClient {
   ];
 
   @override
-  Future<LookedUpPlace?> lookup(String location, {Position? near}) async =>
-      null;
+  Future<LookedUpPlace?> lookup(
+    String location, {
+    Position? near,
+    double? lat,
+    double? lng,
+  }) async => null;
 }
 
 /// A briefing whose phone is in Tokyo with one calendar stop today.
@@ -215,7 +219,7 @@ void main() {
   testWidgets('shows the Assistant title', (tester) async {
     await pumpAssistant(tester, await stores());
     expect(find.text('Assistant'), findsOneWidget);
-    expect(find.text('Cash for today'), findsOneWidget);
+    expect(find.text('Cash on hand'), findsOneWidget);
   });
 
   group('pay comparison', () {
@@ -346,10 +350,11 @@ void main() {
       tester,
     ) async {
       await pumpDemoAssistant(tester, await stores(demo: 'visitorBangkok'));
-      await scrollTo(tester, find.text('Terminal 21 Asok'));
+      // The stops say where they come from, right under them.
+      await scrollTo(tester, find.text('Sample calendar'));
+      expect(find.text('Sample calendar'), findsOneWidget);
       expect(find.text('Terminal 21 Asok'), findsOneWidget);
       expect(find.text('Jim Thompson House Museum'), findsOneWidget);
-      expect(find.text('Sample calendar'), findsOneWidget);
       expect(find.text('Read today\'s calendar'), findsNothing);
     });
 

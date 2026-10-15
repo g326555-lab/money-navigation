@@ -24,7 +24,10 @@ import '../../shared/pill.dart';
 import '../../shared/group.dart';
 import '../../shared/pressable.dart';
 import 'save_row.dart';
+import '../records/receipt_record_detail.dart';
+import '../trip_map/atm_map_screen.dart';
 import '../../shared/surface.dart';
+import '../../rules/nearby_traps.dart' show TrapKind;
 import '../../rules/trip_route.dart';
 import '../assistant/assistant_screen.dart' show arrivalWords;
 import '../briefing/arrival_alerts.dart';
@@ -32,6 +35,7 @@ import '../briefing/briefing_controller.dart';
 import '../briefing/calendar_source.dart';
 import '../briefing/trip_context.dart';
 import 'briefing_card.dart';
+import 'cash_balance_card.dart';
 import 'home_metrics.dart';
 import 'nearby_card.dart';
 import 'route_line.dart';
@@ -144,6 +148,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   );
 
   /// Alerts once when the phone's location shows a new country.
+  Future<void> _openAtmMap({String? select}) => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => AtmMapScreen(briefing: _briefing, selectName: select),
+    ),
+  );
+
   void _checkArrival(AppScope scope) {
     final country = _briefing.country;
     final facts = _briefing.facts;
@@ -179,6 +189,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return ListenableBuilder(
       listenable: Listenable.merge([
         scope.trip,
+        scope.receipts,
+        scope.cashWallet,
         scope.settings,
         scope.rates,
         _briefing,
@@ -191,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _build(BuildContext context, AppScope scope) {
     final l10n = AppLocalizations.of(context);
     final saves = scope.trip.saves;
+    final receipts = scope.receipts.records;
     final total = keptTotalThb(saves);
     final visible = ModalRoute.isCurrentOf(context) ?? true;
     _sync(
@@ -251,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ListView(
               padding: EdgeInsets.fromLTRB(
                 AppSpacing.screenMargin,
-                MediaQuery.paddingOf(context).top,
+                MediaQuery.viewPaddingOf(context).top,
                 AppSpacing.screenMargin,
                 AppTabBar.contentPadding(context),
               ),
@@ -282,21 +295,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
-                _KeptCard(
-                  coinKey: _coinKey,
-                  bump: _bump,
-                  label: l10n.homeKeptLabel,
-                  total: _shownTotal,
-                  currency: marketCurrency,
-                  // Nothing kept yet has no equivalent worth showing.
-                  approx: quote == null || _shownTotal == 0
-                      ? null
-                      : l10n.homeKeptApprox(
-                          AppFormat.estimate(
-                            convertFromBase(_shownTotal, quote),
-                            currency,
+                Pressable(
+                  onPressed: widget.onSeeAll,
+                  semanticLabel: l10n.homeKeptOpenRecords,
+                  child: _KeptCard(
+                    coinKey: _coinKey,
+                    bump: _bump,
+                    label: l10n.homeKeptLabel,
+                    total: _shownTotal,
+                    currency: marketCurrency,
+                    // Nothing kept yet has no equivalent worth showing.
+                    approx: quote == null || _shownTotal == 0
+                        ? null
+                        : l10n.homeKeptApprox(
+                            AppFormat.estimate(
+                              convertFromBase(_shownTotal, quote),
+                              currency,
+                            ),
                           ),
-                        ),
+                  ),
+                ),
+                // Cash is the traveler's primary budget control. Keep it
+                // immediately below the trip total and show it even before
+                // records or a calendar have finished loading.
+                CashBalanceCard(
+                  wallet: scope.cashWallet,
+                  currency: trip.localCurrency,
+                  foreignCurrency: trip.homeCurrency,
+                  onFindNearby: () => _openAtmMap(),
+                  demo: scope.settings.demoState,
                 ),
                 if (currency != marketCurrency || saves.any((x) => x.isSample))
                   GroupFooter(
@@ -314,7 +341,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 if (route.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.xxl),
-                  RouteLine(stops: route),
+                  RouteLine(
+                    stops: route,
+                    onPressed: widget.onSeeAll,
+                    semanticLabel: l10n.homeKeptOpenRecords,
+                  ),
                 ],
                 const SizedBox(height: AppSpacing.zoneGap),
                 // Nothing to say until the trip's records are read.
@@ -335,7 +366,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       : _briefing.nearbyState,
                   traps: traps,
                   onAskLocation: () => _briefing.refresh(askLocation: true),
-                  onOpen: widget.onOpenAssistant,
+                  // An ATM warning opens that machine on the map; a market
+                  // warning has no map of its own yet and opens the list.
+                  onOpen: switch (traps.firstOrNull?.kind) {
+                    TrapKind.atmFee || TrapKind.atmConversion =>
+                      () => _openAtmMap(select: traps.first.placeName),
+                    _ => widget.onOpenAssistant,
+                  },
                 ),
                 const SizedBox(height: AppSpacing.zoneGap),
                 if (!scope.trip.loaded)
@@ -363,6 +400,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     children: [
                       for (final save in saves.take(homeRecentCount))
                         SaveRow(save: save, items: _items),
+                    ],
+                  ),
+                ],
+                if (scope.trip.loaded && receipts.isNotEmpty) ...[
+                  SectionHeader(l10n.homeRecentReceipts),
+                  GroupCard(
+                    children: [
+                      for (final receipt in receipts.take(homeRecentCount))
+                        ReceiptRecordRow(record: receipt),
                     ],
                   ),
                 ],
@@ -447,7 +493,7 @@ class _KeptCard extends StatelessWidget {
       shadows: AppElevation.e1Green,
       edgeLight: EdgeLights.onTile,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Column(
@@ -499,7 +545,19 @@ class _KeptCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.md),
-          LivingCoin(key: coinKey, size: AppSizes.heroCoinCompact),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Icon(
+                Icons.arrow_forward_rounded,
+                size: AppSizes.stepIcon,
+                color: AppColors.onPrimaryContainer,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              LivingCoin(key: coinKey, size: AppSizes.heroCoinCompact),
+            ],
+          ),
         ],
       ),
     );

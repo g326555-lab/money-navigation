@@ -10,14 +10,22 @@ import '../../l10n/app_localizations.dart';
 import '../../rules/haggle.dart' show marketCurrency;
 import '../../rules/trip_route.dart';
 import '../../rules/trip_ledger.dart';
+import '../../shared/pressable.dart';
 import 'home_metrics.dart';
 
 /// The trip drawn as a route: one green dot per place where money was kept,
 /// joined by the green line, ending in a hollow "next stop".
 class RouteLine extends StatefulWidget {
-  const RouteLine({super.key, required this.stops});
+  const RouteLine({
+    super.key,
+    required this.stops,
+    this.onPressed,
+    this.semanticLabel,
+  });
 
   final List<RouteStop> stops;
+  final VoidCallback? onPressed;
+  final String? semanticLabel;
 
   @override
   State<RouteLine> createState() => _RouteLineState();
@@ -81,59 +89,103 @@ class _RouteLineState extends State<RouteLine>
       l10n.homeRouteNext,
     ].join(', ');
 
-    return Semantics(
-      label: semantics,
-      container: true,
-      excludeSemantics: true,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          final points = stops.length + 1;
-          final step = width / points;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: HomeMetrics.routeDotRow,
-                width: width,
-                child: AnimatedBuilder(
-                  animation: _draw,
-                  builder: (context, _) => CustomPaint(
-                    painter: _RoutePainter(
-                      stops: stops.length,
-                      step: step,
-                      progress: AppMotion.enter.transform(_draw.value),
+    return Pressable(
+      onPressed: widget.onPressed,
+      semanticLabel: widget.semanticLabel ?? semantics,
+      child: Semantics(
+        label: semantics,
+        container: true,
+        excludeSemantics: true,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final points = stops.length + 1;
+            final step = width / points;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: HomeMetrics.routeDotRow,
+                  width: width,
+                  child: AnimatedBuilder(
+                    animation: _draw,
+                    builder: (context, _) => CustomPaint(
+                      painter: _RoutePainter(
+                        stops: stops.length,
+                        step: step,
+                        progress: AppMotion.enter.transform(_draw.value),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (final label in labels)
-                    SizedBox(
-                      width: step,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: AppSpacing.xs),
-                        child: label,
-                      ),
-                    ),
-                  SizedBox(
-                    width: step,
-                    child: Text(
-                      l10n.homeRouteNext,
-                      maxLines: 2,
-                      style: type.label.copyWith(
-                        color: AppColors.onSurfaceSecondary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
+                const SizedBox(height: AppSpacing.sm),
+                AnimatedBuilder(
+                  animation: _draw,
+                  builder: (context, _) {
+                    final progress = AppMotion.enter.transform(_draw.value);
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final (i, label) in labels.indexed)
+                          SizedBox(
+                            width: step,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: AppSpacing.xs,
+                              ),
+                              child: _animatedLabel(
+                                i: i,
+                                stops: stops.length,
+                                step: step,
+                                progress: progress,
+                                child: label,
+                              ),
+                            ),
+                          ),
+                        SizedBox(
+                          width: step,
+                          child: Text(
+                            l10n.homeRouteNext,
+                            maxLines: 2,
+                            style: type.label.copyWith(
+                              color: AppColors.onSurfaceSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Labels settle into full contrast as the route line reaches their stop.
+  static Widget _animatedLabel({
+    required int i,
+    required int stops,
+    required double step,
+    required double progress,
+    required Widget child,
+  }) {
+    if (stops <= 1 || progress >= 1 || step <= 0) return child;
+    const r = HomeMetrics.routeDot / 2;
+    final first = r;
+    final last = r + (stops - 1) * step;
+    final reach = first + (last - first) * progress;
+    final x = r + i * step;
+    final span = step * HomeMetrics.routeDotSettleSpan;
+    final t = ((reach - x + span * 0.5) / span).clamp(0.0, 1.0);
+    final eased = AppMotion.enter.transform(t);
+    return Opacity(
+      opacity: 0.45 + 0.55 * eased,
+      child: Transform.translate(
+        offset: Offset(0, (1 - eased) * (AppSpacing.xs / 2)),
+        child: child,
       ),
     );
   }
@@ -213,12 +265,12 @@ class _RoutePainter extends CustomPainter {
     final lastStop = xs[stops - 1 < 0 ? 0 : stops - 1];
     final end = xs.last;
 
-    // The way ahead: a quiet track to the next stop.
+    // The way ahead: a continuous quiet track from the first stop to the next.
     final track = Paint()
       ..color = AppColors.surfaceDim
       ..strokeWidth = HomeMetrics.routeStroke
       ..strokeCap = StrokeCap.round;
-    canvas.drawLine(Offset(lastStop, y), Offset(end - r, y), track);
+    canvas.drawLine(Offset(xs.first, y), Offset(end - r, y), track);
 
     // The way travelled, drawn left to right.
     final reach = xs.first + (lastStop - xs.first) * progress;
@@ -233,30 +285,49 @@ class _RoutePainter extends CustomPainter {
     if (stops > 1) canvas.drawLine(Offset(xs.first, y), Offset(reach, y), line);
 
     for (var i = 0; i < stops; i++) {
-      // A dot lands as the line reaches it.
-      final reached = stops == 1 || xs[i] <= reach + 0.5;
-      if (!reached) continue;
       final c = Offset(xs[i], y);
+      final reached = stops == 1 || xs[i] <= reach + 0.5;
+      if (!reached) {
+        // Unreached stop sits quietly on the track (never scale 0).
+        canvas.drawCircle(
+          c,
+          r * AppMotion.checkFrom,
+          Paint()..color = AppColors.surfaceDim,
+        );
+        continue;
+      }
+      // A dot lands with a settle spring from a visible base scale.
+      final span = step * HomeMetrics.routeDotSettleSpan;
+      final raw = stops == 1 || progress >= 1 || span <= 0
+          ? 1.0
+          : ((reach - xs[i]) / span).clamp(0.0, 1.0);
+      final scale =
+          AppMotion.landFromScale +
+          (1 - AppMotion.landFromScale) * AppMotion.settle.transform(raw);
+      final dotR = r * scale;
+      final ringR = (r - HomeMetrics.routeDotRing) * scale;
       for (final s in AppElevation.knob) {
         canvas.drawCircle(
           c + s.offset,
-          r,
+          dotR,
           Paint()
             ..color = s.color
             ..maskFilter = MaskFilter.blur(BlurStyle.normal, s.blurSigma),
         );
       }
-      canvas.drawCircle(c, r, Paint()..color = AppColors.surface);
-      canvas.drawCircle(
-        c,
-        r - HomeMetrics.routeDotRing,
-        Paint()
-          ..shader = const LinearGradient(
-            colors: [AppColors.primaryTop, AppColors.primaryBottom],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ).createShader(Rect.fromCircle(center: c, radius: r)),
-      );
+      canvas.drawCircle(c, dotR, Paint()..color = AppColors.surface);
+      if (ringR > 0) {
+        canvas.drawCircle(
+          c,
+          ringR,
+          Paint()
+            ..shader = const LinearGradient(
+              colors: [AppColors.primaryTop, AppColors.primaryBottom],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ).createShader(Rect.fromCircle(center: c, radius: dotR)),
+        );
+      }
     }
 
     // Next stop: hollow.

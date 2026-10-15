@@ -704,6 +704,12 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get back;
 
+  /// No description provided for @homeKeptOpenRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Open trip records'**
+  String get homeKeptOpenRecords;
+
   /// No description provided for @homeKeptLabel.
   ///
   /// In en, this message translates to:
@@ -752,6 +758,30 @@ abstract class AppLocalizations {
   /// **'Recent saves'**
   String get homeRecent;
 
+  /// No description provided for @homeRecentReceipts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent receipts'**
+  String get homeRecentReceipts;
+
+  /// No description provided for @receiptChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Figures checked against the saved receipt data.'**
+  String get receiptChecked;
+
+  /// No description provided for @receiptNotChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt data saved, but the figures were not verified.'**
+  String get receiptNotChecked;
+
+  /// No description provided for @receiptPhotoMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The receipt details saved here do not include a photo.'**
+  String get receiptPhotoMissing;
+
   /// No description provided for @homeSeeAll.
   ///
   /// In en, this message translates to:
@@ -787,6 +817,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ATM conversion avoided'**
   String get saveAtmTitle;
+
+  /// No description provided for @saveDetailsAsked.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller asked'**
+  String get saveDetailsAsked;
+
+  /// No description provided for @saveDetailsPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'You paid'**
+  String get saveDetailsPaid;
 
   /// No description provided for @saveHaggleTitle.
   ///
@@ -2190,29 +2232,305 @@ abstract class AppLocalizations {
   /// **'Today'**
   String get homeToday;
 
-  /// No description provided for @homeCashToday.
+  /// No description provided for @cashWalletTitle.
   ///
   /// In en, this message translates to:
-  /// **'About {amount} in cash today'**
-  String homeCashToday(String amount);
+  /// **'Cash on hand'**
+  String get cashWalletTitle;
 
-  /// No description provided for @homeCashBasis.
+  /// No description provided for @cashWalletUpdate.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Estimate from 1 of your records over the last {days} days} other{Estimate from {count} of your records over the last {days} days}}'**
-  String homeCashBasis(int days, int count);
+  /// **'Update'**
+  String get cashWalletUpdate;
 
-  /// No description provided for @homeCashBasisSamples.
+  /// No description provided for @cashWalletNotSet.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Estimate from 1 sample record over {days} days} other{Estimate from {count} sample records over {days} days}}'**
-  String homeCashBasisSamples(int days, int count);
+  /// **'Add your cash balance to start tracking'**
+  String get cashWalletNotSet;
 
-  /// No description provided for @homeCashBasisMixed.
+  /// No description provided for @cashWalletCurrent.
   ///
   /// In en, this message translates to:
-  /// **'Estimate from {count} records over the last {days} days, {samples} of them samples'**
-  String homeCashBasisMixed(int days, int count, int samples);
+  /// **'Current balance: {amount}'**
+  String cashWalletCurrent(String amount);
+
+  /// No description provided for @cashWalletSetBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Set balance'**
+  String get cashWalletSetBalance;
+
+  /// No description provided for @cashWalletAddCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Add cash'**
+  String get cashWalletAddCash;
+
+  /// No description provided for @cashWalletSpendCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Record cash spent'**
+  String get cashWalletSpendCash;
+
+  /// No description provided for @cashWalletBalanceField.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash you have now'**
+  String get cashWalletBalanceField;
+
+  /// No description provided for @cashWalletAddField.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash added'**
+  String get cashWalletAddField;
+
+  /// No description provided for @cashWalletSpendField.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash spent'**
+  String get cashWalletSpendField;
+
+  /// No description provided for @cashWalletSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save balance'**
+  String get cashWalletSave;
+
+  /// No description provided for @cashWalletAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash added'**
+  String get cashWalletAdded;
+
+  /// No description provided for @cashWalletSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash spent'**
+  String get cashWalletSpent;
+
+  /// No description provided for @cashWalletAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM withdrawal'**
+  String get cashWalletAtm;
+
+  /// No description provided for @cashWalletHaggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Market purchase'**
+  String get cashWalletHaggle;
+
+  /// No description provided for @cashWalletBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt payment'**
+  String get cashWalletBill;
+
+  /// No description provided for @cashWalletBillCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in cash · wallet updated'**
+  String get cashWalletBillCash;
+
+  /// No description provided for @cashWalletBillCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by card · cash balance unchanged'**
+  String get cashWalletBillCard;
+
+  /// No description provided for @cashWalletExchange.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash exchange'**
+  String get cashWalletExchange;
+
+  /// No description provided for @exchangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a better exchange rate'**
+  String get exchangeTitle;
+
+  /// No description provided for @exchangeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby counters · rates from their published boards'**
+  String get exchangeSubtitle;
+
+  /// No description provided for @exchangeAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign cash to exchange'**
+  String get exchangeAmount;
+
+  /// No description provided for @exchangeCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency you have'**
+  String get exchangeCurrency;
+
+  /// No description provided for @exchangeDenomination.
+  ///
+  /// In en, this message translates to:
+  /// **'Banknote rate tier'**
+  String get exchangeDenomination;
+
+  /// No description provided for @exchangeChooseDenomination.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the notes you have'**
+  String get exchangeChooseDenomination;
+
+  /// No description provided for @exchangeFind.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare nearby rates'**
+  String get exchangeFind;
+
+  /// No description provided for @exchangeLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking current published rates'**
+  String get exchangeLoading;
+
+  /// No description provided for @exchangeNoLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on location to compare nearby counters'**
+  String get exchangeNoLocation;
+
+  /// No description provided for @exchangeNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'Live exchange rates are unavailable right now'**
+  String get exchangeNoData;
+
+  /// No description provided for @exchangeNoNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'No current rates found within {distance} km'**
+  String exchangeNoNearby(Object distance);
+
+  /// No description provided for @exchangeNoRates.
+  ///
+  /// In en, this message translates to:
+  /// **'No current quote for this currency and note tier'**
+  String get exchangeNoRates;
+
+  /// No description provided for @exchangeRateLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate} {payoutCurrency} per 1 {currency}'**
+  String exchangeRateLine(Object rate, Object payoutCurrency, Object currency);
+
+  /// No description provided for @exchangePayout.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount}'**
+  String exchangePayout(Object amount);
+
+  /// No description provided for @exchangeDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} km away'**
+  String exchangeDistance(Object distance);
+
+  /// No description provided for @exchangeUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate source updated {time}'**
+  String exchangeUpdated(Object time);
+
+  /// No description provided for @exchangeFreshness.
+  ///
+  /// In en, this message translates to:
+  /// **'Only current published rates are ranked'**
+  String get exchangeFreshness;
+
+  /// No description provided for @exchangeAttribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates collected from published shop boards by ThaiRate · CC BY 4.0'**
+  String get exchangeAttribution;
+
+  /// No description provided for @exchangeCounterNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates can change at the counter. Confirm before exchanging.'**
+  String get exchangeCounterNote;
+
+  /// No description provided for @exchangeMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Open map'**
+  String get exchangeMap;
+
+  /// No description provided for @exchangeAddToCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Add received cash to balance'**
+  String get exchangeAddToCash;
+
+  /// No description provided for @exchangeConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm the counter payout'**
+  String get exchangeConfirmTitle;
+
+  /// No description provided for @exchangeConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The estimate was about {amount}. Enter the amount you actually received.'**
+  String exchangeConfirmBody(Object amount);
+
+  /// No description provided for @exchangeUseActual.
+  ///
+  /// In en, this message translates to:
+  /// **'Add actual amount'**
+  String get exchangeUseActual;
+
+  /// No description provided for @exchangeCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get exchangeCancel;
+
+  /// No description provided for @exchangeRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange added to Cash on hand'**
+  String get exchangeRecorded;
+
+  /// No description provided for @exchangeMixedDenomination.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare one banknote tier at a time. Enter only cash in that tier.'**
+  String get exchangeMixedDenomination;
+
+  /// No description provided for @cashPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'How did you pay?'**
+  String get cashPaymentMethod;
+
+  /// No description provided for @cashPaymentCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get cashPaymentCash;
+
+  /// No description provided for @cashPaymentCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get cashPaymentCard;
+
+  /// No description provided for @cashPaymentExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the payment method so your cash balance stays accurate.'**
+  String get cashPaymentExplainer;
 
   /// No description provided for @memoryDaysAgo.
   ///
@@ -2478,6 +2796,66 @@ abstract class AppLocalizations {
   /// **'Shop'**
   String get billShop;
 
+  /// No description provided for @billCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested category'**
+  String get billCategory;
+
+  /// No description provided for @billCategoryGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on this place\'s category in Google Maps'**
+  String get billCategoryGoogle;
+
+  /// No description provided for @billCategoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'No place type matched; the shop-name guess may be wrong'**
+  String get billCategoryName;
+
+  /// No description provided for @billCategoryManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Category chosen by you'**
+  String get billCategoryManual;
+
+  /// No description provided for @billCategoryEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category'**
+  String get billCategoryEdit;
+
+  /// No description provided for @spendFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food and drink'**
+  String get spendFood;
+
+  /// No description provided for @spendTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get spendTransport;
+
+  /// No description provided for @spendShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get spendShopping;
+
+  /// No description provided for @spendLodging.
+  ///
+  /// In en, this message translates to:
+  /// **'Lodging'**
+  String get spendLodging;
+
+  /// No description provided for @spendOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get spendOther;
+
   /// No description provided for @billShopUnknown.
   ///
   /// In en, this message translates to:
@@ -2622,11 +3000,11 @@ abstract class AppLocalizations {
   /// **'Open the assistant'**
   String get homeBriefingOpen;
 
-  /// No description provided for @homeBriefingNoNumber.
+  /// No description provided for @homeBriefingEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No cash estimate yet'**
-  String get homeBriefingNoNumber;
+  /// **'No stops planned today'**
+  String get homeBriefingEmpty;
 
   /// No description provided for @homeBriefingStops.
   ///
@@ -2651,6 +3029,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See every warning nearby'**
   String get nearbyOpen;
+
+  /// No description provided for @nearbyMapLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Open ATM map'**
+  String get nearbyMapLabel;
 
   /// No description provided for @nearbyMore.
   ///
@@ -2778,24 +3162,6 @@ abstract class AppLocalizations {
   /// **'Assistant'**
   String get assistantTitle;
 
-  /// No description provided for @assistantCashLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cash for today'**
-  String get assistantCashLabel;
-
-  /// No description provided for @assistantCashAbout.
-  ///
-  /// In en, this message translates to:
-  /// **'About {amount}'**
-  String assistantCashAbout(String amount);
-
-  /// No description provided for @assistantCashUnknown.
-  ///
-  /// In en, this message translates to:
-  /// **'Not enough to go on yet'**
-  String get assistantCashUnknown;
-
   /// No description provided for @assistantStops.
   ///
   /// In en, this message translates to:
@@ -2843,36 +3209,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Arrival alert'**
   String get assistantArrival;
-
-  /// No description provided for @cashBasisNone.
-  ///
-  /// In en, this message translates to:
-  /// **'Needs a day or two of saved spending'**
-  String get cashBasisNone;
-
-  /// No description provided for @cashBasisPattern.
-  ///
-  /// In en, this message translates to:
-  /// **'{days, plural, =1{From your spending on 1 earlier day} other{From your spending on {days} earlier days}}'**
-  String cashBasisPattern(int days);
-
-  /// No description provided for @cashBasisPatternSamples.
-  ///
-  /// In en, this message translates to:
-  /// **'{days, plural, =1{From sample records on 1 day} other{From sample records on {days} days}}'**
-  String cashBasisPatternSamples(int days);
-
-  /// No description provided for @cashBasisCashOnly.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 stop takes cash only (Google Maps)} other{{count} stops take cash only (Google Maps)}}'**
-  String cashBasisCashOnly(int count);
-
-  /// No description provided for @cashBasisLastVisit.
-  ///
-  /// In en, this message translates to:
-  /// **'includes what you spent there last time'**
-  String get cashBasisLastVisit;
 
   /// No description provided for @calendarConnect.
   ///
@@ -3107,6 +3443,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your card'**
   String get cardSheetTitle;
+
+  /// No description provided for @cardCatalogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a card'**
+  String get cardCatalogTitle;
+
+  /// No description provided for @cardCatalogOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other card / enter details yourself'**
+  String get cardCatalogOther;
+
+  /// No description provided for @cardCatalogUtopia.
+  ///
+  /// In en, this message translates to:
+  /// **'U-topia U-Card · Visa'**
+  String get cardCatalogUtopia;
+
+  /// No description provided for @cardCatalogUtopiaFacts.
+  ///
+  /// In en, this message translates to:
+  /// **'U-topia describes virtual and physical Visa cards, spending alerts, freeze/unfreeze, and custom spending limits.'**
+  String get cardCatalogUtopiaFacts;
+
+  /// No description provided for @cardCatalogUtopiaFeeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Its card terms dated May 20, 2026 list up to 1.5% foreign-exchange and up to 1.5% cross-border fees. These are separate fees, so they are not copied into the single fee field below.'**
+  String get cardCatalogUtopiaFeeNote;
+
+  /// No description provided for @cardCatalogUtopiaIssuerNote.
+  ///
+  /// In en, this message translates to:
+  /// **'U-topia\'s public documents name different card providers: the May 20 card terms say Third National, while the privacy policy updated October 6 names Rain. Check the current terms in your U-topia account before using fee comparisons.'**
+  String get cardCatalogUtopiaIssuerNote;
+
+  /// No description provided for @cardCatalogSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open U-topia card terms'**
+  String get cardCatalogSource;
+
+  /// No description provided for @cardCatalogProductSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open U-topia product page'**
+  String get cardCatalogProductSource;
 
   /// No description provided for @cardFeeLabel.
   ///
@@ -3653,6 +4037,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'read {date}'**
   String haggleReadOn(String date);
+
+  /// No description provided for @atmMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ATMs nearby'**
+  String get atmMapTitle;
+
+  /// No description provided for @atmMapNearest.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest ATM'**
+  String get atmMapNearest;
+
+  /// No description provided for @atmMapMeters.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m'**
+  String atmMapMeters(String meters);
+
+  /// No description provided for @atmMapAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{meters} m away'**
+  String atmMapAway(String meters);
+
+  /// No description provided for @atmMapMapLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Map with {count, plural, =1{1 ATM} other{{count} ATMs}}. Each one is also in the list below.'**
+  String atmMapMapLabel(int count);
+
+  /// No description provided for @atmMapDirections.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get atmMapDirections;
+
+  /// No description provided for @atmMapDirectionsTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Walking directions to {place}'**
+  String atmMapDirectionsTo(String place);
+
+  /// No description provided for @atmMapLooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for ATMs near you'**
+  String get atmMapLooking;
+
+  /// No description provided for @atmMapNeedLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location to see ATMs near you'**
+  String get atmMapNeedLocation;
+
+  /// No description provided for @atmMapLocationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off for this app. Turn it on in Settings.'**
+  String get atmMapLocationSettings;
+
+  /// No description provided for @atmMapEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Maps returned no ATMs here. Check the connection, or search in Google Maps.'**
+  String get atmMapEmpty;
+
+  /// No description provided for @atmMapSearchMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Search in Google Maps'**
+  String get atmMapSearchMaps;
+
+  /// No description provided for @atmMapSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Places from Google Maps · distances in a straight line'**
+  String get atmMapSource;
+
+  /// No description provided for @atmMapDemoOrigin.
+  ///
+  /// In en, this message translates to:
+  /// **'Around the first stop of the sample calendar, not where your phone is'**
+  String get atmMapDemoOrigin;
+
+  /// No description provided for @atmMapList.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest first'**
+  String get atmMapList;
+
+  /// No description provided for @atmMapRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Search again'**
+  String get atmMapRetry;
+
+  /// No description provided for @cashWalletNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'More cash was recorded as spent than you had. Update your balance.'**
+  String get cashWalletNegative;
+
+  /// No description provided for @cashWalletLastMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {what} {amount} · {when}'**
+  String cashWalletLastMove(String what, String amount, String when);
+
+  /// No description provided for @recordKeptHero.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept by this choice'**
+  String get recordKeptHero;
+
+  /// No description provided for @recordReceiptHero.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt total'**
+  String get recordReceiptHero;
+
+  /// No description provided for @recordCashAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to cash on hand'**
+  String get recordCashAdded;
+
+  /// No description provided for @recordCashSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid from cash on hand'**
+  String get recordCashSpent;
+
+  /// No description provided for @recordCashNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash on hand did not change'**
+  String get recordCashNone;
+
+  /// No description provided for @recordCashNoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by card, or saved without a payment method'**
+  String get recordCashNoneBody;
+
+  /// No description provided for @recordCashNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash on hand now: {amount}'**
+  String recordCashNow(String amount);
+
+  /// No description provided for @recordOpenInMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Google Maps'**
+  String get recordOpenInMaps;
+
+  /// No description provided for @recordNoFigures.
+  ///
+  /// In en, this message translates to:
+  /// **'This record was saved before the screen\'s figures were kept.'**
+  String get recordNoFigures;
+
+  /// No description provided for @recordSellerPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller\'s prices'**
+  String get recordSellerPrices;
+
+  /// No description provided for @recordYourOffers.
+  ///
+  /// In en, this message translates to:
+  /// **'Your offers'**
+  String get recordYourOffers;
+
+  /// No description provided for @recordItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get recordItem;
+
+  /// No description provided for @recordSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample record of the demo traveler'**
+  String get recordSample;
+
+  /// No description provided for @recordPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt photo'**
+  String get recordPhoto;
+
+  /// No description provided for @recordPhotoOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the receipt photo full screen'**
+  String get recordPhotoOpen;
+
+  /// No description provided for @recordWhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Where'**
+  String get recordWhere;
+
+  /// No description provided for @recordChecks.
+  ///
+  /// In en, this message translates to:
+  /// **'What was read'**
+  String get recordChecks;
+
+  /// No description provided for @exchangeRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh rates'**
+  String get exchangeRefresh;
+
+  /// No description provided for @exchangeEnterAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount to compare nearby counters'**
+  String get exchangeEnterAmount;
+
+  /// No description provided for @exchangeRecordFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t add this to Cash on hand. Try again.'**
+  String get exchangeRecordFailed;
 }
 
 class _AppLocalizationsDelegate

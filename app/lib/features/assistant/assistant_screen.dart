@@ -2,10 +2,12 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/app_scope.dart';
 import '../../core/colors.dart';
 import '../../core/formatters.dart';
+import '../../core/motion.dart';
 import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../l10n/app_localizations.dart';
@@ -27,7 +29,9 @@ import '../briefing/calendar_source.dart';
 import '../briefing/trip_context.dart';
 import 'card_facts_sheet.dart';
 import 'facts_section.dart';
+import '../home/cash_balance_card.dart';
 import 'pay_compare_card.dart';
+import '../trip_map/atm_map_screen.dart';
 
 /// The demo state's arrival: the Thai traveler lands in Japan.
 const demoArrivalCountry = 'JP';
@@ -70,6 +74,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
         _briefing.card,
         _alerts,
         scope.trip,
+        scope.cashWallet,
         scope.settings,
         scope.rates,
       ]),
@@ -118,7 +123,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
           child: ListView(
             padding: EdgeInsets.fromLTRB(
               AppSpacing.screenMargin,
-              MediaQuery.paddingOf(context).top + AppSpacing.lg,
+              MediaQuery.viewPaddingOf(context).top + AppSpacing.lg,
               AppSpacing.screenMargin,
               AppTabBar.contentPadding(context),
             ),
@@ -131,9 +136,19 @@ class _AssistantScreenState extends State<AssistantScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xxl),
-              _CashHero(plan: plan),
+              CashBalanceCard(
+                wallet: scope.cashWallet,
+                currency: trip.localCurrency,
+                foreignCurrency: trip.homeCurrency,
+                onFindNearby: () => _openAtmMap(),
+                demo: scope.settings.demoState,
+                prominent: true,
+              ),
+              const SizedBox(height: AppSpacing.zoneGap),
               SectionHeader(l10n.assistantStops),
               _stops(l10n, plan, selected, demo: scope.settings.demoState),
+              // The demo's stops come from its sample calendar, never the
+              // phone's.
               if (scope.settings.demoState) GroupFooter(l10n.calendarSample),
               const SizedBox(height: AppSpacing.zoneGap),
               PayCompareCard(
@@ -156,7 +171,19 @@ class _AssistantScreenState extends State<AssistantScreen> {
                     ? l10n.assistantCardFromAccount
                     : l10n.assistantCardFooter,
               ),
-              SectionHeader(l10n.assistantNearby),
+              SectionHeader(
+                l10n.assistantNearby,
+                trailing: Semantics(
+                  button: true,
+                  label: l10n.nearbyMapLabel,
+                  child: IconButton(
+                    tooltip: l10n.nearbyMapLabel,
+                    onPressed: _openAtmMap,
+                    icon: const Icon(Icons.map_outlined),
+                    color: AppColors.primaryText,
+                  ),
+                ),
+              ),
               _nearby(l10n, traps, demo: scope.settings.demoState),
               SectionHeader(l10n.assistantArrival),
               _arrival(l10n, scope, trip),
@@ -217,10 +244,12 @@ class _AssistantScreenState extends State<AssistantScreen> {
             semanticLabel: l10n.assistantPayFor(
               s.event.matchedPlace ?? s.event.location!,
             ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: s == selected ? AppColors.surfaceSunken : null,
-              ),
+            child: AnimatedContainer(
+              duration: AppMotion.of(context, AppMotion.quick),
+              curve: AppMotion.enter,
+              color: s == selected
+                  ? AppColors.surfaceSunken
+                  : AppColors.surface,
               child: StopRow(stop: s),
             ),
           ),
@@ -249,6 +278,13 @@ class _AssistantScreenState extends State<AssistantScreen> {
     return GroupCard(
       dividerInset: AppSpacing.rowIconTextInset,
       children: [
+        if (_briefing.card.productId == 'utopia-u-card')
+          _ActionRow(
+            icon: const IconTile.blue(icon: Icons.credit_card_rounded),
+            title: l10n.cardCatalogUtopia,
+            subtitle: l10n.cardCatalogUtopiaFacts,
+            onPressed: () => _editCard(trip),
+          ),
         _ActionRow(
           icon: const IconTile.blue(icon: Icons.credit_card_rounded),
           title: l10n.cardFeeRow,
@@ -310,10 +346,36 @@ class _AssistantScreenState extends State<AssistantScreen> {
         }
         return GroupCard(
           dividerInset: AppSpacing.rowIconTextInset,
-          children: [for (final t in traps) TrapRow(trap: t)],
+          children: [
+            for (final t in traps)
+              _mapTrapRow(
+                trap: t,
+                onPressed: switch (t.kind) {
+                  TrapKind.atmFee || TrapKind.atmConversion =>
+                    () => _openAtmMap(select: t.placeName),
+                  TrapKind.cashOnlyMarket => () => launchUrl(
+                    Uri.https('www.google.com', '/maps/search/', {
+                      'api': '1',
+                      'query': t.placeName,
+                    }),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                },
+              ),
+          ],
         );
     }
   }
+
+  Widget _mapTrapRow({
+    required TrapWarning trap,
+    required VoidCallback onPressed,
+  }) => Pressable(
+    onPressed: onPressed,
+    semanticLabel:
+        '${trap.placeName} · ${AppLocalizations.of(context).nearbyMapLabel}',
+    child: TrapRow(trap: trap),
+  );
 
   Widget _arrival(AppLocalizations l10n, AppScope scope, TripContext trip) {
     final shown = _alerts.lastShown;
@@ -378,6 +440,12 @@ class _AssistantScreenState extends State<AssistantScreen> {
     );
   }
 
+  Future<void> _openAtmMap({String? select}) => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => AtmMapScreen(briefing: _briefing, selectName: select),
+    ),
+  );
+
   Future<void> _editCard(TripContext trip) =>
       showCardFactsSheet(context, _briefing.card, trip.homeCurrency);
 }
@@ -399,54 +467,6 @@ String _countryName(AppLocalizations l10n, String code) => switch (code) {
   'TH' => l10n.countryThailand,
   _ => code,
 };
-
-/// "About 2,000 THB" for today, or what it needs to say one.
-class _CashHero extends StatelessWidget {
-  const _CashHero({required this.plan});
-
-  final DayCashPlan? plan;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final type = AppTypography.of(context);
-    final amount = plan?.amountThb;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.assistantCashLabel,
-          style: type.heroLabel.copyWith(color: AppColors.onSurfaceSecondary),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          amount == null
-              ? l10n.assistantCashUnknown
-              : l10n.assistantCashAbout(
-                  AppFormat.roundedAmount(amount, marketCurrency),
-                ),
-          style: amount == null ? type.title : type.displayLg,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(cashBasis(l10n, plan), style: type.footer),
-      ],
-    );
-  }
-}
-
-/// Where today's cash figure comes from, in one line.
-String cashBasis(AppLocalizations l10n, DayCashPlan? plan) {
-  if (plan == null) return l10n.cashBasisNone;
-  final parts = <String>[
-    if (plan.pattern case final p?)
-      p.sampleRecords > 0
-          ? l10n.cashBasisPatternSamples(p.daysUsed)
-          : l10n.cashBasisPattern(p.daysUsed),
-    if (plan.cashOnlyStops > 0) l10n.cashBasisCashOnly(plan.cashOnlyStops),
-    if (plan.stopsFloorThb != null) l10n.cashBasisLastVisit,
-  ];
-  return parts.isEmpty ? l10n.cashBasisNone : parts.join(' · ');
-}
 
 /// A tappable row with a chevron.
 class _ActionRow extends StatelessWidget {

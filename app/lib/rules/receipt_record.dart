@@ -30,6 +30,7 @@ class ReceiptRecord {
     this.vatOnTop = false,
     this.itemCount,
     this.category = SpendCategory.other,
+    this.photoPath,
     this.userCorrected = false,
     this.isSample = false,
   }) : assert(
@@ -47,6 +48,7 @@ class ReceiptRecord {
     double? lat,
     double? lng,
     SpendCategory category = SpendCategory.other,
+    String? photoPath,
   }) => ReceiptRecord(
     id: id,
     savedAt: savedAt,
@@ -66,6 +68,7 @@ class ReceiptRecord {
     vatOnTop: check.vatOnTop,
     itemCount: check.itemCount,
     category: category,
+    photoPath: photoPath,
   );
 
   final String id;
@@ -89,6 +92,9 @@ class ReceiptRecord {
   final int? itemCount;
   final SpendCategory category;
 
+  /// Local device copy of the receipt image. Never synced to the account.
+  final String? photoPath;
+
   /// The traveler changed the verdict by hand.
   final bool userCorrected;
   final bool isSample;
@@ -104,6 +110,7 @@ class ReceiptRecord {
     bool? serviceIncluded,
     bool? vatOnTop,
     bool? serviceCharged,
+    SpendCategory? category,
   }) => ReceiptRecord(
     id: id,
     savedAt: savedAt,
@@ -133,8 +140,58 @@ class ReceiptRecord {
     vatThb: vatOnTop == null && totalThb == null ? vatThb : null,
     vatOnTop: vatOnTop ?? this.vatOnTop,
     itemCount: itemCount,
-    category: category,
+    category: category ?? this.category,
+    photoPath: photoPath,
     userCorrected: true,
+    isSample: isSample,
+  );
+
+  /// Changes a label without invalidating the arithmetic read from the bill.
+  ReceiptRecord withCategory(SpendCategory value) => ReceiptRecord(
+    id: id,
+    savedAt: savedAt,
+    totalThb: totalThb,
+    verified: verified,
+    merchantName: merchantName,
+    placeName: placeName,
+    lat: lat,
+    lng: lng,
+    kind: kind,
+    subtotalThb: subtotalThb,
+    discountThb: discountThb,
+    serviceThb: serviceThb,
+    servicePercent: servicePercent,
+    serviceIncluded: serviceIncluded,
+    vatThb: vatThb,
+    vatOnTop: vatOnTop,
+    itemCount: itemCount,
+    category: value,
+    photoPath: photoPath,
+    userCorrected: userCorrected,
+    isSample: isSample,
+  );
+
+  ReceiptRecord withPhotoPath(String? value) => ReceiptRecord(
+    id: id,
+    savedAt: savedAt,
+    totalThb: totalThb,
+    verified: verified,
+    merchantName: merchantName,
+    placeName: placeName,
+    lat: lat,
+    lng: lng,
+    kind: kind,
+    subtotalThb: subtotalThb,
+    discountThb: discountThb,
+    serviceThb: serviceThb,
+    servicePercent: servicePercent,
+    serviceIncluded: serviceIncluded,
+    vatThb: vatThb,
+    vatOnTop: vatOnTop,
+    itemCount: itemCount,
+    category: category,
+    photoPath: value,
+    userCorrected: userCorrected,
     isSample: isSample,
   );
 
@@ -168,6 +225,7 @@ class ReceiptRecord {
     'vatOnTop': vatOnTop,
     'itemCount': ?itemCount,
     'category': category.name,
+    if (photoPath != null) 'photoPath': photoPath,
     'userCorrected': userCorrected,
     'isSample': isSample,
   };
@@ -205,6 +263,7 @@ class ReceiptRecord {
       category:
           SpendCategory.values.asNameMap()[json['category']] ??
           SpendCategory.other,
+      photoPath: _str(json['photoPath']),
       userCorrected: json['userCorrected'] == true,
       isSample: json['isSample'] == true,
     );
@@ -291,6 +350,9 @@ SpendCategory categorize({
   }
   return SpendCategory.other;
 }
+
+bool hasCategoryPlaceType(Iterable<String> placeTypes) =>
+    _typeCategories.values.any((known) => placeTypes.any(known.contains));
 
 bool _hasWord(String text, String word) {
   // Thai has no spaces; Latin words must stand alone ("bar" is not "barbecue").

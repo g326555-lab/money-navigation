@@ -358,6 +358,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get back => 'กลับ';
 
   @override
+  String get homeKeptOpenRecords => 'ดูบันทึกการเดินทาง';
+
+  @override
   String get homeKeptLabel => 'เงินที่ประหยัดได้ในทริปนี้';
 
   @override
@@ -392,6 +395,20 @@ class AppLocalizationsTh extends AppLocalizations {
   String get homeRecent => 'บันทึกล่าสุด';
 
   @override
+  String get homeRecentReceipts => 'ใบเสร็จล่าสุด';
+
+  @override
+  String get receiptChecked => 'ตรวจสอบตัวเลขจากข้อมูลใบเสร็จที่บันทึกแล้ว';
+
+  @override
+  String get receiptNotChecked =>
+      'บันทึกข้อมูลใบเสร็จแล้ว แต่ยังไม่ได้ยืนยันตัวเลข';
+
+  @override
+  String get receiptPhotoMissing =>
+      'บันทึกรายละเอียดใบเสร็จไว้แล้ว แต่ไม่มีรูปภาพ';
+
+  @override
   String get homeSeeAll => 'ดูทั้งหมด';
 
   @override
@@ -410,6 +427,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get saveAtmTitle => 'ไม่โดนค่าแปลงสกุลเงินที่ ATM';
+
+  @override
+  String get saveDetailsAsked => 'ราคาที่ผู้ขายเสนอ';
+
+  @override
+  String get saveDetailsPaid => 'ราคาที่จ่าย';
 
   @override
   String saveHaggleTitle(String item) {
@@ -1243,24 +1266,172 @@ class AppLocalizationsTh extends AppLocalizations {
   String get homeToday => 'วันนี้';
 
   @override
-  String homeCashToday(String amount) {
-    return 'วันนี้น่าจะใช้เงินสดราว $amount';
+  String get cashWalletTitle => 'เงินสดที่มี';
+
+  @override
+  String get cashWalletUpdate => 'ปรับปรุง';
+
+  @override
+  String get cashWalletNotSet => 'เพิ่มยอดเงินสดเพื่อเริ่มติดตาม';
+
+  @override
+  String cashWalletCurrent(String amount) {
+    return 'ยอดเงินสดปัจจุบัน: $amount';
   }
 
   @override
-  String homeCashBasis(int days, int count) {
-    return 'ประมาณจากบันทึกของคุณ $count รายการใน $days วันล่าสุด';
+  String get cashWalletSetBalance => 'ตั้งยอดคงเหลือ';
+
+  @override
+  String get cashWalletAddCash => 'เพิ่มเงินสด';
+
+  @override
+  String get cashWalletSpendCash => 'บันทึกเงินสดที่จ่าย';
+
+  @override
+  String get cashWalletBalanceField => 'เงินสดที่มีตอนนี้';
+
+  @override
+  String get cashWalletAddField => 'จำนวนเงินสดที่เพิ่ม';
+
+  @override
+  String get cashWalletSpendField => 'จำนวนเงินสดที่จ่าย';
+
+  @override
+  String get cashWalletSave => 'บันทึกยอด';
+
+  @override
+  String get cashWalletAdded => 'เพิ่มเงินสด';
+
+  @override
+  String get cashWalletSpent => 'จ่ายเงินสด';
+
+  @override
+  String get cashWalletAtm => 'ถอนเงินจาก ATM';
+
+  @override
+  String get cashWalletHaggle => 'ซื้อของที่ตลาด';
+
+  @override
+  String get cashWalletBill => 'จ่ายตามใบเสร็จ';
+
+  @override
+  String get cashWalletBillCash => 'จ่ายเงินสด · อัปเดตยอดแล้ว';
+
+  @override
+  String get cashWalletBillCard => 'จ่ายด้วยบัตร · ยอดเงินสดไม่เปลี่ยน';
+
+  @override
+  String get cashWalletExchange => 'แลกเงินสด';
+
+  @override
+  String get exchangeTitle => 'หาร้านที่ให้อัตราแลกเปลี่ยนดีกว่า';
+
+  @override
+  String get exchangeSubtitle => 'ร้านใกล้คุณ · อัตราจากป้ายที่ร้านประกาศ';
+
+  @override
+  String get exchangeAmount => 'เงินสกุลต่างประเทศที่ต้องการแลก';
+
+  @override
+  String get exchangeCurrency => 'สกุลเงินที่คุณมี';
+
+  @override
+  String get exchangeDenomination => 'ช่วงราคาตามชนิดธนบัตร';
+
+  @override
+  String get exchangeChooseDenomination => 'เลือกชนิดธนบัตรที่คุณมี';
+
+  @override
+  String get exchangeFind => 'เปรียบเทียบร้านใกล้ฉัน';
+
+  @override
+  String get exchangeLoading => 'กำลังตรวจสอบอัตราที่ประกาศล่าสุด';
+
+  @override
+  String get exchangeNoLocation => 'เปิดตำแหน่งเพื่อเปรียบเทียบร้านใกล้คุณ';
+
+  @override
+  String get exchangeNoData => 'ยังไม่สามารถดูอัตราแลกเปลี่ยนล่าสุดได้';
+
+  @override
+  String exchangeNoNearby(Object distance) {
+    return 'ไม่พบอัตราล่าสุดในระยะ $distance กม.';
   }
 
   @override
-  String homeCashBasisSamples(int days, int count) {
-    return 'ประมาณจากบันทึกตัวอย่าง $count รายการใน $days วัน';
+  String get exchangeNoRates => 'ไม่มีราคาล่าสุดสำหรับสกุลเงินและชนิดธนบัตรนี้';
+
+  @override
+  String exchangeRateLine(Object rate, Object payoutCurrency, Object currency) {
+    return '1 $currency = $rate $payoutCurrency';
   }
 
   @override
-  String homeCashBasisMixed(int days, int count, int samples) {
-    return 'ประมาณจากบันทึก $count รายการใน $days วันล่าสุด เป็นตัวอย่าง $samples รายการ';
+  String exchangePayout(Object amount) {
+    return 'ประมาณ $amount';
   }
+
+  @override
+  String exchangeDistance(Object distance) {
+    return 'ห่าง $distance กม.';
+  }
+
+  @override
+  String exchangeUpdated(Object time) {
+    return 'แหล่งข้อมูลอัปเดต $time';
+  }
+
+  @override
+  String get exchangeFreshness => 'จัดอันดับเฉพาะอัตราที่ประกาศล่าสุด';
+
+  @override
+  String get exchangeAttribution =>
+      'ข้อมูลจากป้ายร้านผ่าน ThaiRate · CC BY 4.0';
+
+  @override
+  String get exchangeCounterNote =>
+      'อัตราที่ร้านอาจเปลี่ยนได้ โปรดยืนยันก่อนแลกเงินจริง';
+
+  @override
+  String get exchangeMap => 'เปิดแผนที่';
+
+  @override
+  String get exchangeAddToCash => 'เพิ่มเงินที่แลกได้เข้ายอดเงินสด';
+
+  @override
+  String get exchangeConfirmTitle => 'ยืนยันยอดเงินที่ได้รับจริง';
+
+  @override
+  String exchangeConfirmBody(Object amount) {
+    return 'ยอดประมาณการคือราว $amount กรอกยอดที่ได้รับจริงจากร้าน';
+  }
+
+  @override
+  String get exchangeUseActual => 'เพิ่มยอดจริง';
+
+  @override
+  String get exchangeCancel => 'ยกเลิก';
+
+  @override
+  String get exchangeRecorded => 'เพิ่มยอดแลกเงินในเงินสดที่มีแล้ว';
+
+  @override
+  String get exchangeMixedDenomination =>
+      'เปรียบเทียบทีละช่วงธนบัตร กรอกเฉพาะเงินสดในช่วงนั้น';
+
+  @override
+  String get cashPaymentMethod => 'จ่ายด้วยวิธีใด';
+
+  @override
+  String get cashPaymentCash => 'เงินสด';
+
+  @override
+  String get cashPaymentCard => 'บัตร';
+
+  @override
+  String get cashPaymentExplainer =>
+      'เลือกวิธีจ่ายเพื่อให้ยอดเงินสดตรงกับความจริง';
 
   @override
   String memoryDaysAgo(int days) {
@@ -1464,6 +1635,37 @@ class AppLocalizationsTh extends AppLocalizations {
   String get billShop => 'ร้าน';
 
   @override
+  String get billCategory => 'หมวดหมู่ที่แนะนำ';
+
+  @override
+  String get billCategoryGoogle => 'อิงจากหมวดหมู่ของสถานที่นี้ใน Google Maps';
+
+  @override
+  String get billCategoryName =>
+      'ไม่พบประเภทร้าน จึงคาดเดาจากชื่อร้าน ซึ่งอาจไม่ถูกต้อง';
+
+  @override
+  String get billCategoryManual => 'หมวดหมู่ที่คุณเลือก';
+
+  @override
+  String get billCategoryEdit => 'เลือกหมวดหมู่';
+
+  @override
+  String get spendFood => 'อาหารและเครื่องดื่ม';
+
+  @override
+  String get spendTransport => 'การเดินทาง';
+
+  @override
+  String get spendShopping => 'ช้อปปิ้ง';
+
+  @override
+  String get spendLodging => 'ที่พัก';
+
+  @override
+  String get spendOther => 'อื่นๆ';
+
+  @override
   String get billShopUnknown => 'อ่านไม่ได้';
 
   @override
@@ -1543,7 +1745,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get homeBriefingOpen => 'เปิดผู้ช่วย';
 
   @override
-  String get homeBriefingNoNumber => 'ยังไม่มียอดประมาณเงินสด';
+  String get homeBriefingEmpty => 'วันนี้ยังไม่มีแผนแวะที่ไหน';
 
   @override
   String homeBriefingStops(int count) {
@@ -1560,6 +1762,9 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get nearbyOpen => 'ดูคำเตือนทั้งหมดแถวนี้';
+
+  @override
+  String get nearbyMapLabel => 'เปิดแผนที่ตู้ ATM';
 
   @override
   String nearbyMore(int count) {
@@ -1641,17 +1846,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get assistantTitle => 'ผู้ช่วย';
 
   @override
-  String get assistantCashLabel => 'เงินสดสำหรับวันนี้';
-
-  @override
-  String assistantCashAbout(String amount) {
-    return 'ราว $amount';
-  }
-
-  @override
-  String get assistantCashUnknown => 'ยังมีข้อมูลไม่พอ';
-
-  @override
   String get assistantStops => 'จุดแวะวันนี้';
 
   @override
@@ -1678,27 +1872,6 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get assistantArrival => 'แจ้งเตือนเมื่อถึงปลายทาง';
-
-  @override
-  String get cashBasisNone => 'ต้องมีบันทึกการใช้จ่ายสักหนึ่งถึงสองวัน';
-
-  @override
-  String cashBasisPattern(int days) {
-    return 'จากการใช้จ่ายของคุณใน $days วันก่อนหน้า';
-  }
-
-  @override
-  String cashBasisPatternSamples(int days) {
-    return 'จากบันทึกตัวอย่างใน $days วัน';
-  }
-
-  @override
-  String cashBasisCashOnly(int count) {
-    return '$count จุดรับเฉพาะเงินสด (Google Maps)';
-  }
-
-  @override
-  String get cashBasisLastVisit => 'รวมยอดที่เคยใช้ที่นั่นครั้งก่อน';
 
   @override
   String get calendarConnect => 'อ่านปฏิทินวันนี้';
@@ -1831,6 +2004,33 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get cardSheetTitle => 'บัตรของคุณ';
+
+  @override
+  String get cardCatalogTitle => 'เลือกบัตร';
+
+  @override
+  String get cardCatalogOther => 'บัตรอื่น / กรอกรายละเอียดเอง';
+
+  @override
+  String get cardCatalogUtopia => 'U-topia U-Card · Visa';
+
+  @override
+  String get cardCatalogUtopiaFacts =>
+      'U-topia ระบุว่ามีบัตร Visa ทั้งแบบเสมือนและแบบจริง พร้อมการแจ้งเตือน การระงับ/เปิดใช้บัตร และกำหนดวงเงินเองได้';
+
+  @override
+  String get cardCatalogUtopiaFeeNote =>
+      'เงื่อนไขบัตรลงวันที่ 20 พ.ค. 2026 ระบุค่าธรรมเนียมแลกเปลี่ยนเงินตราต่างประเทศสูงสุด 1.5% และค่าธรรมเนียมข้ามประเทศสูงสุด 1.5% ซึ่งเป็นคนละรายการ จึงไม่ได้นำไปใส่ในช่องค่าธรรมเนียมเดียวด้านล่าง';
+
+  @override
+  String get cardCatalogUtopiaIssuerNote =>
+      'เอกสารสาธารณะของ U-topia ระบุผู้ให้บริการบัตรไม่ตรงกัน: เงื่อนไขบัตรวันที่ 20 พ.ค. ระบุ Third National ส่วนประกาศความเป็นส่วนตัวที่ปรับปรุงวันที่ 6 ต.ค. ระบุ Rain โปรดตรวจสอบเงื่อนไขล่าสุดในบัญชี U-topia ก่อนใช้เปรียบเทียบค่าธรรมเนียม';
+
+  @override
+  String get cardCatalogSource => 'เปิดเงื่อนไขบัตร U-topia';
+
+  @override
+  String get cardCatalogProductSource => 'เปิดหน้าผลิตภัณฑ์ U-topia';
 
   @override
   String get cardFeeLabel => 'ค่าธรรมเนียมใช้จ่ายต่างประเทศ';
@@ -2167,4 +2367,141 @@ class AppLocalizationsTh extends AppLocalizations {
   String haggleReadOn(String date) {
     return 'อ่านเมื่อ $date';
   }
+
+  @override
+  String get atmMapTitle => 'ตู้ ATM ใกล้ฉัน';
+
+  @override
+  String get atmMapNearest => 'ตู้ ATM ที่ใกล้ที่สุด';
+
+  @override
+  String atmMapMeters(String meters) {
+    return '$meters ม.';
+  }
+
+  @override
+  String atmMapAway(String meters) {
+    return 'ห่างไป $meters ม.';
+  }
+
+  @override
+  String atmMapMapLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count แห่ง',
+    );
+    return 'แผนที่มีตู้ ATM $_temp0 ทุกแห่งอยู่ในรายการด้านล่างด้วย';
+  }
+
+  @override
+  String get atmMapDirections => 'นำทาง';
+
+  @override
+  String atmMapDirectionsTo(String place) {
+    return 'เส้นทางเดินไป $place';
+  }
+
+  @override
+  String get atmMapLooking => 'กำลังหาตู้ ATM ใกล้คุณ';
+
+  @override
+  String get atmMapNeedLocation => 'อนุญาตตำแหน่งเพื่อดูตู้ ATM ใกล้คุณ';
+
+  @override
+  String get atmMapLocationSettings =>
+      'แอปนี้ปิดการใช้ตำแหน่งอยู่ เปิดได้ในการตั้งค่า';
+
+  @override
+  String get atmMapEmpty =>
+      'Google Maps ไม่พบตู้ ATM แถวนี้ ลองตรวจอินเทอร์เน็ต หรือค้นหาใน Google Maps';
+
+  @override
+  String get atmMapSearchMaps => 'ค้นหาใน Google Maps';
+
+  @override
+  String get atmMapSource => 'สถานที่จาก Google Maps · ระยะทางเป็นเส้นตรง';
+
+  @override
+  String get atmMapDemoOrigin =>
+      'รอบจุดแรกในปฏิทินตัวอย่าง ไม่ใช่ตำแหน่งจริงของโทรศัพท์';
+
+  @override
+  String get atmMapList => 'ใกล้ที่สุดก่อน';
+
+  @override
+  String get atmMapRetry => 'ค้นหาอีกครั้ง';
+
+  @override
+  String get cashWalletNegative =>
+      'บันทึกการจ่ายเงินสดมากกว่าที่มี ปรับยอดคงเหลือให้ตรง';
+
+  @override
+  String cashWalletLastMove(String what, String amount, String when) {
+    return 'ล่าสุด: $what $amount · $when';
+  }
+
+  @override
+  String get recordKeptHero => 'ประหยัดได้จากการเลือกนี้';
+
+  @override
+  String get recordReceiptHero => 'ยอดตามใบเสร็จ';
+
+  @override
+  String get recordCashAdded => 'เพิ่มเข้าเงินสดที่มี';
+
+  @override
+  String get recordCashSpent => 'จ่ายจากเงินสดที่มี';
+
+  @override
+  String get recordCashNone => 'เงินสดที่มีไม่เปลี่ยน';
+
+  @override
+  String get recordCashNoneBody =>
+      'จ่ายด้วยบัตร หรือบันทึกโดยไม่ได้ระบุวิธีจ่าย';
+
+  @override
+  String recordCashNow(String amount) {
+    return 'เงินสดที่มีตอนนี้: $amount';
+  }
+
+  @override
+  String get recordOpenInMaps => 'เปิดใน Google Maps';
+
+  @override
+  String get recordNoFigures =>
+      'รายการนี้บันทึกไว้ก่อนที่แอปจะเก็บตัวเลขจากหน้าจอ';
+
+  @override
+  String get recordSellerPrices => 'ราคาที่ผู้ขายบอก';
+
+  @override
+  String get recordYourOffers => 'ราคาที่คุณต่อ';
+
+  @override
+  String get recordItem => 'สินค้า';
+
+  @override
+  String get recordSample => 'รายการตัวอย่างของนักเดินทางในโหมดเดโม';
+
+  @override
+  String get recordPhoto => 'รูปใบเสร็จ';
+
+  @override
+  String get recordPhotoOpen => 'เปิดรูปใบเสร็จเต็มจอ';
+
+  @override
+  String get recordWhere => 'สถานที่';
+
+  @override
+  String get recordChecks => 'สิ่งที่อ่านได้';
+
+  @override
+  String get exchangeRefresh => 'โหลดอัตราใหม่';
+
+  @override
+  String get exchangeEnterAmount => 'กรอกจำนวนเงินเพื่อเปรียบเทียบร้านใกล้คุณ';
+
+  @override
+  String get exchangeRecordFailed => 'เพิ่มเข้ายอดเงินสดไม่สำเร็จ ลองอีกครั้ง';
 }

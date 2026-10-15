@@ -75,6 +75,9 @@ class BriefingController extends ChangeNotifier {
   NearbyState _nearbyState = NearbyState.idle;
   NearbyState get nearbyState => _nearbyState;
 
+  /// Where the last real nearby search was made.
+  ({double lat, double lng})? _nearbyOrigin;
+
   /// The phone's country from its location, when known.
   String? _country;
   String? get country => _country;
@@ -197,6 +200,7 @@ class BriefingController extends ChangeNotifier {
       countries.countryAt(position),
     ]);
     _nearby = results[0] as List<NearbyPlaceFact>;
+    _nearbyOrigin = (lat: position.latitude, lng: position.longitude);
     _country = results[1] as String? ?? _country;
     _nearbyState = NearbyState.done;
     notifyListeners();
@@ -207,6 +211,7 @@ class BriefingController extends ChangeNotifier {
   String? _demoKey;
   List<DayEvent> _demoEvents = const [];
   List<NearbyPlaceFact> _demoNearby = const [];
+  ({double lat, double lng})? _demoOrigin;
   String? _demoCountry;
   NearbyState _demoNearbyState = NearbyState.idle;
   NearbyState get demoNearbyState => _demoNearbyState;
@@ -237,6 +242,7 @@ class BriefingController extends ChangeNotifier {
     bool stale() => generation != _demoGeneration;
     _demoEvents = const [];
     _demoNearby = const [];
+    _demoOrigin = null;
     _demoCountry = null;
     _demoNearbyState = NearbyState.idle;
     notifyListeners();
@@ -268,6 +274,7 @@ class BriefingController extends ChangeNotifier {
         final nearby = await places.nearbyAt(first.lat!, first.lng!);
         if (stale()) return;
         _demoNearby = nearby;
+        _demoOrigin = (lat: first.lat!, lng: first.lng!);
       }
       for (final c in _facts?.countries.values ?? const <CountryPayFacts>[]) {
         if (c.currency == currency) _demoCountry = c.country;
@@ -291,6 +298,18 @@ class BriefingController extends ChangeNotifier {
         events: demo ? _demoEvents : _events,
         now: DateTime.now(),
       );
+
+  /// What the last nearby search found: around the phone, or around the
+  /// demo traveler's first stop in the demo state.
+  List<NearbyPlaceFact> nearbyPlaces({bool demo = false}) =>
+      demo ? _demoNearby : _nearby;
+
+  /// Where that search was made; null before one has finished.
+  ({double lat, double lng})? nearbyOrigin({bool demo = false}) =>
+      demo ? _demoOrigin : _nearbyOrigin;
+
+  NearbyState nearbyStateFor({bool demo = false}) =>
+      demo ? _demoNearbyState : _nearbyState;
 
   /// Warnings around the phone for the country it is in. ATM warnings are
   /// about foreign cards, so they are left out where the traveler's own

@@ -77,6 +77,7 @@ class DccResultScreen extends StatelessWidget {
       state.dcc!,
       id: 'dcc-${state.scannedAt!.microsecondsSinceEpoch}',
       savedAt: DateTime.now(),
+      demoRate: demo,
     );
     if (save == null) return;
     if (!trip.contains(save.id)) await trip.add(save);

@@ -24,6 +24,7 @@ Map<String, Object?> tripSaveToRow(
     ...detail,
     if (save.sellerPrices != null) 'sellerPrices': save.sellerPrices,
     if (save.ourOffers != null) 'ourOffers': save.ourOffers,
+    if (save.screen != null) 'screen': save.screen,
   },
 };
 
@@ -51,6 +52,7 @@ TripSave? tripSaveFromRow(Object? row) {
     placeName: placeName is String && placeName.isNotEmpty ? placeName : null,
     sellerPrices: detail is Map ? _numbers(detail['sellerPrices']) : null,
     ourOffers: detail is Map ? _numbers(detail['ourOffers']) : null,
+    screen: detail is Map ? screenFigures(detail['screen']) : null,
     // Seed rows say so, so the app labels them as samples. The app itself
     // never writes is_sample (tripSaveToRow leaves it to the default).
     isSample: row['is_sample'] == true,

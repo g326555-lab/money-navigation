@@ -145,15 +145,28 @@ class AtmResultScreen extends StatelessWidget {
   /// Adds what this verdict kept to the trip, then goes Home, where the
   /// total counts up to include it. One scan saves once.
   Future<void> _save(BuildContext context) async {
-    final trip = AppScope.of(context).trip;
+    final scope = AppScope.of(context);
+    final trip = scope.trip;
+    final l10n = AppLocalizations.of(context);
     final navigator = Navigator.of(context);
     final save = saveFromAtm(
       state.verdict!,
       id: 'atm-${state.scannedAt!.microsecondsSinceEpoch}',
       savedAt: DateTime.now(),
+      reading: state.reading,
     );
     if (save == null) return;
     if (!trip.contains(save.id)) await trip.add(save);
+    final withdrawal = state.reading?.withdrawalThb;
+    if (withdrawal != null) {
+      await scope.cashWallet.addCash(
+        amount: withdrawal,
+        currency: atmLocalCurrency,
+        sourceId: save.id,
+        description: l10n.cashWalletAtm,
+        at: state.scannedAt,
+      );
+    }
     HapticFeedback.mediumImpact();
     navigator.popUntil((route) => route.isFirst);
   }

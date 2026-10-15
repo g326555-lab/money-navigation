@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_navigation/rules/atm_conversion.dart';
 import 'package:money_navigation/rules/bill_check.dart' show BillKind;
+import 'package:money_navigation/rules/cash_wallet.dart';
 import 'package:money_navigation/rules/demo_personas.dart';
 import 'package:money_navigation/rules/personal_context.dart';
 import 'package:money_navigation/rules/receipt_record.dart';
@@ -26,6 +27,7 @@ Map<String, Object?> visitor() => {
       'itemKey': 'mango',
       'askedThb': 140,
       'paidThb': 100,
+      'paidWith': 'cash',
       'placeName': 'Or Tor Kor Market',
     },
     {
@@ -35,6 +37,7 @@ Map<String, Object?> visitor() => {
       'itemKey': 'coconut',
       'askedThb': 70,
       'paidThb': 70,
+      'paidWith': 'cash',
     },
   ],
 };
@@ -94,6 +97,7 @@ Map<String, Object?> restaurantReceipt() => {
   'serviceThb': 40.0,
   'vatThb': 28.79,
   'totalThb': 440.0,
+  'paidWith': 'cash',
   'category': 'food',
 };
 
@@ -509,6 +513,57 @@ void main() {
       );
       expect(mbk.totalThb, 165.0);
       expect(mbk.kind, BillKind.itemsOnly);
+    });
+
+    test('visitor cash is computed from the sample records', () {
+      final v = d!.byKey('visitorBangkok')!;
+      final movements = v.cashMovementsAt(now);
+      final saves = v.samplesAt(now);
+      final receipts = v.receiptsAt(now);
+      expect(movements.every((m) => m.currency == 'THB'), isTrue);
+      expect(movements.every((m) => m.at.isBefore(now)), isTrue);
+      // The withdrawal is the ATM sample's own screen figure.
+      final atm = saves.singleWhere((s) => s.kind == SaveKind.atmConversion);
+      final withdrawal = movements.singleWhere(
+        (m) => m.kind == CashMovementKind.withdrawal,
+      );
+      expect(withdrawal.sourceId, atm.id);
+      expect(withdrawal.amount, atm.screen![AtmFigures.withdrawalThb]);
+      expect(withdrawal.at, atm.savedAt);
+      // Every haggle was paid in cash, at its own time and price.
+      for (final s in saves.where((s) => s.kind == SaveKind.haggle)) {
+        final m = movements.singleWhere((m) => m.sourceId == s.id);
+        expect(m.kind, CashMovementKind.cashSpend);
+        expect(m.amount, s.paidThb);
+        expect(m.at, s.savedAt);
+      }
+      // Restaurants were paid by card: no cash movement for them.
+      for (final r in receipts) {
+        final linked = movements.where((m) => m.sourceId == r.id);
+        if (r.merchantName == 'Thai restaurant') {
+          expect(linked, isEmpty);
+        } else {
+          expect(linked.single.amount, r.totalThb);
+        }
+      }
+      // 6,000 out of the ATM, 850 on haggles, 89 + 76 + 165 cash receipts.
+      expect(cashBalance(movements, 'THB'), 4820);
+    });
+
+    test('a sample without paidWith refuses the file', () {
+      final json = jsonDecode(
+        File('assets/data/demo_personas.json').readAsStringSync(),
+      ) as Map<String, Object?>;
+      final visitor = (json['personas']! as List).first as Map;
+      ((visitor['samples']! as List)[1] as Map).remove('paidWith');
+      expect(parseDemoPersonas(jsonEncode(json)), isNull);
+    });
+
+    test('Tokyo cash: exchange counter and cash spends from the file', () {
+      final movements = d!.byKey('thaiTokyo')!.cashMovementsAt(now);
+      expect(movements.every((m) => m.currency == 'JPY'), isTrue);
+      expect(movements.every((m) => m.at.isBefore(now)), isTrue);
+      expect(cashBalance(movements, 'JPY'), 17000);
     });
 
     test('visitor receipts: the restaurant remembers the earlier visit', () {

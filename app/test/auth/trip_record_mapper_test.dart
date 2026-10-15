@@ -237,4 +237,16 @@ void main() {
       expect(tripSavesFromRows(const []), isEmpty);
     });
   });
+
+  test('ATM screen figures travel in detail and come back', () {
+    final save = saveFromAtm(
+      evaluateAtm(demoReading),
+      id: 'atm-1',
+      savedAt: t0,
+      reading: demoReading,
+    )!;
+    final row = tripSaveToRow(save);
+    expect((row['detail']! as Map)['screen'], save.screen);
+    expect(tripSaveFromRow(row)!.screen, save.screen);
+  });
 }

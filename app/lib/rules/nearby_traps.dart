@@ -14,12 +14,18 @@ class NearbyPlaceFact {
     required this.kind,
     this.payment = PlacePayment.unknown,
     this.distanceM,
+    this.lat,
+    this.lng,
   });
 
   final String name;
   final PlaceKind kind;
   final PlacePayment payment;
   final double? distanceM;
+
+  /// Where Google Maps puts the place, so it can be pinned and routed to.
+  final double? lat;
+  final double? lng;
 }
 
 enum TrapKind { atmFee, atmConversion, cashOnlyMarket }

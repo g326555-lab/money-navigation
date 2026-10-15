@@ -122,6 +122,8 @@ void main() {
     await stores.settings.setHomeCurrency('THB');
     await tester.pumpWidget(wrap(stores, const AppShell()));
     await pumpFrames(tester);
+    await scrollHomeTo(tester, find.text(startTitle));
+    await scrollHomeTo(tester, find.text('Kept on this trip'));
 
     expect(find.text('Kept on this trip'), findsOneWidget);
     expect(heroNumber('0'), findsOneWidget);
@@ -141,6 +143,7 @@ void main() {
     await stores.rates.ensure('KRW');
     await tester.pumpWidget(wrap(stores, const AppShell()));
     await pumpFrames(tester);
+    await scrollHomeTo(tester, find.text(startTitle));
 
     expect(find.text(startTitle), findsOneWidget);
     expect(find.textContaining('About'), findsNothing);
@@ -154,7 +157,8 @@ void main() {
     await pumpFrames(tester);
 
     expect(heroNumber('286'), findsOneWidget);
-    expect(find.text(' THB'), findsOneWidget);
+    // The hero and the cash card each name their currency.
+    expect(find.text(' THB'), findsNWidgets(2));
     expect(find.text(startTitle), findsNothing);
     // Recent saves sit below the briefing and nearby cards.
     await scrollHomeTo(tester, find.text('Recent saves'));

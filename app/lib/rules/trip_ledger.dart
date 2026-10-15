@@ -29,6 +29,7 @@ class TripSave {
     this.placeLng,
     this.sellerPrices,
     this.ourOffers,
+    this.screen,
     this.isSample = false,
   });
 
@@ -60,6 +61,11 @@ class TripSave {
   final List<double>? sellerPrices;
   final List<double>? ourOffers;
 
+  /// The figures read from the scanned screen, kept so the record can be
+  /// opened later: [AtmFigures] or [TerminalFigures] keys. Null for
+  /// haggles and for records saved before figures were kept.
+  final Map<String, Object>? screen;
+
   /// A sample record of the demo state (assets/data/demo_personas.json),
   /// never one the traveler made. Shown as a sample.
   final bool isSample;
@@ -79,6 +85,7 @@ class TripSave {
     },
     if (sellerPrices != null) 'sellerPrices': sellerPrices,
     if (ourOffers != null) 'ourOffers': ourOffers,
+    if (screen != null) 'screen': screen,
     if (isSample) 'isSample': true,
   };
 
@@ -109,12 +116,90 @@ class TripSave {
           : null,
       sellerPrices: _numbers(json['sellerPrices']),
       ourOffers: _numbers(json['ourOffers']),
+      screen: screenFigures(json['screen']),
       placeLat: lat != null && lng != null ? lat : null,
       placeLng: lat != null && lng != null ? lng : null,
       isSample: json['isSample'] == true,
     );
   }
 }
+
+/// A stored figures map: text keys with finite numbers or text values.
+/// Null when [value] is not one, so a damaged entry shows no figures.
+Map<String, Object>? screenFigures(Object? value) {
+  if (value is! Map || value.isEmpty) return null;
+  final out = <String, Object>{};
+  for (final MapEntry(:key, :value) in value.entries) {
+    if (key is! String) return null;
+    if (value is num && value.isFinite) {
+      out[key] = value.toDouble();
+    } else if (value is String) {
+      out[key] = value;
+    } else {
+      return null;
+    }
+  }
+  return out;
+}
+
+/// Keys of an ATM screen's figures in [TripSave.screen].
+abstract final class AtmFigures {
+  static const withdrawalThb = 'withdrawalThb';
+  static const accessFeeThb = 'accessFeeThb';
+  static const thbPerUsd = 'thbPerUsd';
+  static const markupPercent = 'markupPercent';
+  static const chargedThb = 'chargedThb';
+  static const chargedUsd = 'chargedUsd';
+  static const extraCostUsd = 'extraCostUsd';
+}
+
+/// Keys of a card terminal's figures in [TripSave.screen].
+abstract final class TerminalFigures {
+  static const homeCode = 'homeCode';
+  static const homeAmount = 'homeAmount';
+  static const homeKey = 'homeKey';
+  static const localCode = 'localCode';
+  static const localAmount = 'localAmount';
+  static const localKey = 'localKey';
+  static const fairHomeAmount = 'fairHomeAmount';
+  static const markupPercent = 'markupPercent';
+  static const rate = 'rate';
+  static const rateDate = 'rateDate';
+
+  /// 'demo' for the fixed demo rate, 'live' for a published one.
+  static const rateSource = 'rateSource';
+}
+
+/// The figures of [reading] and its [verdict], for [TripSave.screen].
+Map<String, Object> atmFigures(AtmScreenReading reading, AtmVerdict verdict) =>
+    {
+      AtmFigures.withdrawalThb: reading.withdrawalThb,
+      AtmFigures.accessFeeThb: reading.accessFeeThb,
+      AtmFigures.thbPerUsd: reading.thbPerUsd,
+      AtmFigures.markupPercent: ?reading.markupPercent,
+      AtmFigures.chargedThb: reading.chargedThb,
+      AtmFigures.chargedUsd: reading.chargedUsd,
+      AtmFigures.extraCostUsd: verdict.extraCostUsd,
+    };
+
+/// The figures of a terminal [verdict], for [TripSave.screen]. Currency
+/// codes come from the rate, since OCR may have dropped letters.
+Map<String, Object> terminalFigures(
+  DccVerdict verdict, {
+  bool demoRate = false,
+}) => {
+  TerminalFigures.homeCode: verdict.rate.base,
+  TerminalFigures.homeAmount: verdict.homeOption.amount,
+  TerminalFigures.homeKey: 'F${verdict.homeOption.key}',
+  TerminalFigures.localCode: verdict.rate.quote,
+  TerminalFigures.localAmount: verdict.localOption.amount,
+  TerminalFigures.localKey: 'F${verdict.localOption.key}',
+  TerminalFigures.fairHomeAmount: verdict.fairHomeAmount,
+  TerminalFigures.markupPercent: verdict.markupPercent,
+  TerminalFigures.rate: verdict.rate.rate,
+  TerminalFigures.rateDate: verdict.rate.date,
+  TerminalFigures.rateSource: demoRate ? 'demo' : 'live',
+};
 
 double? _number(Object? value) {
   if (value is! num) return null;
@@ -171,6 +256,7 @@ TripSave? saveFromAtm(
   AtmVerdict verdict, {
   required String id,
   required DateTime savedAt,
+  AtmScreenReading? reading,
 }) {
   if (verdict.extraCostThb <= 0) return null;
   return TripSave(
@@ -178,6 +264,7 @@ TripSave? saveFromAtm(
     kind: SaveKind.atmConversion,
     keptThb: verdict.extraCostThb,
     savedAt: savedAt,
+    screen: reading == null ? null : atmFigures(reading, verdict),
   );
 }
 
@@ -188,6 +275,7 @@ TripSave? saveFromDcc(
   DccVerdict verdict, {
   required String id,
   required DateTime savedAt,
+  bool demoRate = false,
 }) {
   if (!verdict.payLocal || verdict.extraHome <= 0) return null;
   return TripSave(
@@ -195,6 +283,7 @@ TripSave? saveFromDcc(
     kind: SaveKind.terminalDcc,
     keptThb: verdict.extraHome,
     savedAt: savedAt,
+    screen: terminalFigures(verdict, demoRate: demoRate),
   );
 }
 

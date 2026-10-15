@@ -15,6 +15,7 @@ class CardProfileStore extends ChangeNotifier {
   static const _feeKey = 'assist.cardFeePercent';
   static const _policyKey = 'assist.atmFeePolicy';
   static const _valueKey = 'assist.atmFeeValue';
+  static const _productKey = 'assist.cardProductId';
 
   /// The highest card fee the profile table accepts.
   static const maxFeePercent = 20.0;
@@ -23,8 +24,10 @@ class CardProfileStore extends ChangeNotifier {
   TravelerProfile _local = const TravelerProfile();
   TravelerProfile _account = const TravelerProfile();
   bool _loaded = false;
+  String? _productId;
 
   bool get loaded => _loaded;
+  String? get productId => _productId;
 
   /// Typed-in facts first, the account's where nothing was typed.
   TravelerProfile get profile => TravelerProfile(
@@ -47,6 +50,7 @@ class CardProfileStore extends ChangeNotifier {
       final policy = AtmFeePolicy.values
           .asNameMap()[await _prefs.getString(_policyKey)];
       final value = await _prefs.getDouble(_valueKey);
+      _productId = await _prefs.getString(_productKey);
       _local = TravelerProfile(
         cardFeePercent: fee,
         atmFeePolicy: policy ?? AtmFeePolicy.unknown,
@@ -57,6 +61,20 @@ class CardProfileStore extends ChangeNotifier {
     }
     _loaded = true;
     notifyListeners();
+  }
+
+  Future<void> setProductId(String? id) async {
+    _productId = id;
+    notifyListeners();
+    try {
+      if (id == null || id.isEmpty) {
+        await _prefs.remove(_productKey);
+      } else {
+        await _prefs.setString(_productKey, id);
+      }
+    } on Object {
+      // Kept for this session; the next launch asks again.
+    }
   }
 
   /// The signed-in account's card facts (from PersonalMemory).

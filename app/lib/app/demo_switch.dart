@@ -44,7 +44,11 @@ class DemoSwitch extends StatefulWidget {
     // Coming into the demo from normal use: both demo states start again
     // from their samples.
     if (!scope.settings.demoState) {
-      await (scope.trip.resetDemo(), scope.receipts.resetDemo()).wait;
+      await (
+        scope.trip.resetDemo(),
+        scope.receipts.resetDemo(),
+        scope.cashWallet.resetDemo(),
+      ).wait;
     }
     // One notification: the app changes language, currency and records in
     // the same frame.

@@ -101,6 +101,7 @@
   "tabSpeak": "ฟังราคา",
   "tabRecords": "บันทึก",
   "back": "กลับ",
+  "homeKeptOpenRecords": "ดูบันทึกการเดินทาง",
   "homeKeptLabel": "เงินที่ประหยัดได้ในทริปนี้",
   "homeKeptApprox": "ประมาณ {amount}",
   "ratePair": "1 {from} = {rate} {to}",
@@ -109,12 +110,18 @@
   "homeRateLoading": "กำลังดึงอัตราแลกเปลี่ยนวันนี้",
   "homeRateUnavailable": "ต้องต่ออินเทอร์เน็ตเพื่อดูอัตรา {currency} วันนี้",
   "homeRecent": "บันทึกล่าสุด",
+  "homeRecentReceipts": "ใบเสร็จล่าสุด",
+  "receiptChecked": "ตรวจสอบตัวเลขจากข้อมูลใบเสร็จที่บันทึกแล้ว",
+  "receiptNotChecked": "บันทึกข้อมูลใบเสร็จแล้ว แต่ยังไม่ได้ยืนยันตัวเลข",
+  "receiptPhotoMissing": "บันทึกรายละเอียดใบเสร็จไว้แล้ว แต่ไม่มีรูปภาพ",
   "homeSeeAll": "ดูทั้งหมด",
   "homeEmptyLabel": "ก่อนกดถอนเงิน",
   "homeEmptyTitle": "สแกนหน้าจอ ATM ก่อนกดปุ่มใดๆ",
   "homeEmptyAction": "เปิดกล้องสแกน",
   "saveKeptValue": "+{amount}",
   "saveAtmTitle": "ไม่โดนค่าแปลงสกุลเงินที่ ATM",
+  "saveDetailsAsked": "ราคาที่ผู้ขายเสนอ",
+  "saveDetailsPaid": "ราคาที่จ่าย",
   "saveHaggleTitle": "ต่อราคา{item}ได้",
   "saveHaggleSubtitle": "จ่าย {paid} · {when}",
   "saveHaggleUnknownItem": "ราคาตลาด",
@@ -346,10 +353,90 @@
   "saveSampleWhen": "ตัวอย่าง · {when}",
   "homeRateDemo": "{pair} · อัตราคงที่สำหรับสาธิต วันที่ {date}",
   "homeToday": "วันนี้",
-  "homeCashToday": "วันนี้น่าจะใช้เงินสดราว {amount}",
-  "homeCashBasis": "ประมาณจากบันทึกของคุณ {count} รายการใน {days} วันล่าสุด",
-  "homeCashBasisSamples": "ประมาณจากบันทึกตัวอย่าง {count} รายการใน {days} วัน",
-  "homeCashBasisMixed": "ประมาณจากบันทึก {count} รายการใน {days} วันล่าสุด เป็นตัวอย่าง {samples} รายการ",
+  "cashWalletTitle": "เงินสดที่มี",
+  "cashWalletUpdate": "ปรับปรุง",
+  "cashWalletNotSet": "เพิ่มยอดเงินสดเพื่อเริ่มติดตาม",
+  "cashWalletCurrent": "ยอดเงินสดปัจจุบัน: {amount}",
+  "@cashWalletCurrent": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "cashWalletSetBalance": "ตั้งยอดคงเหลือ",
+  "cashWalletAddCash": "เพิ่มเงินสด",
+  "cashWalletSpendCash": "บันทึกเงินสดที่จ่าย",
+  "cashWalletBalanceField": "เงินสดที่มีตอนนี้",
+  "cashWalletAddField": "จำนวนเงินสดที่เพิ่ม",
+  "cashWalletSpendField": "จำนวนเงินสดที่จ่าย",
+  "cashWalletSave": "บันทึกยอด",
+  "cashWalletAdded": "เพิ่มเงินสด",
+  "cashWalletSpent": "จ่ายเงินสด",
+  "cashWalletAtm": "ถอนเงินจาก ATM",
+  "cashWalletHaggle": "ซื้อของที่ตลาด",
+  "cashWalletBill": "จ่ายตามใบเสร็จ",
+  "cashWalletBillCash": "จ่ายเงินสด · อัปเดตยอดแล้ว",
+  "cashWalletBillCard": "จ่ายด้วยบัตร · ยอดเงินสดไม่เปลี่ยน",
+  "cashWalletExchange": "แลกเงินสด",
+  "exchangeTitle": "หาร้านที่ให้อัตราแลกเปลี่ยนดีกว่า",
+  "exchangeSubtitle": "ร้านใกล้คุณ · อัตราจากป้ายที่ร้านประกาศ",
+  "exchangeAmount": "เงินสกุลต่างประเทศที่ต้องการแลก",
+  "exchangeCurrency": "สกุลเงินที่คุณมี",
+  "exchangeDenomination": "ช่วงราคาตามชนิดธนบัตร",
+  "exchangeChooseDenomination": "เลือกชนิดธนบัตรที่คุณมี",
+  "exchangeFind": "เปรียบเทียบร้านใกล้ฉัน",
+  "exchangeLoading": "กำลังตรวจสอบอัตราที่ประกาศล่าสุด",
+  "exchangeNoLocation": "เปิดตำแหน่งเพื่อเปรียบเทียบร้านใกล้คุณ",
+  "exchangeNoData": "ยังไม่สามารถดูอัตราแลกเปลี่ยนล่าสุดได้",
+  "exchangeNoNearby": "ไม่พบอัตราล่าสุดในระยะ {distance} กม.",
+  "exchangeNoRates": "ไม่มีราคาล่าสุดสำหรับสกุลเงินและชนิดธนบัตรนี้",
+  "exchangeRateLine": "1 {currency} = {rate} {payoutCurrency}",
+  "@exchangeRateLine": {
+    "placeholders": {
+      "rate": {},
+      "payoutCurrency": {},
+      "currency": {}
+    }
+  },
+  "exchangePayout": "ประมาณ {amount}",
+  "@exchangePayout": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "exchangeDistance": "ห่าง {distance} กม.",
+  "@exchangeDistance": {
+    "placeholders": {
+      "distance": {}
+    }
+  },
+  "exchangeUpdated": "แหล่งข้อมูลอัปเดต {time}",
+  "@exchangeUpdated": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "exchangeFreshness": "จัดอันดับเฉพาะอัตราที่ประกาศล่าสุด",
+  "exchangeAttribution": "ข้อมูลจากป้ายร้านผ่าน ThaiRate · CC BY 4.0",
+  "exchangeCounterNote": "อัตราที่ร้านอาจเปลี่ยนได้ โปรดยืนยันก่อนแลกเงินจริง",
+  "exchangeMap": "เปิดแผนที่",
+  "exchangeAddToCash": "เพิ่มเงินที่แลกได้เข้ายอดเงินสด",
+  "exchangeConfirmTitle": "ยืนยันยอดเงินที่ได้รับจริง",
+  "exchangeConfirmBody": "ยอดประมาณการคือราว {amount} กรอกยอดที่ได้รับจริงจากร้าน",
+  "@exchangeConfirmBody": {
+    "placeholders": {
+      "amount": {}
+    }
+  },
+  "exchangeUseActual": "เพิ่มยอดจริง",
+  "exchangeCancel": "ยกเลิก",
+  "exchangeRecorded": "เพิ่มยอดแลกเงินในเงินสดที่มีแล้ว",
+  "exchangeMixedDenomination": "เปรียบเทียบทีละช่วงธนบัตร กรอกเฉพาะเงินสดในช่วงนั้น",
+  "cashPaymentMethod": "จ่ายด้วยวิธีใด",
+  "cashPaymentCash": "เงินสด",
+  "cashPaymentCard": "บัตร",
+  "cashPaymentExplainer": "เลือกวิธีจ่ายเพื่อให้ยอดเงินสดตรงกับความจริง",
   "memoryDaysAgo": "{days, plural, =0{วันนี้} =1{เมื่อวาน} other{เมื่อ {days} วันก่อน}}",
   "memoryPaidHere": "{when}คุณจ่ายที่นี่ {amount}",
   "memoryPaidAt": "{when}คุณจ่ายที่ {place} {amount}",
@@ -394,6 +481,16 @@
   "haggleAcceptMeaning": "ตกลงที่ {amount} บาท",
   "haggleLeaveMeaning": "ไม่เป็นไร ขอบคุณ",
   "billShop": "ร้าน",
+  "billCategory": "หมวดหมู่ที่แนะนำ",
+  "billCategoryGoogle": "อิงจากหมวดหมู่ของสถานที่นี้ใน Google Maps",
+  "billCategoryName": "ไม่พบประเภทร้าน จึงคาดเดาจากชื่อร้าน ซึ่งอาจไม่ถูกต้อง",
+  "billCategoryManual": "หมวดหมู่ที่คุณเลือก",
+  "billCategoryEdit": "เลือกหมวดหมู่",
+  "spendFood": "อาหารและเครื่องดื่ม",
+  "spendTransport": "การเดินทาง",
+  "spendShopping": "ช้อปปิ้ง",
+  "spendLodging": "ที่พัก",
+  "spendOther": "อื่นๆ",
   "billShopUnknown": "อ่านไม่ได้",
   "billYourRecord": "บันทึกของคุณ",
   "billSave": "บันทึกไว้",
@@ -418,11 +515,12 @@
   "homeRouteTerminal": "เครื่องรูดบัตร",
   "homeBriefingLabel": "สรุปเช้านี้",
   "homeBriefingOpen": "เปิดผู้ช่วย",
-  "homeBriefingNoNumber": "ยังไม่มียอดประมาณเงินสด",
   "homeBriefingStops": "วันนี้มี {count} จุดในปฏิทิน",
+  "homeBriefingEmpty": "วันนี้ยังไม่มีแผนแวะที่ไหน",
   "homeBriefingMore": "อีก {count} จุด",
   "nearbyLabel": "ระวังแถวนี้",
   "nearbyOpen": "ดูคำเตือนทั้งหมดแถวนี้",
+  "nearbyMapLabel": "เปิดแผนที่ตู้ ATM",
   "nearbyMore": "มีคำเตือนอีก {count} รายการแถวนี้",
   "nearbyNeedLocation": "ดูกับดักเรื่องเงินใกล้ตัว",
   "nearbyLocationPrivacy": "ใช้ตำแหน่งเฉพาะตอนเปิดแอป",
@@ -444,9 +542,6 @@
   "briefingSourceLive": "{source} · ข้อมูลล่าสุด",
   "briefingSourceChecked": "{source} · ตรวจเมื่อ {date}",
   "assistantTitle": "ผู้ช่วย",
-  "assistantCashLabel": "เงินสดสำหรับวันนี้",
-  "assistantCashAbout": "ราว {amount}",
-  "assistantCashUnknown": "ยังมีข้อมูลไม่พอ",
   "assistantStops": "จุดแวะวันนี้",
   "assistantPay": "บัตร เงินสด หรือ QR",
   "assistantPayFor": "เทียบสำหรับ {place}",
@@ -455,11 +550,6 @@
   "assistantCardFromAccount": "ค่าธรรมเนียมบัตรจากโปรไฟล์บัญชีของคุณ",
   "assistantNearby": "ใกล้คุณ",
   "assistantArrival": "แจ้งเตือนเมื่อถึงปลายทาง",
-  "cashBasisNone": "ต้องมีบันทึกการใช้จ่ายสักหนึ่งถึงสองวัน",
-  "cashBasisPattern": "จากการใช้จ่ายของคุณใน {days} วันก่อนหน้า",
-  "cashBasisPatternSamples": "จากบันทึกตัวอย่างใน {days} วัน",
-  "cashBasisCashOnly": "{count} จุดรับเฉพาะเงินสด (Google Maps)",
-  "cashBasisLastVisit": "รวมยอดที่เคยใช้ที่นั่นครั้งก่อน",
   "calendarConnect": "อ่านปฏิทินวันนี้",
   "calendarDenied": "ปิดการเข้าถึงปฏิทินไว้ในการตั้งค่า",
   "calendarPrivacy": "อ่านเฉพาะชื่อ สถานที่ และเวลา ไม่แก้ไขอะไร",
@@ -499,6 +589,14 @@
   "cardAtmFixedValue": "ครั้งละ {amount}",
   "cardAtmPercentValue": "{percent} ของแต่ละครั้งที่ถอน",
   "cardSheetTitle": "บัตรของคุณ",
+  "cardCatalogTitle": "เลือกบัตร",
+  "cardCatalogOther": "บัตรอื่น / กรอกรายละเอียดเอง",
+  "cardCatalogUtopia": "U-topia U-Card · Visa",
+  "cardCatalogUtopiaFacts": "U-topia ระบุว่ามีบัตร Visa ทั้งแบบเสมือนและแบบจริง พร้อมการแจ้งเตือน การระงับ/เปิดใช้บัตร และกำหนดวงเงินเองได้",
+  "cardCatalogUtopiaFeeNote": "เงื่อนไขบัตรลงวันที่ 20 พ.ค. 2026 ระบุค่าธรรมเนียมแลกเปลี่ยนเงินตราต่างประเทศสูงสุด 1.5% และค่าธรรมเนียมข้ามประเทศสูงสุด 1.5% ซึ่งเป็นคนละรายการ จึงไม่ได้นำไปใส่ในช่องค่าธรรมเนียมเดียวด้านล่าง",
+  "cardCatalogUtopiaIssuerNote": "เอกสารสาธารณะของ U-topia ระบุผู้ให้บริการบัตรไม่ตรงกัน: เงื่อนไขบัตรวันที่ 20 พ.ค. ระบุ Third National ส่วนประกาศความเป็นส่วนตัวที่ปรับปรุงวันที่ 6 ต.ค. ระบุ Rain โปรดตรวจสอบเงื่อนไขล่าสุดในบัญชี U-topia ก่อนใช้เปรียบเทียบค่าธรรมเนียม",
+  "cardCatalogSource": "เปิดเงื่อนไขบัตร U-topia",
+  "cardCatalogProductSource": "เปิดหน้าผลิตภัณฑ์ U-topia",
   "cardFeeLabel": "ค่าธรรมเนียมใช้จ่ายต่างประเทศ",
   "cardFeeHintThai": "ธนาคารไทยระบุไม่เกิน 2.5% (ตารางค่าธรรมเนียมกสิกรไทย ทีทีบี ปี 2025-2026)",
   "cardFeeHintOther": "ดูค่าธรรมเนียมจริงได้ในเงื่อนไขบัตร",
@@ -589,5 +687,96 @@
   "haggleCheckingPrices": "กำลังเช็กราคาออนไลน์…",
   "haggleWebRange": "ราว {low}–{high} บาท จาก {count} หน้าเว็บ",
   "haggleWebQuote": "“{quote}” · {site} · {date}",
-  "haggleReadOn": "อ่านเมื่อ {date}"
+  "haggleReadOn": "อ่านเมื่อ {date}",
+  "atmMapTitle": "ตู้ ATM ใกล้ฉัน",
+  "atmMapNearest": "ตู้ ATM ที่ใกล้ที่สุด",
+  "atmMapMeters": "{meters} ม.",
+  "@atmMapMeters": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "atmMapAway": "ห่างไป {meters} ม.",
+  "@atmMapAway": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "atmMapMapLabel": "แผนที่มีตู้ ATM {count, plural, other{{count} แห่ง}} ทุกแห่งอยู่ในรายการด้านล่างด้วย",
+  "@atmMapMapLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "atmMapDirections": "นำทาง",
+  "atmMapDirectionsTo": "เส้นทางเดินไป {place}",
+  "@atmMapDirectionsTo": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "atmMapLooking": "กำลังหาตู้ ATM ใกล้คุณ",
+  "atmMapNeedLocation": "อนุญาตตำแหน่งเพื่อดูตู้ ATM ใกล้คุณ",
+  "atmMapLocationSettings": "แอปนี้ปิดการใช้ตำแหน่งอยู่ เปิดได้ในการตั้งค่า",
+  "atmMapEmpty": "Google Maps ไม่พบตู้ ATM แถวนี้ ลองตรวจอินเทอร์เน็ต หรือค้นหาใน Google Maps",
+  "atmMapSearchMaps": "ค้นหาใน Google Maps",
+  "atmMapSource": "สถานที่จาก Google Maps · ระยะทางเป็นเส้นตรง",
+  "atmMapDemoOrigin": "รอบจุดแรกในปฏิทินตัวอย่าง ไม่ใช่ตำแหน่งจริงของโทรศัพท์",
+  "atmMapList": "ใกล้ที่สุดก่อน",
+  "atmMapRetry": "ค้นหาอีกครั้ง",
+  "cashWalletNegative": "บันทึกการจ่ายเงินสดมากกว่าที่มี ปรับยอดคงเหลือให้ตรง",
+  "cashWalletLastMove": "ล่าสุด: {what} {amount} · {when}",
+  "@cashWalletLastMove": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "recordKeptHero": "ประหยัดได้จากการเลือกนี้",
+  "recordReceiptHero": "ยอดตามใบเสร็จ",
+  "recordCashAdded": "เพิ่มเข้าเงินสดที่มี",
+  "recordCashSpent": "จ่ายจากเงินสดที่มี",
+  "recordCashNone": "เงินสดที่มีไม่เปลี่ยน",
+  "recordCashNoneBody": "จ่ายด้วยบัตร หรือบันทึกโดยไม่ได้ระบุวิธีจ่าย",
+  "recordCashNow": "เงินสดที่มีตอนนี้: {amount}",
+  "@recordCashNow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recordOpenInMaps": "เปิดใน Google Maps",
+  "recordNoFigures": "รายการนี้บันทึกไว้ก่อนที่แอปจะเก็บตัวเลขจากหน้าจอ",
+  "recordSellerPrices": "ราคาที่ผู้ขายบอก",
+  "recordYourOffers": "ราคาที่คุณต่อ",
+  "recordItem": "สินค้า",
+  "recordSample": "รายการตัวอย่างของนักเดินทางในโหมดเดโม",
+  "recordPhoto": "รูปใบเสร็จ",
+  "recordPhotoOpen": "เปิดรูปใบเสร็จเต็มจอ",
+  "recordWhere": "สถานที่",
+  "recordChecks": "สิ่งที่อ่านได้",
+  "@exchangeNoNearby": {
+    "placeholders": {
+      "distance": {}
+    }
+  },
+  "exchangeRefresh": "โหลดอัตราใหม่",
+  "exchangeEnterAmount": "กรอกจำนวนเงินเพื่อเปรียบเทียบร้านใกล้คุณ",
+  "exchangeRecordFailed": "เพิ่มเข้ายอดเงินสดไม่สำเร็จ ลองอีกครั้ง"
 }

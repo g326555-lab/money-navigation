@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:money_navigation/app/app_scope.dart';
 import 'package:money_navigation/app/theme.dart';
+import 'package:money_navigation/data/cash_wallet_store.dart';
 import 'package:money_navigation/data/market_price_repository.dart';
 import 'package:money_navigation/data/settings_store.dart';
 import 'package:money_navigation/data/trip_store.dart';
@@ -23,11 +24,15 @@ const frankfurterKrwBody =
 final savedAt = DateTime.utc(2026, 10, 15, 9, 30);
 
 /// The scene 1 save, built from the real OCR text of the ATM prop.
-TripSave demoAtmSave({String id = 'atm-1', DateTime? at}) => saveFromAtm(
-  evaluateAtm(parseAtmScreen(atmOcrBlockOrder)!),
-  id: id,
-  savedAt: at ?? savedAt,
-)!;
+TripSave demoAtmSave({String id = 'atm-1', DateTime? at}) {
+  final reading = parseAtmScreen(atmOcrBlockOrder)!;
+  return saveFromAtm(
+    evaluateAtm(reading),
+    id: id,
+    savedAt: at ?? savedAt,
+    reading: reading,
+  )!;
+}
 
 /// The scene 2 save: mango asked 150, paid 110.
 TripSave demoMangoSave({String id = 'mango-1', DateTime? at}) => saveFromHaggle(
@@ -65,9 +70,11 @@ class Stores {
   Stores({http.Client? client})
     : trip = TripStore(),
       settings = SettingsStore(),
+      cashWallet = CashWalletStore(),
       rates = RateService(client: client ?? frankfurterClient());
 
   final TripStore trip;
+  final CashWalletStore cashWallet;
   final SettingsStore settings;
   final RateService rates;
 }
@@ -77,6 +84,7 @@ Widget wrap(Stores stores, Widget home) => AppScope(
   trip: stores.trip,
   settings: stores.settings,
   rates: stores.rates,
+  cashWallet: stores.cashWallet,
   child: MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: buildAppTheme(),

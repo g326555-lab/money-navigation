@@ -160,9 +160,11 @@ class _HaggleScreenState extends State<HaggleScreen>
     final heard = state.heard;
     final itemKey = state.match?.item.key ?? _haggle.newItem?.key;
     if (heard == null || itemKey == null) return;
-    final trip = AppScope.of(context).trip;
+    final scope = AppScope.of(context);
+    final trip = scope.trip;
+    final l10n = AppLocalizations.of(context);
     final navigator = Navigator.of(context);
-    final paid = await showModalBottomSheet<double>(
+    final payment = await showModalBottomSheet<({double amount, bool cash})>(
       context: context,
       isScrollControlled: true,
       builder: (_) => _PaidSheet(
@@ -173,7 +175,8 @@ class _HaggleScreenState extends State<HaggleScreen>
             : _haggle.exchanges.last.move.price,
       ),
     );
-    if (paid == null) return;
+    if (payment == null) return;
+    final paid = payment.amount;
     final save = saveFromHaggle(
       id: 'haggle-${DateTime.now().microsecondsSinceEpoch}',
       savedAt: DateTime.now(),
@@ -188,6 +191,15 @@ class _HaggleScreenState extends State<HaggleScreen>
     );
     if (save == null) return;
     await trip.add(save);
+    if (payment.cash) {
+      await scope.cashWallet.setLinkedSpend(
+        sourceId: save.id,
+        amount: paid,
+        currency: marketCurrency,
+        description: l10n.cashWalletHaggle,
+        at: save.savedAt,
+      );
+    }
     HapticFeedback.mediumImpact();
     navigator.popUntil((route) => route.isFirst);
   }
@@ -629,6 +641,7 @@ class _HaggleScreenState extends State<HaggleScreen>
           label: label,
           amount: amount,
           sentence: sentence,
+          meaning: thaiScreen ? null : meaning,
           sayIt: l10n.speakSayIt,
           speakingLabel: l10n.speakSpeaking,
           noVoice: l10n.speakNoVoice,
@@ -820,6 +833,7 @@ class _HaggleScreenState extends State<HaggleScreen>
               label: l10n.speakCounterLabel,
               amount: l10n.speakCounterAmount(price),
               sentence: sentence,
+              meaning: thai ? null : l10n.haggleOfferMeaning(price),
               sayIt: l10n.speakSayIt,
               speakingLabel: l10n.speakSpeaking,
               noVoice: l10n.speakNoVoice,
@@ -1259,6 +1273,7 @@ class _CounterCard extends StatelessWidget {
     required this.label,
     required this.amount,
     required this.sentence,
+    this.meaning,
     required this.sayIt,
     required this.speakingLabel,
     required this.noVoice,
@@ -1272,6 +1287,7 @@ class _CounterCard extends StatelessWidget {
   final String label;
   final String amount;
   final String sentence;
+  final String? meaning;
   final String showSeller;
   final VoidCallback onShowSeller;
   final String sayIt;
@@ -1313,6 +1329,15 @@ class _CounterCard extends StatelessWidget {
               color: AppColors.onSurfaceDark,
             ),
           ),
+          if (meaning != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              meaning!,
+              style: type.bodyMd.copyWith(
+                color: AppColors.onSurfaceDarkSecondary,
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.lg),
           if (canSpeak)
             _BreatheOnce(
@@ -1571,6 +1596,7 @@ class _PaidSheetState extends State<_PaidSheet> {
         ? AppFormat.roundedNumber(widget.offer ?? widget.asked)
         : '',
   );
+  bool? _paidInCash;
 
   @override
   void initState() {
@@ -1593,6 +1619,11 @@ class _PaidSheetState extends State<_PaidSheet> {
     // Paying the asked price keeps nothing, so there is nothing to save.
     return paid < widget.asked;
   }
+
+  bool get _canSubmit => _valid && (!widget.showKept || _paidInCash != null);
+
+  Object _result() =>
+      widget.showKept ? (amount: _paid!, cash: _paidInCash!) : _paid!;
 
   String _problem(AppLocalizations l10n) {
     final paid = _paid;
@@ -1678,7 +1709,7 @@ class _PaidSheetState extends State<_PaidSheet> {
                 style: type.title,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) {
-                  if (_valid) Navigator.of(context).pop(_paid);
+                  if (_canSubmit) Navigator.of(context).pop(_result());
                 },
                 decoration: const InputDecoration(
                   suffixText: marketCurrency,
@@ -1690,6 +1721,26 @@ class _PaidSheetState extends State<_PaidSheet> {
                 ),
               ),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            if (widget.showKept) ...[
+              Text(l10n.cashPaymentMethod, style: type.sectionHeader),
+              const SizedBox(height: AppSpacing.sm),
+              Wrap(
+                spacing: AppSpacing.sm,
+                children: [
+                  _ItemChip(
+                    label: l10n.cashPaymentCash,
+                    selected: _paidInCash == true,
+                    onPressed: () => setState(() => _paidInCash = true),
+                  ),
+                  _ItemChip(
+                    label: l10n.cashPaymentCard,
+                    selected: _paidInCash == false,
+                    onPressed: () => setState(() => _paidInCash = false),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             if (widget.showKept || (_price.text.isNotEmpty && !_valid))
               Text(
@@ -1710,7 +1761,9 @@ class _PaidSheetState extends State<_PaidSheet> {
             const SizedBox(height: AppSpacing.xl),
             AppButton(
               label: widget.action ?? l10n.saveToTrip,
-              onPressed: _valid ? () => Navigator.of(context).pop(_paid) : null,
+              onPressed: _canSubmit
+                  ? () => Navigator.of(context).pop(_result())
+                  : null,
             ),
           ],
         ),

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'atm_conversion.dart';
 import 'bill_check.dart' show BillKind;
+import 'cash_wallet.dart';
+import 'haggle.dart' show marketCurrency;
 import 'receipt_record.dart';
 import 'trip_ledger.dart';
 
@@ -19,6 +21,7 @@ class DemoPersona {
     required this.localCurrency,
     required this._samples,
     required this._receipts,
+    required this._cashMovements,
   });
 
   /// 'visitorBangkok' or 'thaiTokyo'; also names the persona in l10n.
@@ -34,6 +37,21 @@ class DemoPersona {
   final String localCurrency;
   final List<_Sample> _samples;
   final List<_Receipt> _receipts;
+  final List<_CashMovement> _cashMovements;
+
+  /// The sample cash ledger, computed from the sample records the same way
+  /// the app links a traveler's own: an ATM sample adds the amount its
+  /// screen says was taken out, a haggle or receipt paid in cash subtracts
+  /// what was paid, a card payment leaves cash alone. Cash activity with no
+  /// record of its own (an exchange counter) comes from the file as is.
+  /// Kept apart from the traveler's real wallet.
+  List<CashMovement> cashMovementsAt(DateTime now) => [
+    for (final (i, s) in _samples.indexed) ?s.toCash('demo-$key-$i', now),
+    for (final (i, r) in _receipts.indexed)
+      ?r.toCash('demo-$key-receipt-$i', now),
+    for (final (i, m) in _cashMovements.indexed)
+      m.toMovement('demo-$key-cash-$i', now),
+  ]..sort((a, b) => b.at.compareTo(a.at));
 
   /// The sample receipts dated relative to [now], newest first, each marked
   /// [ReceiptRecord.isSample]. Their figures were checked when the file was
@@ -86,6 +104,8 @@ class _Sample {
     this.placeName,
     this.placeLat,
     this.placeLng,
+    this.screen,
+    this.paidCash = false,
   });
 
   final SaveKind kind;
@@ -100,8 +120,46 @@ class _Sample {
   final double? placeLat;
   final double? placeLng;
 
+  /// What an ATM sample's screen showed, as a live scan would keep it.
+  final Map<String, Object>? screen;
+
+  /// A haggle paid in cash ('paidWith': 'cash').
+  final bool paidCash;
+
+  DateTime _at(DateTime now) =>
+      DateTime(now.year, now.month, now.day - daysAgo, hour, minute);
+
+  /// This sample's effect on cash: an ATM withdrawal adds what was taken
+  /// out, a haggle paid in cash takes away what was paid.
+  CashMovement? toCash(String id, DateTime now) {
+    final withdrawal = screen?[AtmFigures.withdrawalThb];
+    if (kind == SaveKind.atmConversion && withdrawal is double) {
+      return CashMovement(
+        id: 'cash-$id',
+        kind: CashMovementKind.withdrawal,
+        amount: withdrawal,
+        currency: atmLocalCurrency,
+        at: _at(now),
+        description: placeName,
+        sourceId: id,
+      );
+    }
+    if (kind == SaveKind.haggle && paidCash) {
+      return CashMovement(
+        id: 'cash-spend-$id',
+        kind: CashMovementKind.cashSpend,
+        amount: paidThb!,
+        currency: marketCurrency,
+        at: _at(now),
+        description: placeName,
+        sourceId: id,
+      );
+    }
+    return null;
+  }
+
   TripSave toSave(String id, DateTime now) {
-    final at = DateTime(now.year, now.month, now.day - daysAgo, hour, minute);
+    final at = _at(now);
     final haggle = kind == SaveKind.haggle;
     return TripSave(
       id: id,
@@ -116,6 +174,7 @@ class _Sample {
       placeName: placeName,
       placeLat: placeLat,
       placeLng: placeLng,
+      screen: screen,
       isSample: true,
     );
   }
@@ -173,6 +232,14 @@ DemoPersona? _persona(Object? entry) {
     if (receipt == null) return null;
     parsedReceipts.add(receipt);
   }
+  final rawCashMovements = entry['cashMovements'] ?? const [];
+  if (rawCashMovements is! List) return null;
+  final cashMovements = <_CashMovement>[];
+  for (final movement in rawCashMovements) {
+    final parsedMovement = _cashMovement(movement);
+    if (parsedMovement == null) return null;
+    cashMovements.add(parsedMovement);
+  }
   return DemoPersona._(
     key: key,
     language: language,
@@ -180,6 +247,74 @@ DemoPersona? _persona(Object? entry) {
     localCurrency: local,
     samples: parsed,
     receipts: parsedReceipts,
+    cashMovements: cashMovements,
+  );
+}
+
+class _CashMovement {
+  const _CashMovement({
+    required this.kind,
+    required this.amount,
+    required this.currency,
+    required this.daysAgo,
+    required this.hour,
+    required this.minute,
+    required this.description,
+    this.sourceId,
+  });
+
+  final CashMovementKind kind;
+  final double amount;
+  final String currency;
+  final int daysAgo;
+  final int hour;
+  final int minute;
+  final String description;
+  final String? sourceId;
+
+  CashMovement toMovement(String id, DateTime now) => CashMovement(
+    id: id,
+    kind: kind,
+    amount: amount,
+    currency: currency,
+    at: DateTime(now.year, now.month, now.day - daysAgo, hour, minute),
+    description: description,
+    sourceId: sourceId,
+  );
+}
+
+_CashMovement? _cashMovement(Object? value) {
+  if (value is! Map) return null;
+  final kind = CashMovementKind.values.asNameMap()[value['kind']];
+  final amount = _number(value['amount']);
+  final currency = value['currency'];
+  final daysAgo = value['daysAgo'];
+  final time = value['time'];
+  final hm = time is String ? _time.firstMatch(time) : null;
+  final description = value['description'];
+  final sourceId = value['sourceId'];
+  if (kind == null ||
+      amount == null ||
+      amount <= 0 ||
+      currency is! String ||
+      !_currency.hasMatch(currency) ||
+      daysAgo is! int ||
+      daysAgo < 0 ||
+      hm == null ||
+      description is! String ||
+      description.isEmpty ||
+      (sourceId != null && sourceId is! String)) {
+    return null;
+  }
+  return _CashMovement(
+    kind: kind,
+    amount: amount,
+    currency: currency,
+    daysAgo: daysAgo,
+    hour: int.parse(hm.group(1)!),
+    minute: int.parse(hm.group(2)!),
+    description: description,
+    sourceId: sourceId as String?,
   );
 }
 
@@ -213,6 +348,8 @@ _Sample? _sample(Object? entry) {
     if (item is! String || item.isEmpty) return null;
     if (asked == null || paid == null || asked <= 0) return null;
     if (paid <= 0 || paid > asked) return null;
+    final paidWith = _paidWith(entry['paidWith']);
+    if (paidWith == null) return null;
     return _Sample(
       kind: kind,
       daysAgo: daysAgo,
@@ -224,13 +361,17 @@ _Sample? _sample(Object? entry) {
       placeName: common.place,
       placeLat: common.lat,
       placeLng: common.lng,
+      paidCash: paidWith == _PaidWith.cash,
     );
   }
   // An ATM sample states what its screen showed; what declining the
   // conversion kept comes from the same rule as a live ATM scan.
   final double? kept;
+  Map<String, Object>? screen;
   if (kind == SaveKind.atmConversion && entry['atm'] != null) {
-    kept = _atmKept(entry['atm']);
+    final atm = _atmSample(entry['atm']);
+    kept = atm == null ? null : (atm.verdict.extraCostThb * 100).round() / 100;
+    screen = atm == null ? null : atmFigures(atm.reading, atm.verdict);
   } else {
     kept = _number(entry['keptThb']);
   }
@@ -241,13 +382,14 @@ _Sample? _sample(Object? entry) {
     hour: common.hour,
     minute: common.minute,
     keptThb: kept,
+    screen: screen,
     placeName: common.place,
     placeLat: common.lat,
     placeLng: common.lng,
   );
 }
 
-double? _atmKept(Object? atm) {
+({AtmScreenReading reading, AtmVerdict verdict})? _atmSample(Object? atm) {
   if (atm is! Map) return null;
   final withdrawal = _number(atm['withdrawalThb']);
   final fee = _number(atm['accessFeeThb']);
@@ -256,29 +398,54 @@ double? _atmKept(Object? atm) {
   final usd = _number(atm['chargedUsd']);
   if ([withdrawal, fee, rate, charged, usd].contains(null)) return null;
   if (rate! <= 0 || (withdrawal! + fee! - charged!).abs() > 0.005) return null;
-  final verdict = evaluateAtm(
-    AtmScreenReading(
-      withdrawalThb: withdrawal,
-      accessFeeThb: fee,
-      thbPerUsd: rate,
-      markupPercent: _number(atm['markupPercent']),
-      chargedThb: charged,
-      chargedUsd: usd!,
-    ),
+  final reading = AtmScreenReading(
+    withdrawalThb: withdrawal,
+    accessFeeThb: fee,
+    thbPerUsd: rate,
+    markupPercent: _number(atm['markupPercent']),
+    chargedThb: charged,
+    chargedUsd: usd!,
   );
+  final verdict = evaluateAtm(reading);
   if (verdict.recommended != AtmChoice.declineConversion) return null;
-  return (verdict.extraCostThb * 100).round() / 100;
+  return (reading: reading, verdict: verdict);
 }
+
+enum _PaidWith { cash, card }
+
+_PaidWith? _paidWith(Object? value) =>
+    value is String ? _PaidWith.values.asNameMap()[value] : null;
 
 /// A sample receipt: only figures that add up the way a checked receipt
 /// does are accepted.
 class _Receipt {
-  const _Receipt(this.daysAgo, this.hour, this.minute, this.fields);
+  const _Receipt(
+    this.daysAgo,
+    this.hour,
+    this.minute,
+    this.fields, {
+    required this.paidCash,
+  });
 
   final int daysAgo;
   final int hour;
   final int minute;
   final Map<String, Object?> fields;
+
+  /// Paid in cash ('paidWith': 'cash'); a card payment leaves cash alone.
+  final bool paidCash;
+
+  CashMovement? toCash(String id, DateTime now) => !paidCash
+      ? null
+      : CashMovement(
+          id: 'cash-spend-$id',
+          kind: CashMovementKind.cashSpend,
+          amount: (fields['totalThb']! as num).toDouble(),
+          currency: marketCurrency,
+          at: DateTime(now.year, now.month, now.day - daysAgo, hour, minute),
+          description: fields['merchantName'] as String?,
+          sourceId: id,
+        );
 
   ReceiptRecord toRecord(String id, DateTime now) => ReceiptRecord.fromJson({
     ...fields,
@@ -352,6 +519,8 @@ _Receipt? _receipt(Object? entry) {
           near((total * _vatRate / (100 + _vatRate) * 100).round() / 100, vat),
   };
   if (!adds) return null;
+  final paidWith = _paidWith(entry['paidWith']);
+  if (paidWith == null) return null;
   return _Receipt(daysAgo, int.parse(hm.group(1)!), int.parse(hm.group(2)!), {
     for (final k in const [
       'merchantName',
@@ -370,7 +539,7 @@ _Receipt? _receipt(Object? entry) {
     ])
       if (entry[k] != null) k: entry[k],
     'vatOnTop': kind == BillKind.vatOnTop,
-  });
+  }, paidCash: paidWith == _PaidWith.cash);
 }
 
 double? _number(Object? value) {

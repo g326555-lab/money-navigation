@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/colors.dart';
 import '../../core/elevation.dart';
@@ -43,6 +44,7 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
     text: _plain(widget.store.profile.atmFeeValue),
   );
   late AtmFeePolicy _policy = widget.store.profile.atmFeePolicy;
+  late String? _productId = widget.store.productId;
   String? _error;
 
   static String _plain(double? v) => v == null
@@ -75,6 +77,7 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
     }
     await widget.store.setCardFee(fee);
     await widget.store.setAtmPolicy(_policy, value: needsValue ? value : null);
+    await widget.store.setProductId(_productId);
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -112,6 +115,55 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
                 const _Grabber(),
                 const SizedBox(height: AppSpacing.lg),
                 Text(l10n.cardSheetTitle, style: type.title),
+                const SizedBox(height: AppSpacing.lg),
+                Text(l10n.cardCatalogTitle, style: type.rowTitle),
+                const SizedBox(height: AppSpacing.sm),
+                DropdownButtonFormField<String?>(
+                  initialValue: _productId,
+                  items: [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(l10n.cardCatalogOther),
+                    ),
+                    DropdownMenuItem(
+                      value: 'utopia-u-card',
+                      child: Text(l10n.cardCatalogUtopia),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() => _productId = value),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                ),
+                if (_productId == 'utopia-u-card') ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(l10n.cardCatalogUtopiaFacts, style: type.rowSubtitle),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(l10n.cardCatalogUtopiaFeeNote, style: type.footer),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(l10n.cardCatalogUtopiaIssuerNote, style: type.footer),
+                  const SizedBox(height: AppSpacing.sm),
+                  Pressable(
+                    onPressed: () => launchUrl(
+                      Uri.parse(
+                        'https://u-topia.com/terms-of-service/international',
+                      ),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                    semanticLabel: l10n.cardCatalogSource,
+                    child: Text(l10n.cardCatalogSource, style: type.link),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Pressable(
+                    onPressed: () => launchUrl(
+                      Uri.parse('https://u-topia.com/about'),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                    semanticLabel: l10n.cardCatalogProductSource,
+                    child: Text(
+                      l10n.cardCatalogProductSource,
+                      style: type.link,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.xl),
                 Text(l10n.cardFeeLabel, style: type.rowTitle),
                 const SizedBox(height: AppSpacing.sm),

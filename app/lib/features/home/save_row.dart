@@ -10,6 +10,8 @@ import '../../rules/haggle.dart' show marketCurrency;
 import '../../rules/trip_ledger.dart';
 import '../../shared/group.dart';
 import '../../shared/icon_tile.dart';
+import '../../shared/pressable.dart';
+import '../records/save_detail_screen.dart';
 
 /// One saved result as a row: what it was, when, and what it kept.
 class SaveRow extends StatelessWidget {
@@ -33,7 +35,7 @@ class SaveRow extends StatelessWidget {
     final kept = l10n.saveKeptValue(
       AppFormat.roundedAmount(save.keptThb, marketCurrency),
     );
-    return switch (save.kind) {
+    final row = switch (save.kind) {
       SaveKind.atmConversion => GroupRow(
         leading: const IconTile.blue(icon: Icons.atm_rounded),
         title: l10n.saveAtmTitle,
@@ -59,6 +61,16 @@ class SaveRow extends StatelessWidget {
         valueStyle: type.rowTitle.copyWith(color: AppColors.primaryText),
       ),
     };
+    return Pressable(
+      semanticLabel: '${row.title} · $when · $kept',
+      onPressed: () => Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) =>
+              SaveDetailScreen(save: save, itemName: _itemName(context)),
+        ),
+      ),
+      child: row,
+    );
   }
 
   String _itemName(BuildContext context) {

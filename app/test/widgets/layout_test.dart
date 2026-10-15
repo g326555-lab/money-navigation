@@ -94,6 +94,25 @@ void main() {
       await pumpFrames(tester);
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('Trip map renders without overflow at ${label(size)}', (
+      tester,
+    ) async {
+      setLogicalSize(tester, size);
+      final stores = await demoStores();
+      await tester.pumpWidget(wrap(stores, const AppShell()));
+      await pumpFrames(tester);
+      await tester.tap(find.text('Records').last);
+      await pumpFrames(tester);
+      await tester.tap(find.text('Trip map'));
+      await pumpFrames(tester);
+      expect(tester.takeException(), isNull);
+      // The map checks reachability with a three-second timeout. Let that
+      // check finish before tearing down the widget; its retry is cancelled
+      // by dispose when the timer has completed.
+      await tester.pump(const Duration(seconds: 3));
+      expect(tester.takeException(), isNull);
+    });
   }
 
   testWidgets('at 932.6 wide the hero card stays within contentMaxWidth', (

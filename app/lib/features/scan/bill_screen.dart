@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
+import '../../app/app_scope.dart';
 import '../../core/colors.dart';
 import '../../core/formatters.dart';
 import '../../core/motion.dart';
@@ -18,6 +23,8 @@ import '../../shared/group.dart';
 import '../../shared/pill.dart';
 import '../../data/receipt_store.dart';
 import '../../rules/receipt_record.dart';
+import '../briefing/places_client.dart';
+import '../records/receipt_record_detail.dart' show spendCategoryName;
 import '../../shared/app_button.dart';
 import '../../shared/surface.dart';
 import '../../shared/pressable.dart';
@@ -30,13 +37,25 @@ import '../../services/location_service.dart';
 /// Zones: hero (the total, or what is happening), content (how the total
 /// was built, then the AI steps that ran), pinned dock.
 class BillScreen extends StatefulWidget {
-  const BillScreen({super.key, this.reader, this.initialPhotoPath});
+  const BillScreen({
+    super.key,
+    this.reader,
+    this.initialPhotoPath,
+    this.location,
+    this.places,
+  });
 
   /// Supplied by tests; the screen makes its own otherwise.
   final BillReader? reader;
 
   /// A photo already taken on the scan screen, read straight away.
   final String? initialPhotoPath;
+
+  /// Where the phone is; [LocationService.current] when not supplied.
+  final Future<({double latitude, double longitude})?> Function()? location;
+
+  /// Supplied by tests; otherwise uses the project's Google Places function.
+  final PlacesClient? places;
 
   @override
   State<BillScreen> createState() => _BillScreenState();
@@ -46,6 +65,7 @@ enum _Phase { start, reading, done }
 
 class _BillScreenState extends State<BillScreen> {
   late final _reader = widget.reader ?? BillReader();
+  late final _places = widget.places ?? PlacesClient();
   final _picker = ImagePicker();
   _Phase _phase = _Phase.start;
   BillReading? _reading;
@@ -53,11 +73,15 @@ class _BillScreenState extends State<BillScreen> {
   /// What would be saved: the proven bill, or the traveler's correction.
   ReceiptRecord? _record;
   bool _saved = false;
+  bool? _savedAsCash;
+  bool _categoryFromGoogle = false;
+  bool _categoryManuallyChosen = false;
   final _receipts = ReceiptStore.shared;
 
   /// Once a bill has been read, the camera button offers another one, and
   /// keeps that label while the next photo is read.
   bool _readOnce = false;
+  String? _photoSourcePath;
 
   @override
   void initState() {
@@ -85,11 +109,18 @@ class _BillScreenState extends State<BillScreen> {
     setState(() {
       _phase = _Phase.reading;
       _reading = null;
+      _photoSourcePath = file.path;
     });
     // Where the bill is being paid: fetched alongside the reading, so the
     // record knows its shop's place from the start (same shop vs another
     // branch) and lands on the trip map. Null when location is off.
-    final placeFuture = LocationService.current();
+    final placeFuture = widget.location != null
+        ? widget.location!()
+        : LocationService.current().then(
+            (p) => p == null
+                ? null
+                : (latitude: p.latitude, longitude: p.longitude),
+          );
     final reading = await _reader.read(await file.readAsBytes());
     final here = await placeFuture;
     if (!mounted) return;
@@ -105,6 +136,9 @@ class _BillScreenState extends State<BillScreen> {
       _reading = reading;
       _readOnce = true;
       _saved = false;
+      _savedAsCash = null;
+      _categoryFromGoogle = false;
+      _categoryManuallyChosen = false;
       _record = check == null
           ? null
           : ReceiptRecord.fromCheck(
@@ -118,6 +152,32 @@ class _BillScreenState extends State<BillScreen> {
             );
       _here = here == null ? null : (here.latitude, here.longitude);
     });
+    final merchant = reading.merchantName;
+    if (reading.check != null && merchant != null && here != null) {
+      _places.languageCode = Localizations.localeOf(context).languageCode;
+      unawaited(_lookupCategory(merchant, here.latitude, here.longitude));
+    }
+  }
+
+  Future<void> _lookupCategory(String merchant, double lat, double lng) async {
+    final place = await _places.lookup(merchant, lat: lat, lng: lng);
+    if (!mounted || place == null || place.types.isEmpty) return;
+    final record = _record;
+    if (record == null || _categoryManuallyChosen) return;
+    final category = categorize(
+      placeTypes: place.types,
+      merchantName: merchant,
+    );
+    final fromGoogle = hasCategoryPlaceType(place.types);
+    if (record.category == category && _categoryFromGoogle == fromGoogle) {
+      return;
+    }
+    final updated = record.withCategory(category);
+    setState(() {
+      _record = updated;
+      _categoryFromGoogle = fromGoogle;
+    });
+    if (_saved) await _receipts.save(updated);
   }
 
   /// Where the phone was when the bill was read.
@@ -126,11 +186,42 @@ class _BillScreenState extends State<BillScreen> {
   Future<void> _save() async {
     final record = _record;
     if (record == null || _saved) return;
+    final cash = await showModalBottomSheet<bool>(
+      context: context,
+      useSafeArea: true,
+      builder: (_) => const _BillPaymentSheet(),
+    );
+    if (cash == null || !mounted) return;
+    final scope = AppScope.of(context);
+    await scope.cashWallet.setLinkedSpend(
+      sourceId: record.id,
+      amount: cash ? record.totalThb : null,
+      currency: marketCurrency,
+      description: AppLocalizations.of(context).cashWalletBill,
+      at: record.savedAt,
+    );
+    var savedRecord = record;
+    final photoSourcePath = _photoSourcePath;
+    if (photoSourcePath != null && File(photoSourcePath).existsSync()) {
+      final directory = await getApplicationSupportDirectory();
+      final receiptDirectory = Directory('${directory.path}/receipts');
+      await receiptDirectory.create(recursive: true);
+      final photo = await File(photoSourcePath).copy(
+        '${receiptDirectory.path}/${record.id.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_')}.jpg',
+      );
+      savedRecord = record.withPhotoPath(photo.path);
+      setState(() => _record = savedRecord);
+    }
     // The phone copy is written at once; the account copy follows in the
     // background, so "Saved" never waits on the network.
-    await _receipts.save(record);
+    await _receipts.save(savedRecord);
     HapticFeedback.mediumImpact();
-    if (mounted) setState(() => _saved = true);
+    if (mounted) {
+      setState(() {
+        _saved = true;
+        _savedAsCash = cash;
+      });
+    }
   }
 
   /// The traveler fixes what was read, or enters a bill the phone could not
@@ -157,8 +248,14 @@ class _BillScreenState extends State<BillScreen> {
     );
     if (edited == null || !mounted) return;
     setState(() {
+      final changedCategory = _record?.category != edited.category;
       _record = edited;
       _saved = false;
+      _savedAsCash = null;
+      if (changedCategory) {
+        _categoryFromGoogle = false;
+        _categoryManuallyChosen = true;
+      }
     });
   }
 
@@ -209,16 +306,27 @@ class _BillScreenState extends State<BillScreen> {
   }
 
   Widget _recordActions(AppLocalizations l10n, ReceiptRecord? record) {
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xl),
-      child: DockPair(
-        secondaryLabel: record == null ? l10n.billEnterIt : l10n.billEdit,
-        onSecondary: _edit,
-        primaryLabel: _saved ? l10n.billSaved : l10n.billSave,
-        onPrimary: record == null || _saved || record.totalThb <= 0
-            ? null
-            : _save,
-      ),
+    return Column(
+      children: [
+        if (_savedAsCash != null)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.lg),
+            child: GroupFooter(
+              _savedAsCash! ? l10n.cashWalletBillCash : l10n.cashWalletBillCard,
+            ),
+          ),
+        Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.xl),
+          child: DockPair(
+            secondaryLabel: record == null ? l10n.billEnterIt : l10n.billEdit,
+            onSecondary: _edit,
+            primaryLabel: _saved ? l10n.billSaved : l10n.billSave,
+            onPrimary: record == null || _saved || record.totalThb <= 0
+                ? null
+                : _save,
+          ),
+        ),
+      ],
     );
   }
 
@@ -377,6 +485,10 @@ class _BillScreenState extends State<BillScreen> {
           value: r.merchantName ?? l10n.billShopUnknown,
         ),
         GroupRow(
+          title: l10n.billCategory,
+          value: spendCategoryName(l10n, r.category),
+        ),
+        GroupRow(
           title: l10n.billTotal,
           value: AppFormat.cents(r.totalThb, marketCurrency),
         ),
@@ -498,12 +610,23 @@ class _BillScreenState extends State<BillScreen> {
               title: l10n.billShop,
               value: r.merchantName ?? l10n.billShopUnknown,
             ),
+            GroupRow(
+              title: l10n.billCategory,
+              value: spendCategoryName(l10n, r.category),
+            ),
             if (r.userCorrected)
               GroupRow(
                 title: l10n.billTotal,
                 value: AppFormat.cents(r.totalThb, marketCurrency),
               ),
           ],
+        ),
+        GroupFooter(
+          _categoryManuallyChosen
+              ? l10n.billCategoryManual
+              : _categoryFromGoogle
+              ? l10n.billCategoryGoogle
+              : l10n.billCategoryName,
         ),
         if (r.userCorrected) GroupFooter(l10n.billCorrectedNote),
         ..._memory(l10n, r),
@@ -566,6 +689,7 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
       ? _Service.added
       : _Service.none;
   late bool _vatOnTop = widget.record.vatOnTop;
+  late SpendCategory _category = widget.record.category;
 
   @override
   void initState() {
@@ -608,7 +732,7 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
     return true;
   }
 
-  bool get _changed {
+  bool get _financialChanged {
     final r = widget.record;
     final service = r.serviceIncluded
         ? _Service.included
@@ -622,11 +746,17 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
         _vatOnTop != r.vatOnTop;
   }
 
+  bool get _changed => _financialChanged || _category != widget.record.category;
+
   void _done() {
     if (!_valid) return;
     // Nothing changed: keep the proven record as it was.
     if (!_changed) {
       Navigator.of(context).pop();
+      return;
+    }
+    if (!_financialChanged) {
+      Navigator.of(context).pop(widget.record.withCategory(_category));
       return;
     }
     final name = _name.text.trim();
@@ -637,6 +767,7 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
       // "No service charge" must clear what was read, not keep it.
       serviceCharged: _service != _Service.none,
       vatOnTop: _vatOnTop,
+      category: _category,
     );
     Navigator.of(context).pop(
       ReceiptRecord.fromJson({
@@ -726,6 +857,21 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
             Text(l10n.billEditTitle, style: type.title),
             const SizedBox(height: AppSpacing.xl),
             field(_name, l10n.billShop),
+            Text(l10n.billCategoryEdit, style: type.sectionHeader),
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                for (final category in SpendCategory.values)
+                  choice(
+                    spendCategoryName(l10n, category),
+                    _category == category,
+                    () => setState(() => _category = category),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
             field(_total, l10n.billTotal, number: true, suffix: marketCurrency),
             if (_total.text.isNotEmpty && !_totalValid) ...[
               Text(
@@ -788,6 +934,44 @@ class _ReceiptEditSheetState extends State<_ReceiptEditSheet> {
             AppButton(
               label: l10n.billUseCorrection,
               onPressed: _valid ? _done : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BillPaymentSheet extends StatelessWidget {
+  const _BillPaymentSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final type = AppTypography.of(context);
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sheetPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.cashPaymentMethod, style: type.title),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              l10n.cashPaymentExplainer,
+              style: type.bodyMd.copyWith(color: AppColors.onSurfaceSecondary),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            AppButton(
+              label: l10n.cashPaymentCash,
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton.secondary(
+              label: l10n.cashPaymentCard,
+              onPressed: () => Navigator.of(context).pop(false),
             ),
           ],
         ),

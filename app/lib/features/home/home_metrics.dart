@@ -12,6 +12,10 @@ abstract final class HomeMetrics {
   /// A new stop redraws only the last stretch of the line.
   static const double routeRedrawFrom = 0.7;
 
+  /// Share of one step over which a newly reached route dot settles to full
+  /// size.
+  static const double routeDotSettleSpan = 0.35;
+
   /// Stops Home draws: three on a narrow screen, four from this width.
   static const double routeWideFrom = 400;
   static const int routeStopsNarrow = 3;

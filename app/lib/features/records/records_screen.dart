@@ -12,6 +12,7 @@ import '../../shared/group.dart';
 import '../../shared/pressable.dart';
 import '../auth/auth_gate.dart' show AuthScope;
 import '../home/save_row.dart';
+import 'receipt_record_detail.dart';
 import '../trip_map/trip_map_screen.dart';
 
 /// Every save on this trip, newest first. Swipe a row left to remove it.
@@ -57,7 +58,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
       child: ColoredBox(
         color: AppColors.background,
         child: ListenableBuilder(
-          listenable: trip,
+          listenable: Listenable.merge([trip, AppScope.of(context).receipts]),
           builder: (context, _) => ListView(
             padding: EdgeInsets.fromLTRB(
               AppSpacing.screenMargin,
@@ -153,17 +154,24 @@ class _RecordsScreenState extends State<RecordsScreen> {
                             ),
                           ),
                         ),
-                        onDismissed: (_) {
+                        onDismissed: (_) async {
                           HapticFeedback.mediumImpact();
+                          final messenger = ScaffoldMessenger.of(context);
+                          final wallet = AppScope.of(context).cashWallet;
                           trip.remove(save.id);
-                          ScaffoldMessenger.of(context)
+                          // The cash this record moved goes with it.
+                          final cash = await wallet.removeLinked(save.id);
+                          messenger
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
                               SnackBar(
                                 content: Text(l10n.recordsRemoved),
                                 action: SnackBarAction(
                                   label: l10n.recordsUndo,
-                                  onPressed: () => trip.add(save),
+                                  onPressed: () {
+                                    trip.add(save);
+                                    wallet.restore(cash);
+                                  },
                                 ),
                               ),
                             );
@@ -173,6 +181,15 @@ class _RecordsScreenState extends State<RecordsScreen> {
                   ],
                 ),
                 GroupFooter(_footer(context, l10n)),
+              ],
+              if (AppScope.of(context).receipts.records.isNotEmpty) ...[
+                SectionHeader(l10n.homeRecentReceipts),
+                GroupCard(
+                  children: [
+                    for (final receipt in AppScope.of(context).receipts.records)
+                      ReceiptRecordRow(record: receipt),
+                  ],
+                ),
               ],
             ],
           ),

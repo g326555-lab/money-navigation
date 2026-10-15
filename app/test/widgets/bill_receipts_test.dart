@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_navigation/data/receipt_store.dart';
 import 'package:money_navigation/features/scan/bill_screen.dart';
@@ -67,12 +67,20 @@ List<ReceiptRecord> recordsAt(String merchant) => [
     if (r.merchantName == merchant) r,
 ];
 
-Future<void> openBill(WidgetTester tester, BillReading reading) async {
+Future<void> openBill(
+  WidgetTester tester,
+  BillReading reading, {
+  ({double latitude, double longitude})? at,
+}) async {
   setLogicalSize(tester, const Size(430, 2400));
   await tester.pumpWidget(
     wrap(
       Stores(),
-      BillScreen(reader: FakeBillReader(reading), initialPhotoPath: photoPath),
+      BillScreen(
+        reader: FakeBillReader(reading),
+        initialPhotoPath: photoPath,
+        location: at == null ? null : () async => at,
+      ),
     ),
   );
   // The photo is read from disk with real IO, outside fake time.
@@ -113,6 +121,17 @@ Future<void> tapText(WidgetTester tester, String text) async {
   await pumpFrames(tester, frames: 20);
 }
 
+Future<void> tapSave(WidgetTester tester) async {
+  await tapText(tester, saveLabel);
+  await tapText(tester, en.cashPaymentCard);
+  for (var i = 0; i < 20 && find.text(savedLabel).evaluate().isEmpty; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    await tester.pump();
+  }
+}
+
 Finder inSheet(Finder f) =>
     find.descendant(of: find.byType(BottomSheet), matching: f);
 
@@ -134,6 +153,15 @@ String thb(String amount) => '$amount THB';
 void main() {
   setUpAll(() async {
     resetPreferences();
+    const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
+    final supportDir = await Directory.systemTemp.createTemp(
+      'bill_app_support',
+    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          pathProvider,
+          (_) => Future<String>.value(supportDir.path),
+        );
     await warmMarketPrices();
     // ReceiptStore.shared memoises its first load. Started inside one
     // test's fake zone, that future would never resolve in the next test,
@@ -156,7 +184,7 @@ void main() {
       expect(find.textContaining('You saved'), findsNothing);
       expect(recordsAt(shop), isEmpty);
 
-      await tapText(tester, saveLabel);
+      await tapSave(tester);
 
       expect(find.text(savedLabel), findsOneWidget);
       expect(find.text(saveLabel), findsNothing);
@@ -165,6 +193,8 @@ void main() {
       expect(r.userCorrected, isFalse);
       expect(r.totalThb, 233);
       expect(r.subtotalThb, 225);
+      expect(r.photoPath, isNotNull);
+      expect(File(r.photoPath!).existsSync(), isTrue);
       expect(r.discountThb, 13);
       expect(r.serviceThb, 21);
       expect(r.servicePercent, 10);
@@ -212,7 +242,7 @@ void main() {
     ) async {
       const shop = 'Som Tam Nua Test';
       await openBill(tester, verified(shop));
-      await tapText(tester, saveLabel);
+      await tapSave(tester);
       final proven = recordsAt(shop).single;
       expect(proven.verified, isTrue);
 
@@ -229,7 +259,7 @@ void main() {
       expect(find.text(saveLabel), findsOneWidget);
       expect(recordsAt(shop).single.verified, isTrue);
 
-      await tapText(tester, saveLabel);
+      await tapSave(tester);
       expect(find.text(savedLabel), findsOneWidget);
       final r = recordsAt(shop).single;
       expect(r.id, proven.id);
@@ -256,7 +286,7 @@ void main() {
       await tapInSheet(tester, useLabel);
 
       expect(find.text(renamed), findsOneWidget);
-      await tapText(tester, saveLabel);
+      await tapSave(tester);
       final r = recordsAt(renamed).single;
       expect(r.servicePercent, 12);
       expect(r.serviceIncluded, isFalse);
@@ -271,7 +301,7 @@ void main() {
       await tapInSheet(tester, en.billServiceNone);
       expect(inSheet(find.byType(TextField)), findsNWidgets(2));
       await tapInSheet(tester, useLabel);
-      await tapText(tester, saveLabel);
+      await tapSave(tester);
       final r = recordsAt(shop).single;
       expect(r.servicePercent, isNull);
       expect(r.serviceIncluded, isFalse);
@@ -339,7 +369,7 @@ void main() {
       expect(find.text(correctionNote), findsOneWidget);
       expect(find.text(editLabel), findsOneWidget);
 
-      await tapText(tester, saveLabel);
+      await tapSave(tester);
       expect(find.text(savedLabel), findsOneWidget);
       final r = recordsAt(shop).single;
       expect(r.verified, isFalse);
@@ -460,33 +490,29 @@ void main() {
       );
     });
 
-    testWidgets(
-      'a located earlier bill at this shop counts as a visit',
-      (tester) async {
-        const shop = 'Located Kitchen';
-        await seed(
-          tester,
-          earlierAt(
-            shop,
-            id: 'located-earlier',
-            lat: 13.7466,
-            lng: 100.5393,
-          ).corrected(totalThb: 400, servicePercent: 10),
-        );
-        await openBill(tester, verified(shop));
-        expect(
-          find.text(en.billMemoryVisits(1, thb('400.00'))),
-          findsOneWidget,
-        );
-        expect(
-          find.text(en.billMemoryNote(en.billNoteServiceAdded('10'), 1)),
-          findsOneWidget,
-        );
-      },
-      skip: true, // Bill read records carry no location until Save
-      // (bill_screen.dart _read vs _save), so _sameShop is never true on
-      // screen and this line cannot appear. Unskip once the read record
-      // is located.
-    );
+    testWidgets('a located earlier bill at this shop counts as a visit', (
+      tester,
+    ) async {
+      const shop = 'Located Kitchen';
+      await seed(
+        tester,
+        earlierAt(
+          shop,
+          id: 'located-earlier',
+          lat: 13.7466,
+          lng: 100.5393,
+        ).corrected(totalThb: 400, servicePercent: 10),
+      );
+      await openBill(
+        tester,
+        verified(shop),
+        at: (latitude: 13.7466, longitude: 100.5393),
+      );
+      expect(find.text(en.billMemoryVisits(1, thb('400.00'))), findsOneWidget);
+      expect(
+        find.text(en.billMemoryNote(en.billNoteServiceAdded('10'), 1)),
+        findsOneWidget,
+      );
+    });
   });
 }

@@ -382,4 +382,40 @@ void main() {
       expect(m.lastPlaceName, 'Chatuchak Weekend Market');
     });
   });
+
+  group('screen figures kept with a save', () {
+    test('an ATM save keeps every figure its screen showed', () {
+      final verdict = evaluateAtm(demoReading);
+      final s = saveFromAtm(
+        verdict,
+        id: 'atm-1',
+        savedAt: t0,
+        reading: demoReading,
+      )!;
+      expect(s.screen, {
+        AtmFigures.withdrawalThb: 4000.0,
+        AtmFigures.accessFeeThb: 220.0,
+        AtmFigures.thbPerUsd: 30.86,
+        AtmFigures.markupPercent: 5.5,
+        AtmFigures.chargedThb: 4220.0,
+        AtmFigures.chargedUsd: 144.71,
+        AtmFigures.extraCostUsd: verdict.extraCostUsd,
+      });
+      final back = TripSave.fromJson(jsonDecode(jsonEncode(s.toJson())))!;
+      expect(back.screen, s.screen);
+    });
+
+    test('a save without a reading keeps no figures', () {
+      expect(atmSave().screen, isNull);
+      expect(TripSave.fromJson(atmSave().toJson())!.screen, isNull);
+    });
+
+    test('damaged figures are dropped, never half read', () {
+      expect(screenFigures({'a': 1, 'b': true}), isNull);
+      expect(screenFigures({'a': double.nan}), isNull);
+      expect(screenFigures({}), isNull);
+      expect(screenFigures([1, 2]), isNull);
+      expect(screenFigures({'code': 'THB', 'v': 2}), {'code': 'THB', 'v': 2.0});
+    });
+  });
 }

@@ -368,6 +368,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
+  String get homeKeptOpenRecords => 'Open trip records';
+
+  @override
   String get homeKeptLabel => 'Kept on this trip';
 
   @override
@@ -402,6 +405,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeRecent => 'Recent saves';
 
   @override
+  String get homeRecentReceipts => 'Recent receipts';
+
+  @override
+  String get receiptChecked =>
+      'Figures checked against the saved receipt data.';
+
+  @override
+  String get receiptNotChecked =>
+      'Receipt data saved, but the figures were not verified.';
+
+  @override
+  String get receiptPhotoMissing =>
+      'The receipt details saved here do not include a photo.';
+
+  @override
   String get homeSeeAll => 'See all';
 
   @override
@@ -420,6 +438,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saveAtmTitle => 'ATM conversion avoided';
+
+  @override
+  String get saveDetailsAsked => 'Seller asked';
+
+  @override
+  String get saveDetailsPaid => 'You paid';
 
   @override
   String saveHaggleTitle(String item) {
@@ -1263,36 +1287,175 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeToday => 'Today';
 
   @override
-  String homeCashToday(String amount) {
-    return 'About $amount in cash today';
+  String get cashWalletTitle => 'Cash on hand';
+
+  @override
+  String get cashWalletUpdate => 'Update';
+
+  @override
+  String get cashWalletNotSet => 'Add your cash balance to start tracking';
+
+  @override
+  String cashWalletCurrent(String amount) {
+    return 'Current balance: $amount';
   }
 
   @override
-  String homeCashBasis(int days, int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Estimate from $count of your records over the last $days days',
-      one: 'Estimate from 1 of your records over the last $days days',
-    );
-    return '$_temp0';
+  String get cashWalletSetBalance => 'Set balance';
+
+  @override
+  String get cashWalletAddCash => 'Add cash';
+
+  @override
+  String get cashWalletSpendCash => 'Record cash spent';
+
+  @override
+  String get cashWalletBalanceField => 'Cash you have now';
+
+  @override
+  String get cashWalletAddField => 'Cash added';
+
+  @override
+  String get cashWalletSpendField => 'Cash spent';
+
+  @override
+  String get cashWalletSave => 'Save balance';
+
+  @override
+  String get cashWalletAdded => 'Cash added';
+
+  @override
+  String get cashWalletSpent => 'Cash spent';
+
+  @override
+  String get cashWalletAtm => 'ATM withdrawal';
+
+  @override
+  String get cashWalletHaggle => 'Market purchase';
+
+  @override
+  String get cashWalletBill => 'Receipt payment';
+
+  @override
+  String get cashWalletBillCash => 'Paid in cash · wallet updated';
+
+  @override
+  String get cashWalletBillCard => 'Paid by card · cash balance unchanged';
+
+  @override
+  String get cashWalletExchange => 'Cash exchange';
+
+  @override
+  String get exchangeTitle => 'Find a better exchange rate';
+
+  @override
+  String get exchangeSubtitle =>
+      'Nearby counters · rates from their published boards';
+
+  @override
+  String get exchangeAmount => 'Foreign cash to exchange';
+
+  @override
+  String get exchangeCurrency => 'Currency you have';
+
+  @override
+  String get exchangeDenomination => 'Banknote rate tier';
+
+  @override
+  String get exchangeChooseDenomination => 'Choose the notes you have';
+
+  @override
+  String get exchangeFind => 'Compare nearby rates';
+
+  @override
+  String get exchangeLoading => 'Checking current published rates';
+
+  @override
+  String get exchangeNoLocation =>
+      'Turn on location to compare nearby counters';
+
+  @override
+  String get exchangeNoData => 'Live exchange rates are unavailable right now';
+
+  @override
+  String exchangeNoNearby(Object distance) {
+    return 'No current rates found within $distance km';
   }
 
   @override
-  String homeCashBasisSamples(int days, int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Estimate from $count sample records over $days days',
-      one: 'Estimate from 1 sample record over $days days',
-    );
-    return '$_temp0';
+  String get exchangeNoRates =>
+      'No current quote for this currency and note tier';
+
+  @override
+  String exchangeRateLine(Object rate, Object payoutCurrency, Object currency) {
+    return '$rate $payoutCurrency per 1 $currency';
   }
 
   @override
-  String homeCashBasisMixed(int days, int count, int samples) {
-    return 'Estimate from $count records over the last $days days, $samples of them samples';
+  String exchangePayout(Object amount) {
+    return 'About $amount';
   }
+
+  @override
+  String exchangeDistance(Object distance) {
+    return '$distance km away';
+  }
+
+  @override
+  String exchangeUpdated(Object time) {
+    return 'Rate source updated $time';
+  }
+
+  @override
+  String get exchangeFreshness => 'Only current published rates are ranked';
+
+  @override
+  String get exchangeAttribution =>
+      'Rates collected from published shop boards by ThaiRate · CC BY 4.0';
+
+  @override
+  String get exchangeCounterNote =>
+      'Rates can change at the counter. Confirm before exchanging.';
+
+  @override
+  String get exchangeMap => 'Open map';
+
+  @override
+  String get exchangeAddToCash => 'Add received cash to balance';
+
+  @override
+  String get exchangeConfirmTitle => 'Confirm the counter payout';
+
+  @override
+  String exchangeConfirmBody(Object amount) {
+    return 'The estimate was about $amount. Enter the amount you actually received.';
+  }
+
+  @override
+  String get exchangeUseActual => 'Add actual amount';
+
+  @override
+  String get exchangeCancel => 'Cancel';
+
+  @override
+  String get exchangeRecorded => 'Exchange added to Cash on hand';
+
+  @override
+  String get exchangeMixedDenomination =>
+      'Compare one banknote tier at a time. Enter only cash in that tier.';
+
+  @override
+  String get cashPaymentMethod => 'How did you pay?';
+
+  @override
+  String get cashPaymentCash => 'Cash';
+
+  @override
+  String get cashPaymentCard => 'Card';
+
+  @override
+  String get cashPaymentExplainer =>
+      'Choose the payment method so your cash balance stays accurate.';
 
   @override
   String memoryDaysAgo(int days) {
@@ -1498,6 +1661,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get billShop => 'Shop';
 
   @override
+  String get billCategory => 'Suggested category';
+
+  @override
+  String get billCategoryGoogle =>
+      'Based on this place\'s category in Google Maps';
+
+  @override
+  String get billCategoryName =>
+      'No place type matched; the shop-name guess may be wrong';
+
+  @override
+  String get billCategoryManual => 'Category chosen by you';
+
+  @override
+  String get billCategoryEdit => 'Choose a category';
+
+  @override
+  String get spendFood => 'Food and drink';
+
+  @override
+  String get spendTransport => 'Transport';
+
+  @override
+  String get spendShopping => 'Shopping';
+
+  @override
+  String get spendLodging => 'Lodging';
+
+  @override
+  String get spendOther => 'Other';
+
+  @override
   String get billShopUnknown => 'Not read';
 
   @override
@@ -1589,7 +1784,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBriefingOpen => 'Open the assistant';
 
   @override
-  String get homeBriefingNoNumber => 'No cash estimate yet';
+  String get homeBriefingEmpty => 'No stops planned today';
 
   @override
   String homeBriefingStops(int count) {
@@ -1618,6 +1813,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nearbyOpen => 'See every warning nearby';
+
+  @override
+  String get nearbyMapLabel => 'Open ATM map';
 
   @override
   String nearbyMore(int count) {
@@ -1705,17 +1903,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantTitle => 'Assistant';
 
   @override
-  String get assistantCashLabel => 'Cash for today';
-
-  @override
-  String assistantCashAbout(String amount) {
-    return 'About $amount';
-  }
-
-  @override
-  String get assistantCashUnknown => 'Not enough to go on yet';
-
-  @override
   String get assistantStops => 'Today\'s stops';
 
   @override
@@ -1741,45 +1928,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assistantArrival => 'Arrival alert';
-
-  @override
-  String get cashBasisNone => 'Needs a day or two of saved spending';
-
-  @override
-  String cashBasisPattern(int days) {
-    String _temp0 = intl.Intl.pluralLogic(
-      days,
-      locale: localeName,
-      other: 'From your spending on $days earlier days',
-      one: 'From your spending on 1 earlier day',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String cashBasisPatternSamples(int days) {
-    String _temp0 = intl.Intl.pluralLogic(
-      days,
-      locale: localeName,
-      other: 'From sample records on $days days',
-      one: 'From sample records on 1 day',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String cashBasisCashOnly(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count stops take cash only (Google Maps)',
-      one: '1 stop takes cash only (Google Maps)',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get cashBasisLastVisit => 'includes what you spent there last time';
 
   @override
   String get calendarConnect => 'Read today\'s calendar';
@@ -1914,6 +2062,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardSheetTitle => 'Your card';
+
+  @override
+  String get cardCatalogTitle => 'Choose a card';
+
+  @override
+  String get cardCatalogOther => 'Other card / enter details yourself';
+
+  @override
+  String get cardCatalogUtopia => 'U-topia U-Card · Visa';
+
+  @override
+  String get cardCatalogUtopiaFacts =>
+      'U-topia describes virtual and physical Visa cards, spending alerts, freeze/unfreeze, and custom spending limits.';
+
+  @override
+  String get cardCatalogUtopiaFeeNote =>
+      'Its card terms dated May 20, 2026 list up to 1.5% foreign-exchange and up to 1.5% cross-border fees. These are separate fees, so they are not copied into the single fee field below.';
+
+  @override
+  String get cardCatalogUtopiaIssuerNote =>
+      'U-topia\'s public documents name different card providers: the May 20 card terms say Third National, while the privacy policy updated October 6 names Rain. Check the current terms in your U-topia account before using fee comparisons.';
+
+  @override
+  String get cardCatalogSource => 'Open U-topia card terms';
+
+  @override
+  String get cardCatalogProductSource => 'Open U-topia product page';
 
   @override
   String get cardFeeLabel => 'Foreign transaction fee';
@@ -2288,4 +2463,145 @@ class AppLocalizationsEn extends AppLocalizations {
   String haggleReadOn(String date) {
     return 'read $date';
   }
+
+  @override
+  String get atmMapTitle => 'ATMs nearby';
+
+  @override
+  String get atmMapNearest => 'Nearest ATM';
+
+  @override
+  String atmMapMeters(String meters) {
+    return '$meters m';
+  }
+
+  @override
+  String atmMapAway(String meters) {
+    return '$meters m away';
+  }
+
+  @override
+  String atmMapMapLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ATMs',
+      one: '1 ATM',
+    );
+    return 'Map with $_temp0. Each one is also in the list below.';
+  }
+
+  @override
+  String get atmMapDirections => 'Directions';
+
+  @override
+  String atmMapDirectionsTo(String place) {
+    return 'Walking directions to $place';
+  }
+
+  @override
+  String get atmMapLooking => 'Looking for ATMs near you';
+
+  @override
+  String get atmMapNeedLocation => 'Allow location to see ATMs near you';
+
+  @override
+  String get atmMapLocationSettings =>
+      'Location is off for this app. Turn it on in Settings.';
+
+  @override
+  String get atmMapEmpty =>
+      'Google Maps returned no ATMs here. Check the connection, or search in Google Maps.';
+
+  @override
+  String get atmMapSearchMaps => 'Search in Google Maps';
+
+  @override
+  String get atmMapSource =>
+      'Places from Google Maps · distances in a straight line';
+
+  @override
+  String get atmMapDemoOrigin =>
+      'Around the first stop of the sample calendar, not where your phone is';
+
+  @override
+  String get atmMapList => 'Nearest first';
+
+  @override
+  String get atmMapRetry => 'Search again';
+
+  @override
+  String get cashWalletNegative =>
+      'More cash was recorded as spent than you had. Update your balance.';
+
+  @override
+  String cashWalletLastMove(String what, String amount, String when) {
+    return 'Last: $what $amount · $when';
+  }
+
+  @override
+  String get recordKeptHero => 'Kept by this choice';
+
+  @override
+  String get recordReceiptHero => 'Receipt total';
+
+  @override
+  String get recordCashAdded => 'Added to cash on hand';
+
+  @override
+  String get recordCashSpent => 'Paid from cash on hand';
+
+  @override
+  String get recordCashNone => 'Cash on hand did not change';
+
+  @override
+  String get recordCashNoneBody =>
+      'Paid by card, or saved without a payment method';
+
+  @override
+  String recordCashNow(String amount) {
+    return 'Cash on hand now: $amount';
+  }
+
+  @override
+  String get recordOpenInMaps => 'Open in Google Maps';
+
+  @override
+  String get recordNoFigures =>
+      'This record was saved before the screen\'s figures were kept.';
+
+  @override
+  String get recordSellerPrices => 'Seller\'s prices';
+
+  @override
+  String get recordYourOffers => 'Your offers';
+
+  @override
+  String get recordItem => 'Item';
+
+  @override
+  String get recordSample => 'Sample record of the demo traveler';
+
+  @override
+  String get recordPhoto => 'Receipt photo';
+
+  @override
+  String get recordPhotoOpen => 'Open the receipt photo full screen';
+
+  @override
+  String get recordWhere => 'Where';
+
+  @override
+  String get recordChecks => 'What was read';
+
+  @override
+  String get exchangeRefresh => 'Refresh rates';
+
+  @override
+  String get exchangeEnterAmount =>
+      'Enter an amount to compare nearby counters';
+
+  @override
+  String get exchangeRecordFailed =>
+      'Couldn\'t add this to Cash on hand. Try again.';
 }

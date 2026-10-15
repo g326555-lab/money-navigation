@@ -11,12 +11,14 @@ class LookedUpPlace {
   const LookedUpPlace({
     required this.name,
     required this.payment,
+    this.types = const [],
     this.lat,
     this.lng,
   });
 
   final String name;
   final PlacePayment payment;
+  final List<String> types;
   final double? lat;
   final double? lng;
 }
@@ -76,6 +78,8 @@ class PlacesClient {
               kind: kind,
               payment: paymentFromJson(p['payment']),
               distanceM: _distance(lat, lng, p['lat'], p['lng']),
+              lat: p['lat'] is num ? (p['lat'] as num).toDouble() : null,
+              lng: p['lng'] is num ? (p['lng'] as num).toDouble() : null,
             ),
       ];
     } on CloudFunctionError {
@@ -84,22 +88,40 @@ class PlacesClient {
   }
 
   /// The place Google Maps finds for a calendar [location], cached per text.
-  Future<LookedUpPlace?> lookup(String location, {Position? near}) async {
-    final key = location.trim().toLowerCase();
-    if (key.isEmpty || !CloudFunctions.configured) return null;
+  Future<LookedUpPlace?> lookup(
+    String location, {
+    Position? near,
+    double? lat,
+    double? lng,
+  }) async {
+    final query = location.trim();
+    final lookupLat = near?.latitude ?? lat;
+    final lookupLng = near?.longitude ?? lng;
+    if (query.isEmpty || !CloudFunctions.configured) return null;
+    final key = [
+      query.toLowerCase(),
+      lookupLat?.toStringAsFixed(3) ?? '',
+      lookupLng?.toStringAsFixed(3) ?? '',
+    ].join('|');
     if (_lookups.containsKey(key)) return _lookups[key];
     try {
       final json = await _functions.call('places-lookup', {
-        'query': location.trim(),
+        'query': query,
         'languageCode': ?languageCode,
-        if (near != null) 'lat': near.latitude,
-        if (near != null) 'lng': near.longitude,
+        if (lookupLat != null && lookupLng != null) 'lat': lookupLat,
+        if (lookupLat != null && lookupLng != null) 'lng': lookupLng,
       }, timeout: lookupTimeout);
       final place = json['place'];
       final found = place is Map && place['name'] is String
           ? LookedUpPlace(
               name: place['name'] as String,
               payment: paymentFromJson(place['payment']),
+              types: place['types'] is List
+                  ? [
+                      for (final type in place['types'] as List)
+                        if (type is String) type,
+                    ]
+                  : const [],
               lat: place['lat'] is num
                   ? (place['lat'] as num).toDouble()
                   : null,

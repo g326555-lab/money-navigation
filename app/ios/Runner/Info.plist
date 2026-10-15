@@ -9,7 +9,9 @@
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Money Navigation turns spoken prices into text so it can translate them and check if they are fair.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Money Navigation uses your location to show the usual prices and payment tips for the place you are in.</string>
+	<string>Money Navigation uses your location to show where you are on the map, find nearby ATMs and exchange counters, and show the usual prices and payment tips for the place you are in.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Money Navigation lets you pick a photo of a bill, receipt or price tag from your library so it can read the amounts.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>

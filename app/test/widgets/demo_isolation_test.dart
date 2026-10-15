@@ -57,7 +57,12 @@ class QuietPlaces extends PlacesClient {
   var usedNear = false;
 
   @override
-  Future<LookedUpPlace?> lookup(String location, {Position? near}) async {
+  Future<LookedUpPlace?> lookup(
+    String location, {
+    Position? near,
+    double? lat,
+    double? lng,
+  }) async {
     lookups.add(location);
     if (near != null) usedNear = true;
     return LookedUpPlace(
