@@ -175,6 +175,163 @@
       "heardAsTh": [
         "นางขวัญ"
       ]
+    },
+    {
+      "key": "latte",
+      "nameEn": "Latte",
+      "nameTh": "ลาเต้",
+      "keywordsTh": [
+        "ลาเต้",
+        "กาแฟลาเต้"
+      ],
+      "unit": "each",
+      "low": 55,
+      "high": 180,
+      "derived": "Two price levels: chain cafe (Cafe Amazon) 55-85, specialty cafes on Thonglor/Ekkamai 130-180. A price above 180 is high anywhere; 130-180 is normal only at specialty cafes.",
+      "sources": [
+        {
+          "title": "Cafe Amazon menu on Wongnai (Bangkok branch)",
+          "url": "https://www.wongnai.com/delivery/businesses/1519464gF/order",
+          "date": "2026-10-15",
+          "dateKind": "fetched",
+          "quote": "ลาเต้อเมซอน ร้อน (เล็ก) Hot Latte Amazon (Small) ฿55"
+        },
+        {
+          "title": "Superagent: Bangkok digital nomad monthly cost",
+          "url": "https://www.superagent.co/en/blog/bangkok-digital-nomad-monthly-cost-2026-real-budget-breakdown",
+          "date": "2026-04-30",
+          "dateKind": "published",
+          "quote": "A latte at Roots Coffee on Thonglor or Brave Roasters near Ekkamai runs 130 to 180 THB."
+        }
+      ]
+    },
+    {
+      "key": "thai_iced_tea",
+      "nameEn": "Thai iced tea",
+      "nameTh": "ชาเย็น",
+      "keywordsTh": [
+        "ชาเย็น",
+        "ชานมเย็น",
+        "ชาไทย"
+      ],
+      "unit": "each",
+      "low": 20,
+      "high": 50,
+      "derived": "Street stalls 20-40 (Chiang Rai Times), chain cafe 50 (Cafe Amazon menu).",
+      "sources": [
+        {
+          "title": "Chiang Rai Times: Bangkok street food prices",
+          "url": "https://www.chiangraitimes.com/food/bangkok-street-food-prices/",
+          "date": "2026-02-23",
+          "dateKind": "published",
+          "quote": "Thai Iced Tea or fresh coconut: 20 to 40 baht"
+        },
+        {
+          "title": "Cafe Amazon menu on Wongnai (Bangkok branch)",
+          "url": "https://www.wongnai.com/delivery/businesses/1519464gF/order",
+          "date": "2026-10-15",
+          "dateKind": "fetched",
+          "quote": "ชานม เย็น Iced Tea with Milk ฿50"
+        }
+      ]
+    },
+    {
+      "key": "som_tam",
+      "nameEn": "Som tam (papaya salad)",
+      "nameTh": "ส้มตำ",
+      "keywordsTh": [
+        "ส้มตำ",
+        "ตำไทย",
+        "ตำปู"
+      ],
+      "unit": "perPlate",
+      "low": 40,
+      "high": 80,
+      "derived": "Usual version 40-60, up to 80 with extras (Chiang Rai Times); 50-80 (Holafly).",
+      "sources": [
+        {
+          "title": "Chiang Rai Times: Bangkok street food prices",
+          "url": "https://www.chiangraitimes.com/food/bangkok-street-food-prices/",
+          "date": "2026-02-23",
+          "dateKind": "published",
+          "quote": "Som Tum (spicy green papaya salad, sometimes with salted crab or dried shrimp): 40 to 60 baht for the usual version, up to 80 baht"
+        },
+        {
+          "title": "Holafly: Thailand street food guide",
+          "url": "https://esim.holafly.com/travel-tips/thailand-street-food-guide/",
+          "date": "2025-09-18",
+          "dateKind": "published",
+          "quote": "Average cost: 50-80 baht ($2-4 AUD)"
+        }
+      ]
+    },
+    {
+      "key": "taxi_5km",
+      "nameEn": "Metered taxi, about 5 km",
+      "nameTh": "แท็กซี่",
+      "keywordsTh": [
+        "แท็กซี่",
+        "แท๊กซี่",
+        "taxi"
+      ],
+      "unit": "perRide",
+      "low": 61,
+      "high": 66,
+      "derived": "Official meter tariff since 13 Jan 2023: first km 35 (large taxi 40), then 6.50 per km up to 10 km. 5 km = 35 + 4 x 6.50 = 61 (large 66). Excludes 3 THB per minute in traffic, 20 THB phone/app booking fee and 50 THB airport surcharge. Only fair for about 5 km; a longer ride costs more.",
+      "sources": [
+        {
+          "title": "Thai PBS: new Bangkok taxi fares",
+          "url": "https://www.thaipbs.or.th/news/content/323504",
+          "date": "2023-01-13",
+          "dateKind": "published",
+          "quote": "ระยะทาง 1 กิโลเมตรแรก 35 บาท ระยะทางเกินกว่า 1-10 กม.ละ 6.50 บาท"
+        },
+        {
+          "title": "Khaosod: taxi fare increase approved",
+          "url": "https://www.khaosod.co.th/breaking-news/news_7357204",
+          "date": "2022-11-09",
+          "dateKind": "published",
+          "quote": "สตาร์ทรถเล็ก 35 บาท รถใหญ่ 40 บาท"
+        },
+        {
+          "title": "thaiest.com: Bangkok taxi",
+          "url": "https://thaiest.com/en/thailand/bangkok/taxi",
+          "date": "2026-04-28",
+          "dateKind": "published",
+          "quote": "35 THB is a starting taxi fare in Bangkok"
+        }
+      ]
+    },
+    {
+      "key": "beer",
+      "nameEn": "Local beer (bottle or can, shop price)",
+      "nameTh": "เบียร์",
+      "keywordsTh": [
+        "เบียร์",
+        "เบียร์ช้าง",
+        "เบียร์สิงห์",
+        "เบียร์ลีโอ"
+      ],
+      "unit": "each",
+      "low": 59,
+      "high": 80,
+      "derived": "Shop prices: Chang Classic 620 ml bottle 59 at retail (The Nation); 40-80 per bottle or can in convenience stores (cyalcohol). Bars charge about double, so this range is for shops and street stalls.",
+      "sources": [
+        {
+          "title": "The Nation: Chang beer retail prices",
+          "url": "https://www.nationthailand.com/news/general/40063602",
+          "date": "2026-03-11",
+          "dateKind": "published",
+          "quote": "Chang Classic 620ml glass bottle at 59 baht"
+        },
+        {
+          "title": "cyalcohol: how expensive is alcohol in Thailand",
+          "url": "https://cyalcohol.com/article/how-expensive-is-alcohol-in-thailand",
+          "date": "2025-12-01",
+          "dateKind": "published",
+          "quote": "typically priced between 40 to 80 Thai Baht (THB) per bottle or can in convenience stores"
+        }
+      ]
     }
   ],
   "heardAsNote": "heardAsTh lists real Thai speech-recognition mishearings logged on the demo phone (SM-F971B, 15 Oct 2026), used by the on-device item matcher. They are recognizer output, not prices."
