@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_navigation/app/app_shell.dart';
 import 'package:money_navigation/core/spacing.dart';
+import 'package:money_navigation/features/home/home_screen.dart';
 import 'package:money_navigation/features/settings/settings_screen.dart';
 import 'package:money_navigation/shared/odometer.dart';
 import 'package:money_navigation/shared/surface.dart';
@@ -48,6 +49,20 @@ void main() {
       final stores = await demoStores();
       await tester.pumpWidget(wrap(stores, const AppShell()));
       await pumpFrames(tester);
+      expect(tester.takeException(), isNull);
+      // "See all" sits under the briefing and nearby cards; scroll Home's
+      // own list (offstage tabs have lists too) and check again for overflow.
+      await tester.scrollUntilVisible(
+        find.text('See all'),
+        200,
+        scrollable: find
+            .descendant(
+              of: find.byType(HomeScreen),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await pumpFrames(tester, frames: 5);
       expect(tester.takeException(), isNull);
       expect(find.text('See all'), findsOneWidget);
 
