@@ -17,7 +17,7 @@ const FIELD_MASK = [
 ].join(",");
 const TIMEOUT_MS = 4000;
 const RADIUS_M = 1500;
-const MAX_RESULTS = 5;
+const MAX_RESULTS = 10;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
           ? types
           : ["market", "grocery_store", "supermarket"],
         maxResultCount: MAX_RESULTS,
-        rankPreference: "DISTANCE",
+        rankPreference: "POPULARITY",
         locationRestriction: {
           circle: { center: { latitude: lat, longitude: lng }, radius: RADIUS_M },
         },
@@ -46,7 +46,10 @@ Deno.serve(async (req) => {
     }, TIMEOUT_MS);
     const body = await res.json();
     if (!res.ok) return json({ error: body?.error?.message ?? "places error" }, 502);
-    const places = (body.places ?? []).map((p: Record<string, any>) => ({
+    // Only places people have actually rated count as evidence.
+    const places = (body.places ?? [])
+      .filter((p: Record<string, any>) => (p.userRatingCount ?? 0) > 0)
+      .map((p: Record<string, any>) => ({
       id: p.id,
       name: p.displayName?.text ?? "",
       type: p.primaryType ?? null,
@@ -54,7 +57,7 @@ Deno.serve(async (req) => {
       ratingCount: p.userRatingCount ?? 0,
       priceLevel: p.priceLevel ?? null,
       mapsUri: p.googleMapsUri ?? null,
-    }));
+      }));
     return json({ places, source: "Google Maps", fetchedAt: new Date().toISOString() });
   } catch (e) {
     const timedOut = e instanceof DOMException && e.name === "AbortError";
