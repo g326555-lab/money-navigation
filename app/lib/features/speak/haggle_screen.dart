@@ -113,6 +113,9 @@ class _HaggleScreenState extends State<HaggleScreen>
     final heard = state.heard;
     if (verdict == null || match == null || heard == null) return;
     if (Localizations.localeOf(context).languageCode != 'en') return;
+    // A web range is "about", with its sources on screen; Gemini would
+    // state it as a usual price.
+    if (match.item.key.startsWith('new:')) return;
     final key = '${match.item.key}:${heard.amount}';
     if (key == _explainedFor) return;
     _explainedFor = key;

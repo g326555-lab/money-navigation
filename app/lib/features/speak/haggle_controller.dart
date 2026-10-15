@@ -482,11 +482,15 @@ class HaggleController extends ChangeNotifier {
   Future<void> _lookUpPrice(NewItem item) async {
     _checkingPrices = true;
     notifyListeners();
-    final ref = await _priceReference.lookup(item.nameEn);
+    var ref = await _priceReference.lookup(item.nameEn);
     if (_disposed || !identical(_newItem, item)) return;
     _checkingPrices = false;
     _reference = ref;
     final heard = _state.heard;
+    // The haggle moved on (a reply came, a new listen began): leave it.
+    if (_exchanges.isNotEmpty || _state.phase != HagglePhase.done) {
+      ref = null;
+    }
     if (ref == null || heard == null || ref.sources.isEmpty) {
       notifyListeners();
       return;
@@ -519,6 +523,7 @@ class HaggleController extends ChangeNotifier {
         verdict: verdict,
         problem: verdict == null ? HeardProblem.unitMismatch : null,
         canSpeak: _state.canSpeak,
+        speaking: _state.speaking,
         typed: _state.typed,
       ),
     );
