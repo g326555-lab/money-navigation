@@ -168,7 +168,7 @@ class _PayCompareCardState extends State<PayCompareCard> {
         ? l10n.payCompareNoAtmFee
         : l10n.payCompareAtmFeeSource(
             AppFormat.amount(fee.value, fee.currency),
-            fee.source,
+            fee.appliesTo ?? fee.source,
           );
     return trip.rateIsDemo ? '$atm · ${l10n.payCompareDemoRate}' : atm;
   }

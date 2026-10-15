@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ import '../../l10n/app_localizations.dart';
 import '../../rules/arrival_alert.dart';
 import '../../rules/day_cash.dart';
 import '../../rules/haggle.dart' show marketCurrency;
+import '../../rules/nearby_traps.dart';
 import '../../rules/pay_route.dart';
 import '../../rules/personal_context.dart';
 import '../../shared/app_button.dart';
@@ -79,10 +81,14 @@ class _AssistantScreenState extends State<AssistantScreen> {
     final type = AppTypography.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
     final trip = TripContext.of(scope, _briefing.facts);
-    final plan = _briefing.cashPlan(trip.history);
+    final plan = _briefing.cashPlan(
+      trip.history,
+      demo: scope.settings.demoState,
+    );
     final profile = _briefing.card.profile;
     final traps = _briefing.traps(
-      countryCode: _briefing.country ?? trip.localFacts?.country,
+      countryCode: _briefing.country,
+      demo: scope.settings.demoState,
       homeCurrency: trip.homeCurrency,
     );
     final selected = plan?.stops.where((s) => _key(s) == _selected).firstOrNull;
@@ -135,7 +141,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
                     : l10n.assistantCardFooter,
               ),
               SectionHeader(l10n.assistantNearby),
-              _nearby(l10n, traps),
+              _nearby(l10n, traps, demo: scope.settings.demoState),
               SectionHeader(l10n.assistantArrival),
               _arrival(l10n, scope, trip),
             ],
@@ -235,7 +241,22 @@ class _AssistantScreenState extends State<AssistantScreen> {
     );
   }
 
-  Widget _nearby(AppLocalizations l10n, List traps) {
+  Widget _nearby(
+    AppLocalizations l10n,
+    List<TrapWarning> traps, {
+    required bool demo,
+  }) {
+    if (demo) {
+      return GroupCard(
+        children: [
+          GroupRow(
+            leading: const IconTile.blue(icon: Icons.near_me_rounded),
+            title: l10n.nearbyDemoOff,
+            subtitle: l10n.nearbyDemoOffBody,
+          ),
+        ],
+      );
+    }
     switch (_briefing.nearbyState) {
       case NearbyState.noLocation:
         return GroupCard(
@@ -296,7 +317,11 @@ class _AssistantScreenState extends State<AssistantScreen> {
                 light: AppColors.iconGreenLight,
                 dark: AppColors.iconGreen,
               ),
-              title: shown == null ? l10n.arrivalOn : _words(l10n, shown).title,
+              title: shown != null
+                  ? _words(l10n, shown).title
+                  : _alerts.permitted == true
+                  ? l10n.arrivalOn
+                  : l10n.arrivalOff,
               subtitle: shown == null
                   ? l10n.arrivalOnBody
                   : (_alerts.lastWasDemo
@@ -310,7 +335,9 @@ class _AssistantScreenState extends State<AssistantScreen> {
                     ? l10n.arrivalBlocked
                     : l10n.arrivalAllow,
                 onPressed: _alerts.permitted == false
-                    ? null
+                    ? () => AppSettings.openAppSettings(
+                        type: AppSettingsType.notification,
+                      )
                     : _alerts.requestPermission,
               ),
           ],

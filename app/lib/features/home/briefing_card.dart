@@ -41,10 +41,9 @@ class BriefingCard extends StatelessWidget {
       onPressed: onOpen,
       semanticLabel: l10n.homeBriefingOpen,
       child: Surface(
-        radius: AppRadius.xl,
+        radius: AppRadius.lg,
         color: AppColors.surface,
-        shadows: AppElevation.e1,
-        pressedShadows: AppElevation.e0,
+        shadows: AppElevation.e0,
         padding: const EdgeInsets.all(AppSpacing.cardPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +81,8 @@ class BriefingCard extends StatelessWidget {
                   : l10n.homeCashToday(
                       AppFormat.roundedAmount(amount, marketCurrency),
                     ),
-              style: type.title,
+              // The figure is the headline; without one the line stays quiet.
+              style: amount == null ? type.rowTitle : type.title,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(cashBasis(l10n, plan), style: type.footer),
@@ -110,7 +110,7 @@ class BriefingCard extends StatelessWidget {
                       const Icon(
                         Icons.event_rounded,
                         size: AppSizes.pillIcon,
-                        color: AppColors.onSurface,
+                        color: AppColors.onSurfaceTertiary,
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(

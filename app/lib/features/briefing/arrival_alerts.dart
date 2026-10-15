@@ -50,6 +50,31 @@ class ArrivalAlerts extends ChangeNotifier {
     _ready = true;
   }
 
+  /// Reads whether notifications are allowed, without asking.
+  Future<bool> checkPermission() async {
+    try {
+      await _init();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      final ios = _plugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
+      final allowed =
+          await android?.areNotificationsEnabled() ??
+          (await ios?.checkPermissions())?.isEnabled ??
+          false;
+      // Never asked yet stays null so the screen offers to ask.
+      if (allowed || permitted != null) permitted = allowed;
+    } on Object {
+      // Unknown; the screen offers to ask.
+    }
+    notifyListeners();
+    return permitted == true;
+  }
+
   /// Asks for permission to notify (Android 13+, iOS).
   Future<bool> requestPermission() async {
     try {
@@ -80,6 +105,8 @@ class ArrivalAlerts extends ChangeNotifier {
     required PayFacts facts,
     required ArrivalWords Function(ArrivalAlert) words,
   }) async {
+    // An alert the system would drop is not spent: wait for permission.
+    if (permitted != true && !await checkPermission()) return null;
     String? last;
     try {
       last = await _prefs.getString(_lastKey);
@@ -100,7 +127,7 @@ class ArrivalAlerts extends ChangeNotifier {
       }
       return null;
     }
-    await _show(alert, words(alert), demo: false);
+    if (!await _show(alert, words(alert), demo: false)) return null;
     try {
       await _prefs.setString(_lastKey, alert.country);
     } on Object {
@@ -127,7 +154,8 @@ class ArrivalAlerts extends ChangeNotifier {
     return alert;
   }
 
-  Future<void> _show(
+  /// True when the system took the notification.
+  Future<bool> _show(
     ArrivalAlert alert,
     ArrivalWords words, {
     required bool demo,
@@ -156,8 +184,10 @@ class ArrivalAlerts extends ChangeNotifier {
           ),
         ),
       );
+      return true;
     } on Object {
       // The in-app card still shows [lastShown].
+      return false;
     }
   }
 

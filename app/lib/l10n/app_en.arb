@@ -1362,7 +1362,7 @@
   "homeRouteTerminal": "Card terminal",
   "homeBriefingLabel": "Morning briefing",
   "homeBriefingOpen": "Open the assistant",
-  "homeBriefingNoNumber": "Not enough records yet to say how much cash today needs",
+  "homeBriefingNoNumber": "No cash estimate yet",
   "homeBriefingStops": "{count, plural, =1{1 stop on your calendar today} other{{count} stops on your calendar today}}",
   "@homeBriefingStops": {
     "placeholders": {
@@ -1394,15 +1394,8 @@
   "nearbyLooking": "Checking ATMs and markets nearby",
   "nearbyClear": "Nothing to watch out for nearby",
   "nearbyClearBasis": "From ATMs and markets Google Maps lists near you",
-  "trapAtmFeeTitle": "Foreign cards pay an ATM fee, for example {fee}",
-  "@trapAtmFeeTitle": {
-    "placeholders": {
-      "fee": {
-        "type": "String"
-      }
-    }
-  },
-  "trapAtmFeeBody": "Take out more at once so you pay the fee fewer times",
+  "trapAtmFeeTitle": "Foreign cards pay a fee at ATMs here",
+  "trapAtmFeeBody": "For example {fee} at {where}. Other banks differ, so take out more at once.",
   "trapAtmConversionTitle": "ATMs here may offer to convert",
   "trapAtmConversionBody": "Choose the local currency, not your own",
   "trapCashOnlyTitle": "Cash only",
@@ -1482,7 +1475,7 @@
   "assistantCardFromAccount": "Card fee from your account profile",
   "assistantNearby": "Near you",
   "assistantArrival": "Arrival alert",
-  "cashBasisNone": "Save a few purchases or connect your calendar to get an estimate",
+  "cashBasisNone": "Save a purchase to start a cash estimate",
   "cashBasisPattern": "{days, plural, =1{From your spending on 1 earlier day} other{From your spending on {days} earlier days}}",
   "@cashBasisPattern": {
     "placeholders": {
@@ -1539,7 +1532,7 @@
       }
     }
   },
-  "payCompareAtmFeeSource": "ATM fee {fee} from {source}",
+  "payCompareAtmFeeSource": "Cash priced with a {fee} ATM fee ({source}). Other banks differ.",
   "@payCompareAtmFeeSource": {
     "placeholders": {
       "fee": {
@@ -1601,7 +1594,7 @@
   "cardSheetTitle": "Your card",
   "cardFeeLabel": "Foreign transaction fee",
   "cardFeeHintThai": "Thai banks publish up to 2.5% (Kasikorn, ttb fee lists 2025-2026)",
-  "cardFeeHintOther": "Often between 0% and 3%. Your card's terms list the exact figure.",
+  "cardFeeHintOther": "Your card's terms list the exact fee.",
   "cardAtmLabel": "What your bank charges at a foreign ATM",
   "cardFeeInvalid": "Use a number from 0 to 20",
   "cardAtmValueInvalid": "Add the fee amount",
@@ -1755,5 +1748,26 @@
         "type": "String"
       }
     }
-  }
+  },
+  "@trapAtmFeeBody": {
+    "placeholders": {
+      "fee": {
+        "type": "String"
+      },
+      "where": {
+        "type": "String"
+      }
+    }
+  },
+  "trapAtmFeeBodyPlain": "For example {fee} per withdrawal. Take out more at once.",
+  "@trapAtmFeeBodyPlain": {
+    "placeholders": {
+      "fee": {
+        "type": "String"
+      }
+    }
+  },
+  "arrivalOff": "Off until notifications are allowed",
+  "nearbyDemoOff": "Off in the demo state",
+  "nearbyDemoOffBody": "Warnings nearby come from where your phone really is"
 }

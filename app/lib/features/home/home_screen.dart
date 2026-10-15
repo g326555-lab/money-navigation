@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       widget.briefing ?? BriefingController.instance;
   ArrivalAlerts get _alerts => widget.alerts ?? ArrivalAlerts.instance;
 
-  /// The country the arrival check last ran for.
+  /// The country (and permission) the arrival check last ran for.
   String? _checkedCountry;
 
   late final _lifecycle = AppLifecycleListener(
@@ -147,10 +147,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void _checkArrival(AppScope scope) {
     final country = _briefing.country;
     final facts = _briefing.facts;
-    if (country == null || facts == null || country == _checkedCountry) return;
+    final key = '$country|${_alerts.permitted}';
+    if (country == null || facts == null || key == _checkedCountry) return;
     // The demo state plays its arrival from the Assistant tab instead.
     if (scope.settings.demoState) return;
-    _checkedCountry = country;
+    _checkedCountry = key;
     final l10n = AppLocalizations.of(context);
     _alerts.checkArrival(
       homeCurrency: scope.settings.homeCurrency,
@@ -165,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     _lifecycle;
     _briefing.start();
+    _alerts.checkPermission();
     _market.load().then((items) {
       if (!mounted) return;
       setState(() => _items = {for (final s in items) s.item.key: s});
@@ -180,6 +182,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         scope.settings,
         scope.rates,
         _briefing,
+        _alerts,
       ]),
       builder: (context, _) => _build(context, scope),
     );
@@ -206,9 +209,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         : demoQuote ?? scope.rates.quoteFor(currency);
     final persona = scope.settings.demoPersona;
     final trip = TripContext.of(scope, _briefing.facts);
-    final plan = scope.trip.loaded ? _briefing.cashPlan(trip.history) : null;
+    final plan = scope.trip.loaded
+        ? _briefing.cashPlan(trip.history, demo: scope.settings.demoState)
+        : null;
     final traps = _briefing.traps(
-      countryCode: _briefing.country ?? trip.localFacts?.country,
+      countryCode: _briefing.country,
+      demo: scope.settings.demoState,
       homeCurrency: trip.homeCurrency,
       limit: HomeMetrics.homeWarnings + 2,
     );
@@ -219,6 +225,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ? HomeMetrics.routeStopsWide
           : HomeMetrics.routeStopsNarrow,
     );
+    _briefing.places.languageCode = Localizations.localeOf(context)
+        .languageCode;
     _checkArrival(scope);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -297,16 +305,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   RouteLine(stops: route),
                 ],
                 const SizedBox(height: AppSpacing.zoneGap),
-                BriefingCard(
-                  plan: plan,
-                  calendarConnected:
-                      _briefing.calendar.access == CalendarAccess.granted,
-                  onConnect: _briefing.connectCalendar,
-                  onOpen: widget.onOpenAssistant,
-                ),
+                // Nothing to say until the trip's records are read.
+                if (scope.trip.loaded)
+                  BriefingCard(
+                    plan: plan,
+                    calendarConnected:
+                        _briefing.calendar.access == CalendarAccess.granted,
+                    onConnect: _briefing.connectCalendar,
+                    onOpen: widget.onOpenAssistant,
+                  ),
                 const SizedBox(height: AppSpacing.groupGap),
                 NearbyCard(
-                  state: _briefing.nearbyState,
+                  // A demo traveler is not where the phone is.
+                  state: scope.settings.demoState
+                      ? NearbyState.idle
+                      : _briefing.nearbyState,
                   traps: traps,
                   onAskLocation: () => _briefing.refresh(askLocation: true),
                   onOpen: widget.onOpenAssistant,

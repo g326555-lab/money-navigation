@@ -13,6 +13,7 @@ class SourcedFee {
     required this.isPercent,
     required this.source,
     required this.checked,
+    this.appliesTo,
   });
 
   /// An amount in [currency], or a percent when [isPercent].
@@ -20,6 +21,10 @@ class SourcedFee {
   final String currency;
   final bool isPercent;
   final String source;
+
+  /// Which machines or cards the figure is for, e.g. "Kasikorn K-ATM, Visa".
+  /// Other banks may charge differently, so the screen names it.
+  final String? appliesTo;
 
   /// ISO date the source was read, 'YYYY-MM-DD'.
   final String checked;
@@ -34,7 +39,11 @@ class SourcedFee {
     if (currency is! String || currency.isEmpty) return null;
     if (source is! String || source.trim().isEmpty) return null;
     if (checked is! String || DateTime.tryParse(checked) == null) return null;
+    final appliesTo = json['appliesTo'];
     return SourcedFee(
+      appliesTo: appliesTo is String && appliesTo.trim().isNotEmpty
+          ? appliesTo
+          : null,
       value: value.toDouble(),
       currency: currency.toUpperCase(),
       isPercent: json['isPercent'] == true,
@@ -85,7 +94,8 @@ class CountryPayFacts {
       country: country.toUpperCase(),
       currency: currency.toUpperCase(),
       foreignCardAtmFee: SourcedFee._fromJson(json['foreignCardAtmFee']),
-      atmOffersConversion: json['atmOffersConversion'] == true,
+      // No source, no claim.
+      atmOffersConversion: json['atmOffersConversion'] == true && hasSource,
       atmConversionSource: hasSource ? conversionSource : null,
       atmConversionChecked: hasSource && json['atmConversionChecked'] is String
           ? json['atmConversionChecked'] as String

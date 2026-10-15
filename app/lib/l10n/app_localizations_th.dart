@@ -1543,8 +1543,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get homeBriefingOpen => 'เปิดผู้ช่วย';
 
   @override
-  String get homeBriefingNoNumber =>
-      'ยังมีบันทึกไม่พอจะบอกว่าวันนี้ต้องใช้เงินสดเท่าไร';
+  String get homeBriefingNoNumber => 'ยังไม่มียอดประมาณเงินสด';
 
   @override
   String homeBriefingStops(int count) {
@@ -1583,13 +1582,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get nearbyClearBasis => 'จากตู้ ATM และตลาดใกล้คุณใน Google Maps';
 
   @override
-  String trapAtmFeeTitle(String fee) {
-    return 'บัตรต่างประเทศเสียค่าธรรมเนียม ATM เช่น $fee';
-  }
+  String get trapAtmFeeTitle =>
+      'บัตรต่างประเทศเสียค่าธรรมเนียมที่ตู้ ATM ที่นี่';
 
   @override
-  String get trapAtmFeeBody =>
-      'ถอนครั้งละมากขึ้น จะได้เสียค่าธรรมเนียมน้อยครั้ง';
+  String trapAtmFeeBody(String fee, String where) {
+    return 'เช่น $fee ที่ $where ธนาคารอื่นอาจต่างกัน จึงควรถอนครั้งละมากขึ้น';
+  }
 
   @override
   String get trapAtmConversionTitle => 'ตู้ ATM ที่นี่อาจเสนอแปลงสกุลเงิน';
@@ -1681,8 +1680,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get assistantArrival => 'แจ้งเตือนเมื่อถึงปลายทาง';
 
   @override
-  String get cashBasisNone =>
-      'บันทึกการซื้อสักหน่อยหรือเชื่อมปฏิทินเพื่อดูยอดประมาณ';
+  String get cashBasisNone => 'บันทึกการซื้อเพื่อเริ่มประมาณเงินสด';
 
   @override
   String cashBasisPattern(int days) {
@@ -1759,7 +1757,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String payCompareAtmFeeSource(String fee, String source) {
-    return 'ค่าธรรมเนียม ATM $fee จาก $source';
+    return 'คิดเงินสดด้วยค่าธรรมเนียม ATM $fee ($source) ธนาคารอื่นอาจต่างกัน';
   }
 
   @override
@@ -1842,8 +1840,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'ธนาคารไทยระบุไม่เกิน 2.5% (ตารางค่าธรรมเนียมกสิกรไทย ทีทีบี ปี 2025-2026)';
 
   @override
-  String get cardFeeHintOther =>
-      'มักอยู่ระหว่าง 0% ถึง 3% ดูตัวเลขจริงในเงื่อนไขบัตร';
+  String get cardFeeHintOther => 'ดูค่าธรรมเนียมจริงได้ในเงื่อนไขบัตร';
 
   @override
   String get cardAtmLabel => 'ธนาคารของคุณคิดเท่าไรเมื่อถอนที่ ATM ต่างประเทศ';
@@ -2008,4 +2005,18 @@ class AppLocalizationsTh extends AppLocalizations {
   String billTotalInvalid(String max) {
     return 'ใส่ยอดรวมมากกว่า 0 และไม่เกิน $max';
   }
+
+  @override
+  String trapAtmFeeBodyPlain(String fee) {
+    return 'เช่น ครั้งละ $fee ควรถอนครั้งละมากขึ้น';
+  }
+
+  @override
+  String get arrivalOff => 'ปิดอยู่จนกว่าจะอนุญาตการแจ้งเตือน';
+
+  @override
+  String get nearbyDemoOff => 'ปิดในโหมดสาธิต';
+
+  @override
+  String get nearbyDemoOffBody => 'คำเตือนใกล้ตัวมาจากตำแหน่งจริงของโทรศัพท์';
 }

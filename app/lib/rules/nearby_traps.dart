@@ -85,12 +85,15 @@ List<TrapWarning> nearbyTraps(
         source: fee.source,
         checked: fee.checked,
       ),
-    if (atm != null && facts != null && facts.atmOffersConversion)
+    if (atm != null &&
+        facts != null &&
+        facts.atmOffersConversion &&
+        facts.atmConversionSource != null)
       TrapWarning(
         kind: TrapKind.atmConversion,
         placeName: atm.name,
         distanceM: atm.distanceM,
-        source: facts.atmConversionSource ?? googleMapsSource,
+        source: facts.atmConversionSource!,
         checked: facts.atmConversionChecked,
       ),
     for (final m in sortedMarkets)

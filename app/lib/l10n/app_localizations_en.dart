@@ -1589,8 +1589,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBriefingOpen => 'Open the assistant';
 
   @override
-  String get homeBriefingNoNumber =>
-      'Not enough records yet to say how much cash today needs';
+  String get homeBriefingNoNumber => 'No cash estimate yet';
 
   @override
   String homeBriefingStops(int count) {
@@ -1649,13 +1648,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'From ATMs and markets Google Maps lists near you';
 
   @override
-  String trapAtmFeeTitle(String fee) {
-    return 'Foreign cards pay an ATM fee, for example $fee';
-  }
+  String get trapAtmFeeTitle => 'Foreign cards pay a fee at ATMs here';
 
   @override
-  String get trapAtmFeeBody =>
-      'Take out more at once so you pay the fee fewer times';
+  String trapAtmFeeBody(String fee, String where) {
+    return 'For example $fee at $where. Other banks differ, so take out more at once.';
+  }
 
   @override
   String get trapAtmConversionTitle => 'ATMs here may offer to convert';
@@ -1745,8 +1743,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantArrival => 'Arrival alert';
 
   @override
-  String get cashBasisNone =>
-      'Save a few purchases or connect your calendar to get an estimate';
+  String get cashBasisNone => 'Save a purchase to start a cash estimate';
 
   @override
   String cashBasisPattern(int days) {
@@ -1843,7 +1840,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String payCompareAtmFeeSource(String fee, String source) {
-    return 'ATM fee $fee from $source';
+    return 'Cash priced with a $fee ATM fee ($source). Other banks differ.';
   }
 
   @override
@@ -1926,8 +1923,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Thai banks publish up to 2.5% (Kasikorn, ttb fee lists 2025-2026)';
 
   @override
-  String get cardFeeHintOther =>
-      'Often between 0% and 3%. Your card\'s terms list the exact figure.';
+  String get cardFeeHintOther => 'Your card\'s terms list the exact fee.';
 
   @override
   String get cardAtmLabel => 'What your bank charges at a foreign ATM';
@@ -2123,4 +2119,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String billTotalInvalid(String max) {
     return 'Enter a total above 0 and up to $max';
   }
+
+  @override
+  String trapAtmFeeBodyPlain(String fee) {
+    return 'For example $fee per withdrawal. Take out more at once.';
+  }
+
+  @override
+  String get arrivalOff => 'Off until notifications are allowed';
+
+  @override
+  String get nearbyDemoOff => 'Off in the demo state';
+
+  @override
+  String get nearbyDemoOffBody =>
+      'Warnings nearby come from where your phone really is';
 }

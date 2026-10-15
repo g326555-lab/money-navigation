@@ -24,6 +24,9 @@ class PlacesClient {
   static const lookupTimeout = Duration(seconds: 4);
 
   final CloudFunctions _functions;
+
+  /// The app's language, so Google names places in it.
+  String? languageCode;
   final Map<String, LookedUpPlace?> _lookups = {};
 
   /// ATMs and markets around [position] with their payment options.
@@ -47,6 +50,7 @@ class PlacesClient {
         'lng': position.longitude,
         'types': types,
         'withPayment': true,
+        'languageCode': ?languageCode,
       }, timeout: lookupTimeout);
       final places = json['places'];
       if (places is! List) return const [];
@@ -75,6 +79,7 @@ class PlacesClient {
     try {
       final json = await _functions.call('places-lookup', {
         'query': location.trim(),
+        'languageCode': ?languageCode,
         if (near != null) 'lat': near.latitude,
         if (near != null) 'lng': near.longitude,
       }, timeout: lookupTimeout);

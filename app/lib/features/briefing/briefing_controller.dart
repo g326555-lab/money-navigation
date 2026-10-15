@@ -93,18 +93,28 @@ class BriefingController extends ChangeNotifier {
     }
   }
 
-  /// Re-reads today's events and the nearby places. Called on start, when
-  /// the app comes back to the front on a new day, and on pull to refresh.
+  /// Re-reads today's events and the nearby places. Called on start and on
+  /// pull to refresh; retries the facts file if it failed to load.
   Future<void> refresh({bool askLocation = false}) async {
+    if (_facts == null) await _loadFacts();
     await Future.wait([_loadEvents(), _loadNearby(ask: askLocation)]);
   }
 
-  /// Refreshes only when the day changed since the last load.
+  /// Least time between two location reads when the app comes back.
+  static const resumeThrottle = Duration(minutes: 2);
+  DateTime? _nearbyAt;
+
+  /// On coming back to the front: the location and country every time
+  /// (throttled), so a landing is noticed the same day; the calendar only
+  /// on a new day.
   Future<void> refreshIfStale() async {
     final now = DateTime.now();
     final day = DateTime(now.year, now.month, now.day);
-    if (_loadedDay == day) return;
-    await refresh();
+    final last = _nearbyAt;
+    await Future.wait([
+      if (_loadedDay != day) _loadEvents(),
+      if (last == null || now.difference(last) >= resumeThrottle) _loadNearby(),
+    ]);
   }
 
   Future<void> connectCalendar() async {
@@ -114,6 +124,8 @@ class BriefingController extends ChangeNotifier {
   }
 
   Future<void> _loadEvents() async {
+    final today = DateTime.now();
+    _loadedDay = DateTime(today.year, today.month, today.day);
     if (calendar.access != CalendarAccess.granted) {
       _events = const [];
       notifyListeners();
@@ -143,8 +155,12 @@ class BriefingController extends ChangeNotifier {
   }
 
   Future<void> _loadNearby({bool ask = false}) async {
-    _nearbyState = NearbyState.loading;
-    notifyListeners();
+    _nearbyAt = DateTime.now();
+    // Keep showing what was found while it refreshes.
+    if (_nearbyState != NearbyState.done) {
+      _nearbyState = NearbyState.loading;
+      notifyListeners();
+    }
     final position = await location.read(ask: ask);
     if (position == null) {
       _nearbyState = NearbyState.noLocation;
@@ -161,9 +177,15 @@ class BriefingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// The cash plan for today from [history] (the ledger in view).
-  DayCashPlan? cashPlan(List<PastPurchase> history) =>
-      dayCash(history: history, events: _events, now: DateTime.now());
+  /// The cash plan for today from [history] (the ledger in view). A demo
+  /// state is a prepared traveler somewhere else, so the phone's real
+  /// calendar is left out of it.
+  DayCashPlan? cashPlan(List<PastPurchase> history, {bool demo = false}) =>
+      dayCash(
+        history: history,
+        events: demo ? const [] : _events,
+        now: DateTime.now(),
+      );
 
   /// Warnings around the phone for the country it is in. ATM warnings are
   /// about foreign cards, so they are left out where the traveler's own
@@ -171,8 +193,11 @@ class BriefingController extends ChangeNotifier {
   List<TrapWarning> traps({
     required String? countryCode,
     required String homeCurrency,
+    bool demo = false,
     int limit = 3,
   }) {
+    // The phone's real surroundings do not belong to a demo traveler.
+    if (demo) return const [];
     final facts = countryCode == null ? null : _facts?.country(countryCode);
     final foreign = facts != null && facts.currency != homeCurrency;
     return nearbyTraps(_nearby, foreign ? facts : null, limit: limit);

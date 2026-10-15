@@ -2625,7 +2625,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeBriefingNoNumber.
   ///
   /// In en, this message translates to:
-  /// **'Not enough records yet to say how much cash today needs'**
+  /// **'No cash estimate yet'**
   String get homeBriefingNoNumber;
 
   /// No description provided for @homeBriefingStops.
@@ -2691,14 +2691,14 @@ abstract class AppLocalizations {
   /// No description provided for @trapAtmFeeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Foreign cards pay an ATM fee, for example {fee}'**
-  String trapAtmFeeTitle(String fee);
+  /// **'Foreign cards pay a fee at ATMs here'**
+  String get trapAtmFeeTitle;
 
   /// No description provided for @trapAtmFeeBody.
   ///
   /// In en, this message translates to:
-  /// **'Take out more at once so you pay the fee fewer times'**
-  String get trapAtmFeeBody;
+  /// **'For example {fee} at {where}. Other banks differ, so take out more at once.'**
+  String trapAtmFeeBody(String fee, String where);
 
   /// No description provided for @trapAtmConversionTitle.
   ///
@@ -2847,7 +2847,7 @@ abstract class AppLocalizations {
   /// No description provided for @cashBasisNone.
   ///
   /// In en, this message translates to:
-  /// **'Save a few purchases or connect your calendar to get an estimate'**
+  /// **'Save a purchase to start a cash estimate'**
   String get cashBasisNone;
 
   /// No description provided for @cashBasisPattern.
@@ -2979,7 +2979,7 @@ abstract class AppLocalizations {
   /// No description provided for @payCompareAtmFeeSource.
   ///
   /// In en, this message translates to:
-  /// **'ATM fee {fee} from {source}'**
+  /// **'Cash priced with a {fee} ATM fee ({source}). Other banks differ.'**
   String payCompareAtmFeeSource(String fee, String source);
 
   /// No description provided for @payCompareNoAtmFee.
@@ -3123,7 +3123,7 @@ abstract class AppLocalizations {
   /// No description provided for @cardFeeHintOther.
   ///
   /// In en, this message translates to:
-  /// **'Often between 0% and 3%. Your card\'s terms list the exact figure.'**
+  /// **'Your card\'s terms list the exact fee.'**
   String get cardFeeHintOther;
 
   /// No description provided for @cardAtmLabel.
@@ -3389,6 +3389,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a total above 0 and up to {max}'**
   String billTotalInvalid(String max);
+
+  /// No description provided for @trapAtmFeeBodyPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'For example {fee} per withdrawal. Take out more at once.'**
+  String trapAtmFeeBodyPlain(String fee);
+
+  /// No description provided for @arrivalOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off until notifications are allowed'**
+  String get arrivalOff;
+
+  /// No description provided for @nearbyDemoOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off in the demo state'**
+  String get nearbyDemoOff;
+
+  /// No description provided for @nearbyDemoOffBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Warnings nearby come from where your phone really is'**
+  String get nearbyDemoOffBody;
 }
 
 class _AppLocalizationsDelegate

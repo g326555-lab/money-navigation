@@ -12,7 +12,8 @@
         "value": 250,
         "currency": "THB",
         "isPercent": false,
-        "source": "Kasikorn Bank fee list (Visa)",
+        "source": "Kasikorn Bank fee list",
+        "appliesTo": "Kasikorn K-ATM, Visa",
         "_detail": "K-ATM cash withdrawal with an international card: Visa 250 THB, UnionPay 250 THB, Mastercard 350 THB, effective 20 May 2026.",
         "url": "https://www.kasikornbank.com/en/rate/fee/feePDF/servicingfees-en-20052026.pdf",
         "checked": "2026-10-15"

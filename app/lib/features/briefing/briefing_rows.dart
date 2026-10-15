@@ -110,7 +110,10 @@ class TrapRow extends StatelessWidget {
             AppFormat.roundedNumber(trap.distanceM!),
           );
     const primary = AppColors.onSurface;
-    const secondary = AppColors.onSurfaceTertiary;
+    // On the pale red card tertiary grey falls below WCAG AA.
+    final secondary = compact
+        ? AppColors.onSurfaceSecondary
+        : AppColors.onSurfaceTertiary;
     return ConstrainedBox(
       constraints: BoxConstraints(
         minHeight: compact ? 0 : AppSizes.rowMinHeight,
@@ -150,8 +153,11 @@ class TrapRow extends StatelessWidget {
                     style: type.rowSubtitle.copyWith(color: secondary),
                   ),
                   const SizedBox(height: AppSpacing.xs),
+                  // Where first, then whose fact: a fee example is never
+                  // read as this machine's own price.
+                  Text(where, style: type.footer.copyWith(color: secondary)),
                   Text(
-                    '$where · ${trapSource(l10n, trap, context)}',
+                    trapSource(l10n, trap, context),
                     style: type.footer.copyWith(color: secondary),
                   ),
                 ],
@@ -165,20 +171,28 @@ class TrapRow extends StatelessWidget {
 }
 
 /// Title and body of a warning.
-(String, String) trapText(
-  AppLocalizations l10n,
-  TrapWarning trap,
-) => switch (trap.kind) {
-  TrapKind.atmFee => (
-    l10n.trapAtmFeeTitle(AppFormat.amount(trap.fee!.value, trap.fee!.currency)),
-    l10n.trapAtmFeeBody,
-  ),
-  TrapKind.atmConversion => (
-    l10n.trapAtmConversionTitle,
-    l10n.trapAtmConversionBody,
-  ),
-  TrapKind.cashOnlyMarket => (l10n.trapCashOnlyTitle, l10n.trapCashOnlyBody),
-};
+(String, String) trapText(AppLocalizations l10n, TrapWarning trap) =>
+    switch (trap.kind) {
+      TrapKind.atmFee => (
+        l10n.trapAtmFeeTitle,
+        trap.fee!.appliesTo == null
+            ? l10n.trapAtmFeeBodyPlain(
+                AppFormat.amount(trap.fee!.value, trap.fee!.currency),
+              )
+            : l10n.trapAtmFeeBody(
+                AppFormat.amount(trap.fee!.value, trap.fee!.currency),
+                trap.fee!.appliesTo!,
+              ),
+      ),
+      TrapKind.atmConversion => (
+        l10n.trapAtmConversionTitle,
+        l10n.trapAtmConversionBody,
+      ),
+      TrapKind.cashOnlyMarket => (
+        l10n.trapCashOnlyTitle,
+        l10n.trapCashOnlyBody,
+      ),
+    };
 
 /// "Google Maps · live", or the fee source with the day it was checked.
 String trapSource(AppLocalizations l10n, TrapWarning trap, BuildContext c) {
