@@ -1,8 +1,9 @@
 {
-  "_comment": "Fixed exchange rates for the demo state only, so stage results never change. Normal use takes live Frankfurter rates. Never read these outside the demo state.",
+  "_comment": "Fixed exchange rates for the demo state only, so stage results never change. Normal use takes live Frankfurter rates. Never read these outside the demo state. THB->USD was copied from Frankfurter 2026-10-14; like THB->JPY it is a fixed demo value, labelled with this file's source and date, and only sanity-checks the exchange board reading.",
   "source": "Fixed demo rate",
   "date": "2026-10-15",
   "rates": [
-    { "base": "THB", "quote": "JPY", "rate": 4.6935 }
+    { "base": "THB", "quote": "JPY", "rate": 4.6935 },
+    { "base": "THB", "quote": "USD", "rate": 0.02978 }
   ]
 }

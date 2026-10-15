@@ -25,6 +25,12 @@ final liveRate = RateQuote(
   fetchedAt: DateTime.utc(2026, 10, 6, 9),
 );
 
+/// Real ML Kit iOS simulator capture of prints/demo-prints-A4.pdf page 2
+/// rendered at 150 dpi: rowsFromLines(straightenLines(...)) output, verbatim.
+/// The dot is used for both thousands and decimals ("12.851.82").
+const terminal150DpiRows =
+    'F1:THB 12.851.82\nF2:JPY 58,000\nF1 i2 DEF\nF2\nF1 OR F2 6';
+
 /// The terminal as printed on the demo prop (CLAUDE.md "Demo data").
 const demoRows = 'Select Currency\nF1:THB 12,851.82\nF2:JPY 58,000';
 
@@ -172,10 +178,37 @@ void main() {
       );
     });
 
-    test('home and local are decided from the amounts, not the codes, so a '
-        'missing code still works', () {
-      _expectDemoVerdict(
+    test('no code on either option gives null: a label paired with the '
+        'wrong amount would send the user to the wrong key', () {
+      expect(
         judgeTerminal('F1: 12,851.82\nF2: 58,000', rate: demoRate),
+        isNull,
+      );
+    });
+
+    test('one fitting home code is enough', () {
+      _expectDemoVerdict(
+        judgeTerminal('F1:THB 12,851.82\nF2: 58,000', rate: demoRate),
+      );
+    });
+
+    test('one fitting partial local code ("PY") is enough', () {
+      _expectDemoVerdict(
+        judgeTerminal('F1: 12,851.82\nF2:PY 58,000', rate: demoRate),
+      );
+    });
+
+    test('a single-letter code alone is not enough', () {
+      expect(
+        judgeTerminal('F1:H 12,851.82\nF2: 58,000', rate: demoRate),
+        isNull,
+      );
+    });
+
+    test('reviewer repro: swapped amounts with no codes give null', () {
+      expect(
+        judgeTerminal('F1: 58,000\nF2: 12,851.82', rate: demoRate),
+        isNull,
       );
     });
   });
@@ -375,4 +408,66 @@ void main() {
       });
     },
   );
+
+  group('readTerminalOptions: F1 digit misread as a letter', () {
+    for (final label in ['FL', 'Fl', 'FI', 'F|']) {
+      test('"$label:THB" is key 1', () {
+        final options = readTerminalOptions(
+          '$label:THB 12, 851.82\nF2:JPY 58, 000',
+        );
+        expect(options.map((o) => o.key), [1, 2]);
+        expect(options[0].code, 'THB');
+        expect(options[0].amount, closeTo(12851.82, 1e-9));
+      });
+    }
+
+    test('"FL:THB" gives the demo verdict', () {
+      _expectDemoVerdict(
+        judgeTerminal('FL:THB 12, 851.82\nF2:JPY 58, 000', rate: demoRate),
+      );
+    });
+
+    test('a letter is never read as key 2', () {
+      final options = readTerminalOptions('FZ:JPY 58,000');
+      expect(options.where((o) => o.key == 2), isEmpty);
+    });
+  });
+
+  group('readTerminalOptions: dot for both thousands and decimals', () {
+    test('real 150 dpi capture gives the full demo verdict', () {
+      _expectDemoVerdict(judgeTerminal(terminal150DpiRows, rate: demoRate));
+    });
+
+    test('real 150 dpi capture: keypad rows add no options', () {
+      final options = readTerminalOptions(terminal150DpiRows);
+      expect(options.map((o) => o.key), [1, 2]);
+    });
+
+    test('"12.851.82" reads 12851.82', () {
+      final options = readTerminalOptions('F1:THB 12.851.82');
+      expect(options, hasLength(1));
+      expect(options.single.amount, closeTo(12851.82, 1e-9));
+    });
+
+    test('"12. 851.82" with a space after the first dot reads 12851.82', () {
+      final options = readTerminalOptions('F1:THB 12. 851.82');
+      expect(options, hasLength(1));
+      expect(options.single.amount, closeTo(12851.82, 1e-9));
+    });
+
+    test('"1.234.567.89" reads 1234567.89', () {
+      final options = readTerminalOptions('F1:THB 1.234.567.89');
+      expect(options.single.amount, closeTo(1234567.89, 1e-9));
+    });
+
+    test('"1.234.567" stays 1234567', () {
+      final options = readTerminalOptions('F1:THB 1.234.567');
+      expect(options.single.amount, closeTo(1234567, 1e-9));
+    });
+
+    test('"58.000" stays 58000', () {
+      final options = readTerminalOptions('F2:JPY 58.000');
+      expect(options.single.amount, closeTo(58000, 1e-9));
+    });
+  });
 }

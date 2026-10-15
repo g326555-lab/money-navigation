@@ -25,15 +25,25 @@ void main() {
 
     test('quotes lists every pair in the file', () {
       final quotes = parseDemoRates(_assetJson())!.quotes;
-      expect(quotes, hasLength(1));
-      expect(quotes.single.base, 'THB');
-      expect(quotes.single.quote, 'JPY');
+      expect(quotes, hasLength(2));
+      expect(
+        quotes.map((q) => '${q.base}->${q.quote}'),
+        containsAll(['THB->JPY', 'THB->USD']),
+      );
     });
 
     test('an unknown pair gives null', () {
       final rates = parseDemoRates(_assetJson())!;
-      expect(rates.quoteFor('THB', 'USD'), isNull);
+      expect(rates.quoteFor('THB', 'EUR'), isNull);
       expect(rates.quoteFor('USD', 'THB'), isNull);
+    });
+
+    test('THB to USD is 0.02978, for the board sanity check', () {
+      final q = parseDemoRates(_assetJson())!.quoteFor('THB', 'USD');
+      expect(q, isNotNull);
+      expect(q!.base, 'THB');
+      expect(q.quote, 'USD');
+      expect(q.rate, closeTo(0.02978, 1e-12));
     });
 
     test('the reverse direction is not invented', () {

@@ -47,27 +47,26 @@ final _codeLike = RegExp(r'^[A-Z]{2,4}$');
 /// boards that list Buying (notes, and sometimes cheques) left of Selling.
 ///
 /// Rows that mention the code with fewer than two numbers (a caption such as
-/// "Rates per 1 USD") are skipped. Returns null when no row gives a pair, the
+/// "Rates per 1 USD") are skipped. When other rows carry more numbers (a
+/// cheque column), a shorter row is not trusted. Returns null when no row gives a pair, the
 /// code appears with two different readings, or a pair cannot be right
 /// (buying not below selling, or a spread only a misread explains). It never
 /// repairs a number.
 BoardRate? readExchangeBoard(String rowsText, {required String code}) {
   BoardRate? found;
+  var foundCount = 0;
+  var widest = 0;
   for (final row in rowsText.split('\n')) {
     final tokens = [
       for (final t in row.split(RegExp(r'\s+')))
         if (t.replaceAll(_edgeJunk, '').isNotEmpty) t.replaceAll(_edgeJunk, ''),
     ];
+    final codeAt = tokens.indexWhere(_codeLike.hasMatch);
+    if (codeAt < 0) continue;
     final at = tokens.indexOf(code);
-    if (at < 0) continue;
-    final numbers = <double>[];
-    for (final t in tokens.skip(at + 1)) {
-      if (_codeLike.hasMatch(t)) break;
-      if (_rateToken.hasMatch(t)) {
-        numbers.add(double.parse(t.replaceAll(',', '.')));
-      }
-    }
-    if (numbers.length < 2) continue;
+    final numbers = _numbersAfter(tokens, at < 0 ? codeAt : at);
+    if (numbers.length > widest) widest = numbers.length;
+    if (at < 0 || numbers.length < 2) continue;
     final rate = _validPair(code, numbers);
     if (rate == null) return null;
     if (found != null &&
@@ -75,14 +74,35 @@ BoardRate? readExchangeBoard(String rowsText, {required String code}) {
       return null;
     }
     found = rate;
+    foundCount = numbers.length;
   }
+  // On a board with a cheque column, two numbers could be buying and selling
+  // (no cheque price) or buying and cheque (selling not read); a keystoned
+  // photo gave CAD 29.65 / 29.98, the cheque price. Only full rows count.
+  if (found != null && foundCount < widest) return null;
   return found;
+}
+
+List<double> _numbersAfter(List<String> tokens, int at) {
+  final numbers = <double>[];
+  for (final t in tokens.skip(at + 1)) {
+    if (_codeLike.hasMatch(t)) break;
+    if (_rateToken.hasMatch(t)) {
+      numbers.add(double.parse(t.replaceAll(',', '.')));
+    }
+  }
+  return numbers;
 }
 
 BoardRate? _validPair(String code, List<double> numbers) {
   final buying = numbers.first;
   final selling = numbers.last;
   if (!(buying > 0) || buying >= selling) return null;
+  // A middle column (cheques) is priced between the two; "3503 35.60 3510"
+  // shows both outer values lost their decimal point.
+  for (final middle in numbers.sublist(1, numbers.length - 1)) {
+    if (middle < buying || middle > selling) return null;
+  }
   if (selling / buying > boardMaxSpreadRatio) return null;
   return BoardRate(code: code, buying: buying, selling: selling);
 }
@@ -102,22 +122,44 @@ double? lossVsReferencePercent(
   return (referenceMid - board.buying) / referenceMid * 100;
 }
 
-/// The band, in percent, that [lossVsReferencePercent] must fall in for a
-/// board reading to be believed. Booths pay a few percent under the published
-/// mid; a rate read with both decimal points dropped ("3503 3610") is off by
-/// thousands of percent and fails, while the spread check alone cannot see it.
-const boardReferenceMinPercent = -5.0;
-const boardReferenceMaxPercent = 20.0;
+/// The band, in percent, that a board's buying rate may sit below a
+/// published mid, and its selling rate above it, for the reading to be
+/// believed. Booths buy and sell a few percent around the mid; the demo board
+/// is an older photo and buys about 4 % above today's mid, hence the low end.
+/// A value with a dropped decimal point ("3503 3610") or a rate pulled in from
+/// the next row by a keystoned photo (EUR selling read as GBP's 70.90, +53 %)
+/// falls far outside.
+const boardReferenceMinPercent = -10.0;
+const boardReferenceMaxPercent = 25.0;
 
-/// Whether [board]'s buying rate is believable next to a published rate.
-/// [home] and [reference] are as in [lossVsReferencePercent].
+/// Whether [board]'s buying and selling rates are believable next to a
+/// published rate. [home] and [reference] are as in [lossVsReferencePercent].
 bool boardRatePlausible(
   BoardRate board,
   RateQuote reference, {
   required String home,
 }) {
-  final loss = lossVsReferencePercent(board, reference, home: home);
-  return loss != null &&
-      loss >= boardReferenceMinPercent &&
-      loss <= boardReferenceMaxPercent;
+  final buyingGap = lossVsReferencePercent(board, reference, home: home);
+  if (buyingGap == null) return false;
+  final referenceMid = 1 / reference.rate;
+  final sellingGap = (board.selling - referenceMid) / referenceMid * 100;
+  bool inBand(double v) =>
+      v >= boardReferenceMinPercent && v <= boardReferenceMaxPercent;
+  return inBand(buyingGap) && inBand(sellingGap);
+}
+
+/// The board reading a screen should use: [readExchangeBoard] followed by
+/// [boardRatePlausible] against a published rate (live Frankfurter, or the
+/// demo file in the demo state). A keystoned photo can pull the next row's
+/// rate in (EUR selling read as GBP's 70.90) in a way the text alone cannot
+/// show, so an unchecked reading is never returned.
+BoardRate? readCheckedBoardRate(
+  String rowsText, {
+  required String code,
+  required RateQuote reference,
+  required String home,
+}) {
+  final board = readExchangeBoard(rowsText, code: code);
+  if (board == null) return null;
+  return boardRatePlausible(board, reference, home: home) ? board : null;
 }

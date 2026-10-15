@@ -1,5 +1,6 @@
 import 'amount_parser.dart';
 import 'exchange_rate.dart';
+import 'ocr_layout.dart';
 
 /// One currency choice on a card terminal screen, such as "F1:THB 12,851.82".
 class TerminalOption {
@@ -30,19 +31,45 @@ class TerminalOption {
 const dccMarkupMin = -0.05;
 const dccMarkupMax = 0.20;
 
+// The function key label: "F1", "F2". The 1 is often read as l, L, I or |
+// ("FL:THB" on a real photo); only the key position accepts these.
+const _keyLabel = '^F\\s*([12lLI|])\\s*(?::\\s*([A-Z]{1,3})?|\\s+([A-Z]{1,3}))';
+
 // "F1:THB 12,851.82", "F2:PY 58, 000", "F1 : THB 12,851.82", "F1: 12,851.82".
 // A colon or a code must sit between the key and the amount, so keypad rows
 // such as "F2 6" or "F1 OR F2 6" are not taken for options.
-final _optionRow = RegExp(
-  '^F\\s*([12])\\s*(?::\\s*([A-Z]{1,3})?|\\s+([A-Z]{1,3}))\\s*'
-  '($amountPattern)\\s*\$',
-);
+final _optionRow = RegExp('$_keyLabel\\s*($amountPattern)\\s*\$');
+
+// A label read on its own line ("F1:THB"), when the amount is a separate line.
+final _labelOnly = RegExp('$_keyLabel\\s*\$');
+
+// An amount read on its own line. It must carry a separator ("58, 000",
+// "12,851.82"), so keypad digits such as "2" never count.
+final _amountOnly = RegExp('^($amountPattern)\$');
+final _hasSeparator = RegExp(r'[.,]');
+
+int _key(String digit) => digit == '2' ? 2 : 1;
 
 // More decimals than money has ("12851.8234", "12,851.823"). A 3-digit
 // group after a dot is allowed only as a dot-grouped whole amount ("58.000").
 final _tooManyDecimals = RegExp(r'[.,]\d{4,}$');
 final _threeDecimals = RegExp(r'\.\d{3}$');
 final _dotGrouped = RegExp(r'^\d{1,3}(?:\.\d{3})+$');
+
+// "12.851.82": dots both group thousands and mark the decimals. Only the
+// last dot, before one or two digits, is the decimal point.
+final _dotsWithDecimals = RegExp(r'^\d{1,3}(?:\. ?\d{3})+\.\d{1,2}$');
+
+double? _terminalAmount(String raw) {
+  if (!_moneyShaped(raw)) return null;
+  final text = raw.trim();
+  if (_dotsWithDecimals.hasMatch(text)) {
+    final last = text.lastIndexOf('.');
+    final whole = text.substring(0, last).replaceAll(RegExp(r'[. ]'), '');
+    return double.tryParse('$whole${text.substring(last)}');
+  }
+  return parseAmount(text);
+}
 
 bool _moneyShaped(String raw) {
   final text = raw.replaceAll(' ', '');
@@ -60,9 +87,9 @@ List<TerminalOption> readTerminalOptions(String rowsText) {
   for (final row in rowsText.split('\n')) {
     final m = _optionRow.firstMatch(row.trim());
     if (m == null) continue;
-    final key = int.parse(m.group(1)!);
+    final key = _key(m.group(1)!);
     final raw = m.group(4)!;
-    final amount = _moneyShaped(raw) ? parseAmount(raw) : null;
+    final amount = _terminalAmount(raw);
     if (amount == null) continue;
     final seen = byKey[key];
     if (seen != null) {
@@ -118,7 +145,8 @@ class DccVerdict {
 ///
 /// Which option is home and which is local is decided from the amounts: only
 /// one pairing implies a plausible mark-up. Codes are not trusted for this,
-/// because OCR drops letters ("F2:PY"). A code that was read must still fit:
+/// because OCR drops letters ("F2:PY"). At least one option must carry two or
+/// more letters of its code, and a code that was read must fit:
 /// a full code must be the expected one and a partial code part of it, so a
 /// terminal in another currency, or a rate given the wrong way round, gives
 /// null instead of a verdict.
@@ -132,6 +160,12 @@ DccVerdict? judgeTerminal(String rowsText, {required RateQuote rate}) {
   if (pairings.length != 1) return null;
   final (home, local) = pairings.single;
   if (!_codeFits(home.code, rate.base) || !_codeFits(local.code, rate.quote)) {
+    return null;
+  }
+  // The amounts decide which option is which currency, but only a read code
+  // ties an amount to its key. Without one, an amount paired with the wrong
+  // label (a misaligned row) would send the user to the wrong key.
+  if (!_hasCodeEvidence(home.code) && !_hasCodeEvidence(local.code)) {
     return null;
   }
 
@@ -148,11 +182,51 @@ DccVerdict? judgeTerminal(String rowsText, {required RateQuote rate}) {
   );
 }
 
+/// Judges a terminal from straightened OCR lines (`straightenLines`).
+///
+/// Tries the visual rows first. On an angled photo the LCD's labels and
+/// amounts come back as separate lines that no longer share a row; then the
+/// two label lines ("F1:THB", "F2:JPY") are paired with the two amount lines
+/// in top-to-bottom order. Anything other than exactly two labels with
+/// different keys and exactly two amounts to their right gives null.
+DccVerdict? judgeTerminalLines(List<OcrLine> lines, {required RateQuote rate}) {
+  final byRows = judgeTerminal(rowsFromLines(lines), rate: rate);
+  if (byRows != null) return byRows;
+
+  final labels = [
+    for (final l in lines)
+      if (_labelOnly.hasMatch(l.text.trim())) l,
+  ];
+  if (labels.length != 2) return null;
+  final labelLeft = labels.map((l) => l.left).reduce((a, b) => a < b ? a : b);
+  final amounts = [
+    for (final l in lines)
+      if (l.left > labelLeft && _isAmountLine(l.text.trim())) l,
+  ];
+  if (amounts.length != 2) return null;
+  labels.sort((a, b) => a.top.compareTo(b.top));
+  amounts.sort((a, b) => a.top.compareTo(b.top));
+  final rows = [
+    for (var i = 0; i < 2; i++)
+      '${labels[i].text.trim()} ${amounts[i].text.trim()}',
+  ];
+  final options = readTerminalOptions(rows.join('\n'));
+  if (options.length != 2) return null;
+  return judgeTerminal(rows.join('\n'), rate: rate);
+}
+
+bool _isAmountLine(String text) =>
+    _amountOnly.hasMatch(text) &&
+    _hasSeparator.hasMatch(text) &&
+    _moneyShaped(text);
+
 bool _plausible(TerminalOption home, TerminalOption local, RateQuote rate) {
   if (home.amount <= 0 || local.amount <= 0) return false;
   final markup = home.amount * rate.rate / local.amount - 1;
   return markup >= dccMarkupMin && markup <= dccMarkupMax;
 }
+
+bool _hasCodeEvidence(String? code) => code != null && code.length >= 2;
 
 bool _codeFits(String? read, String expected) {
   if (read == null) return true;

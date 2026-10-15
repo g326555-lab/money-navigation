@@ -125,8 +125,9 @@ void main() {
       _expectRate(readExchangeBoard(realRows, code: 'SEK'), 'SEK', 4.89, 5.19);
     });
 
-    test('ZAR with comma decimal and trailing "|" reads 3.65 / 5.45', () {
-      _expectRate(readExchangeBoard(realRows, code: 'ZAR'), 'ZAR', 3.65, 5.45);
+    test('ZAR row has 2 numbers while other rows have a cheque column: '
+        'not trusted, null', () {
+      expect(readExchangeBoard(realRows, code: 'ZAR'), isNull);
     });
 
     test('NZD row (code read as "INZD", selling "2531") gives null', () {
@@ -320,6 +321,32 @@ void main() {
       expect(boardRatePlausible(usd, referenceUsd, home: 'THB'), isTrue);
     });
 
+    test('demo USD row against the demo THB->USD 0.02978 is plausible', () {
+      final usd = readExchangeBoard(demoUsdRow, code: 'USD')!;
+      final demoUsd = RateQuote(
+        base: 'THB',
+        quote: 'USD',
+        rate: 0.02978,
+        date: '2026-10-14',
+        fetchedAt: DateTime.utc(2026, 10, 15),
+      );
+      expect(boardRatePlausible(usd, demoUsd, home: 'THB'), isTrue);
+    });
+
+    test('EUR 45.72 / 70.90 (selling from another row) against THB->EUR '
+        '0.0216 is not plausible', () {
+      final eur = readExchangeBoard('EUR 45.72 70.90', code: 'EUR');
+      expect(eur, isNotNull);
+      final reference = RateQuote(
+        base: 'THB',
+        quote: 'EUR',
+        rate: 0.0216,
+        date: '2026-10-15',
+        fetchedAt: DateTime.utc(2026, 10, 15),
+      );
+      expect(boardRatePlausible(eur!, reference, home: 'THB'), isFalse);
+    });
+
     test('a misread board 3503 / 3610 is not plausible', () {
       final misread = readExchangeBoard('USD 3503 3610', code: 'USD');
       expect(misread, isNotNull);
@@ -358,6 +385,61 @@ void main() {
       expect(
         readExchangeBoard('USD 35.03 36.10\nUSD 36.10 35.03', code: 'USD'),
         isNull,
+      );
+    });
+  });
+
+  group('readExchangeBoard: middle numbers lie between buying and selling', () {
+    test('"USD 3503 35.60 3510" (dots dropped) gives null', () {
+      expect(readExchangeBoard('USD 3503 35.60 3510', code: 'USD'), isNull);
+    });
+
+    test('"USD 35.03 35.60 36.10" still reads', () {
+      _expectRate(
+        readExchangeBoard('USD 35.03 35.60 36.10', code: 'USD'),
+        'USD',
+        35.03,
+        36.10,
+      );
+    });
+
+    test('a middle number below buying gives null', () {
+      expect(readExchangeBoard('USD 35.03 3.56 36.10', code: 'USD'), isNull);
+    });
+
+    test('a middle number equal to buying or selling still reads', () {
+      _expectRate(
+        readExchangeBoard('USD 35.03 36.10 36.10', code: 'USD'),
+        'USD',
+        35.03,
+        36.10,
+      );
+    });
+  });
+
+  group('readExchangeBoard: cheque column', () {
+    test('a 2-number row on a board where another row has 3 gives null', () {
+      expect(
+        readExchangeBoard('USD 35.03 35.60 36.10\nZAR 3.65 5.45', code: 'ZAR'),
+        isNull,
+      );
+    });
+
+    test('the 3-number row on the same board still reads', () {
+      _expectRate(
+        readExchangeBoard('USD 35.03 35.60 36.10\nZAR 3.65 5.45', code: 'USD'),
+        'USD',
+        35.03,
+        36.10,
+      );
+    });
+
+    test('a single-row board with 2 numbers still reads', () {
+      _expectRate(
+        readExchangeBoard('ZAR 3.65 5.45', code: 'ZAR'),
+        'ZAR',
+        3.65,
+        5.45,
       );
     });
   });
