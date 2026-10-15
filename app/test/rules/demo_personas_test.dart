@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:money_navigation/rules/atm_conversion.dart';
+import 'package:money_navigation/rules/bill_check.dart' show BillKind;
 import 'package:money_navigation/rules/demo_personas.dart';
 import 'package:money_navigation/rules/personal_context.dart';
+import 'package:money_navigation/rules/receipt_record.dart';
 import 'package:money_navigation/rules/trip_ledger.dart';
 
 /// 16:00 local on the demo day.
@@ -75,6 +79,71 @@ String withThaiSample(void Function(Map<String, Object?> s) change) {
   return file([visitor(), t]);
 }
 
+/// A restaurant bill that adds up: 400 + 10 % service 40 = 440, VAT
+/// 28.79 inside.
+Map<String, Object?> restaurantReceipt() => {
+  'daysAgo': 2,
+  'time': '19:30',
+  'merchantName': 'Thai restaurant',
+  'placeName': 'Sukhumvit Soi 12',
+  'lat': 13.7363,
+  'lng': 100.5579,
+  'kind': 'serviceCharge',
+  'subtotalThb': 400.0,
+  'servicePercent': 10,
+  'serviceThb': 40.0,
+  'vatThb': 28.79,
+  'totalThb': 440.0,
+  'category': 'food',
+};
+
+/// The valid file with the visitor carrying [restaurantReceipt] after
+/// [change].
+String withReceipt(void Function(Map<String, Object?> r) change) =>
+    withVisitor((p) {
+      final r = restaurantReceipt();
+      change(r);
+      p['receipts'] = [r];
+    });
+
+/// An airport ATM screen: 6000 + 220 fee = 6220 THB, or 212.64 USD at the
+/// ATM's conversion against 6220 / 30.86 = 201.56 USD fair.
+Map<String, Object?> atmSample() => {
+  'kind': 'atmConversion',
+  'daysAgo': 3,
+  'time': '20:40',
+  'placeName': 'Suvarnabhumi Airport',
+  'atm': {
+    'withdrawalThb': 6000,
+    'accessFeeThb': 220,
+    'thbPerUsd': 30.86,
+    'markupPercent': 5.5,
+    'chargedThb': 6220,
+    'chargedUsd': 212.64,
+  },
+};
+
+/// The valid file with the visitor carrying [atmSample] after [change] to
+/// its atm block.
+String withAtm(void Function(Map<String, Object?> atm) change) =>
+    withVisitor((p) {
+      final a = atmSample();
+      change((a['atm']! as Map).cast<String, Object?>());
+      p['samples'] = <Object?>[...(p['samples']! as List), a];
+    });
+
+/// Great-circle distance in metres.
+double haversineMeters(double lat1, double lng1, double lat2, double lng2) {
+  const r = 6371000.0;
+  double rad(double d) => d * math.pi / 180;
+  final h =
+      math.pow(math.sin(rad(lat2 - lat1) / 2), 2) +
+      math.cos(rad(lat1)) *
+          math.cos(rad(lat2)) *
+          math.pow(math.sin(rad(lng2 - lng1) / 2), 2);
+  return 2 * r * math.asin(math.sqrt(h));
+}
+
 void main() {
   group('parseDemoPersonas: valid file', () {
     test('two personas parse with their fields', () {
@@ -105,6 +174,21 @@ void main() {
     test('keptThb 0 is valid for atmConversion / terminalDcc', () {
       // The second Thai sample is an atmConversion with keptThb 0.
       expect(parseDemoPersonas(file([visitor(), thai()])), isNotNull);
+    });
+
+    test('receipts are optional; a receipt that adds up parses', () {
+      final d = parseDemoPersonas(withReceipt((_) {}))!;
+      expect(d.byKey('visitorBangkok')!.receiptsAt(now), hasLength(1));
+      expect(d.byKey('thaiTokyo')!.receiptsAt(now), isEmpty);
+    });
+
+    test('an ATM block parses; kept comes from evaluateAtm', () {
+      final d = parseDemoPersonas(withAtm((_) {}))!;
+      final atm = d
+          .byKey('visitorBangkok')!
+          .samplesAt(now)
+          .singleWhere((s) => s.kind == SaveKind.atmConversion);
+      expect(atm.keptThb, closeTo(342.07, 0.005));
     });
   });
 
@@ -158,6 +242,32 @@ void main() {
         s['kind'] = 'atmConversion';
         s['keptThb'] = -5;
       }),
+      'receipts not a list': withVisitor((p) => p['receipts'] = 'none'),
+      'receipt service not 10 % of the subtotal': withReceipt((r) {
+        r['serviceThb'] = 44.0;
+        r['totalThb'] = 444.0;
+        r.remove('vatThb');
+      }),
+      'receipt total does not add up': withReceipt(
+        (r) => r['totalThb'] = 441.0,
+      ),
+      'receipt VAT wrong by 0.02': withReceipt((r) => r['vatThb'] = 28.81),
+      'receipt missing lat': withReceipt((r) => r.remove('lat')),
+      'receipt missing lng': withReceipt((r) => r.remove('lng')),
+      'receipt unknown category': withReceipt((r) => r['category'] = 'casino'),
+      'receipt itemsOnly with net != total': withReceipt((r) {
+        r['kind'] = 'itemsOnly';
+        r.remove('serviceThb');
+        r.remove('servicePercent');
+        r.remove('vatThb');
+      }),
+      'ATM chargedThb != withdrawal + fee': withAtm(
+        (a) => a['chargedThb'] = 6200,
+      ),
+      'ATM chargedUsd not above the fair amount': withAtm(
+        (a) => a['chargedUsd'] = 201.56,
+      ),
+      'ATM block missing chargedUsd': withAtm((a) => a.remove('chargedUsd')),
     };
     cases.forEach((name, json) {
       test(name, () => expect(parseDemoPersonas(json), isNull));
@@ -289,7 +399,29 @@ void main() {
       final saves = v.samplesAt(now);
       expect(saves.every((s) => s.isSample), isTrue);
       expect(saves.every((s) => s.savedAt.isBefore(now)), isTrue);
-      expect(keptTotalThb(saves), 120);
+      // ATM 342.07 + haggles 100 + 40 + 100 + 60 + 10.
+      expect(keptTotalThb(saves), closeTo(652.07, 0.005));
+    });
+
+    test('visitor ATM sample: kept is evaluateAtm on the screen figures', () {
+      final atm = d!
+          .byKey('visitorBangkok')!
+          .samplesAt(now)
+          .singleWhere((s) => s.kind == SaveKind.atmConversion);
+      final verdict = evaluateAtm(
+        const AtmScreenReading(
+          withdrawalThb: 6000,
+          accessFeeThb: 220,
+          thbPerUsd: 30.86,
+          markupPercent: 5.5,
+          chargedThb: 6220,
+          chargedUsd: 212.64,
+        ),
+      );
+      expect(verdict.recommended, AtmChoice.declineConversion);
+      expect(atm.keptThb, closeTo(verdict.extraCostThb, 0.005));
+      expect(atm.keptThb, closeTo(342.07, 0.005));
+      expect(atm.isSample, isTrue);
     });
 
     test('visitor memory lines: price memory, counter, morning cash', () {
@@ -299,19 +431,99 @@ void main() {
 
       final memory = priceMemory('mango', history, now)!;
       expect(memory.lastPaidThb, 90);
-      expect(memory.daysAgo, 2);
+      expect(memory.daysAgo, 1);
       expect(memory.recordsUsed, 2);
       expect(memory.sampleRecords, 2);
-      expect(memory.lastPlaceName, 'Chatuchak Weekend Market');
+      expect(memory.lastPlaceName, 'Or Tor Kor Market');
 
+      // Mango 140 -> 100 (28.57 %) and 150 -> 90 (40 %): median 34.29 %.
       final counter = counterFromHistory('mango', 150, history, now)!;
+      expect(counter.medianDiscountPercent, closeTo(34.29, 0.005));
       expect(counter.offerThb, 95);
       expect(counter.recordsUsed, 2);
       expect(counter.sampleRecords, 2);
 
+      // Day totals 200 + 100 + 400 = 700 and 90 + 60 = 150: median 425,
+      // rounded up to 500.
       final cash = morningCash(history, now)!;
-      expect(cash.amountThb, 200);
+      expect(cash.amountThb, 500);
       expect(cash.daysUsed, 2);
+    });
+
+    test('visitor receipts: 5 checked samples from the trip', () {
+      final receipts = d!.byKey('visitorBangkok')!.receiptsAt(now);
+      expect(receipts, hasLength(5));
+      expect(receipts.every((r) => r.isSample), isTrue);
+      expect(receipts.every((r) => r.verified), isTrue);
+      expect(receipts.every((r) => !r.userCorrected), isTrue);
+      expect(receipts.every((r) => r.savedAt.isBefore(now)), isTrue);
+      expect(receipts.every((r) => r.lat != null && r.lng != null), isTrue);
+      expect(
+        receipts.map((r) => r.id).toSet(),
+        hasLength(5),
+        reason: 'ids are distinct',
+      );
+      for (var i = 1; i < receipts.length; i++) {
+        expect(
+          receipts[i - 1].savedAt.isAfter(receipts[i].savedAt),
+          isTrue,
+          reason: 'newest first',
+        );
+      }
+
+      final restaurant = receipts
+          .where((r) => r.merchantName == 'Thai restaurant')
+          .toList();
+      expect(restaurant, hasLength(2));
+      expect(restaurant[0].lat, restaurant[1].lat);
+      expect(restaurant[0].lng, restaurant[1].lng);
+      expect(restaurant[0].merchantKey, restaurant[1].merchantKey);
+      final byTotal = {for (final r in restaurant) r.totalThb: r};
+      expect(byTotal.keys, unorderedEquals([440.0, 418.0]));
+      expect(byTotal[440.0]!.vatThb, closeTo(28.79, 1e-9));
+      expect(byTotal[418.0]!.vatThb, closeTo(27.35, 1e-9));
+      for (final r in restaurant) {
+        expect(r.kind, BillKind.serviceCharge);
+        expect(r.vatOnTop, isFalse, reason: 'VAT inside the total');
+        expect(r.servicePercent, 10);
+        expect(r.category, SpendCategory.food);
+      }
+
+      final sevens = receipts
+          .where((r) => r.merchantName == '7-Eleven')
+          .toList();
+      expect(sevens, hasLength(2));
+      expect(
+        haversineMeters(
+          sevens[0].lat!,
+          sevens[0].lng!,
+          sevens[1].lat!,
+          sevens[1].lng!,
+        ),
+        greaterThan(5000),
+      );
+      expect(sevens.every((r) => r.category == SpendCategory.shopping), isTrue);
+
+      final mbk = receipts.singleWhere(
+        (r) => r.merchantName == 'MBK Center food court',
+      );
+      expect(mbk.totalThb, 165.0);
+      expect(mbk.kind, BillKind.itemsOnly);
+    });
+
+    test('visitor receipts: the restaurant remembers the earlier visit', () {
+      final receipts = d!.byKey('visitorBangkok')!.receiptsAt(now);
+      final latest = receipts.firstWhere(
+        (r) => r.merchantName == 'Thai restaurant',
+      );
+      final memory = merchantMemory(latest, receipts, now)!;
+      expect(memory.visits, 1);
+      expect(memory.lastTotalThb, 440.0);
+      expect(memory.sampleRecords, 1);
+      // The other 7-Eleven is a branch, not the same shop.
+      final seven = receipts.firstWhere((r) => r.merchantName == '7-Eleven');
+      expect(merchantMemory(seven, receipts, now), isNull);
+      expect(brandMemory(seven, receipts, now)!.records, 1);
     });
 
     test('Thai traveler in Tokyo: th, THB at home, JPY local, no haggles', () {
@@ -326,6 +538,7 @@ void main() {
       final history = pastPurchasesFromSaves(saves);
       expect(history, isEmpty);
       expect(morningCash(history, now), isNull);
+      expect(t.receiptsAt(now), isEmpty);
     });
   });
 }

@@ -18,10 +18,10 @@ const pastHaggles = 'Your past haggles';
 
 /// Amounts keep the number and currency together with a no-break space.
 const sampleFooter =
-    'You paid 90\u00A0THB at Chatuchak Weekend Market 2 days ago'
+    'You paid 90\u00A0THB at Or Tor Kor Market yesterday'
     ' · from 2 sample records';
 const realFooter =
-    'You paid 90\u00A0THB at Chatuchak Weekend Market 2 days ago'
+    'You paid 90\u00A0THB at Or Tor Kor Market yesterday'
     ' · from your 2 past records';
 
 const wakelockChannel =
@@ -35,17 +35,32 @@ List<TripSave> visitorSamples(DateTime now) {
   return personas.byKey('visitorBangkok')!.samplesAt(now);
 }
 
-/// The same records as the traveler's own (not samples).
-TripSave asReal(TripSave s) => TripSave(
-  id: 'real-${s.id}',
-  kind: s.kind,
-  keptThb: s.keptThb,
-  savedAt: s.savedAt,
-  itemKey: s.itemKey,
-  askedThb: s.askedThb,
-  paidThb: s.paidThb,
-  placeName: s.placeName,
-);
+/// The traveler's own haggles (not samples) with the visitor's mango
+/// figures: 140 -> 100 two days ago, 150 -> 90 at Or Tor Kor yesterday.
+List<TripSave> ownMangoSaves(DateTime now) {
+  DateTime at(int daysAgo, int h, int m) =>
+      DateTime(now.year, now.month, now.day - daysAgo, h, m);
+  TripSave mango(
+    String id,
+    DateTime t,
+    double asked,
+    double paid,
+    String place,
+  ) => TripSave(
+    id: id,
+    kind: SaveKind.haggle,
+    keptThb: asked - paid,
+    savedAt: t,
+    itemKey: 'mango',
+    askedThb: asked,
+    paidThb: paid,
+    placeName: place,
+  );
+  return [
+    mango('own-1', at(2, 14, 10), 140, 100, 'Khao San Road'),
+    mango('own-2', at(1, 10, 40), 150, 90, 'Or Tor Kor Market'),
+  ];
+}
 
 void main() {
   late SourcedItem mango;
@@ -140,7 +155,7 @@ void main() {
   testWidgets('the traveler\'s own saves say "from your 2 past records"', (
     tester,
   ) async {
-    final real = [for (final s in visitorSamples(DateTime.now())) asReal(s)];
+    final real = ownMangoSaves(DateTime.now());
     expect(real.every((s) => !s.isSample), isTrue);
     final stores = await storesWith(real);
     expect(stores.trip.showingDemo, isFalse);

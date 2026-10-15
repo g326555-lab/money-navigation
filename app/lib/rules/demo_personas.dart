@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'atm_conversion.dart';
+import 'bill_check.dart' show BillKind;
+import 'receipt_record.dart';
 import 'trip_ledger.dart';
 
 /// The demo file: the two prepared states of the demo switch and their
@@ -15,6 +18,7 @@ class DemoPersona {
     required this.homeCurrency,
     required this.localCurrency,
     required this._samples,
+    required this._receipts,
   });
 
   /// 'visitorBangkok' or 'thaiTokyo'; also names the persona in l10n.
@@ -29,6 +33,18 @@ class DemoPersona {
   /// The currency of the country being visited.
   final String localCurrency;
   final List<_Sample> _samples;
+  final List<_Receipt> _receipts;
+
+  /// The sample receipts dated relative to [now], newest first, each marked
+  /// [ReceiptRecord.isSample]. Their figures were checked when the file was
+  /// read.
+  List<ReceiptRecord> receiptsAt(DateTime now) {
+    final out = [
+      for (final (i, r) in _receipts.indexed)
+        r.toRecord('demo-$key-receipt-$i', now),
+    ]..sort((a, b) => b.savedAt.compareTo(a.savedAt));
+    return out;
+  }
 
   /// The sample records dated relative to [now], newest first, each marked
   /// [TripSave.isSample].
@@ -149,12 +165,21 @@ DemoPersona? _persona(Object? entry) {
     if (sample == null) return null;
     parsed.add(sample);
   }
+  final receipts = entry['receipts'] ?? const [];
+  if (receipts is! List) return null;
+  final parsedReceipts = <_Receipt>[];
+  for (final r in receipts) {
+    final receipt = _receipt(r);
+    if (receipt == null) return null;
+    parsedReceipts.add(receipt);
+  }
   return DemoPersona._(
     key: key,
     language: language,
     homeCurrency: home,
     localCurrency: local,
     samples: parsed,
+    receipts: parsedReceipts,
   );
 }
 
@@ -201,7 +226,14 @@ _Sample? _sample(Object? entry) {
       placeLng: common.lng,
     );
   }
-  final kept = _number(entry['keptThb']);
+  // An ATM sample states what its screen showed; what declining the
+  // conversion kept comes from the same rule as a live ATM scan.
+  final double? kept;
+  if (kind == SaveKind.atmConversion && entry['atm'] != null) {
+    kept = _atmKept(entry['atm']);
+  } else {
+    kept = _number(entry['keptThb']);
+  }
   if (kept == null || kept < 0) return null;
   return _Sample(
     kind: kind,
@@ -213,6 +245,132 @@ _Sample? _sample(Object? entry) {
     placeLat: common.lat,
     placeLng: common.lng,
   );
+}
+
+double? _atmKept(Object? atm) {
+  if (atm is! Map) return null;
+  final withdrawal = _number(atm['withdrawalThb']);
+  final fee = _number(atm['accessFeeThb']);
+  final rate = _number(atm['thbPerUsd']);
+  final charged = _number(atm['chargedThb']);
+  final usd = _number(atm['chargedUsd']);
+  if ([withdrawal, fee, rate, charged, usd].contains(null)) return null;
+  if (rate! <= 0 || (withdrawal! + fee! - charged!).abs() > 0.005) return null;
+  final verdict = evaluateAtm(
+    AtmScreenReading(
+      withdrawalThb: withdrawal,
+      accessFeeThb: fee,
+      thbPerUsd: rate,
+      markupPercent: _number(atm['markupPercent']),
+      chargedThb: charged,
+      chargedUsd: usd!,
+    ),
+  );
+  if (verdict.recommended != AtmChoice.declineConversion) return null;
+  return (verdict.extraCostThb * 100).round() / 100;
+}
+
+/// A sample receipt: only figures that add up the way a checked receipt
+/// does are accepted.
+class _Receipt {
+  const _Receipt(this.daysAgo, this.hour, this.minute, this.fields);
+
+  final int daysAgo;
+  final int hour;
+  final int minute;
+  final Map<String, Object?> fields;
+
+  ReceiptRecord toRecord(String id, DateTime now) => ReceiptRecord.fromJson({
+    ...fields,
+    'id': id,
+    'savedAt': DateTime(
+      now.year,
+      now.month,
+      now.day - daysAgo,
+      hour,
+      minute,
+    ).toIso8601String(),
+    'verified': true,
+    'userCorrected': false,
+    'isSample': true,
+  })!;
+}
+
+/// VAT inside a total: total * 7 / 107, to the satang.
+const _vatRate = 7.0;
+
+_Receipt? _receipt(Object? entry) {
+  if (entry is! Map) return null;
+  final daysAgo = entry['daysAgo'];
+  final time = entry['time'];
+  if (daysAgo is! int || daysAgo < 0) return null;
+  final hm = time is String ? _time.firstMatch(time) : null;
+  if (hm == null) return null;
+  final merchant = entry['merchantName'];
+  final place = entry['placeName'];
+  if (merchant is! String || merchant.isEmpty) return null;
+  if (place is! String || place.isEmpty) return null;
+  final lat = _number(entry['lat']);
+  final lng = _number(entry['lng']);
+  if (lat == null || lng == null || lat.abs() > 90 || lng.abs() > 180) {
+    return null;
+  }
+  final kind = BillKind.values.asNameMap()[entry['kind']];
+  final total = _number(entry['totalThb']);
+  final subtotal = _number(entry['subtotalThb']);
+  if (kind == null || total == null || subtotal == null || total <= 0) {
+    return null;
+  }
+  if (SpendCategory.values.asNameMap()[entry['category']] == null) {
+    return null;
+  }
+  final discount = _number(entry['discountThb']) ?? 0;
+  final service = _number(entry['serviceThb']);
+  final percent = _number(entry['servicePercent']);
+  final vat = _number(entry['vatThb']);
+  bool near(double a, double b) => (a - b).abs() < 0.005;
+  final net = subtotal - discount;
+  final adds = switch (kind) {
+    BillKind.itemsOnly => near(net, total) && service == null && vat == null,
+    BillKind.serviceCharge =>
+      service != null &&
+          percent != null &&
+          near((net * percent).round() / 100, service) &&
+          near(net + service, total) &&
+          (vat == null ||
+              near(
+                (total * _vatRate / (100 + _vatRate) * 100).round() / 100,
+                vat,
+              )),
+    BillKind.vatOnTop =>
+      vat != null &&
+          near((net * _vatRate).round() / 100, vat) &&
+          near(net + vat, total),
+    BillKind.vatIncluded =>
+      vat != null &&
+          near(net, total) &&
+          near((total * _vatRate / (100 + _vatRate) * 100).round() / 100, vat),
+  };
+  if (!adds) return null;
+  return _Receipt(daysAgo, int.parse(hm.group(1)!), int.parse(hm.group(2)!), {
+    for (final k in const [
+      'merchantName',
+      'placeName',
+      'lat',
+      'lng',
+      'kind',
+      'subtotalThb',
+      'discountThb',
+      'serviceThb',
+      'servicePercent',
+      'vatThb',
+      'totalThb',
+      'itemCount',
+      'category',
+    ])
+      if (entry[k] != null) k: entry[k],
+    'vatOnTop': kind == BillKind.vatOnTop,
+  });
 }
 
 double? _number(Object? value) {

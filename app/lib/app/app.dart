@@ -98,11 +98,18 @@ class _MoneyNavigationAppState extends State<MoneyNavigationApp>
     // rehearsal's saves never reach the stage.
     final restored = !_demoSettled && persona != null;
     _demoShown = persona?.key;
+    final receipts = ReceiptStore.shared;
     if (persona == null) {
       _trip.showReal();
+      receipts.showReal();
     } else {
-      _trip.showDemo(persona.key, persona.samplesAt(DateTime.now()));
-      if (restored) _trip.resetDemo();
+      final now = DateTime.now();
+      _trip.showDemo(persona.key, persona.samplesAt(now));
+      receipts.showDemo(persona.key, persona.receiptsAt(now));
+      if (restored) {
+        _trip.resetDemo();
+        receipts.resetDemo();
+      }
     }
     _rates.ensure(_settings.homeCurrency);
     setState(() {});

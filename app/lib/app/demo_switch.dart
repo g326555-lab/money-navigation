@@ -43,7 +43,9 @@ class DemoSwitch extends StatefulWidget {
   static Future<void> _apply(AppScope scope, DemoPersona? persona) async {
     // Coming into the demo from normal use: both demo states start again
     // from their samples.
-    if (!scope.settings.demoState) await scope.trip.resetDemo();
+    if (!scope.settings.demoState) {
+      await (scope.trip.resetDemo(), scope.receipts.resetDemo()).wait;
+    }
     // One notification: the app changes language, currency and records in
     // the same frame.
     await scope.settings.setDemoPersona(persona);
