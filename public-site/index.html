@@ -33,6 +33,14 @@
   .card { background:var(--card); border-radius:20px; padding:20px; }
   .card h3 { font-size:17px; margin:0 0 6px; line-height:1.35; }
   .card p { color:var(--muted); font-size:15px; margin:0; }
+  .leak { background:var(--dark); color:#fff; border-radius:24px; padding:32px 24px; }
+  .leak .big { font-size:clamp(56px,12vw,112px); font-weight:800; line-height:1; letter-spacing:-0.03em; }
+  .leak .big span { color:#19D873; }
+  .leak .facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin-top:24px; }
+  .leak .leak-num { font-size:36px; font-weight:800; color:#19D873; line-height:1.15; white-space:nowrap; margin-bottom:6px; }
+  .leak .facts > div { line-height:1.4; }
+  .leak .src { font-size:12px; color:#9AA3AE; margin-top:4px; }
+  .leak .line { font-size:22px; font-weight:800; color:#19D873; margin-top:28px; }
   .num { display:inline-flex; width:28px; height:28px; border-radius:50%; background:var(--mint); color:#0B5A33; font-weight:700; font-size:14px; align-items:center; justify-content:center; margin-bottom:10px; }
   .strip { display:flex; gap:16px; overflow-x:auto; padding:8px 20px 20px; margin:16px -20px 0; scroll-snap-type:x proximity; }
   .strip figure { margin:0; flex:0 0 auto; width:210px; scroll-snap-align:start; }
@@ -81,6 +89,20 @@
 </header>
 
 <main class="wrap">
+  <section class="block" id="leak">
+    <div class="leak">
+      <p class="src" style="font-size:14px;color:#19D873;font-weight:700;margin:0 0 8px">MANY PEOPLE ARE LOSING MONEY</p>
+      <div class="big">33 <span>million</span></div>
+      <p style="font-size:19px;margin:12px 0 4px">foreign visitors came to Thailand in 2025. Each one pays abroad.</p>
+      <p class="src">32,974,321 international arrivals · Ministry of Tourism and Sports, Thailand, 2025 year-end summary (1 Jan 2026)</p>
+      <div class="facts">
+        <div><div class="leak-num">250 THB</div><div>per ATM withdrawal with a foreign Visa card</div><div class="src">Kasikorn Bank fee list, effective 20 May 2026</div></div>
+        <div><div class="leak-num">+2.6–12%</div><div>when an ATM abroad converts for you (2–5% in shops)</div><div class="src">Stiftung Warentest 2016, as cited by BEUC (EU consumer group), 2017</div></div>
+      </div>
+      <p class="line">It's not someone else's problem.</p>
+    </div>
+  </section>
+
   <section class="block" id="ai">
     <h2>What the AI does for you</h2>
     <p class="muted">Six money jobs that travelers usually do by hand, done by one assistant.</p>
