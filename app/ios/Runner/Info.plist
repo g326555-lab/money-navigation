@@ -2,28 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Money Navigation uses the camera to read ATM screens, card terminals, price tags and bills so it can tell you the cheaper way to pay.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Money Navigation uses the microphone to hear prices when you talk with a seller.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Money Navigation turns spoken prices into text so it can translate them and check if they are fair.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Money Navigation uses your location to show where you are on the map, find nearby ATMs and exchange counters, and show the usual prices and payment tips for the place you are in.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Money Navigation lets you pick a photo of a bill, receipt or price tag from your library so it can read the amounts.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>GMSApiKey</key>
-	<string>$(MAPS_IOS_KEY)</string>
-	<key>GIDClientID</key>
-	<string>928755686938-q3vtgd55rncd5a7efmeh1c3ehbkrecmg.apps.googleusercontent.com</string>
-	<key>GIDServerClientID</key>
-	<string>928755686938-ns6ug04udlamre48fukpasf00jgmt6s9.apps.googleusercontent.com</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Money Navigation</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>th</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>Money Navigation</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -47,35 +50,34 @@
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>en</string>
-		<string>th</string>
-	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Money Navigation</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Money Navigation</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GIDClientID</key>
+	<string>928755686938-q3vtgd55rncd5a7efmeh1c3ehbkrecmg.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>928755686938-ns6ug04udlamre48fukpasf00jgmt6s9.apps.googleusercontent.com</string>
+	<key>GMSApiKey</key>
+	<string>$(MAPS_IOS_KEY)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Money Navigation reads the title, place and time of your trip events to plan how much cash you need. It never changes your calendar.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Money Navigation uses the camera to read ATM screens, card terminals, price tags and bills so it can tell you the cheaper way to pay.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Money Navigation uses your location only while the app is open, to show ATMs, exchange counters and money traps near you and to notice when you arrive in a new country. It never tracks you in the background.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Money Navigation uses your location to show where you are on the map, find nearby ATMs and exchange counters, and show the usual prices and payment tips for the place you are in.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Money Navigation uses the microphone to hear prices when you talk with a seller.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Money Navigation lets you pick a photo of a bill, receipt or price tag from your library so it can read the amounts.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Money Navigation turns spoken prices into text so it can translate them and check if they are fair.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
