@@ -1,9 +1,9 @@
 # Money Navigation — 4-minute pitch script
 
-Deck: `pitch/deck/project/` (14 slides in `deck.json` order). The older claude.ai deck link (https://claude.ai/artifact/C1RqZ63tAsbBJxa35gxGR5) still shows the previous version until it is re-published.
+Deck: `pitch/deck/project/` (17 slides in `deck.json` order). The older claude.ai deck link (https://claude.ai/artifact/C1RqZ63tAsbBJxa35gxGR5) still shows the previous version until it is re-published.
 Each block: time · slide · English (say this) · 한국어 해석 · stage direction.
 Core message: travel money apps already exist; our point is that one AI assistant does six separate money jobs together. Every demo scene is introduced as "the AI reads / hears / keeps count / warns / checks".
-Timing: the slots end at 3:53 (7 seconds of slack). Spoken English on the main path is about 460 words: about 3:17 at 140 words a minute, plus about 30 seconds of phone actions, the seller's line and pauses. Time it in rehearsal. If the market scene runs long, cut slide 12 (Waze) first, then shorten slide 11 to its first sentence. Never cut the market scene itself.
+Timing: the slots end at 4:28 (2 seconds under the 4:30 limit; the market slide 3 is 0:17–0:29, the user and plan slides 15–16 are 3:51–4:14; cut slide 15 first if you run long). Spoken English on the main path is about 460 words: about 3:17 at 140 words a minute, plus about 30 seconds of phone actions, the seller's line and pauses. Time it in rehearsal. If the market scene runs long, cut slide 13 (Waze) first, then shorten slide 12 to its first sentence. Never cut the market scene itself.
 
 ---
 
@@ -23,15 +23,23 @@ KO: 손 들어 보세요. 방콕 ATM에서 현금 뽑아 보신 분? 기계가 �
 
 ---
 
-## 0:17–0:32 · 3 "246 THB"
+## 0:17–0:29 · 3 "Many people are losing money" — the money that leaks
 
-EN: That question: convert this to your home currency? Most people press yes. On this ATM, 4,000 baht, the machine's own rate adds 5.50 percent. Yes costs about 246 baht, nearly eight dollars, for one button.
+EN: Thailand welcomed almost 33 million foreign visitors in 2025, the ministry's own count. Every one pays abroad. A foreign card at an ATM: 250 baht a withdrawal at Kasikorn. Let the machine convert: 2.6 to 12 percent more, in consumer tests. Nobody has measured the total. It's not someone else's problem.
 
-KO: 그 질문은 "고객님 나라 통화로 바꿔 드릴까요?"입니다. 대부분 "예"를 누릅니다. 이 ATM에서 4,000밧을 뽑으면 기계 자체 환율이 5.50%를 더 붙입니다. "예"는 약 246밧, 거의 8달러입니다. 버튼 하나로요.
+KO: 태국은 2025년에 외국인 관광객 거의 3,300만 명을 맞았습니다. 관광체육부 공식 집계입니다. 모두 해외에서 결제합니다. 외국 카드로 ATM을 쓰면 카시콘 은행 기준 1회 250밧. 기계가 환전하게 두면 소비자 테스트에서 2.6~12% 더 냅니다. 전체 규모는 아무도 측정하지 않았습니다. 남의 일이 아닙니다.
 
 ---
 
-## 0:32–0:45 · 4 "Six money jobs, done by hand."
+## 0:29–0:44 · 4 "246 THB"
+
+EN: Remember that ATM question: convert this to your home currency? Most people press yes. On this ATM, 4,000 baht, the machine's own rate adds 5.50 percent. Yes costs about 246 baht, nearly eight dollars, for one button.
+
+KO: 아까 그 질문, "고객님 나라 통화로 바꿔 드릴까요?"입니다. 대부분 "예"를 누릅니다. 이 ATM에서 4,000밧을 뽑으면 기계 자체 환율이 5.50%를 더 붙입니다. "예"는 약 246밧, 거의 8달러입니다. 버튼 하나로요.
+
+---
+
+## 0:44–0:57 · 5 "Six money jobs, done by hand."
 
 EN: And that's one job. Abroad, you do six money jobs by hand: read the ATM screen, check the bill, haggle in Thai, find cash, compare rates, count what's left.
 
@@ -39,7 +47,7 @@ KO: 그건 한 가지 일일 뿐입니다. 해외에서는 돈과 관련된 일 
 
 ---
 
-## 0:45–0:54 · 5 "Not six apps. One AI assistant."
+## 0:57–1:06 · 6 "Not six apps. One AI assistant."
 
 EN: Travel money apps exist. Each does one job. Our point: one AI assistant does all six, together. Money Navigation.
 
@@ -47,9 +55,9 @@ KO: 여행 돈 관리 앱은 이미 있습니다. 각각 한 가지 일만 합�
 
 ---
 
-(0:54 휴대폰 미러링으로 전환합니다. 미러링이 안 되면 슬라이드 6~9가 예비 화면입니다.)
+(1:06 휴대폰 미러링으로 전환합니다. 미러링이 안 되면 슬라이드 7~10이 예비 화면입니다.)
 
-## 0:54–1:13 · 6 The AI reads the ATM screen — 246 THB
+## 1:06–1:25 · 7 The AI reads the ATM screen — 246 THB
 
 EN: Live, on this phone, on printed props. The AI reads the ATM screen with on-device text recognition, works out both totals, and says which button to press: without conversion. I keep about 246 baht.
 
@@ -59,7 +67,7 @@ KO: 이 휴대폰에서, 인쇄한 소품으로 실제로 보여 드립니다. A
 
 ---
 
-## 1:13–1:45 · 7 The AI hears the seller — 150 → 110 (핵심 장면)
+## 1:25–1:57 · 8 The AI hears the seller — 150 → 110 (핵심 장면)
 
 Seller (판매자 역할): มะม่วงกิโลละร้อยห้าสิบ (망고 1킬로 150). 줄임말 "ร้อยห้า"는 105로 인식되니 꼭 전체 형태로 말해 달라고 미리 부탁하세요.
 
@@ -73,7 +81,7 @@ KO: AI가 상인의 태국어를 들었습니다. 망고 1킬로 150밧. 이번 
 
 ---
 
-## 1:45–2:04 · 8 The AI keeps count — 1,414 THB and cash on hand
+## 1:57–2:16 · 9 The AI keeps count — 1,414 THB and cash on hand
 
 EN: The AI keeps count. 1,414 baht kept on this trip; the first days are sample records. And cash on hand, about 3,500 baht left: ATM withdrawals, cash haggles and cash bills flow in by themselves; card payments don't. Need cash? Nearby ATMs, and live exchange rates near you.
 
@@ -83,7 +91,7 @@ KO: AI가 계속 셉니다. 이번 여행에서 지킨 돈 1,414밧, 앞의 날�
 
 ---
 
-## 2:04–2:24 · 9 The AI reads a Japanese terminal — 494 THB
+## 2:16–2:36 · 10 The AI reads a Japanese terminal — 494 THB
 
 (데모 전환 버튼을 누릅니다.)
 
@@ -93,7 +101,7 @@ KO: 같은 AI를 반대로 씁니다. 도쿄에 간 태국인. 언어는 태국�
 
 ---
 
-## 2:24–2:48 · 10 The AI warns first
+## 2:36–3:00 · 11 The AI warns first
 
 (슬라이드로 돌아옵니다.)
 
@@ -103,7 +111,7 @@ KO: 챗봇은 질문을 기다립니다. 하지만 ATM 앞에서는 질문이 �
 
 ---
 
-## 2:48–3:06 · 11 How it works: phone first, cloud when it matters
+## 3:00–3:18 · 12 How it works: phone first, cloud when it matters
 
 EN: On the phone first: reading screens and a first guess at the seller's words, instantly, even offline. In the cloud when it matters: Thai speech and voice, Google Vision, Gemini, Google Maps, web search. Every number is calculated or quoted, never guessed.
 
@@ -111,7 +119,7 @@ KO: 폰 안에서 먼저: 화면 읽기와 상인 말의 첫 추정은 즉시, �
 
 ---
 
-## 3:06–3:13 · 12 "The Waze of money." (Next)
+## 3:18–3:25 · 13 "The Waze of money." (Next)
 
 EN: Next: every price a traveler pays makes the next traveler's answer better. The Waze of money.
 
@@ -119,7 +127,7 @@ KO: 다음 단계: 여행자가 낸 가격 하나하나가 다음 여행자의 �
 
 ---
 
-## 3:13–3:39 · 13 "One more thing." — The AI checks the bill
+## 3:25–3:51 · 14 "One more thing." — The AI checks the bill
 
 (2초 멈춥니다. 객석 쪽으로 갑니다.)
 
@@ -135,7 +143,23 @@ KO: 추측하지 않습니다. (인쇄한 데모 계산서를 찍습니다.) 225
 
 ---
 
-## 3:39–3:53 · 14 Closing
+## 3:51–4:02 · 15 Who it is for
+
+EN: Who is it for? A visitor in Thailand, or a Thai traveler abroad. They have seconds, a screen they can't read, and a few percent at stake each time. Bank apps show the fee after you paid. Converters don't read the machine or the bill. Maps tell you where to go, not how to pay. We read the screen and answer before you press.
+
+KO: 누구를 위한 앱일까요? 태국을 찾은 여행자, 그리고 해외로 가는 태국인입니다. 결정할 시간은 몇 초, 읽을 수 없는 화면, 매번 몇 퍼센트가 걸려 있습니다. 은행 앱은 결제 뒤에 수수료를 보여 줍니다. 환율 계산기는 기계나 계산서를 읽지 못합니다. 지도는 어디로 갈지만 알려 줍니다. 우리는 화면을 읽고, 누르기 전에 답합니다.
+
+---
+
+## 4:02–4:14 · 16 Plan — free for travelers
+
+EN: The plan, and it is a plan. Free for travelers. Revenue later from partners: card issuers and exchange counters shown as options, ranked by cost and labelled, never a paid placement above a cheaper one. Premium trip features. And it scales: rules are data files, so a new currency pair is a new file. Japan is already in the demo.
+
+KO: 계획입니다, 아직 계획입니다. 여행자에게는 무료. 수익은 나중에 파트너에게서: 카드사와 환전소를 비용 순서로, 표시를 달아 선택지로 보여 줍니다. 더 싼 곳보다 돈 낸 곳을 위에 두지 않습니다. 프리미엄 여행 기능. 그리고 확장: 규칙이 데이터 파일이라 새 통화쌍은 새 파일입니다. 일본은 이미 데모에 있습니다.
+
+---
+
+## 4:14–4:28 · 17 Closing
 
 EN: Six money jobs, done by hand. One AI assistant does them together. Maps tells you which way to go. Money Navigation tells you which way to pay. Thank you.
 
@@ -153,6 +177,11 @@ Not in the order any more (files kept): `trip.html` (records + map + today's ATM
 No capture yet of the cash-on-hand card, the exchange-counter list or a checked bill; those scenes are text only on the slides.
 
 ## Facts check (사실 확인)
+
+- 32,974,321 foreign arrivals 2025: Ministry of Tourism and Sports year-end summary (1 Jan 2026), read via The Nation / ASEAN News Network (2 Jan 2026). Foreign-visitor revenue 1,536,574 million THB (same source) is not on the slide.
+- 250 THB: Kasikorn Bank fee list, K-ATM, Visa, effective 20 May 2026 (app/assets/data/pay_facts.json). The 220 THB in demo_personas.json is a demo sample, not a sourced fee, so it is not used.
+- +2.6–12% ATM / +2–5% shops: Stiftung Warentest (May 2016) as cited in BEUC position paper X/2017/118. Older study, EU/Europe tests; labelled with year. No total market-loss figure is claimed.
+- Slide 16 is a Plan: nothing in it is built or earning.
 
 - 246 THB, 5.50%, 4,000 THB: printed ATM prop + CLAUDE.md demo data.
 - 150 → 110, 80–110 THB/kg: app/assets/data/market_prices.json (checkraka.app, lotuss.com, researched 15 Oct). Thai speech recognition 15/15 quiet, 14/15 noisy: our own test with price-phrase hints (HANDOFF 5b).
