@@ -1,5 +1,7 @@
 # Money Navigation – AI travel assistant
 
+**Try it:** [iPhone (TestFlight)](https://testflight.apple.com/join/N1jHDdtN) · [Android APK](https://github.com/g326555-lab/money-navigation/releases/tag/v1.0.0-7) · [Demo website](https://storage.googleapis.com/money-navigation-site/index.html)
+
 > Maps tells you which way to go. Money Navigation tells you which way to pay.
 
 Built for **U-Hackathon 2026** (AI track, Bangkok, 15–16 Oct 2026).
