@@ -151,7 +151,13 @@ KO: 누구를 위한 앱일까요? 태국을 찾은 여행자, 그리고 해외�
 
 ---
 
-## 4:02–4:14 · 16 Plan — free for travelers
+## Optional (Q&A or if time allows) · 16 Why not an app you already have?
+
+EN: Why not ChatGPT or a travel card app? Travel cards cut fees on their own card, but don't read the ATM in front of you. Maps and Translate find places and words, not costs. ChatGPT can read a photo if you stop and ask, but it doesn't check the maths, has no sourced prices and doesn't know your cash. Others answer when you ask. We answer before you pay.
+
+KO: 왜 ChatGPT나 여행 카드 앱이 아닐까요? 여행 카드 앱은 자기 카드 수수료를 줄여 주지만, 눈앞의 ATM 화면은 읽지 못합니다. 지도와 번역 앱은 장소와 단어를 찾을 뿐, 비용은 모릅니다. ChatGPT는 멈춰서 사진을 올리고 물으면 읽을 수는 있지만, 계산을 검증하지 않고, 출처 있는 가격도 없고, 내 현금도 모릅니다. 다른 앱은 물어봐야 답합니다. 우리는 결제하기 전에 답합니다.
+
+## 4:02–4:14 · 17 Plan — free for travelers
 
 EN: The plan, and it is a plan. Free for travelers. Revenue later from partners: card issuers and exchange counters shown as options, ranked by cost and labelled, never a paid placement above a cheaper one. Premium trip features. And it scales: rules are data files, so a new currency pair is a new file. Japan is already in the demo.
 

@@ -33,6 +33,13 @@
   .card { background:var(--card); border-radius:20px; padding:20px; }
   .card h3 { font-size:17px; margin:0 0 6px; line-height:1.35; }
   .card p { color:var(--muted); font-size:15px; margin:0; }
+  .vs-wrap { overflow-x:auto; }
+  .vs { width:100%; min-width:680px; border-collapse:collapse; font-size:15px; }
+  .vs th { text-align:left; padding:10px 12px; color:var(--muted); font-size:14px; vertical-align:bottom; }
+  .vs th.me { color:var(--green); }
+  .vs td { padding:12px; border-top:1px solid var(--line); vertical-align:top; color:var(--muted); }
+  .vs td.row { color:var(--text); font-weight:700; }
+  .vs td.me { background:var(--mint); color:#0B5A33; font-weight:700; }
   .leak { background:var(--dark); color:#fff; border-radius:24px; padding:32px 24px; }
   .leak .big { font-size:clamp(56px,12vw,112px); font-weight:800; line-height:1; letter-spacing:-0.03em; }
   .leak .big span { color:#19D873; }
@@ -114,6 +121,21 @@
       <div class="card"><span class="num">5</span><h3>Reads your card</h3><p>It reads your card and fills in its foreign fees from the issuer's own page.</p></div>
       <div class="card"><span class="num">6</span><h3>Morning briefing</h3><p>From today's calendar, it shows what each stop needs and the payment traps nearby.</p></div>
     </div>
+  </section>
+
+  <section class="block" id="vs">
+    <h2>Why not an app you already have?</h2>
+    <p class="muted">Others answer when you ask. Money Navigation answers before you pay.</p>
+    <div class="vs-wrap"><table class="vs">
+      <thead><tr><th></th><th>Travel money apps (Wise, Revolut)</th><th>Maps &amp; Translate</th><th>ChatGPT</th><th class="me">Money Navigation</th></tr></thead>
+      <tbody>
+        <tr><td class="row">Which ATM / terminal button to press</td><td>No</td><td>No</td><td>If you upload a photo and ask; maths not checked</td><td class="me">Reads the screen on the phone, in seconds</td></tr>
+        <tr><td class="row">Is this bill right?</td><td>No</td><td>Translates the words</td><td>Reads it; can guess numbers</td><td class="me">Read, and the add-up checked</td></tr>
+        <tr><td class="row">Haggle in Thai</td><td>No</td><td>Translates; no price judgement</td><td>Typed; prices not sourced</td><td class="me">Hears the seller, sourced range, says it in Thai</td></tr>
+        <tr><td class="row">Cash on hand</td><td>Own card balance only</td><td>No</td><td>No memory of your payments</td><td class="me">From your ATM, exchange and cash records</td></tr>
+        <tr><td class="row">Cheapest way to pay here</td><td>Their own card's fees</td><td>Finds ATMs, not their cost</td><td>General advice</td><td class="me">Card, cash, ATM or counter, with sources</td></tr>
+      </tbody>
+    </table></div>
   </section>
 
   <section class="block" id="screens">
