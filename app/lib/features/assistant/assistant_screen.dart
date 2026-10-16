@@ -302,8 +302,8 @@ class _AssistantScreenState extends State<AssistantScreen> {
         else if (_cards.isNotEmpty)
           _ActionRow(
             icon: const IconTile.blue(icon: Icons.add_card_rounded),
-            title: l10n.cardChooseList,
-            subtitle: l10n.cardScan,
+            title: l10n.cardAdd,
+            subtitle: l10n.cardAddBody,
             onPressed: () => _editCard(trip),
           ),
         _ActionRow(

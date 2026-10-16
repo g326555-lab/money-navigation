@@ -99,6 +99,16 @@ ThemeData buildAppTheme() {
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
     ),
+    // The trip-dates picker: the chosen days stay readable on a pale green
+    // band instead of a solid dark fill.
+    datePickerTheme: const DatePickerThemeData(
+      backgroundColor: AppColors.surface,
+      rangeSelectionBackgroundColor: AppColors.primaryContainer,
+      rangePickerBackgroundColor: AppColors.surface,
+      rangePickerHeaderBackgroundColor: AppColors.surface,
+      rangePickerHeaderForegroundColor: AppColors.onSurface,
+      todayForegroundColor: WidgetStatePropertyAll(AppColors.primaryText),
+    ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: AppColors.surface,
       elevation: 0,

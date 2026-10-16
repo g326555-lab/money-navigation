@@ -403,28 +403,32 @@ void main() {
       final saves = v.samplesAt(now);
       expect(saves.every((s) => s.isSample), isTrue);
       expect(saves.every((s) => s.savedAt.isBefore(now)), isTrue);
-      // ATM 342.07 + haggles 100 + 40 + 100 + 60 + 10.
-      expect(keptTotalThb(saves), closeTo(652.07, 0.005));
+      // Two ATM samples (10,000 and 5,000 baht) plus eleven haggles (730).
+      expect(keptTotalThb(saves), closeTo(1579.36, 0.005));
     });
 
     test('visitor ATM sample: kept is evaluateAtm on the screen figures', () {
       final atm = d!
           .byKey('visitorBangkok')!
           .samplesAt(now)
-          .singleWhere((s) => s.kind == SaveKind.atmConversion);
+          .singleWhere(
+            (s) =>
+                s.kind == SaveKind.atmConversion &&
+                s.screen![AtmFigures.withdrawalThb] == 10000,
+          );
       final verdict = evaluateAtm(
         const AtmScreenReading(
-          withdrawalThb: 6000,
+          withdrawalThb: 10000,
           accessFeeThb: 220,
-          thbPerUsd: 30.86,
+          thbPerUsd: 31.62,
           markupPercent: 5.5,
-          chargedThb: 6220,
-          chargedUsd: 212.64,
+          chargedThb: 10220,
+          chargedUsd: 340.99,
         ),
       );
       expect(verdict.recommended, AtmChoice.declineConversion);
       expect(atm.keptThb, closeTo(verdict.extraCostThb, 0.005));
-      expect(atm.keptThb, closeTo(342.07, 0.005));
+      expect(atm.keptThb, closeTo(562.10, 0.005));
       expect(atm.isSample, isTrue);
     });
 
@@ -434,29 +438,29 @@ void main() {
       );
 
       final memory = priceMemory('mango', history, now)!;
-      expect(memory.lastPaidThb, 90);
+      expect(memory.lastPaidThb, 95);
       expect(memory.daysAgo, 1);
       expect(memory.recordsUsed, 2);
       expect(memory.sampleRecords, 2);
-      expect(memory.lastPlaceName, 'Or Tor Kor Market');
+      expect(memory.lastPlaceName, 'Chatuchak Weekend Market');
 
-      // Mango 140 -> 100 (28.57 %) and 150 -> 90 (40 %): median 34.29 %.
+      // Mango 140 -> 100 (28.57 %) and 140 -> 95 (32.14 %): median 30.36 %.
       final counter = counterFromHistory('mango', 150, history, now)!;
-      expect(counter.medianDiscountPercent, closeTo(34.29, 0.005));
-      expect(counter.offerThb, 95);
+      expect(counter.medianDiscountPercent, closeTo(30.36, 0.005));
+      expect(counter.offerThb, 100);
       expect(counter.recordsUsed, 2);
       expect(counter.sampleRecords, 2);
 
-      // Day totals 200 + 100 + 400 = 700 and 90 + 60 = 150: median 425,
+      // Haggle day totals (3 days ago to yesterday) are 350, 375 and 445 baht; the median is
       // rounded up to 500.
       final cash = morningCash(history, now)!;
       expect(cash.amountThb, 500);
-      expect(cash.daysUsed, 2);
+      expect(cash.daysUsed, 3);
     });
 
-    test('visitor receipts: 5 checked samples from the trip', () {
+    test('visitor receipts: 16 checked samples from the trip', () {
       final receipts = d!.byKey('visitorBangkok')!.receiptsAt(now);
-      expect(receipts, hasLength(5));
+      expect(receipts, hasLength(16));
       expect(receipts.every((r) => r.isSample), isTrue);
       expect(receipts.every((r) => r.verified), isTrue);
       expect(receipts.every((r) => !r.userCorrected), isTrue);
@@ -464,7 +468,7 @@ void main() {
       expect(receipts.every((r) => r.lat != null && r.lng != null), isTrue);
       expect(
         receipts.map((r) => r.id).toSet(),
-        hasLength(5),
+        hasLength(16),
         reason: 'ids are distinct',
       );
       for (var i = 1; i < receipts.length; i++) {
@@ -483,13 +487,13 @@ void main() {
       expect(restaurant[0].lng, restaurant[1].lng);
       expect(restaurant[0].merchantKey, restaurant[1].merchantKey);
       final byTotal = {for (final r in restaurant) r.totalThb: r};
-      expect(byTotal.keys, unorderedEquals([440.0, 418.0]));
-      expect(byTotal[440.0]!.vatThb, closeTo(28.79, 1e-9));
-      expect(byTotal[418.0]!.vatThb, closeTo(27.35, 1e-9));
+      expect(byTotal.keys, unorderedEquals([572.0, 195.0]));
+      expect(byTotal[572.0]!.vatThb, closeTo(37.42, 1e-9));
+      expect(byTotal[572.0]!.kind, BillKind.serviceCharge);
+      expect(byTotal[572.0]!.vatOnTop, isFalse, reason: 'VAT inside the total');
+      expect(byTotal[572.0]!.servicePercent, 10);
+      expect(byTotal[195.0]!.kind, BillKind.itemsOnly);
       for (final r in restaurant) {
-        expect(r.kind, BillKind.serviceCharge);
-        expect(r.vatOnTop, isFalse, reason: 'VAT inside the total');
-        expect(r.servicePercent, 10);
         expect(r.category, SpendCategory.food);
       }
 
@@ -508,11 +512,11 @@ void main() {
       );
       expect(sevens.every((r) => r.category == SpendCategory.shopping), isTrue);
 
-      final mbk = receipts.singleWhere(
-        (r) => r.merchantName == 'MBK Center food court',
+      final foodCourt = receipts.singleWhere(
+        (r) => r.merchantName == 'Terminal 21 food court',
       );
-      expect(mbk.totalThb, 165.0);
-      expect(mbk.kind, BillKind.itemsOnly);
+      expect(foodCourt.totalThb, 215.0);
+      expect(foodCourt.kind, BillKind.itemsOnly);
     });
 
     test('visitor cash is computed from the sample records', () {
@@ -522,14 +526,15 @@ void main() {
       final receipts = v.receiptsAt(now);
       expect(movements.every((m) => m.currency == 'THB'), isTrue);
       expect(movements.every((m) => m.at.isBefore(now)), isTrue);
-      // The withdrawal is the ATM sample's own screen figure.
-      final atm = saves.singleWhere((s) => s.kind == SaveKind.atmConversion);
-      final withdrawal = movements.singleWhere(
-        (m) => m.kind == CashMovementKind.withdrawal,
-      );
-      expect(withdrawal.sourceId, atm.id);
-      expect(withdrawal.amount, atm.screen![AtmFigures.withdrawalThb]);
-      expect(withdrawal.at, atm.savedAt);
+      // Each withdrawal is its ATM sample's own screen figure.
+      final atms = saves.where((s) => s.kind == SaveKind.atmConversion);
+      expect(atms, hasLength(2));
+      for (final atm in atms) {
+        final withdrawal = movements.singleWhere((m) => m.sourceId == atm.id);
+        expect(withdrawal.kind, CashMovementKind.withdrawal);
+        expect(withdrawal.amount, atm.screen![AtmFigures.withdrawalThb]);
+        expect(withdrawal.at, atm.savedAt);
+      }
       // Every haggle was paid in cash, at its own time and price.
       for (final s in saves.where((s) => s.kind == SaveKind.haggle)) {
         final m = movements.singleWhere((m) => m.sourceId == s.id);
@@ -537,17 +542,34 @@ void main() {
         expect(m.amount, s.paidThb);
         expect(m.at, s.savedAt);
       }
-      // Restaurants were paid by card: no cash movement for them.
+      // Card payments leave no cash movement; cash receipts do.
+      const cardMerchants = {
+        'Hotel restaurant',
+        'Thai restaurant',
+        'ICONSIAM department store',
+        'Siam Paragon shop',
+        'Cafe',
+      };
       for (final r in receipts) {
         final linked = movements.where((m) => m.sourceId == r.id);
-        if (r.merchantName == 'Thai restaurant') {
+        if (cardMerchants.contains(r.merchantName)) {
           expect(linked, isEmpty);
         } else {
           expect(linked.single.amount, r.totalThb);
         }
       }
-      // 6,000 out of the ATM, 850 on haggles, 89 + 76 + 165 cash receipts.
-      expect(cashBalance(movements, 'THB'), 4820);
+      // Never below zero, at any moment of the trip.
+      final byTime = [...movements]..sort((a, b) => a.at.compareTo(b.at));
+      for (var i = 1; i <= byTime.length; i++) {
+        expect(
+          cashBalance(byTime.sublist(0, i), 'THB'),
+          greaterThanOrEqualTo(0),
+          reason: 'after ${byTime[i - 1].description}',
+        );
+      }
+      // Exchanges 15,700 + 32,000 + 3,190 and ATM 10,000 + 5,000, minus cash
+      // haggles, cash receipts and the other cash spends.
+      expect(cashBalance(movements, 'THB'), 49044);
     });
 
     test('a sample without paidWith refuses the file', () {
@@ -573,7 +595,7 @@ void main() {
       );
       final memory = merchantMemory(latest, receipts, now)!;
       expect(memory.visits, 1);
-      expect(memory.lastTotalThb, 440.0);
+      expect(memory.lastTotalThb, 572.0);
       expect(memory.sampleRecords, 1);
       // The other 7-Eleven is a branch, not the same shop.
       final seven = receipts.firstWhere((r) => r.merchantName == '7-Eleven');

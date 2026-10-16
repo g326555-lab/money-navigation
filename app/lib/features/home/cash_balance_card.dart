@@ -48,6 +48,7 @@ class CashBalanceCard extends StatelessWidget {
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
+        showDragHandle: false,
         backgroundColor: Colors.transparent,
         builder: (_) => _CashWalletSheet(
           wallet: wallet,

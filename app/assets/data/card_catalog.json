@@ -11,27 +11,70 @@
       "faceColor": "#D6D4CB",
       "faceTextLight": false,
       "fees": [
-        { "kind": "foreignExchange", "percent": 1.5, "upTo": true },
-        { "kind": "crossBorder", "percent": 1.5, "upTo": true }
+        {
+          "kind": "foreignExchange",
+          "percent": 1.5,
+          "upTo": true
+        },
+        {
+          "kind": "crossBorder",
+          "percent": 1.5,
+          "upTo": true
+        }
       ],
-      "atm": { "policy": "unknown", "value": null, "currency": null },
+      "atm": {
+        "policy": "unknown",
+        "value": null,
+        "currency": null
+      },
       "benefits": [
-        { "en": "Free virtual card issued instantly; physical card also available.", "th": "ได้บัตรเสมือนฟรีทันที และขอบัตรจริงได้ด้วย" },
-        { "en": "Contactless payments at Visa merchants worldwide.", "th": "จ่ายแบบแตะได้ที่ร้านค้าที่รับ Visa ทั่วโลก" },
-        { "en": "Freeze and unfreeze the card instantly.", "th": "อายัดและปลดอายัดบัตรได้ทันที" },
-        { "en": "Real-time spending notifications and custom spending limits.", "th": "แจ้งเตือนการใช้จ่ายแบบเรียลไทม์ และตั้งวงเงินใช้จ่ายเองได้" }
+        {
+          "en": "Free virtual card issued instantly; physical card also available.",
+          "th": "ได้บัตรเสมือนฟรีทันที และขอบัตรจริงได้ด้วย"
+        },
+        {
+          "en": "Contactless payments at Visa merchants worldwide.",
+          "th": "จ่ายแบบแตะได้ที่ร้านค้าที่รับ Visa ทั่วโลก"
+        },
+        {
+          "en": "Freeze and unfreeze the card instantly.",
+          "th": "อายัดและปลดอายัดบัตรได้ทันที"
+        },
+        {
+          "en": "Real-time spending notifications and custom spending limits.",
+          "th": "แจ้งเตือนการใช้จ่ายแบบเรียลไทม์ และตั้งวงเงินใช้จ่ายเองได้"
+        }
       ],
-      "printedText": ["U-TOPIA", "VISA"],
+      "printedText": [
+        "U-TOPIA",
+        "VISA"
+      ],
       "sources": [
-        { "label": "U-topia card terms (International), effective 20 May 2026", "url": "https://u-topia.com/terms-of-service/international", "checked": "2026-10-16" },
-        { "label": "U-topia About page (card features and card picture)", "url": "https://u-topia.com/about", "checked": "2026-10-16" },
-        { "label": "U-topia Privacy Policy, updated 6 Oct 2026", "url": "https://u-topia.com/privacy-policy", "checked": "2026-10-16" }
+        {
+          "label": "U-topia card terms (International), effective 20 May 2026",
+          "url": "https://u-topia.com/terms-of-service/international",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "U-topia About page (card features and card picture)",
+          "url": "https://u-topia.com/about",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "U-topia Privacy Policy, updated 6 Oct 2026",
+          "url": "https://u-topia.com/privacy-policy",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "Issuer names conflict: the card terms (20 May 2026) name Third National as issuer, while the privacy policy (6 Oct 2026) says Rain issues the cards.", "th": "ชื่อผู้ออกบัตรไม่ตรงกัน: ข้อกำหนดบัตร (20 พ.ค. 2026) ระบุ Third National แต่นโยบายความเป็นส่วนตัว (6 ต.ค. 2026) ระบุว่า Rain เป็นผู้ออกบัตร" },
-        { "en": "The About page calls the product 'uPay Card'; the terms say U-TOPIA Card.", "th": "หน้า About เรียกบัตรว่า 'uPay Card' ส่วนข้อกำหนดเรียกว่า U-TOPIA Card" },
-        { "en": "Secured account backed by crypto collateral; the terms say cash advances are not available and list no ATM fee.", "th": "เป็นบัญชีที่มีหลักประกันเป็นคริปโต ข้อกำหนดระบุว่าไม่มีบริการเบิกเงินสดล่วงหน้า และไม่ได้ระบุค่าธรรมเนียม ATM" },
-        { "en": "The official picture shows three colours (light grey, navy #0A1C40, orange #DE5001); light grey is the front card.", "th": "รูปทางการมีบัตร 3 สี (เทาอ่อน, กรมท่า #0A1C40, ส้ม #DE5001) ใช้สีเทาอ่อนซึ่งเป็นใบหน้าสุด" }
+        {
+          "en": "U-topia's card terms and privacy policy name different card issuers; check the terms in your account.",
+          "th": "ข้อกำหนดบัตรและนโยบายความเป็นส่วนตัวของ U-topia ระบุผู้ออกบัตรต่างกัน โปรดตรวจเงื่อนไขในบัญชีของคุณ"
+        },
+        {
+          "en": "No ATM fee is listed and cash advances are not available.",
+          "th": "ไม่ได้ระบุค่าธรรมเนียม ATM และกดเงินสดล่วงหน้าไม่ได้"
+        }
       ]
     },
     {
@@ -44,22 +87,56 @@
       "faceColor": "#0B3F6E",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignTransaction", "percent": 0, "upTo": false }
+        {
+          "kind": "foreignTransaction",
+          "percent": 0,
+          "upTo": false
+        }
       ],
-      "atm": { "policy": "unknown", "value": null, "currency": null },
+      "atm": {
+        "policy": "unknown",
+        "value": null,
+        "currency": null
+      },
       "benefits": [
-        { "en": "No foreign transaction fees on purchases outside the US.", "th": "ไม่มีค่าธรรมเนียมธุรกรรมต่างประเทศเมื่อซื้อของนอกสหรัฐฯ" },
-        { "en": "Trip cancellation/interruption cover up to $10,000 per traveler.", "th": "คุ้มครองการยกเลิก/หยุดการเดินทางสูงสุด 10,000 ดอลลาร์ต่อผู้เดินทาง" },
-        { "en": "Baggage delay: up to $100 a day for up to 5 days.", "th": "กระเป๋าล่าช้า: ชดเชยสูงสุดวันละ 100 ดอลลาร์ นานสูงสุด 5 วัน" },
-        { "en": "Lost luggage reimbursement up to $3,000 per traveler.", "th": "กระเป๋าสูญหาย: ชดเชยสูงสุด 3,000 ดอลลาร์ต่อผู้เดินทาง" }
+        {
+          "en": "No foreign transaction fees on purchases outside the US.",
+          "th": "ไม่มีค่าธรรมเนียมธุรกรรมต่างประเทศเมื่อซื้อของนอกสหรัฐฯ"
+        },
+        {
+          "en": "Trip cancellation/interruption cover up to $10,000 per traveler.",
+          "th": "คุ้มครองการยกเลิก/หยุดการเดินทางสูงสุด 10,000 ดอลลาร์ต่อผู้เดินทาง"
+        },
+        {
+          "en": "Baggage delay: up to $100 a day for up to 5 days.",
+          "th": "กระเป๋าล่าช้า: ชดเชยสูงสุดวันละ 100 ดอลลาร์ นานสูงสุด 5 วัน"
+        },
+        {
+          "en": "Lost luggage reimbursement up to $3,000 per traveler.",
+          "th": "กระเป๋าสูญหาย: ชดเชยสูงสุด 3,000 ดอลลาร์ต่อผู้เดินทาง"
+        }
       ],
-      "printedText": ["SAPPHIRE", "PREFERRED"],
+      "printedText": [
+        "SAPPHIRE",
+        "PREFERRED"
+      ],
       "sources": [
-        { "label": "Chase Sapphire Preferred product page", "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred", "checked": "2026-10-16" },
-        { "label": "Chase Guide to Benefits, Sapphire Preferred Visa Signature (network)", "url": "https://asset.chase.com/content/services/structured-document/document.en.pdf/card/benefits-center/product-benefits-guide-pdf/BGC11387_v2.pdf", "checked": "2026-10-16" }
+        {
+          "label": "Chase Sapphire Preferred product page",
+          "url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "Chase Guide to Benefits, Sapphire Preferred Visa Signature (network)",
+          "url": "https://asset.chase.com/content/services/structured-document/document.en.pdf/card/benefits-center/product-benefits-guide-pdf/BGC11387_v2.pdf",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "Annual fee $95. The product page does not state a cash advance (ATM) fee; it is in the separate Pricing & Terms.", "th": "ค่าธรรมเนียมรายปี 95 ดอลลาร์ หน้าผลิตภัณฑ์ไม่ได้ระบุค่าเบิกเงินสด (ATM) ซึ่งอยู่ในเอกสาร Pricing & Terms แยกต่างหาก" }
+        {
+          "en": "Annual fee 95 USD.",
+          "th": "ค่าธรรมเนียมรายปี 95 USD"
+        }
       ]
     },
     {
@@ -72,18 +149,44 @@
       "faceColor": "#173479",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignTransaction", "percent": 0, "upTo": false }
+        {
+          "kind": "foreignTransaction",
+          "percent": 0,
+          "upTo": false
+        }
       ],
-      "atm": { "policy": "unknown", "value": null, "currency": null },
+      "atm": {
+        "policy": "unknown",
+        "value": null,
+        "currency": null
+      },
       "benefits": [
-        { "en": "No annual fee and no foreign transaction fees.", "th": "ไม่มีค่าธรรมเนียมรายปีและไม่มีค่าธรรมเนียมธุรกรรมต่างประเทศ" },
-        { "en": "Unlimited 1.5 points for every $1 spent.", "th": "รับ 1.5 คะแนนต่อการใช้จ่ายทุก 1 ดอลลาร์ ไม่จำกัด" },
-        { "en": "Points don't expire while the account is open.", "th": "คะแนนไม่มีวันหมดอายุตราบที่บัญชียังเปิดอยู่" }
+        {
+          "en": "No annual fee and no foreign transaction fees.",
+          "th": "ไม่มีค่าธรรมเนียมรายปีและไม่มีค่าธรรมเนียมธุรกรรมต่างประเทศ"
+        },
+        {
+          "en": "Unlimited 1.5 points for every $1 spent.",
+          "th": "รับ 1.5 คะแนนต่อการใช้จ่ายทุก 1 ดอลลาร์ ไม่จำกัด"
+        },
+        {
+          "en": "Points don't expire while the account is open.",
+          "th": "คะแนนไม่มีวันหมดอายุตราบที่บัญชียังเปิดอยู่"
+        }
       ],
-      "printedText": ["BANK OF AMERICA", "VISA", "SIGNATURE"],
+      "printedText": [
+        "BANK OF AMERICA",
+        "VISA",
+        "SIGNATURE"
+      ],
       "sources": [
-        { "label": "Bank of America Travel Rewards product page and card art", "url": "https://www.bankofamerica.com/credit-cards/products/travel-rewards-credit-card/", "checked": "2026-10-16" }
-      ]
+        {
+          "label": "Bank of America Travel Rewards product page and card art",
+          "url": "https://www.bankofamerica.com/credit-cards/products/travel-rewards-credit-card/",
+          "checked": "2026-10-16"
+        }
+      ],
+      "notes": []
     },
     {
       "id": "schwab-investor-checking-debit",
@@ -95,22 +198,57 @@
       "faceColor": "#686868",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignTransaction", "percent": 0, "upTo": false }
+        {
+          "kind": "foreignTransaction",
+          "percent": 0,
+          "upTo": false
+        }
       ],
-      "atm": { "policy": "refundsFees", "value": null, "currency": null },
+      "atm": {
+        "policy": "refundsFees",
+        "value": null,
+        "currency": null
+      },
       "benefits": [
-        { "en": "Unlimited ATM fee rebates on cash withdrawals worldwide.", "th": "คืนค่าธรรมเนียม ATM ไม่จำกัดเมื่อถอนเงินสดทั่วโลก" },
-        { "en": "No foreign transaction fees.", "th": "ไม่มีค่าธรรมเนียมธุรกรรมต่างประเทศ" },
-        { "en": "No monthly service fees or overdraft fees on Investor Checking.", "th": "บัญชี Investor Checking ไม่มีค่าบริการรายเดือนและค่าเบิกเกินบัญชี" },
-        { "en": "Lock and unlock the card if it is lost or stolen.", "th": "ล็อกและปลดล็อกบัตรได้เมื่อบัตรหายหรือถูกขโมย" }
+        {
+          "en": "Unlimited ATM fee rebates on cash withdrawals worldwide.",
+          "th": "คืนค่าธรรมเนียม ATM ไม่จำกัดเมื่อถอนเงินสดทั่วโลก"
+        },
+        {
+          "en": "No foreign transaction fees.",
+          "th": "ไม่มีค่าธรรมเนียมธุรกรรมต่างประเทศ"
+        },
+        {
+          "en": "No monthly service fees or overdraft fees on Investor Checking.",
+          "th": "บัญชี Investor Checking ไม่มีค่าบริการรายเดือนและค่าเบิกเกินบัญชี"
+        },
+        {
+          "en": "Lock and unlock the card if it is lost or stolen.",
+          "th": "ล็อกและปลดล็อกบัตรได้เมื่อบัตรหายหรือถูกขโมย"
+        }
       ],
-      "printedText": ["CHARLES SCHWAB BANK", "DEBIT", "VISA"],
+      "printedText": [
+        "CHARLES SCHWAB BANK",
+        "DEBIT",
+        "VISA"
+      ],
       "sources": [
-        { "label": "Schwab Bank Investor Checking page", "url": "https://www.schwab.com/checking", "checked": "2026-10-16" },
-        { "label": "Schwab Bank Visa Platinum Debit Card page and card picture", "url": "https://www.schwab.com/checking/debit-card", "checked": "2026-10-16" }
+        {
+          "label": "Schwab Bank Investor Checking page",
+          "url": "https://www.schwab.com/checking",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "Schwab Bank Visa Platinum Debit Card page and card picture",
+          "url": "https://www.schwab.com/checking/debit-card",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "Rebates cover ATM cash withdrawals in local currency only; dynamic currency conversion fees are not rebated.", "th": "คืนเฉพาะค่าธรรมเนียมถอนเงินสดเป็นสกุลท้องถิ่น ไม่คืนค่าธรรมเนียมการแปลงสกุลเงินที่ตู้ (DCC)" }
+        {
+          "en": "ATM fee rebates do not cover a conversion the ATM offers; decline it.",
+          "th": "การคืนค่าธรรมเนียม ATM ไม่รวมการแปลงสกุลเงินที่ตู้เสนอ ควรปฏิเสธ"
+        }
       ]
     },
     {
@@ -123,22 +261,51 @@
       "faceColor": "#4FB51C",
       "faceTextLight": true,
       "fees": [],
-      "atm": { "policy": "chargesFixed", "value": 1.95, "currency": "USD" },
+      "atm": {
+        "policy": "chargesFixed",
+        "value": 1.95,
+        "currency": "USD"
+      },
       "benefits": [
-        { "en": "Spend in 150+ countries and 40+ currencies at the mid-market rate with no markup.", "th": "ใช้จ่ายได้ใน 150+ ประเทศ 40+ สกุลเงิน ด้วยอัตรากลางตลาดโดยไม่บวกส่วนต่าง" },
-        { "en": "First 250 USD of ATM withdrawals each month have no Wise fee.", "th": "ถอนเงินจาก ATM เดือนละ 250 ดอลลาร์แรกไม่มีค่าธรรมเนียมของ Wise" },
-        { "en": "Use the digital card right away with Apple Pay or Google Pay.", "th": "ใช้บัตรดิจิทัลกับ Apple Pay หรือ Google Pay ได้ทันที" },
-        { "en": "Freeze and unfreeze the card instantly; notification for every payment.", "th": "อายัด/ปลดอายัดบัตรได้ทันที และแจ้งเตือนทุกการใช้จ่าย" }
+        {
+          "en": "Spend in 150+ countries and 40+ currencies at the mid-market rate with no markup.",
+          "th": "ใช้จ่ายได้ใน 150+ ประเทศ 40+ สกุลเงิน ด้วยอัตรากลางตลาดโดยไม่บวกส่วนต่าง"
+        },
+        {
+          "en": "First 250 USD of ATM withdrawals each month have no Wise fee.",
+          "th": "ถอนเงินจาก ATM เดือนละ 250 ดอลลาร์แรกไม่มีค่าธรรมเนียมของ Wise"
+        },
+        {
+          "en": "Use the digital card right away with Apple Pay or Google Pay.",
+          "th": "ใช้บัตรดิจิทัลกับ Apple Pay หรือ Google Pay ได้ทันที"
+        },
+        {
+          "en": "Freeze and unfreeze the card instantly; notification for every payment.",
+          "th": "อายัด/ปลดอายัดบัตรได้ทันที และแจ้งเตือนทุกการใช้จ่าย"
+        }
       ],
       "printedText": [],
       "sources": [
-        { "label": "Wise US card fees", "url": "https://wise.com/us/pricing/card-fees", "checked": "2026-10-16" },
-        { "label": "Wise US card page and card picture", "url": "https://wise.com/us/card/", "checked": "2026-10-16" }
+        {
+          "label": "Wise US card fees",
+          "url": "https://wise.com/us/pricing/card-fees",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "Wise US card page and card picture",
+          "url": "https://wise.com/us/card/",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "ATM: free up to 250 USD per calendar month, then 1.95 USD + 1.95% per withdrawal. ATM operators may add their own fee.", "th": "ATM: ฟรีถึง 250 ดอลลาร์ต่อเดือน หลังจากนั้นครั้งละ 1.95 ดอลลาร์ + 1.95% และเจ้าของตู้อาจเก็บค่าธรรมเนียมเพิ่ม" },
-        { "en": "Wise states 'low conversion fees' that vary by currency, so no single percentage is listed.", "th": "Wise ระบุว่ามี 'ค่าแปลงสกุลเงินต่ำ' ซึ่งต่างกันตามสกุลเงิน จึงไม่ใส่ตัวเลขเดียว" },
-        { "en": "One-time card order fee 9 USD. The official picture shows no readable words on the front.", "th": "ค่าสั่งบัตรครั้งเดียว 9 ดอลลาร์ รูปบัตรทางการไม่มีตัวอักษรที่อ่านได้ด้านหน้า" }
+        {
+          "en": "ATM: free up to 250 USD a month, then 1.95 USD + 1.95% per withdrawal.",
+          "th": "ATM: ฟรีถึง 250 USD ต่อเดือน จากนั้น 1.95 USD + 1.95% ต่อครั้ง"
+        },
+        {
+          "en": "Conversion fees vary by currency, so no single percentage is listed.",
+          "th": "ค่าแปลงสกุลเงินต่างกันตามสกุล จึงไม่มีตัวเลขเดียว"
+        }
       ]
     },
     {
@@ -151,23 +318,64 @@
       "faceColor": "#EE2222",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignExchange", "percent": 2.5, "upTo": true }
+        {
+          "kind": "foreignExchange",
+          "percent": 2.5,
+          "upTo": true
+        }
       ],
-      "atm": { "policy": "chargesFixed", "value": 100, "currency": "THB" },
+      "atm": {
+        "policy": "chargesFixed",
+        "value": 100,
+        "currency": "THB"
+      },
       "benefits": [
-        { "en": "No 2.5% conversion fee when paying at card terminals abroad in the local currency.", "th": "ไม่มีค่าธรรมเนียมแปลงสกุลเงิน 2.5% เมื่อรูดที่เครื่อง EDC ต่างประเทศด้วยสกุลเงินท้องถิ่น" },
-        { "en": "No 2.5% conversion fee on online travel-category payments (bank's MCC list).", "th": "ไม่มีค่าธรรมเนียม 2.5% เมื่อจ่ายออนไลน์หมวดท่องเที่ยวตาม MCC ที่ธนาคารกำหนด" },
-        { "en": "One airport lounge visit per calendar year (Miracle Lounge, K Point KLUB or The Coral Executive Lounge).", "th": "ใช้ห้องรับรองสนามบินได้ 1 ครั้งต่อปีปฏิทิน (Miracle Lounge, K Point KLUB หรือ The Coral Executive Lounge)" }
+        {
+          "en": "No 2.5% conversion fee when paying at card terminals abroad in the local currency.",
+          "th": "ไม่มีค่าธรรมเนียมแปลงสกุลเงิน 2.5% เมื่อรูดที่เครื่อง EDC ต่างประเทศด้วยสกุลเงินท้องถิ่น"
+        },
+        {
+          "en": "No 2.5% conversion fee on online travel-category payments (bank's MCC list).",
+          "th": "ไม่มีค่าธรรมเนียม 2.5% เมื่อจ่ายออนไลน์หมวดท่องเที่ยวตาม MCC ที่ธนาคารกำหนด"
+        },
+        {
+          "en": "One airport lounge visit per calendar year (Miracle Lounge, K Point KLUB or The Coral Executive Lounge).",
+          "th": "ใช้ห้องรับรองสนามบินได้ 1 ครั้งต่อปีปฏิทิน (Miracle Lounge, K Point KLUB หรือ The Coral Executive Lounge)"
+        }
       ],
-      "printedText": ["JOURNEY", "KBANK", "VISA", "PLATINUM", "DEBIT"],
+      "printedText": [
+        "JOURNEY",
+        "KBANK",
+        "VISA",
+        "PLATINUM",
+        "DEBIT"
+      ],
       "sources": [
-        { "label": "KBank fee announcement 024/2569, effective 22 Sep 2026", "url": "https://www.kasikornbank.com/en/rate/fee/ChargesDoc/ServicingFees_en.pdf", "checked": "2026-10-16" },
-        { "label": "KBank JOURNEY sale sheet (Thai, updated Jul 2023)", "url": "https://www.kasikornbank.com/th/download/tc/salesheet-journeycard_factsheet.pdf", "checked": "2026-10-16" },
-        { "label": "KBank JOURNEY exchange-rate page (card picture)", "url": "https://www.kasikornbank.com/th/personal/debit-card/pages/exchange-rate.aspx", "checked": "2026-10-16" }
+        {
+          "label": "KBank fee announcement 024/2569, effective 22 Sep 2026",
+          "url": "https://www.kasikornbank.com/en/rate/fee/ChargesDoc/ServicingFees_en.pdf",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "KBank JOURNEY sale sheet (Thai, updated Jul 2023)",
+          "url": "https://www.kasikornbank.com/th/download/tc/salesheet-journeycard_factsheet.pdf",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "KBank JOURNEY exchange-rate page (card picture)",
+          "url": "https://www.kasikornbank.com/th/personal/debit-card/pages/exchange-rate.aspx",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "Other foreign-currency transactions carry a forex risk charge of not more than 2.5%. Overseas ATM: 100 THB per withdrawal plus up to 2.5% forex charge, excluding the ATM owner's fee.", "th": "ธุรกรรมสกุลเงินต่างประเทศอื่น ๆ มีค่าความเสี่ยงอัตราแลกเปลี่ยนไม่เกิน 2.5% ถอนเงิน ATM ต่างประเทศ 100 บาทต่อรายการ บวกค่าความเสี่ยงไม่เกิน 2.5% ไม่รวมค่าธรรมเนียมของเจ้าของตู้" },
-        { "en": "Benefits come from the July 2023 sale sheet. First card 700 THB, first-year annual fee 0, then 550 THB a year (Sep 2026 fee list). The picture shows red; other face colours exist.", "th": "สิทธิประโยชน์มาจาก sale sheet ก.ค. 2566 ค่าทำบัตรแรก 700 บาท ปีแรกไม่มีค่ารายปี ปีถัดไป 550 บาท (ประกาศ ก.ย. 2569) รูปเป็นสีแดง แต่มีสีอื่นด้วย" }
+        {
+          "en": "Overseas ATM: 100 THB per withdrawal plus up to 2.5%.",
+          "th": "ATM ต่างประเทศ: 100 บาทต่อครั้ง บวกสูงสุด 2.5%"
+        },
+        {
+          "en": "Annual fee 550 THB from the second year.",
+          "th": "ค่าธรรมเนียมรายปี 550 บาทตั้งแต่ปีที่สอง"
+        }
       ]
     },
     {
@@ -180,23 +388,57 @@
       "faceColor": "#3C4C4C",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignTransaction", "percent": 0, "upTo": false }
+        {
+          "kind": "foreignTransaction",
+          "percent": 0,
+          "upTo": false
+        }
       ],
-      "atm": { "policy": "noFee", "value": null, "currency": null },
+      "atm": {
+        "policy": "noFee",
+        "value": null,
+        "currency": null
+      },
       "benefits": [
-        { "en": "No 2.5% exchange fee when paying overseas in foreign currencies.", "th": "ไม่มีค่าธรรมเนียมแลกเปลี่ยน 2.5% เมื่อจ่ายเป็นสกุลเงินต่างประเทศ" },
-        { "en": "Pay in up to 150 currencies wherever Mastercard is accepted.", "th": "จ่ายได้สูงสุด 150 สกุลเงินทุกที่ที่รับ Mastercard" },
-        { "en": "Free overseas ATM withdrawals up to THB 50,000 a month (until 31 Dec 2026).", "th": "ถอนเงิน ATM ต่างประเทศฟรีสูงสุด 50,000 บาทต่อเดือน (ถึง 31 ธ.ค. 2026)" },
-        { "en": "Lock the card with one tap and get a push notification for every payment.", "th": "ล็อกบัตรได้ในแตะเดียว และแจ้งเตือนทุกการใช้จ่าย" }
+        {
+          "en": "No 2.5% exchange fee when paying overseas in foreign currencies.",
+          "th": "ไม่มีค่าธรรมเนียมแลกเปลี่ยน 2.5% เมื่อจ่ายเป็นสกุลเงินต่างประเทศ"
+        },
+        {
+          "en": "Pay in up to 150 currencies wherever Mastercard is accepted.",
+          "th": "จ่ายได้สูงสุด 150 สกุลเงินทุกที่ที่รับ Mastercard"
+        },
+        {
+          "en": "Free overseas ATM withdrawals up to THB 50,000 a month (until 31 Dec 2026).",
+          "th": "ถอนเงิน ATM ต่างประเทศฟรีสูงสุด 50,000 บาทต่อเดือน (ถึง 31 ธ.ค. 2026)"
+        },
+        {
+          "en": "Lock the card with one tap and get a push notification for every payment.",
+          "th": "ล็อกบัตรได้ในแตะเดียว และแจ้งเตือนทุกการใช้จ่าย"
+        }
       ],
       "printedText": [],
       "sources": [
-        { "label": "YouTrip Thailand home page", "url": "https://www.you.co/th/en-th/", "checked": "2026-10-16" },
-        { "label": "KBank fee announcement 024/2569, effective 22 Sep 2026 (YouTrip card fees)", "url": "https://www.kasikornbank.com/en/rate/fee/ChargesDoc/ServicingFees_en.pdf", "checked": "2026-10-16" }
+        {
+          "label": "YouTrip Thailand home page",
+          "url": "https://www.you.co/th/en-th/",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "KBank fee announcement 024/2569, effective 22 Sep 2026 (YouTrip card fees)",
+          "url": "https://www.kasikornbank.com/en/rate/fee/ChargesDoc/ServicingFees_en.pdf",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "ATM is free only under a promotion. The standard fee is 100 THB per overseas withdrawal. YouTrip's page says the waiver runs until 31 Dec 2026, but KBank's Sep 2026 fee list says until 31 Mar 2027. An older KBank list (20 May 2026) said until 30 Sep 2026.", "th": "ATM ฟรีเฉพาะช่วงโปรโมชัน ค่าธรรมเนียมปกติ 100 บาทต่อการถอนในต่างประเทศ หน้า YouTrip ระบุถึง 31 ธ.ค. 2026 แต่ประกาศ KBank ก.ย. 2026 ระบุถึง 31 มี.ค. 2027 และประกาศเดิม (20 พ.ค. 2026) ระบุถึง 30 ก.ย. 2026" },
-        { "en": "Spending uses YouTrip's own exchange rate. The face colour is sampled from a small dark card in YouTrip's Oct 2026 banner; no words on it are readable.", "th": "การใช้จ่ายใช้อัตราแลกเปลี่ยนของ YouTrip สีบัตรวัดจากบัตรสีเข้มขนาดเล็กในแบนเนอร์ ต.ค. 2026 และอ่านตัวอักษรบนบัตรไม่ได้" }
+        {
+          "en": "Overseas ATM is free during a promotion; otherwise 100 THB per withdrawal.",
+          "th": "ATM ต่างประเทศฟรีช่วงโปรโมชัน ปกติ 100 บาทต่อครั้ง"
+        },
+        {
+          "en": "Spending uses YouTrip's own exchange rate.",
+          "th": "ใช้อัตราแลกเปลี่ยนของ YouTrip"
+        }
       ]
     },
     {
@@ -209,22 +451,53 @@
       "faceColor": "#111111",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignTransaction", "percent": 0, "upTo": false }
+        {
+          "kind": "foreignTransaction",
+          "percent": 0,
+          "upTo": false
+        }
       ],
-      "atm": { "policy": "chargesFixed", "value": 100, "currency": "THB" },
+      "atm": {
+        "policy": "chargesFixed",
+        "value": 100,
+        "currency": "THB"
+      },
       "benefits": [
-        { "en": "No currency conversion fee and no exchange-rate risk fee in supported currencies.", "th": "ไม่มีค่าแปลงสกุลเงินและไม่มีค่าความเสี่ยงอัตราแลกเปลี่ยนในสกุลเงินที่รองรับ" },
-        { "en": "Holds 14 currencies, including Thai baht.", "th": "เก็บเงินได้ 14 สกุล รวมเงินบาท" },
-        { "en": "No annual fee for the life of the card.", "th": "ไม่มีค่าธรรมเนียมรายปีตลอดอายุบัตร" },
-        { "en": "Free AXA travel insurance for up to 10 days, cover up to THB 1.5 million.", "th": "ประกันเดินทาง AXA ฟรีสูงสุด 10 วัน คุ้มครองสูงสุด 1.5 ล้านบาท" }
+        {
+          "en": "No currency conversion fee and no exchange-rate risk fee in supported currencies.",
+          "th": "ไม่มีค่าแปลงสกุลเงินและไม่มีค่าความเสี่ยงอัตราแลกเปลี่ยนในสกุลเงินที่รองรับ"
+        },
+        {
+          "en": "Holds 14 currencies, including Thai baht.",
+          "th": "เก็บเงินได้ 14 สกุล รวมเงินบาท"
+        },
+        {
+          "en": "No annual fee for the life of the card.",
+          "th": "ไม่มีค่าธรรมเนียมรายปีตลอดอายุบัตร"
+        },
+        {
+          "en": "Free AXA travel insurance for up to 10 days, cover up to THB 1.5 million.",
+          "th": "ประกันเดินทาง AXA ฟรีสูงสุด 10 วัน คุ้มครองสูงสุด 1.5 ล้านบาท"
+        }
       ],
-      "printedText": ["PLANET", "SCB", "PLANET SCB CARD", "VISA"],
+      "printedText": [
+        "PLANET",
+        "SCB",
+        "PLANET SCB CARD",
+        "VISA"
+      ],
       "sources": [
-        { "label": "SCB PLANET Card page and card picture", "url": "https://www.scb.co.th/en/personal-banking/cards/prepaid-cards/planet-scb-card", "checked": "2026-10-16" }
+        {
+          "label": "SCB PLANET Card page and card picture",
+          "url": "https://www.scb.co.th/en/personal-banking/cards/prepaid-cards/planet-scb-card",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "Overseas ATM: THB 100 per withdrawal; the local ATM operator may add a fee. Cash withdrawal is not available in Thailand. Card issuance fee THB 200.", "th": "ถอน ATM ต่างประเทศ 100 บาทต่อรายการ เจ้าของตู้อาจเก็บเพิ่ม ถอนเงินในไทยไม่ได้ ค่าออกบัตร 200 บาท" },
-        { "en": "There is also a black FIFA World Cup design.", "th": "มีลายฟุตบอลโลก FIFA สีดำด้วย" }
+        {
+          "en": "Overseas ATM 100 THB per withdrawal; card fee 200 THB.",
+          "th": "ATM ต่างประเทศ 100 บาทต่อครั้ง ค่าทำบัตร 200 บาท"
+        }
       ]
     },
     {
@@ -237,22 +510,50 @@
       "faceColor": "#F7F7F8",
       "faceTextLight": false,
       "fees": [
-        { "kind": "foreignExchange", "percent": 0, "upTo": false }
+        {
+          "kind": "foreignExchange",
+          "percent": 0,
+          "upTo": false
+        }
       ],
-      "atm": { "policy": "chargesFixed", "value": 100, "currency": "THB" },
+      "atm": {
+        "policy": "chargesFixed",
+        "value": 100,
+        "currency": "THB"
+      },
       "benefits": [
-        { "en": "No 2.5% foreign exchange fee worldwide.", "th": "ไม่มีค่าธรรมเนียมแลกเปลี่ยน 2.5% ทั่วโลก" },
-        { "en": "Exchange baht into up to 11 foreign currencies 24/7 in the app.", "th": "แลกเงินบาทเป็นสกุลต่างประเทศได้ 11 สกุล ตลอด 24 ชม. ผ่านแอป" },
-        { "en": "No annual fee for the lifetime of the card.", "th": "ไม่มีค่าธรรมเนียมรายปีตลอดอายุบัตร" },
-        { "en": "Mastercard Flight Delay Pass: lounge access when a flight is 2+ hours late (register first).", "th": "Mastercard Flight Delay Pass: เข้าห้องรับรองได้เมื่อเที่ยวบินล่าช้า 2 ชม. ขึ้นไป (ต้องลงทะเบียนก่อน)" }
+        {
+          "en": "No 2.5% foreign exchange fee worldwide.",
+          "th": "ไม่มีค่าธรรมเนียมแลกเปลี่ยน 2.5% ทั่วโลก"
+        },
+        {
+          "en": "Exchange baht into up to 11 foreign currencies 24/7 in the app.",
+          "th": "แลกเงินบาทเป็นสกุลต่างประเทศได้ 11 สกุล ตลอด 24 ชม. ผ่านแอป"
+        },
+        {
+          "en": "No annual fee for the lifetime of the card.",
+          "th": "ไม่มีค่าธรรมเนียมรายปีตลอดอายุบัตร"
+        },
+        {
+          "en": "Mastercard Flight Delay Pass: lounge access when a flight is 2+ hours late (register first).",
+          "th": "Mastercard Flight Delay Pass: เข้าห้องรับรองได้เมื่อเที่ยวบินล่าช้า 2 ชม. ขึ้นไป (ต้องลงทะเบียนก่อน)"
+        }
       ],
-      "printedText": ["TRAVEL CARD"],
+      "printedText": [
+        "TRAVEL CARD"
+      ],
       "sources": [
-        { "label": "Bangkok Bank Travel Card page and card picture", "url": "https://www.bangkokbank.com/en/Personal/Cards/Travel-Card", "checked": "2026-10-16" }
+        {
+          "label": "Bangkok Bank Travel Card page and card picture",
+          "url": "https://www.bangkokbank.com/en/Personal/Cards/Travel-Card",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "Overseas ATM: 100 THB (or equivalent) per withdrawal; the ATM provider may charge more. Entry fee 200 THB (waived 15 Nov 2025 - 31 Dec 2026 for some channels).", "th": "ถอน ATM ต่างประเทศ 100 บาท (หรือเทียบเท่า) ต่อรายการ ผู้ให้บริการตู้อาจเก็บเพิ่ม ค่าแรกเข้า 200 บาท (ยกเว้น 15 พ.ย. 2025 - 31 ธ.ค. 2026 บางช่องทาง)" },
-        { "en": "The picture is a white vertical card with a pastel rainbow band ('design 2'); other designs may exist.", "th": "รูปเป็นบัตรแนวตั้งสีขาวมีแถบสีรุ้งพาสเทล ('design 2') อาจมีลายอื่น" }
+        {
+          "en": "Overseas ATM 100 THB per withdrawal; entry fee 200 THB.",
+          "th": "ATM ต่างประเทศ 100 บาทต่อครั้ง ค่าแรกเข้า 200 บาท"
+        }
       ]
     },
     {
@@ -265,23 +566,55 @@
       "faceColor": "#3A56A8",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignExchange", "percent": 0, "upTo": false }
+        {
+          "kind": "foreignExchange",
+          "percent": 0,
+          "upTo": false
+        }
       ],
-      "atm": { "policy": "noFee", "value": null, "currency": null },
+      "atm": {
+        "policy": "noFee",
+        "value": null,
+        "currency": null
+      },
       "benefits": [
-        { "en": "No 2.5% exchange rate fee on overseas payments.", "th": "ไม่มีค่าธรรมเนียมอัตราแลกเปลี่ยน 2.5% เมื่อจ่ายในต่างประเทศ" },
-        { "en": "No ATM withdrawal fee worldwide from Krungthai (ATM owner fees may apply).", "th": "ถอนเงิน ATM ทั่วโลกโดยกรุงไทยไม่เก็บค่าธรรมเนียม (เจ้าของตู้อาจเก็บ)" },
-        { "en": "Spend and exchange in 20 currencies via a linked Global Savings account.", "th": "ใช้จ่ายและแลกเงินได้ 20 สกุล ผ่านบัญชี Global Savings ที่ผูกไว้" },
-        { "en": "Numberless card for safer shopping.", "th": "บัตรไม่มีเลขบัตรบนหน้าบัตร ปลอดภัยขึ้น" }
+        {
+          "en": "No 2.5% exchange rate fee on overseas payments.",
+          "th": "ไม่มีค่าธรรมเนียมอัตราแลกเปลี่ยน 2.5% เมื่อจ่ายในต่างประเทศ"
+        },
+        {
+          "en": "No ATM withdrawal fee worldwide from Krungthai (ATM owner fees may apply).",
+          "th": "ถอนเงิน ATM ทั่วโลกโดยกรุงไทยไม่เก็บค่าธรรมเนียม (เจ้าของตู้อาจเก็บ)"
+        },
+        {
+          "en": "Spend and exchange in 20 currencies via a linked Global Savings account.",
+          "th": "ใช้จ่ายและแลกเงินได้ 20 สกุล ผ่านบัญชี Global Savings ที่ผูกไว้"
+        },
+        {
+          "en": "Numberless card for safer shopping.",
+          "th": "บัตรไม่มีเลขบัตรบนหน้าบัตร ปลอดภัยขึ้น"
+        }
       ],
-      "printedText": ["TRAVEL"],
+      "printedText": [
+        "TRAVEL"
+      ],
       "sources": [
-        { "label": "Krungthai Travel Premium Mastercard Debit page and card picture", "url": "https://krungthai.com/en/content/personal/cards/krungthai-travel-premium-mastercard", "checked": "2026-10-16" },
-        { "label": "Krungthai Travel Visa Platinum sales sheet V1.0/26 (product ended)", "url": "https://krungthai.com/Download/generalcontent/MediaFile_205712attach7_SalesSheet_KrungthaiTravelVisaPlatinumCard_EN_V1_2569.pdf", "checked": "2026-10-16" }
+        {
+          "label": "Krungthai Travel Premium Mastercard Debit page and card picture",
+          "url": "https://krungthai.com/en/content/personal/cards/krungthai-travel-premium-mastercard",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "Krungthai Travel Visa Platinum sales sheet V1.0/26 (product ended)",
+          "url": "https://krungthai.com/Download/generalcontent/MediaFile_205712attach7_SalesSheet_KrungthaiTravelVisaPlatinumCard_EN_V1_2569.pdf",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "This replaces the Krungthai Travel Visa Platinum card, which stopped working after 28 Feb 2026.", "th": "บัตรนี้มาแทนบัตร Krungthai Travel Visa Platinum ซึ่งใช้งานไม่ได้หลัง 28 ก.พ. 2026" },
-        { "en": "Card issuance fee 100 THB, annual fee 900 THB. The cashback dates shown on the page have ended, so cashback is not listed.", "th": "ค่าออกบัตร 100 บาท ค่ารายปี 900 บาท เงินคืนตามที่ระบุในหน้าเว็บหมดช่วงเวลาแล้ว จึงไม่ใส่" }
+        {
+          "en": "Card fee 100 THB, annual fee 900 THB.",
+          "th": "ค่าทำบัตร 100 บาท ค่าธรรมเนียมรายปี 900 บาท"
+        }
       ]
     },
     {
@@ -294,22 +627,58 @@
       "faceColor": "#5A3A30",
       "faceTextLight": true,
       "fees": [
-        { "kind": "foreignExchange", "percent": 2.0, "upTo": true }
+        {
+          "kind": "foreignExchange",
+          "percent": 2.0,
+          "upTo": true
+        }
       ],
-      "atm": { "policy": "unknown", "value": null, "currency": null },
+      "atm": {
+        "policy": "unknown",
+        "value": null,
+        "currency": null
+      },
       "benefits": [
-        { "en": "No entrance fee and no annual fee.", "th": "ไม่มีค่าธรรมเนียมแรกเข้าและค่าธรรมเนียมรายปี" },
-        { "en": "2x KTC FOREVER points on foreign-currency spending (some countries excluded), 1 Jan - 31 Dec 2026.", "th": "รับคะแนน KTC FOREVER 2 เท่าเมื่อใช้จ่ายสกุลเงินต่างประเทศ (ยกเว้นบางประเทศ) 1 ม.ค. - 31 ธ.ค. 2026" },
-        { "en": "MIRACLE LOUNGE access twice a year with a Thai Airways international boarding pass.", "th": "เข้า MIRACLE LOUNGE ได้ปีละ 2 ครั้ง พร้อมบัตรขึ้นเครื่องการบินไทยเที่ยวบินระหว่างประเทศ" },
-        { "en": "Points never expire.", "th": "คะแนนไม่มีวันหมดอายุ" }
+        {
+          "en": "No entrance fee and no annual fee.",
+          "th": "ไม่มีค่าธรรมเนียมแรกเข้าและค่าธรรมเนียมรายปี"
+        },
+        {
+          "en": "2x KTC FOREVER points on foreign-currency spending (some countries excluded), 1 Jan - 31 Dec 2026.",
+          "th": "รับคะแนน KTC FOREVER 2 เท่าเมื่อใช้จ่ายสกุลเงินต่างประเทศ (ยกเว้นบางประเทศ) 1 ม.ค. - 31 ธ.ค. 2026"
+        },
+        {
+          "en": "MIRACLE LOUNGE access twice a year with a Thai Airways international boarding pass.",
+          "th": "เข้า MIRACLE LOUNGE ได้ปีละ 2 ครั้ง พร้อมบัตรขึ้นเครื่องการบินไทยเที่ยวบินระหว่างประเทศ"
+        },
+        {
+          "en": "Points never expire.",
+          "th": "คะแนนไม่มีวันหมดอายุ"
+        }
       ],
-      "printedText": ["KTC", "KRUNGTHAI", "VISA", "SIGNATURE"],
+      "printedText": [
+        "KTC",
+        "KRUNGTHAI",
+        "VISA",
+        "SIGNATURE"
+      ],
       "sources": [
-        { "label": "KTC VISA SIGNATURE product page and card picture", "url": "https://www.ktc.co.th/en/credit-card/generic/ktc-visa-signature", "checked": "2026-10-16" },
-        { "label": "KTC currency risk disclosure (hedging premium)", "url": "https://www.ktc.co.th/en/about/product-disclosures/currency-risk-information", "checked": "2026-10-16" }
+        {
+          "label": "KTC VISA SIGNATURE product page and card picture",
+          "url": "https://www.ktc.co.th/en/credit-card/generic/ktc-visa-signature",
+          "checked": "2026-10-16"
+        },
+        {
+          "label": "KTC currency risk disclosure (hedging premium)",
+          "url": "https://www.ktc.co.th/en/about/product-disclosures/currency-risk-information",
+          "checked": "2026-10-16"
+        }
       ],
       "notes": [
-        { "en": "KTC charges a hedging premium of not more than 2.0% on foreign-currency spending and cash advances. Non-USD amounts are converted to USD first. The cash advance fee is not on these pages.", "th": "KTC เก็บค่าความเสี่ยงอัตราแลกเปลี่ยนไม่เกิน 2.0% สำหรับการใช้จ่ายและเบิกเงินสดสกุลต่างประเทศ สกุลอื่นที่ไม่ใช่ดอลลาร์สหรัฐจะแปลงเป็นดอลลาร์ก่อน ไม่พบค่าธรรมเนียมเบิกเงินสดในหน้านี้" }
+        {
+          "en": "Amounts not in USD are converted to USD first.",
+          "th": "ยอดที่ไม่ใช่ USD จะแปลงเป็น USD ก่อน"
+        }
       ]
     }
   ]

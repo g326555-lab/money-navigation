@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import '../../rules/bill_check.dart';
 import '../../rules/ocr_layout.dart';
 import '../../rules/receipt_record.dart';
+import '../../rules/receipt_roles.dart' show printedTotalOnly;
 import 'ai_trace.dart';
 import 'cloud_functions.dart';
 
@@ -67,12 +68,14 @@ class BillReader {
       () => checkBillFromVision(vision),
     );
     final traces = [visionTrace, checkTrace];
-    final merchant = merchantFromRows(_rows(lines));
+    final rows = _rows(lines);
+    final merchant = merchantFromRows(rows);
     if (check == null) {
       return BillReading.failed(
         BillFailure.doesNotAddUp,
         traces: traces,
         merchantName: merchant,
+        printedTotal: printedTotalOnly(rows),
       );
     }
     return BillReading(check: check, traces: traces, merchantName: merchant);
@@ -120,13 +123,19 @@ class BillReading {
     required BillCheck this.check,
     required this.traces,
     this.merchantName,
-  }) : failure = null;
+  }) : failure = null,
+       printedTotal = null;
 
   const BillReading.failed(
     BillFailure this.failure, {
     this.traces = const [],
     this.merchantName,
+    this.printedTotal,
   }) : check = null;
+
+  /// A slip that prints only its total (card or QR payment): the total,
+  /// to save as a record that is not verified. Null otherwise.
+  final double? printedTotal;
 
   /// The shop name printed at the top, when one was read
   /// ([merchantFromRows]); null otherwise.

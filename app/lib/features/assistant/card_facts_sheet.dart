@@ -34,6 +34,7 @@ Future<void> showCardFactsSheet(
 ) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
+  showDragHandle: false,
   backgroundColor: Colors.transparent,
   builder: (_) => _CardFactsSheet(store: store, homeCurrency: homeCurrency),
 );
@@ -150,6 +151,15 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
     });
   }
 
+  /// The chosen card's face at a card's real proportions, never wider
+  /// than a card held at arm's length on a big screen.
+  Widget _bigFace(CatalogCard card) => Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppSizes.cardFaceMaxWidth),
+      child: CardFace(card: card),
+    ),
+  );
+
   List<Widget> _cardSection(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final type = AppTypography.of(context);
@@ -157,10 +167,8 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
     final pending = _pending;
     final card = _card;
     return [
-      Text(l10n.cardYourCard, style: type.sectionHeader),
-      const SizedBox(height: AppSpacing.sm),
       if (pending != null) ...[
-        CardFace(card: pending),
+        _bigFace(pending),
         const SizedBox(height: AppSpacing.md),
         Text(l10n.cardScanConfirm, style: type.title),
         const SizedBox(height: AppSpacing.md),
@@ -185,7 +193,7 @@ class _CardFactsSheetState extends State<_CardFactsSheet> {
           ],
         ),
       ] else if (card != null) ...[
-        CardFace(card: card),
+        _bigFace(card),
         const SizedBox(height: AppSpacing.md),
         Text(cardFeeLine(l10n, card), style: type.rowTitle),
         Text(l10n.cardFilled, style: type.footer),

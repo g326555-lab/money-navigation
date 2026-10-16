@@ -2700,4 +2700,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardFilled => 'Fees filled in from this card\'s page';
+
+  @override
+  String get cardAdd => 'Add your card';
+
+  @override
+  String get cardAddBody =>
+      'Pick it from your country\'s list or scan it; fees fill in by themselves';
+
+  @override
+  String cardPickerNoneForCurrency(String currency) {
+    return 'No cards listed for $currency accounts yet, so every listed card is shown.';
+  }
+
+  @override
+  String get billSlipTitle => 'Only the total is printed';
+
+  @override
+  String get billSlipBody =>
+      'This looks like a card or QR payment slip: it shows the total but no items, so there is nothing to check it against. You can save it as it is, marked as not checked, or fix it first.';
 }

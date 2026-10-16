@@ -2133,5 +2133,17 @@
   "cardChange": "Change card",
   "cardManual": "Or enter the fees yourself",
   "cardNotThis": "Not using a listed card",
-  "cardFilled": "Fees filled in from this card's page"
+  "cardFilled": "Fees filled in from this card's page",
+  "cardAdd": "Add your card",
+  "cardAddBody": "Pick it from your country's list or scan it; fees fill in by themselves",
+  "cardPickerNoneForCurrency": "No cards listed for {currency} accounts yet, so every listed card is shown.",
+  "@cardPickerNoneForCurrency": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "billSlipTitle": "Only the total is printed",
+  "billSlipBody": "This looks like a card or QR payment slip: it shows the total but no items, so there is nothing to check it against. You can save it as it is, marked as not checked, or fix it first."
 }

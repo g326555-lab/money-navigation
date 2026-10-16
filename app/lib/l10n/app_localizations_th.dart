@@ -2598,4 +2598,23 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get cardFilled => 'กรอกค่าธรรมเนียมจากหน้าเว็บของบัตรนี้แล้ว';
+
+  @override
+  String get cardAdd => 'เพิ่มบัตรของคุณ';
+
+  @override
+  String get cardAddBody =>
+      'เลือกจากรายการของประเทศคุณหรือสแกนบัตร ค่าธรรมเนียมจะกรอกให้เอง';
+
+  @override
+  String cardPickerNoneForCurrency(String currency) {
+    return 'ยังไม่มีบัตรสำหรับบัญชี $currency จึงแสดงบัตรทั้งหมด';
+  }
+
+  @override
+  String get billSlipTitle => 'มีแค่ยอดรวม';
+
+  @override
+  String get billSlipBody =>
+      'ดูเหมือนสลิปจ่ายด้วยบัตรหรือ QR มีแต่ยอดรวม ไม่มีรายการสินค้า จึงตรวจสอบไม่ได้ บันทึกไว้แบบยังไม่ได้ตรวจ หรือแก้ไขก่อนก็ได้';
 }

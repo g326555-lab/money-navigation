@@ -3,3 +3,25 @@ _to_delete/
 prints/*.zip
 .venv*/
 design/screens/
+
+# Secrets and local config (never commit)
+env/
+**/env/*.json
+*.local.md
+.env
+.env.*
+**/ios/Flutter/ReleaseOverrides.xcconfig
+**/ios/Flutter/Maps.xcconfig
+key.properties
+*.jks
+*.keystore
+*.p8
+*.p12
+*.pem
+*.mobileprovision
+google-services.json
+GoogleService-Info.plist
+service-account*.json
+supabase/.temp/
+**/supabase/.temp/
+.claude/settings.local.json

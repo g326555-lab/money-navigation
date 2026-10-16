@@ -18,7 +18,7 @@ const pastHaggles = 'Your past haggles';
 
 /// Amounts keep the number and currency together with a no-break space.
 const sampleFooter =
-    'You paid 90\u00A0THB at Or Tor Kor Market yesterday'
+    'You paid 95\u00A0THB at Chatuchak Weekend Market yesterday'
     ' · from 2 sample records';
 const realFooter =
     'You paid 90\u00A0THB at Or Tor Kor Market yesterday'
@@ -145,8 +145,8 @@ void main() {
 
     expect(find.text(sampleFooter), findsOneWidget);
     expect(find.text(pastHaggles), findsOneWidget);
-    // Mango 140 -> 100 (28.6 %) and 150 -> 90 (40 %): median 34.3 %.
-    expect(find.text('About 34 % off the first price'), findsOneWidget);
+    // Mango 140 -> 100 (28.6 %) and 140 -> 95 (32.1 %): median 30.4 %.
+    expect(find.text('About 30 % off the first price'), findsOneWidget);
     expect(find.text('from 2 sample records'), findsOneWidget);
     expect(find.textContaining('past records'), findsNothing);
     await drainTimers(tester);

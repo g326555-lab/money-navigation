@@ -30,10 +30,13 @@ class CardPickerScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final type = AppTypography.of(context);
     final byIssuer = <String, List<CatalogCard>>{};
-    final ordered = [
-      ...cards.where((c) => c.homeCurrency == homeCurrency),
-      ...cards.where((c) => c.homeCurrency != homeCurrency),
+    // Cards of the traveler's own country (their home currency); every
+    // card when none is listed for it yet.
+    final own = [
+      for (final c in cards)
+        if (c.homeCurrency == homeCurrency) c,
     ];
+    final ordered = own.isEmpty ? cards : own;
     for (final c in ordered) {
       (byIssuer[c.issuer] ??= []).add(c);
     }
@@ -126,6 +129,8 @@ class CardPickerScreen extends StatelessWidget {
                     ],
                   ),
                 ],
+                if (own.isEmpty)
+                  GroupFooter(l10n.cardPickerNoneForCurrency(homeCurrency)),
                 GroupFooter(l10n.cardPickerFooter),
               ],
             ),

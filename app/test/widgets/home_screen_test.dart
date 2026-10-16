@@ -327,8 +327,8 @@ void main() {
       await pumpFrames(tester, frames: 5);
 
       expect(find.text('Sample calendar'), findsOneWidget);
-      expect(find.text('Jim Thompson House'), findsOneWidget);
-      expect(find.text('Lunch and shopping'), findsOneWidget);
+      expect(find.text('Flight home'), findsOneWidget);
+      expect(find.text('Lunch appointment'), findsOneWidget);
       expect(find.text('Read today\'s calendar'), findsNothing);
     });
 

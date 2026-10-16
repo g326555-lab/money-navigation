@@ -4415,6 +4415,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fees filled in from this card\'s page'**
   String get cardFilled;
+
+  /// No description provided for @cardAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your card'**
+  String get cardAdd;
+
+  /// No description provided for @cardAddBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick it from your country\'s list or scan it; fees fill in by themselves'**
+  String get cardAddBody;
+
+  /// No description provided for @cardPickerNoneForCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'No cards listed for {currency} accounts yet, so every listed card is shown.'**
+  String cardPickerNoneForCurrency(String currency);
+
+  /// No description provided for @billSlipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the total is printed'**
+  String get billSlipTitle;
+
+  /// No description provided for @billSlipBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This looks like a card or QR payment slip: it shows the total but no items, so there is nothing to check it against. You can save it as it is, marked as not checked, or fix it first.'**
+  String get billSlipBody;
 }
 
 class _AppLocalizationsDelegate

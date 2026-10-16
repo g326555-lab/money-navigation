@@ -76,6 +76,9 @@ abstract final class AppSizes {
   static const double cardThumbWidth = 56;
   static const double cardThumbRadius = 6;
 
+  /// Widest the full card face is drawn.
+  static const double cardFaceMaxWidth = 280;
+
   /// How far a receipt photo can be pinched in.
   static const double photoMaxZoom = 5;
 

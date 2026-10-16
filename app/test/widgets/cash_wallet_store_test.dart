@@ -116,7 +116,7 @@ void main() {
     await store.setBalance(amount: 300, currency: 'THB', at: now);
 
     store.showDemo(visitor.key, sampleMovements: visitor.cashMovementsAt(now));
-    expect(store.balance('THB'), 4820);
+    expect(store.balance('THB'), 49044);
     await store.setLinkedSpend(
       sourceId: 'demo-haggle',
       amount: 110,
@@ -124,7 +124,7 @@ void main() {
       description: 'Market purchase',
       at: now,
     );
-    expect(store.balance('THB'), 4710);
+    expect(store.balance('THB'), 48934);
 
     store.showReal();
     expect(store.balance('THB'), 300);
@@ -134,9 +134,9 @@ void main() {
 
     // Back in the demo its own change is still there, until a reset.
     store.showDemo(visitor.key, sampleMovements: visitor.cashMovementsAt(now));
-    expect(store.balance('THB'), 4710);
+    expect(store.balance('THB'), 48934);
     await store.resetDemo();
-    expect(store.balance('THB'), 4820);
+    expect(store.balance('THB'), 49044);
   });
 
   test('negative or non-finite amounts are refused', () async {

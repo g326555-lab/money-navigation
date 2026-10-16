@@ -40,14 +40,14 @@ Future<Object?> stored(String key) async {
 void main() {
   setUp(resetPreferences);
 
-  test('switching the visitor on shows its 5 sample receipts', () async {
+  test('switching the visitor on shows its 16 sample receipts', () async {
     final store = freshStore();
     await store.load();
     final visitor = personas().byKey('visitorBangkok')!;
     switchOn(store, visitor);
 
     expect(store.showingDemo, isTrue);
-    expect(store.records, hasLength(5));
+    expect(store.records, hasLength(16));
     expect(store.records.every((r) => r.isSample && r.verified), isTrue);
     expect(
       store.records.map((r) => r.id),
@@ -55,7 +55,7 @@ void main() {
     );
     expect(
       store.records.map((r) => r.merchantName),
-      containsAll(['Thai restaurant', '7-Eleven', 'MBK Center food court']),
+      containsAll(['Thai restaurant', '7-Eleven', 'Terminal 21 food court']),
     );
   });
 
@@ -93,7 +93,7 @@ void main() {
       switchOn(store, visitor);
 
       await store.save(own('demo-save'));
-      expect(store.records, hasLength(6));
+      expect(store.records, hasLength(17));
       expect(store.contains('demo-save'), isTrue);
 
       // The real records, here and on the phone, never see it.
@@ -111,7 +111,7 @@ void main() {
       // Back in the demo the save is still in its ledger, with the samples.
       switchOn(store, visitor);
       expect(store.contains('demo-save'), isTrue);
-      expect(store.records.where((r) => r.isSample), hasLength(5));
+      expect(store.records.where((r) => r.isSample), hasLength(16));
 
       // A later app start reads the real list without it.
       final reopened = freshStore();
@@ -122,7 +122,7 @@ void main() {
       await store.resetDemo();
       switchOn(store, visitor);
       expect(store.contains('demo-save'), isFalse);
-      expect(store.records, hasLength(5));
+      expect(store.records, hasLength(16));
       expect(await stored(demoReceiptsKey), isNull);
       store.showReal();
       expect(store.records.map((r) => r.id), ['mine-1']);

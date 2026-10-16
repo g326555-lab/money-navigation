@@ -139,8 +139,22 @@ class _BillScreenState extends State<BillScreen> {
       _savedAsCash = null;
       _categoryFromGoogle = false;
       _categoryManuallyChosen = false;
+      // A payment slip that prints only its total: kept as read, marked
+      // not verified, so it can still be saved and corrected.
       _record = check == null
-          ? null
+          ? switch (reading.printedTotal) {
+              final total? => ReceiptRecord(
+                id: 'bill-${now.microsecondsSinceEpoch}',
+                savedAt: now,
+                totalThb: total,
+                verified: false,
+                merchantName: reading.merchantName,
+                lat: here?.latitude,
+                lng: here?.longitude,
+                category: categorize(merchantName: reading.merchantName),
+              ),
+              null => null,
+            }
           : ReceiptRecord.fromCheck(
               check,
               id: 'bill-${now.microsecondsSinceEpoch}',
@@ -455,6 +469,10 @@ class _BillScreenState extends State<BillScreen> {
       BillFailure.tooLarge => (l10n.billTooLargeTitle, l10n.billTooLargeBody),
       BillFailure.timeout => (l10n.billTimeoutTitle, l10n.billTimeoutBody),
       BillFailure.noText => (l10n.billNoTextTitle, l10n.billNoTextBody),
+      BillFailure.doesNotAddUp when reading?.printedTotal != null => (
+        l10n.billSlipTitle,
+        l10n.billSlipBody,
+      ),
       BillFailure.doesNotAddUp => (l10n.billNoMatchTitle, l10n.billNoMatchBody),
       _ => (l10n.billServiceTitle, l10n.billServiceBody),
     };
@@ -494,7 +512,9 @@ class _BillScreenState extends State<BillScreen> {
         ),
       ],
     ),
-    GroupFooter(l10n.billCorrectedNote),
+    GroupFooter(
+      r.userCorrected ? l10n.billCorrectedNote : l10n.receiptNotChecked,
+    ),
   ];
 
   List<Widget> _result(AppLocalizations l10n, BillReading reading) {

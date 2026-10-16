@@ -144,10 +144,10 @@ void main() {
     final file = File('assets/data/demo_personas.json').readAsStringSync();
     final now = DateTime(2026, 10, 16, 11);
 
-    test('the visitor is on day 4 of a 5-day trip', () {
+    test('the visitor is on day 4 of a 4-day trip', () {
       final p = demoTripPeriod(file, 'visitorBangkok', now)!;
       expect(p.start, DateTime(2026, 10, 13));
-      expect(p.end, DateTime(2026, 10, 17));
+      expect(p.end, DateTime(2026, 10, 16));
       expect(p.dayNumber(now), 4);
     });
 

@@ -399,8 +399,13 @@ List<RoleRow> parseRoleRows(List<String> rows) {
     (r) => _amount.allMatches(r).any((m) => m[3] != null),
   );
   final out = <RoleRow>[];
+  // A "Payment" label on its own row, its amount on the next.
+  var paymentLabel = false;
   for (final row in rows) {
     final lower = row.toLowerCase();
+    final afterPaymentLabel = paymentLabel;
+    paymentLabel =
+        roleOf(row) == RowRole.payment && _amount.allMatches(row).isEmpty;
     // Piece counts, dates and document numbers are not money.
     if (_metaRow.hasMatch(lower) || _unitOnlyRow.hasMatch(lower)) continue;
     // "Total Qty 2" counts pieces; a column header "Qty Description ...
@@ -409,7 +414,8 @@ List<RoleRow> parseRoleRows(List<String> rows) {
         !_amount.allMatches(row).any((m) => m[3] != null)) {
       continue;
     }
-    final role = roleOf(row);
+    final bare = !RegExp(r'[A-Za-z\u0E00-\u0E7F]').hasMatch(row);
+    final role = afterPaymentLabel && bare ? RowRole.payment : roleOf(row);
     final percent = double.tryParse(_percent.firstMatch(row)?[1] ?? '');
     final amounts = [
       for (final m in _amount.allMatches(row))
@@ -436,7 +442,17 @@ List<RoleRow> parseRoleRows(List<String> rows) {
       );
       continue;
     }
-    final cents = amounts.last;
+    var cents = amounts.last;
+    // "9.81 VAT TTL 150.00" (Starbucks Thailand): the VAT figure is printed
+    // before its label and the VAT-inclusive total after it.
+    if (role == RowRole.vat && amounts.length >= 2) {
+      final label = lower.indexOf('vat');
+      final before = [
+        for (final m in _amount.allMatches(row))
+          if (m.end <= label && m[3] != null) m,
+      ];
+      if (label > 0 && before.length == 1) cents = _cents(before.single);
+    }
     // A minus-signed line without a discount word is part of the item list
     // (a cup discount under its drink); with one, it is a discount.
     out.add(
@@ -473,6 +489,8 @@ RowRole roleOf(String row) {
   final vat = _vat.hasMatch(t);
   final total = _total.hasMatch(t);
   if (vat && (!total || t.contains('vat ttl'))) return RowRole.vat;
+  // "Total Discount 0.00" is a discount line, not a total.
+  if (total && _discount.hasMatch(t)) return RowRole.discount;
   if (total) return RowRole.total;
   if (_service.hasMatch(t)) return RowRole.service;
   if (_rounding.hasMatch(t)) return RowRole.rounding;
@@ -489,7 +507,10 @@ final _payment = RegExp(
   r'ชำระเงิน|พร้อมเพย์|'
   r'(?<!ยอด)ชำระ',
 );
-final _vatable = RegExp(r'\bvatable\b|\bbefore (?:vat|tax)\b|ก่อนภาษี');
+// "Net TTL." under a "VAT TTL" line is the amount before VAT (Starbucks).
+final _vatable = RegExp(
+  r'\bvatable\b|\bbefore (?:vat|tax)\b|\bnet ttl\b|ก่อนภาษี',
+);
 final _subtotal = RegExp(r'\bsub[\s-]?total\b|ยอดรวม|\border amt\b');
 final _vat = RegExp(r'\bvat\b|\btax\b|ภาษี');
 // รวม alone means total only as the row's first word: ผลไม้รวม is "mixed
@@ -508,7 +529,9 @@ final _included = RegExp(r'\(รวม\)|\bincl(?:uded)?\b');
 
 /// Date, document-number and phone rows.
 final _metaRow = RegExp(
-  r'\bdate\b|\breceipt no\b|\btel\b|\btax id\b|เลขที่|เล่มที่|วันที่|โทร',
+  r'\bdate\b|\breceipt no\b|\btel\b|\btax id\b|เลขที่|เล่มที่|วันที่|โทร|'
+  // A stored-value card's balance or loyalty points, not this bill.
+  r'\b(?:card|star|reward|point)s? balance\b',
 );
 
 /// A row holding only "1 x 50.00": the quantity and unit price printed
@@ -539,4 +562,39 @@ int _cents(RegExpMatch m) {
   final whole = int.parse(m[2]!.replaceAll(RegExp('[,.]'), ''));
   final cents = whole * 100 + (m[3] == null ? 0 : int.parse(m[3]!));
   return m[1] == '-' ? -cents : cents;
+}
+
+/// "THB160.00" or "฿ 160.00": an amount glued to the baht code or sign,
+/// as card-terminal and QR slips print it.
+final _bahtTagged = RegExp(
+  r'(?:THB|฿)\s?(\d{1,3}(?:,\d{3})+|\d+)[.,](\d{2})\b',
+);
+
+/// The payable total of a slip that prints only a total (a card or QR
+/// payment slip): the amount on, or right under, the last "Total" row.
+/// Null when no total is printed. Nothing here is checked against items,
+/// so a record made from it is saved as not verified.
+double? printedTotalOnly(List<String> rows) {
+  double? found;
+  for (var i = 0; i < rows.length; i++) {
+    if (roleOf(rows[i]) != RowRole.total) continue;
+    for (final row in rows.skip(i).take(4)) {
+      final tagged = _bahtTagged.firstMatch(row);
+      if (tagged != null) {
+        found =
+            double.parse(tagged[1]!.replaceAll(',', '')) +
+            int.parse(tagged[2]!) / 100;
+        break;
+      }
+      final plain = [
+        for (final m in _amount.allMatches(row))
+          if (m[3] != null) _cents(m) / 100,
+      ];
+      if (plain.isNotEmpty) {
+        found = plain.last;
+        break;
+      }
+    }
+  }
+  return found == null || found <= 0 ? null : found;
 }
