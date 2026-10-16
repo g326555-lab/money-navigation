@@ -143,12 +143,12 @@
           "placeLat": 13.7376,
           "placeLng": 100.5603,
           "atm": {
-            "withdrawalThb": 5000,
+            "withdrawalThb": 2000,
             "accessFeeThb": 220,
             "thbPerUsd": 31.62,
             "markupPercent": 5.5,
-            "chargedThb": 5220,
-            "chargedUsd": 174.17
+            "chargedThb": 2220,
+            "chargedUsd": 74.07
           }
         }
       ],
@@ -317,15 +317,29 @@
         {
           "daysAgo": 1,
           "time": "18:00",
-          "merchantName": "Siam Paragon shop",
+          "merchantName": "Siam Paragon fashion store",
           "placeName": "Siam Paragon",
           "lat": 13.7461,
           "lng": 100.5348,
           "kind": "vatIncluded",
-          "subtotalThb": 4290.0,
-          "totalThb": 4290.0,
-          "vatThb": 280.65,
-          "paidWith": "card",
+          "subtotalThb": 30000.0,
+          "totalThb": 30000.0,
+          "vatThb": 1962.62,
+          "paidWith": "cash",
+          "category": "shopping"
+        },
+        {
+          "daysAgo": 1,
+          "time": "18:45",
+          "merchantName": "Siam Paragon electronics",
+          "placeName": "Siam Paragon",
+          "lat": 13.7461,
+          "lng": 100.5348,
+          "kind": "vatIncluded",
+          "subtotalThb": 8500.0,
+          "totalThb": 8500.0,
+          "vatThb": 556.07,
+          "paidWith": "cash",
           "category": "shopping"
         },
         {
@@ -350,9 +364,9 @@
           "lat": 13.7991,
           "lng": 100.5513,
           "kind": "itemsOnly",
-          "subtotalThb": 640.0,
-          "totalThb": 640.0,
-          "itemCount": 4,
+          "subtotalThb": 4200.0,
+          "totalThb": 4200.0,
+          "itemCount": 9,
           "paidWith": "cash",
           "category": "shopping"
         },
@@ -367,7 +381,7 @@
           "subtotalThb": 195.0,
           "totalThb": 195.0,
           "itemCount": 2,
-          "paidWith": "card",
+          "paidWith": "cash",
           "category": "food"
         },
         {
@@ -381,7 +395,7 @@
           "subtotalThb": 285.0,
           "totalThb": 285.0,
           "itemCount": 2,
-          "paidWith": "card",
+          "paidWith": "cash",
           "category": "food"
         }
       ],

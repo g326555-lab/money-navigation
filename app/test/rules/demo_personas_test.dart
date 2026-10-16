@@ -404,7 +404,7 @@ void main() {
       expect(saves.every((s) => s.isSample), isTrue);
       expect(saves.every((s) => s.savedAt.isBefore(now)), isTrue);
       // Two ATM samples (10,000 and 5,000 baht) plus eleven haggles (730).
-      expect(keptTotalThb(saves), closeTo(1579.36, 0.005));
+      expect(keptTotalThb(saves), closeTo(1414.19, 0.005));
     });
 
     test('visitor ATM sample: kept is evaluateAtm on the screen figures', () {
@@ -458,9 +458,9 @@ void main() {
       expect(cash.daysUsed, 3);
     });
 
-    test('visitor receipts: 16 checked samples from the trip', () {
+    test('visitor receipts: 17 checked samples from the trip', () {
       final receipts = d!.byKey('visitorBangkok')!.receiptsAt(now);
-      expect(receipts, hasLength(16));
+      expect(receipts, hasLength(17));
       expect(receipts.every((r) => r.isSample), isTrue);
       expect(receipts.every((r) => r.verified), isTrue);
       expect(receipts.every((r) => !r.userCorrected), isTrue);
@@ -468,7 +468,7 @@ void main() {
       expect(receipts.every((r) => r.lat != null && r.lng != null), isTrue);
       expect(
         receipts.map((r) => r.id).toSet(),
-        hasLength(16),
+        hasLength(17),
         reason: 'ids are distinct',
       );
       for (var i = 1; i < receipts.length; i++) {
@@ -543,16 +543,16 @@ void main() {
         expect(m.at, s.savedAt);
       }
       // Card payments leave no cash movement; cash receipts do.
-      const cardMerchants = {
-        'Hotel restaurant',
-        'Thai restaurant',
-        'ICONSIAM department store',
-        'Siam Paragon shop',
-        'Cafe',
-      };
+      final raw =
+          ((jsonDecode(File(demoPersonasAsset).readAsStringSync())
+                          as Map)['personas']
+                      as List)
+                  .first['receipts']
+              as List;
       for (final r in receipts) {
         final linked = movements.where((m) => m.sourceId == r.id);
-        if (cardMerchants.contains(r.merchantName)) {
+        final index = int.parse(r.id.split('-').last);
+        if (raw[index]['paidWith'] == 'card') {
           expect(linked, isEmpty);
         } else {
           expect(linked.single.amount, r.totalThb);
@@ -567,9 +567,10 @@ void main() {
           reason: 'after ${byTime[i - 1].description}',
         );
       }
-      // Exchanges 15,700 + 32,000 + 3,190 and ATM 10,000 + 5,000, minus cash
-      // haggles, cash receipts and the other cash spends.
-      expect(cashBalance(movements, 'THB'), 49044);
+      // Exchanges 15,700 + 32,000 + 3,190 and ATM 10,000 + 2,000, minus cash
+      // haggles, cash receipts (shopping at Siam Paragon included) and the
+      // other cash spends: about 3,500 left for the last day.
+      expect(cashBalance(movements, 'THB'), 3504);
     });
 
     test('a sample without paidWith refuses the file', () {
