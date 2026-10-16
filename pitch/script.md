@@ -73,11 +73,11 @@ KO: AI가 상인의 태국어를 들었습니다. 망고 1킬로 150밧. 이번 
 
 ---
 
-## 1:45–2:04 · 8 The AI keeps count — 652 THB and cash on hand
+## 1:45–2:04 · 8 The AI keeps count — 1,414 THB and cash on hand
 
-EN: The AI keeps count. 652 baht kept on this trip; the first days are sample records. And cash on hand: ATM withdrawals, cash haggles and cash bills flow in by themselves; card payments don't. Need cash? Nearby ATMs, and live exchange rates near you.
+EN: The AI keeps count. 1,414 baht kept on this trip; the first days are sample records. And cash on hand, about 3,500 baht left: ATM withdrawals, cash haggles and cash bills flow in by themselves; card payments don't. Need cash? Nearby ATMs, and live exchange rates near you.
 
-KO: AI가 계속 셉니다. 이번 여행에서 지킨 돈 652밧, 앞의 날들은 샘플 기록입니다. 그리고 지금 가진 현금. ATM 인출, 현금으로 낸 흥정과 계산서는 저절로 반영되고, 카드 결제는 빠집니다. 현금이 필요하면? 근처 ATM, 그리고 근처 환전소의 실시간 환율.
+KO: AI가 계속 셉니다. 이번 여행에서 지킨 돈 1,414밧, 앞의 날들은 샘플 기록입니다. 그리고 지금 가진 현금, 약 3,500밧. ATM 인출, 현금으로 낸 흥정과 계산서는 저절로 반영되고, 카드 결제는 빠집니다. 현금이 필요하면? 근처 ATM, 그리고 근처 환전소의 실시간 환율.
 
 (화면의 총액을 그대로 읽습니다. 오늘 저장한 ATM 246, 망고 흥정이 더해집니다. 현금 카드는 실제로 입력하거나 인출한 금액만 보여 주며, 데모에는 샘플 현금 잔액이 없습니다. "현금이 부족하면 알려 준다"고는 말하지 않습니다. 환전 화면은 리허설 때 실시간 환전소가 실제로 뜰 때만 엽니다. 안 뜨면 "Nearby ATMs."까지만 말합니다.)
 
@@ -157,7 +157,7 @@ No capture yet of the cash-on-hand card, the exchange-counter list or a checked 
 - 246 THB, 5.50%, 4,000 THB: printed ATM prop + CLAUDE.md demo data.
 - 150 → 110, 80–110 THB/kg: app/assets/data/market_prices.json (checkraka.app, lotuss.com, researched 15 Oct). Thai speech recognition 15/15 quiet, 14/15 noisy: our own test with price-phrase hints (HANDOFF 5b).
 - Web price lookup for items not on the list: Edge Function `price-reference`; a range is used only when its quoted sentence appears on the fetched page.
-- 652 THB: real home capture of the demo persona, includes sample records (not today's saves).
+- 1,414 THB: real home capture (fold-01) of the demo persona, includes sample records (not today's saves).
 - 494 THB, 1 THB = 4.6935 JPY: Japanese terminal prop, fixed demo rate.
 - Cash on hand: real balance from entered cash, ATM withdrawals, cash exchange and cash-paid bills/haggles; card payments do not change it. No low-cash alert: never claim one.
 - Live exchange-counter rates: ThaiRate feed (CC BY 4.0), refreshed every 15 minutes; reported deployed by the coordinator on 16 Oct. Confirm on the phone in rehearsal before saying it live.
