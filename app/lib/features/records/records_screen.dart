@@ -12,6 +12,7 @@ import '../../rules/trip_ledger.dart';
 import '../../shared/app_tab_bar.dart';
 import '../../shared/group.dart';
 import '../../shared/pressable.dart';
+import '../../shared/reveal_on_scroll.dart';
 import '../auth/auth_gate.dart' show AuthScope;
 import '../home/save_row.dart';
 import 'receipt_record_detail.dart';
@@ -105,7 +106,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
               AppSpacing.screenMargin,
               AppTabBar.contentPadding(context),
             ),
-            children: [
+            children: revealOnScroll([
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sectionHeaderInset,
@@ -234,7 +235,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                   ],
                 ),
               ],
-            ],
+            ]),
           ),
         ),
       ),

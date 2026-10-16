@@ -571,7 +571,7 @@ class HaggleController extends ChangeNotifier {
   }
 
   /// An item typed by the traveler that is not on our list.
-  void useTypedItem(String name, double amount) {
+  void useTypedItem(String name, double amount, {String? nameTh}) {
     final trimmed = name.trim();
     if (trimmed.isEmpty || amount <= 0) return;
     // Keep the unit the seller said (per kilo, a plate); "each" only when
@@ -580,12 +580,12 @@ class HaggleController extends ChangeNotifier {
     _resetHaggle();
     _clearGuess();
     _newItem = NewItem(
-      nameTh: trimmed,
+      nameTh: nameTh?.trim() ?? trimmed,
       nameEn: trimmed,
       unit: unit,
       category: ItemCategory.other,
     );
-    // The traveler typed it: nothing to confirm.
+    // The traveler typed or chose it: nothing to confirm.
     _newItemConfirmed = true;
     _set(
       HaggleState(

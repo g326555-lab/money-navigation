@@ -1,0 +1,21 @@
+{
+  "_comment": "Names only: everyday things travellers buy in Thailand that have no sourced usual price in market_prices.json. Choosing one on the haggle screen looks its usual price up online (price-reference, quote-checked); no price is stored here.",
+  "items": [
+    {"en": "Iced coffee", "th": "กาแฟเย็น"},
+    {"en": "Bottled water", "th": "น้ำเปล่า"},
+    {"en": "Fried rice", "th": "ข้าวผัด"},
+    {"en": "Grilled pork skewer", "th": "หมูปิ้ง"},
+    {"en": "Coconut ice cream", "th": "ไอศกรีมกะทิ"},
+    {"en": "Dried mango", "th": "มะม่วงอบแห้ง"},
+    {"en": "Elephant pants", "th": "กางเกงช้าง"},
+    {"en": "T-shirt", "th": "เสื้อยืด"},
+    {"en": "Sunglasses", "th": "แว่นกันแดด"},
+    {"en": "Hat", "th": "หมวก"},
+    {"en": "Bag", "th": "กระเป๋า"},
+    {"en": "Phone case", "th": "เคสโทรศัพท์"},
+    {"en": "Sunscreen", "th": "ครีมกันแดด"},
+    {"en": "Fridge magnet", "th": "แม่เหล็กติดตู้เย็น"},
+    {"en": "Motorbike taxi", "th": "วินมอเตอร์ไซค์"},
+    {"en": "Foot massage", "th": "นวดเท้า"}
+  ]
+}

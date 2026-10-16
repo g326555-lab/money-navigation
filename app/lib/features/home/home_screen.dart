@@ -23,6 +23,7 @@ import '../../shared/odometer.dart';
 import '../../shared/pill.dart';
 import '../../shared/group.dart';
 import '../../shared/pressable.dart';
+import '../../shared/reveal_on_scroll.dart';
 import 'save_row.dart';
 import '../records/receipt_record_detail.dart';
 import '../trip_map/atm_map_screen.dart';
@@ -283,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 AppSpacing.screenMargin,
                 AppTabBar.contentPadding(context),
               ),
-              children: [
+              children: revealOnScroll([
                 Row(
                   children: [
                     if (persona != null && scope.demoPersonas != null)
@@ -429,7 +430,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ],
                   ),
                 ],
-              ],
+              ]),
             ),
             if (_arriving)
               _FlyingCoin(

@@ -33,8 +33,10 @@ class GeminiItemResolver {
 
   final CloudFunctions _functions;
 
-  /// The function gives up at 4.5 s; this leaves room for the network.
-  static const timeout = Duration(seconds: 5);
+  /// The function gives up at 9 s (the free key's models answer in 1-10 s);
+  /// this leaves room for the network. The haggle screen says it is
+  /// working out the item meanwhile.
+  static const timeout = Duration(seconds: 10);
 
   /// Below this Gemini's own confidence the item stays unknown. On 5
   /// hand-written misheard transcripts (15 Oct, NOTES.md) the right picks

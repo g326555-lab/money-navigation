@@ -18,7 +18,7 @@ const FAST = { thinkingConfig: { thinkingLevel: "minimal" } };
 // The free Developer key often answers 503 or hangs, and every caller treats
 // Gemini as optional. Each task gives up in time for its caller: the app
 // waits 3 s for an explanation and 5 s for an item name.
-const DEADLINES: Record<Task, number> = { explain: 2200, resolve_item: 4500, read_bill: 8000 };
+const DEADLINES: Record<Task, number> = { explain: 2200, resolve_item: 9000, read_bill: 8000 };
 
 type Task = "read_bill" | "resolve_item" | "explain";
 

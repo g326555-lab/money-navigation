@@ -79,6 +79,9 @@ abstract final class AppSizes {
   /// Widest the full card face is drawn.
   static const double cardFaceMaxWidth = 280;
 
+  /// How far a card rises as it scrolls into view.
+  static const double revealRise = 16;
+
   /// How far a receipt photo can be pinched in.
   static const double photoMaxZoom = 5;
 

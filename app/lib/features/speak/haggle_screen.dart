@@ -16,6 +16,7 @@ import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../data/market_price_repository.dart';
 import '../../l10n/app_localizations.dart';
+import '../../rules/quick_items.dart';
 import '../../rules/haggle.dart';
 import '../../rules/haggle_rounds.dart';
 import '../../rules/new_item.dart';
@@ -56,6 +57,9 @@ class HaggleScreen extends StatefulWidget {
 
 class _HaggleScreenState extends State<HaggleScreen>
     with WidgetsBindingObserver {
+  /// Names offered when the item is not on the price list.
+  List<QuickItem> _quickItems = const [];
+
   late final _haggle = widget.controller ?? HaggleController();
   HaggleVerdict? _lastVerdict;
 
@@ -68,6 +72,9 @@ class _HaggleScreenState extends State<HaggleScreen>
   @override
   void initState() {
     super.initState();
+    rootBundle.loadString(quickItemsAsset).then((text) {
+      if (mounted) setState(() => _quickItems = parseQuickItems(text));
+    }, onError: (_) {});
     WidgetsBinding.instance.addObserver(this);
     _haggle.addListener(_onChanged);
     _haggle.start();
@@ -531,6 +538,17 @@ class _HaggleScreenState extends State<HaggleScreen>
                   label: s.item.nameEn,
                   selected: false,
                   onPressed: () => _haggle.chooseItem(s),
+                ),
+              // Everyday things with no usual price on record: chosen by
+              // name, their price is looked up online.
+              for (final q in _quickItems)
+                _ItemChip(
+                  label: Localizations.localeOf(context).languageCode == 'th'
+                      ? q.th
+                      : q.en,
+                  selected: false,
+                  onPressed: () =>
+                      _haggle.useTypedItem(q.en, heard.amount, nameTh: q.th),
                 ),
               if (!_haggle.guessFailed)
                 _ItemChip(

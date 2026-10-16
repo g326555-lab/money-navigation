@@ -67,9 +67,7 @@ class TripDatesPrompt extends StatelessWidget {
             children: [
               Expanded(
                 child: GroupRow(
-                  leading: const IconTile.blue(
-                    icon: Icons.date_range_rounded,
-                  ),
+                  leading: const IconTile.blue(icon: Icons.date_range_rounded),
                   title: l10n.tripDatesAsk,
                   subtitle: l10n.tripDatesAskBody,
                 ),
@@ -152,9 +150,7 @@ class TripDayStrip extends StatelessWidget {
                       widthFactor: 1,
                       child: Text(
                         l10n.tripDatesChange,
-                        style: type.link.copyWith(
-                          color: AppColors.primaryText,
-                        ),
+                        style: type.link.copyWith(color: AppColors.primaryText),
                       ),
                     ),
                   ),

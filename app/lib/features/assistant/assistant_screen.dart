@@ -22,6 +22,7 @@ import '../../shared/app_tab_bar.dart';
 import '../../shared/group.dart';
 import '../../shared/icon_tile.dart';
 import '../../shared/pressable.dart';
+import '../../shared/reveal_on_scroll.dart';
 import '../briefing/arrival_alerts.dart';
 import '../briefing/briefing_controller.dart';
 import '../briefing/briefing_rows.dart';
@@ -148,7 +149,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
               AppSpacing.screenMargin,
               AppTabBar.contentPadding(context),
             ),
-            children: [
+            children: revealOnScroll([
               Text(l10n.assistantTitle, style: type.headline),
               Text(
                 DateFormat.MMMMEEEEd(locale).format(DateTime.now()),
@@ -215,7 +216,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
               _arrival(l10n, scope, trip),
               SectionHeader(l10n.assistantFacts),
               FactsSection(repository: _briefing.live),
-            ],
+            ]),
           ),
         ),
       ),
