@@ -250,8 +250,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       limit: HomeMetrics.homeWarnings + 2,
     );
     final wide = MediaQuery.sizeOf(context).width >= HomeMetrics.routeWideFrom;
-    final route = tripRoute(
+    final route = tripDayRoute(
       saves,
+      firstDay: _briefing.tripPeriod(demo: scope.settings.demoState)?.start,
       maxStops: wide
           ? HomeMetrics.routeStopsWide
           : HomeMetrics.routeStopsNarrow,

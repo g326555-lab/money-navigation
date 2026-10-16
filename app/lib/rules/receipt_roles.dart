@@ -570,10 +570,11 @@ final _bahtTagged = RegExp(
   r'(?:THB|฿)\s?(\d{1,3}(?:,\d{3})+|\d+)[.,](\d{2})\b',
 );
 
-/// The payable total of a slip that prints only a total (a card or QR
-/// payment slip): the amount on, or right under, the last "Total" row.
-/// Null when no total is printed. Nothing here is checked against items,
-/// so a record made from it is saved as not verified.
+/// The payable total printed on a bill whose lines could not be checked
+/// (or a card or QR slip that prints only a total): the amount on, or
+/// right under, the last "Total" row. Null when no total is printed.
+/// Nothing here is checked against items, so a record made from it is
+/// saved as not verified.
 double? printedTotalOnly(List<String> rows) {
   double? found;
   for (var i = 0; i < rows.length; i++) {

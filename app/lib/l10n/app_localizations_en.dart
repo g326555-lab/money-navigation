@@ -1359,7 +1359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exchangeCurrency => 'Currency you have';
 
   @override
-  String get exchangeDenomination => 'Banknote rate tier';
+  String get exchangeDenomination => 'Your notes';
 
   @override
   String get exchangeChooseDenomination => 'Choose the notes you have';
@@ -1442,7 +1442,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exchangeMixedDenomination =>
-      'Compare one banknote tier at a time. Enter only cash in that tier.';
+      'Counters pay a better rate for big notes (like 100 USD) than for small ones (1-20 USD). Pick the notes you will hand over; if you have both, compare each kind separately.';
 
   @override
   String get cashPaymentMethod => 'How did you pay?';
@@ -2714,9 +2714,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get billSlipTitle => 'Only the total is printed';
+  String billSlipTitle(String amount) {
+    return 'Total read: $amount';
+  }
 
   @override
   String get billSlipBody =>
-      'This looks like a card or QR payment slip: it shows the total but no items, so there is nothing to check it against. You can save it as it is, marked as not checked, or fix it first.';
+      'The lines above it could not be checked against this total, so it is saved as not checked. If the total is wrong, fix it before saving.';
+
+  @override
+  String get tripDayRecords => 'What you did that day';
+
+  @override
+  String get tripDayNoRecords => 'No saved records on this day';
+
+  @override
+  String get tripDayRecordsSample => 'Sample records of the demo traveler';
+
+  @override
+  String tripDayShort(int day) {
+    return 'Day $day';
+  }
 }

@@ -469,8 +469,11 @@ class _BillScreenState extends State<BillScreen> {
       BillFailure.tooLarge => (l10n.billTooLargeTitle, l10n.billTooLargeBody),
       BillFailure.timeout => (l10n.billTimeoutTitle, l10n.billTimeoutBody),
       BillFailure.noText => (l10n.billNoTextTitle, l10n.billNoTextBody),
+      // The total is what matters most: read even when nothing adds up.
       BillFailure.doesNotAddUp when reading?.printedTotal != null => (
-        l10n.billSlipTitle,
+        l10n.billSlipTitle(
+          AppFormat.cents(reading!.printedTotal!, marketCurrency),
+        ),
         l10n.billSlipBody,
       ),
       BillFailure.doesNotAddUp => (l10n.billNoMatchTitle, l10n.billNoMatchBody),

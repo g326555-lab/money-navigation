@@ -383,7 +383,7 @@
   "exchangeSubtitle": "ร้านใกล้คุณ · อัตราจากป้ายที่ร้านประกาศ",
   "exchangeAmount": "เงินสกุลต่างประเทศที่ต้องการแลก",
   "exchangeCurrency": "สกุลเงินที่คุณมี",
-  "exchangeDenomination": "ช่วงราคาตามชนิดธนบัตร",
+  "exchangeDenomination": "ธนบัตรของคุณ",
   "exchangeChooseDenomination": "เลือกชนิดธนบัตรที่คุณมี",
   "exchangeFind": "เปรียบเทียบร้านใกล้ฉัน",
   "exchangeLoading": "กำลังตรวจสอบอัตราที่ประกาศล่าสุด",
@@ -432,7 +432,7 @@
   "exchangeUseActual": "เพิ่มยอดจริง",
   "exchangeCancel": "ยกเลิก",
   "exchangeRecorded": "เพิ่มยอดแลกเงินในเงินสดที่มีแล้ว",
-  "exchangeMixedDenomination": "เปรียบเทียบทีละช่วงธนบัตร กรอกเฉพาะเงินสดในช่วงนั้น",
+  "exchangeMixedDenomination": "ร้านแลกเงินให้เรตดีกว่าสำหรับธนบัตรใบใหญ่ (เช่น 100 USD) มากกว่าใบเล็ก (1-20 USD) เลือกธนบัตรที่จะใช้แลก ถ้ามีทั้งสองแบบ ให้เทียบทีละแบบ",
   "cashPaymentMethod": "จ่ายด้วยวิธีใด",
   "cashPaymentCash": "เงินสด",
   "cashPaymentCard": "บัตร",
@@ -879,6 +879,24 @@
       }
     }
   },
-  "billSlipTitle": "มีแค่ยอดรวม",
-  "billSlipBody": "ดูเหมือนสลิปจ่ายด้วยบัตรหรือ QR มีแต่ยอดรวม ไม่มีรายการสินค้า จึงตรวจสอบไม่ได้ บันทึกไว้แบบยังไม่ได้ตรวจ หรือแก้ไขก่อนก็ได้"
+  "billSlipTitle": "อ่านยอดรวมได้: {amount}",
+  "billSlipBody": "ตรวจรายการกับยอดรวมนี้ไม่ได้ จึงบันทึกเป็นยังไม่ได้ตรวจ ถ้ายอดรวมไม่ถูก ให้แก้ก่อนบันทึก",
+  "tripDayRecords": "สิ่งที่ทำในวันนั้น",
+  "tripDayNoRecords": "ไม่มีรายการที่บันทึกไว้ในวันนี้",
+  "tripDayRecordsSample": "รายการตัวอย่างของนักเดินทางในโหมดเดโม",
+  "@billSlipTitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripDayShort": "วันที่ {day}",
+  "@tripDayShort": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  }
 }

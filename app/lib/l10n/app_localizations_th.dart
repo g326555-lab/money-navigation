@@ -1337,7 +1337,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get exchangeCurrency => 'สกุลเงินที่คุณมี';
 
   @override
-  String get exchangeDenomination => 'ช่วงราคาตามชนิดธนบัตร';
+  String get exchangeDenomination => 'ธนบัตรของคุณ';
 
   @override
   String get exchangeChooseDenomination => 'เลือกชนิดธนบัตรที่คุณมี';
@@ -1418,7 +1418,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get exchangeMixedDenomination =>
-      'เปรียบเทียบทีละช่วงธนบัตร กรอกเฉพาะเงินสดในช่วงนั้น';
+      'ร้านแลกเงินให้เรตดีกว่าสำหรับธนบัตรใบใหญ่ (เช่น 100 USD) มากกว่าใบเล็ก (1-20 USD) เลือกธนบัตรที่จะใช้แลก ถ้ามีทั้งสองแบบ ให้เทียบทีละแบบ';
 
   @override
   String get cashPaymentMethod => 'จ่ายด้วยวิธีใด';
@@ -2612,9 +2612,25 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get billSlipTitle => 'มีแค่ยอดรวม';
+  String billSlipTitle(String amount) {
+    return 'อ่านยอดรวมได้: $amount';
+  }
 
   @override
   String get billSlipBody =>
-      'ดูเหมือนสลิปจ่ายด้วยบัตรหรือ QR มีแต่ยอดรวม ไม่มีรายการสินค้า จึงตรวจสอบไม่ได้ บันทึกไว้แบบยังไม่ได้ตรวจ หรือแก้ไขก่อนก็ได้';
+      'ตรวจรายการกับยอดรวมนี้ไม่ได้ จึงบันทึกเป็นยังไม่ได้ตรวจ ถ้ายอดรวมไม่ถูก ให้แก้ก่อนบันทึก';
+
+  @override
+  String get tripDayRecords => 'สิ่งที่ทำในวันนั้น';
+
+  @override
+  String get tripDayNoRecords => 'ไม่มีรายการที่บันทึกไว้ในวันนี้';
+
+  @override
+  String get tripDayRecordsSample => 'รายการตัวอย่างของนักเดินทางในโหมดเดโม';
+
+  @override
+  String tripDayShort(int day) {
+    return 'วันที่ $day';
+  }
 }

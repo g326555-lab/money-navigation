@@ -2373,7 +2373,7 @@ abstract class AppLocalizations {
   /// No description provided for @exchangeDenomination.
   ///
   /// In en, this message translates to:
-  /// **'Banknote rate tier'**
+  /// **'Your notes'**
   String get exchangeDenomination;
 
   /// No description provided for @exchangeChooseDenomination.
@@ -2505,7 +2505,7 @@ abstract class AppLocalizations {
   /// No description provided for @exchangeMixedDenomination.
   ///
   /// In en, this message translates to:
-  /// **'Compare one banknote tier at a time. Enter only cash in that tier.'**
+  /// **'Counters pay a better rate for big notes (like 100 USD) than for small ones (1-20 USD). Pick the notes you will hand over; if you have both, compare each kind separately.'**
   String get exchangeMixedDenomination;
 
   /// No description provided for @cashPaymentMethod.
@@ -4437,14 +4437,38 @@ abstract class AppLocalizations {
   /// No description provided for @billSlipTitle.
   ///
   /// In en, this message translates to:
-  /// **'Only the total is printed'**
-  String get billSlipTitle;
+  /// **'Total read: {amount}'**
+  String billSlipTitle(String amount);
 
   /// No description provided for @billSlipBody.
   ///
   /// In en, this message translates to:
-  /// **'This looks like a card or QR payment slip: it shows the total but no items, so there is nothing to check it against. You can save it as it is, marked as not checked, or fix it first.'**
+  /// **'The lines above it could not be checked against this total, so it is saved as not checked. If the total is wrong, fix it before saving.'**
   String get billSlipBody;
+
+  /// No description provided for @tripDayRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'What you did that day'**
+  String get tripDayRecords;
+
+  /// No description provided for @tripDayNoRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved records on this day'**
+  String get tripDayNoRecords;
+
+  /// No description provided for @tripDayRecordsSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample records of the demo traveler'**
+  String get tripDayRecordsSample;
+
+  /// No description provided for @tripDayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}'**
+  String tripDayShort(int day);
 }
 
 class _AppLocalizationsDelegate

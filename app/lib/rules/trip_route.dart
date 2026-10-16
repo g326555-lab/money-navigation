@@ -11,7 +11,11 @@ class RouteStop {
     required this.at,
     required this.saves,
     required this.isSample,
+    this.day,
   });
+
+  /// Day of the trip, 1 for the first, when stops are whole days.
+  final int? day;
 
   final String? placeName;
 
@@ -65,4 +69,49 @@ bool _samePlace(TripSave a, TripSave b) {
   if (pa == null || pb == null || pa.isEmpty || pa != pb) return false;
   final la = a.savedAt.toLocal(), lb = b.savedAt.toLocal();
   return la.year == lb.year && la.month == lb.month && la.day == lb.day;
+}
+
+/// The trip by day for the route line: one stop per calendar day with a
+/// save, numbered from [firstDay] (the trip's first day; the earliest save
+/// when no trip dates are set). The most recent [maxStops] days are kept.
+List<RouteStop> tripDayRoute(
+  List<TripSave> saves, {
+  DateTime? firstDay,
+  int maxStops = routeMaxStops,
+}) {
+  if (saves.isEmpty || maxStops <= 0) return const [];
+  DateTime dateOf(DateTime t) {
+    final l = t.toLocal();
+    return DateTime(l.year, l.month, l.day);
+  }
+
+  final byDay = <DateTime, List<TripSave>>{};
+  for (final s in saves) {
+    (byDay[dateOf(s.savedAt)] ??= []).add(s);
+  }
+  final days = byDay.keys.toList()..sort();
+  final start = firstDay == null ? days.first : dateOf(firstDay);
+  final stops = [
+    for (final d in days)
+      if (!d.isBefore(start))
+        RouteStop(
+          placeName: null,
+          kind: byDay[d]!.reduce((a, b) => b.keptThb > a.keptThb ? b : a).kind,
+          keptThb: byDay[d]!.fold(0, (sum, x) => sum + x.keptThb),
+          at: byDay[d]!
+              .map((x) => x.savedAt)
+              .reduce((a, b) => a.isBefore(b) ? a : b),
+          saves: byDay[d]!.length,
+          isSample: byDay[d]!.every((x) => x.isSample),
+          // Calendar days, safe across daylight-saving changes.
+          day:
+              DateTime.utc(d.year, d.month, d.day)
+                  .difference(DateTime.utc(start.year, start.month, start.day))
+                  .inDays +
+              1,
+        ),
+  ];
+  return stops.length <= maxStops
+      ? stops
+      : stops.sublist(stops.length - maxStops);
 }

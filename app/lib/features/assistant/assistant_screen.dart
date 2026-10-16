@@ -30,6 +30,9 @@ import '../briefing/trip_context.dart';
 import '../briefing/trip_dates.dart';
 import '../../data/card_catalog_repository.dart';
 import '../../rules/card_catalog.dart';
+import '../../data/market_price_repository.dart';
+import '../home/save_row.dart';
+import '../records/receipt_record_detail.dart';
 import 'card_face.dart';
 import 'card_facts_sheet.dart';
 import 'facts_section.dart';
@@ -65,6 +68,8 @@ class _AssistantScreenState extends State<AssistantScreen> {
 
   final _catalog = CardCatalogRepository();
   List<CatalogCard> _cards = const [];
+  final _market = MarketPriceRepository();
+  Map<String, SourcedItem> _items = const {};
 
   @override
   void initState() {
@@ -72,6 +77,11 @@ class _AssistantScreenState extends State<AssistantScreen> {
     _briefing.start();
     _catalog.load().then((cards) {
       if (mounted) setState(() => _cards = cards);
+    });
+    _market.load().then((items) {
+      if (mounted) {
+        setState(() => _items = {for (final s in items) s.item.key: s});
+      }
     });
   }
 
@@ -84,6 +94,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
         _briefing.card,
         _alerts,
         scope.trip,
+        scope.receipts,
         scope.cashWallet,
         scope.settings,
         scope.rates,
@@ -157,7 +168,13 @@ class _AssistantScreenState extends State<AssistantScreen> {
               const SizedBox(height: AppSpacing.zoneGap),
               SectionHeader(_stopsTitle(l10n, demo: scope.settings.demoState)),
               ?_tripStrip(demo: scope.settings.demoState),
-              _stops(l10n, plan, selected, demo: scope.settings.demoState),
+              // A past trip day: what was really recorded that day. The
+              // demo's sample calendar has no past days to show.
+              if (!(scope.settings.demoState &&
+                  _isPast(scope.settings.demoState)))
+                _stops(l10n, plan, selected, demo: scope.settings.demoState),
+              if (_isPast(scope.settings.demoState))
+                ..._pastDay(l10n, scope, demo: scope.settings.demoState),
               // The demo's stops come from its sample calendar, never the
               // phone's.
               if (scope.settings.demoState) GroupFooter(l10n.calendarSample),
@@ -466,6 +483,43 @@ class _AssistantScreenState extends State<AssistantScreen> {
     final granted = await _briefing.connectCalendar();
     if (!granted || !mounted || _briefing.trip.period != null) return;
     await askTripDates(context, _briefing);
+  }
+
+  bool _isPast(bool demo) {
+    final now = DateTime.now();
+    return _briefing
+        .dayShown(demo: demo)
+        .isBefore(DateTime(now.year, now.month, now.day));
+  }
+
+  /// The saves and receipts recorded on the day shown, earliest first.
+  List<Widget> _pastDay(
+    AppLocalizations l10n,
+    AppScope scope, {
+    required bool demo,
+  }) {
+    final day = _briefing.dayShown(demo: demo);
+    bool sameDay(DateTime t) {
+      final l = t.toLocal();
+      return DateTime(l.year, l.month, l.day) == day;
+    }
+
+    final rows = <(DateTime, Widget)>[
+      for (final s in scope.trip.saves)
+        if (sameDay(s.savedAt)) (s.savedAt, SaveRow(save: s, items: _items)),
+      for (final r in scope.receipts.records)
+        if (sameDay(r.savedAt)) (r.savedAt, ReceiptRecordRow(record: r)),
+    ]..sort((a, b) => a.$1.compareTo(b.$1));
+    return [
+      SectionHeader(l10n.tripDayRecords),
+      GroupCard(
+        dividerInset: AppSpacing.rowIconTextInset,
+        children: rows.isEmpty
+            ? [GroupRow(title: l10n.tripDayNoRecords)]
+            : [for (final (_, row) in rows) row],
+      ),
+      if (demo && rows.isNotEmpty) GroupFooter(l10n.tripDayRecordsSample),
+    ];
   }
 
   bool _showingToday({required bool demo}) {

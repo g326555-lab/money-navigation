@@ -77,7 +77,9 @@ class _RouteLineState extends State<RouteLine>
     final labels = [
       for (final s in stops)
         _StopLabel(
-          title: s.placeName ?? _kindName(l10n, s.kind),
+          title: s.day != null
+              ? l10n.tripDayShort(s.day!)
+              : s.placeName ?? _kindName(l10n, s.kind),
           value: l10n.saveKeptValue(
             AppFormat.roundedAmount(s.keptThb, marketCurrency),
           ),

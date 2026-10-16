@@ -1049,7 +1049,7 @@
   "exchangeSubtitle": "Nearby counters · rates from their published boards",
   "exchangeAmount": "Foreign cash to exchange",
   "exchangeCurrency": "Currency you have",
-  "exchangeDenomination": "Banknote rate tier",
+  "exchangeDenomination": "Your notes",
   "exchangeChooseDenomination": "Choose the notes you have",
   "exchangeFind": "Compare nearby rates",
   "exchangeLoading": "Checking current published rates",
@@ -1098,7 +1098,7 @@
   "exchangeUseActual": "Add actual amount",
   "exchangeCancel": "Cancel",
   "exchangeRecorded": "Exchange added to Cash on hand",
-  "exchangeMixedDenomination": "Compare one banknote tier at a time. Enter only cash in that tier.",
+  "exchangeMixedDenomination": "Counters pay a better rate for big notes (like 100 USD) than for small ones (1-20 USD). Pick the notes you will hand over; if you have both, compare each kind separately.",
   "cashPaymentMethod": "How did you pay?",
   "cashPaymentCash": "Cash",
   "cashPaymentCard": "Card",
@@ -2144,6 +2144,24 @@
       }
     }
   },
-  "billSlipTitle": "Only the total is printed",
-  "billSlipBody": "This looks like a card or QR payment slip: it shows the total but no items, so there is nothing to check it against. You can save it as it is, marked as not checked, or fix it first."
+  "billSlipTitle": "Total read: {amount}",
+  "billSlipBody": "The lines above it could not be checked against this total, so it is saved as not checked. If the total is wrong, fix it before saving.",
+  "tripDayRecords": "What you did that day",
+  "tripDayNoRecords": "No saved records on this day",
+  "tripDayRecordsSample": "Sample records of the demo traveler",
+  "@billSlipTitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripDayShort": "Day {day}",
+  "@tripDayShort": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -219,7 +219,7 @@ void main() {
   });
 
   group('route line', () {
-    testWidgets('one stop per place with its kept amount, then Next stop', (
+    testWidgets('one stop per trip day with its kept amount, then Next', (
       tester,
     ) async {
       final stores = await demoTrip(Stores(), homeCurrency: 'THB');
@@ -228,19 +228,12 @@ void main() {
       await settleBriefing(tester, briefing);
 
       expect(find.byType(RouteLine), findsOneWidget);
-      // ATM save 245.75 THB and mango 40 THB, rounded to whole baht.
-      expect(inRoute('ATM'), findsOneWidget);
-      expect(inRoute(kept('246')), findsOneWidget);
-      expect(inRoute('Market'), findsOneWidget);
-      expect(inRoute(kept('40')), findsOneWidget);
+      // The ATM save (245.75) and the mango (40) on the same day: one stop.
+      expect(inRoute('Day 1'), findsOneWidget);
+      expect(inRoute(kept('286')), findsOneWidget);
       expect(inRoute('Next stop'), findsOneWidget);
-      // Oldest first: the ATM stop is left of the market stop.
       expect(
-        tester.getTopLeft(inRoute('ATM')).dx,
-        lessThan(tester.getTopLeft(inRoute('Market')).dx),
-      );
-      expect(
-        tester.getTopLeft(inRoute('Market')).dx,
+        tester.getTopLeft(inRoute('Day 1')).dx,
         lessThan(tester.getTopLeft(inRoute('Next stop')).dx),
       );
     });

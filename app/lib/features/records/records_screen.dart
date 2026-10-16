@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 import '../../app/app_scope.dart';
 import '../../core/colors.dart';
@@ -7,6 +8,7 @@ import '../../core/spacing.dart';
 import '../../core/typography.dart';
 import '../../data/market_price_repository.dart';
 import '../../l10n/app_localizations.dart';
+import '../../rules/trip_ledger.dart';
 import '../../shared/app_tab_bar.dart';
 import '../../shared/group.dart';
 import '../../shared/pressable.dart';
@@ -14,6 +16,7 @@ import '../auth/auth_gate.dart' show AuthScope;
 import '../home/save_row.dart';
 import 'receipt_record_detail.dart';
 import '../trip_map/trip_map_screen.dart';
+import '../briefing/briefing_controller.dart';
 
 /// Every save on this trip, newest first. Swipe a row left to remove it.
 class RecordsScreen extends StatefulWidget {
@@ -34,6 +37,42 @@ class _RecordsScreenState extends State<RecordsScreen> {
         ? l10n.recordsSavedAccount
         : l10n.recordsSavedPhone;
     return '${l10n.recordsSwipeHint} $where';
+  }
+
+  /// Saves by local calendar day, newest day first.
+  static List<(DateTime, List<TripSave>)> _byDay(List<TripSave> saves) {
+    final days = <DateTime, List<TripSave>>{};
+    for (final s in saves) {
+      final l = s.savedAt.toLocal();
+      (days[DateTime(l.year, l.month, l.day)] ??= []).add(s);
+    }
+    final keys = days.keys.toList()..sort((a, b) => b.compareTo(a));
+    return [for (final d in keys) (d, days[d]!)];
+  }
+
+  /// "Day 2 · Wed, Oct 14", counted from the trip's first day (the first
+  /// save's day when no trip dates are set).
+  String _dayTitle(
+    BuildContext context,
+    AppLocalizations l10n,
+    DateTime day,
+    List<TripSave> saves,
+  ) {
+    final demo = AppScope.of(context).settings.demoState;
+    final first =
+        BriefingController.instance.tripPeriod(demo: demo)?.start ??
+        _byDay(saves).last.$1;
+    final n =
+        DateTime.utc(
+          day.year,
+          day.month,
+          day.day,
+        ).difference(DateTime.utc(first.year, first.month, first.day)).inDays +
+        1;
+    final date = DateFormat.MMMEd(
+      Localizations.localeOf(context).toLanguageTag(),
+    ).format(day);
+    return n >= 1 ? '${l10n.tripDayShort(n)} · $date' : date;
   }
 
   final _market = MarketPriceRepository();
@@ -129,57 +168,61 @@ class _RecordsScreenState extends State<RecordsScreen> {
                   ),
                 )
               else if (trip.saves.isNotEmpty) ...[
-                GroupCard(
-                  dividerInset: AppSpacing.rowIconTextInset,
-                  clip: true,
-                  children: [
-                    for (final save in trip.saves)
-                      Dismissible(
-                        key: ValueKey(save.id),
-                        direction: DismissDirection.endToStart,
-                        background: ColoredBox(
-                          color: AppColors.errorContainer,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: AppSpacing.groupPaddingH,
-                              ),
-                              child: Text(
-                                l10n.recordsRemove,
-                                style: type.label.copyWith(
-                                  color: AppColors.errorText,
+                // One group per trip day, newest day first.
+                for (final (day, saves) in _byDay(trip.saves)) ...[
+                  SectionHeader(_dayTitle(context, l10n, day, trip.saves)),
+                  GroupCard(
+                    dividerInset: AppSpacing.rowIconTextInset,
+                    clip: true,
+                    children: [
+                      for (final save in saves)
+                        Dismissible(
+                          key: ValueKey(save.id),
+                          direction: DismissDirection.endToStart,
+                          background: ColoredBox(
+                            color: AppColors.errorContainer,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  right: AppSpacing.groupPaddingH,
+                                ),
+                                child: Text(
+                                  l10n.recordsRemove,
+                                  style: type.label.copyWith(
+                                    color: AppColors.errorText,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        onDismissed: (_) async {
-                          HapticFeedback.mediumImpact();
-                          final messenger = ScaffoldMessenger.of(context);
-                          final wallet = AppScope.of(context).cashWallet;
-                          trip.remove(save.id);
-                          // The cash this record moved goes with it.
-                          final cash = await wallet.removeLinked(save.id);
-                          messenger
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(l10n.recordsRemoved),
-                                action: SnackBarAction(
-                                  label: l10n.recordsUndo,
-                                  onPressed: () {
-                                    trip.add(save);
-                                    wallet.restore(cash);
-                                  },
+                          onDismissed: (_) async {
+                            HapticFeedback.mediumImpact();
+                            final messenger = ScaffoldMessenger.of(context);
+                            final wallet = AppScope.of(context).cashWallet;
+                            trip.remove(save.id);
+                            // The cash this record moved goes with it.
+                            final cash = await wallet.removeLinked(save.id);
+                            messenger
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.recordsRemoved),
+                                  action: SnackBarAction(
+                                    label: l10n.recordsUndo,
+                                    onPressed: () {
+                                      trip.add(save);
+                                      wallet.restore(cash);
+                                    },
+                                  ),
                                 ),
-                              ),
-                            );
-                        },
-                        child: SaveRow(save: save, items: _items),
-                      ),
-                  ],
-                ),
+                              );
+                          },
+                          child: SaveRow(save: save, items: _items),
+                        ),
+                    ],
+                  ),
+                ],
                 GroupFooter(_footer(context, l10n)),
               ],
               if (AppScope.of(context).receipts.records.isNotEmpty) ...[
