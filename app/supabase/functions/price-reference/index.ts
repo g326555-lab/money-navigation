@@ -5,6 +5,7 @@
 // in the page we fetched and the numbers are sane. Found ranges are cached in
 // `facts` (one search per item); otherwise the answer is "no sourced range".
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
+import { guard } from "../_shared/guard.ts";
 
 // Prices move; a range older than this is looked up again.
 const CACHE_DAYS = 7;
@@ -188,6 +189,8 @@ async function readPage(url: string): Promise<{ url: string; text: string } | nu
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "price-reference");
+  if ("reject" in caller) return caller.reject;
   const started = Date.now();
   try {
     const { nameEn } = await req.json();

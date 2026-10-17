@@ -72,10 +72,21 @@ class AuthService {
 
   bool get configured => AuthConfig.supabaseConfigured;
 
-  User? get currentUser => configured ? _auth.currentUser : null;
+  /// The anonymous session the app opens for cloud calls is not an account,
+  /// so it reads as signed out everywhere.
+  User? get currentUser {
+    if (!configured) return null;
+    final user = _auth.currentUser;
+    return user == null || user.isAnonymous ? null : user;
+  }
 
-  Stream<AuthState> get changes =>
-      configured ? _auth.onAuthStateChange : const Stream.empty();
+  Stream<AuthState> get changes => configured
+      ? _auth.onAuthStateChange.where(
+          (s) =>
+              s.event == AuthChangeEvent.signedOut ||
+              !(s.session?.user.isAnonymous ?? false),
+        )
+      : const Stream.empty();
 
   /// Sign in with Apple is offered on Apple platforms only. On Android it
   /// would need the web flow and a Services ID secret that expires every six

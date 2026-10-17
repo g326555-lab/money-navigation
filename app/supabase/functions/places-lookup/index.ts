@@ -2,6 +2,7 @@
 // "Chatuchak Weekend Market"), with how it accepts payment, from Google
 // Places Text Search (New). Payment facts are Google's own; absent stays null.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
+import { guard } from "../_shared/guard.ts";
 import { paymentOf, validLanguage, validLatLng } from "../_shared/places.ts";
 
 const SEARCH_URL = "https://places.googleapis.com/v1/places:searchText";
@@ -18,6 +19,8 @@ const MAX_QUERY = 200;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "places-lookup");
+  if ("reject" in caller) return caller.reject;
   try {
     const { query, lat, lng, languageCode } = await req.json();
     if (typeof query !== "string" || !query.trim() || query.length > MAX_QUERY) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Calls the project's Supabase Edge Functions (Vision, Places, Cloud TTS,
 /// Gemini). Keys stay in Supabase secrets; the app only knows the project
@@ -26,13 +27,14 @@ class CloudFunctions {
     required Duration timeout,
   }) async {
     if (!configured) throw const CloudFunctionError('not configured');
+    final token = await _callerToken() ?? _anonKey;
     final http.Response res;
     try {
       res = await _client
           .post(
             Uri.parse('$_url/functions/v1/$name'),
             headers: {
-              'Authorization': 'Bearer $_anonKey',
+              'Authorization': 'Bearer $token',
               'apikey': _anonKey,
               'Content-Type': 'application/json',
             },
@@ -57,6 +59,28 @@ class CloudFunctions {
       throw CloudFunctionError('${res.statusCode}: ${decoded['error']}');
     }
     return decoded;
+  }
+
+  static Future<AuthResponse>? _guestSignIn;
+
+  /// The functions only answer a signed-in caller (the public anon key
+  /// proves nothing). A traveler without an account gets an anonymous
+  /// Supabase session the first time the app calls the cloud; account
+  /// screens treat that session as signed out.
+  static Future<String?> _callerToken() async {
+    try {
+      final auth = Supabase.instance.client.auth;
+      final session = auth.currentSession;
+      if (session != null) return session.accessToken;
+      final pending = _guestSignIn ??= auth.signInAnonymously();
+      try {
+        return (await pending).session?.accessToken;
+      } finally {
+        _guestSignIn = null;
+      }
+    } on Object {
+      return null; // Supabase not started (tests) or offline: the call fails cleanly.
+    }
   }
 }
 

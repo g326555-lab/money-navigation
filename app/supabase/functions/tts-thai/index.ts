@@ -2,6 +2,7 @@
 // Only text is sent; the app plays the returned MP3 and falls back to the
 // on-device voice if this fails or is slow.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
+import { guard } from "../_shared/guard.ts";
 
 const TTS_URL = "https://texttospeech.googleapis.com/v1/text:synthesize";
 const TIMEOUT_MS = 3000;
@@ -10,6 +11,8 @@ const DEFAULT_VOICE = "th-TH-Chirp3-HD-Achernar";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "tts-thai");
+  if ("reject" in caller) return caller.reject;
   try {
     const { text, voice } = await req.json();
     if (typeof text !== "string" || !text.trim() || text.length > MAX_CHARS) {

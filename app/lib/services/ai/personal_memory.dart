@@ -30,7 +30,7 @@ class PersonalMemory {
   /// offline, so verdicts simply show no personal line.
   Future<bool> load() async {
     final user = _db.auth.currentUser;
-    if (user == null) {
+    if (user == null || user.isAnonymous) {
       // Never keep someone else's records after sign-out.
       _history = const [];
       _profile = const TravelerProfile();

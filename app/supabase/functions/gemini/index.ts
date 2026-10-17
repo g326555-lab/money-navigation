@@ -3,6 +3,7 @@
 // the project's credit; if Vertex is not configured or fails, the Gemini
 // Developer API key is tried. Every answer reports which path served it.
 import { corsHeaders, fetchWithTimeout, json } from "../_shared/http.ts";
+import { guard, MAX_IMAGE_BASE64, tooLarge } from "../_shared/guard.ts";
 import { vertexAccessToken } from "../_shared/google_auth.ts";
 
 // Measured 15 Oct on the free Developer key: gemini-3.8-flash and
@@ -114,9 +115,14 @@ async function callDeveloperApi(model: string, body: unknown, ms: number, signal
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "gemini");
+  if ("reject" in caller) return caller.reject;
   const started = Date.now();
   try {
     const { task, input } = await req.json();
+    if (tooLarge(input?.imageBase64, MAX_IMAGE_BASE64)) {
+      return json({ error: "image too large (about 4 MB at most)" }, 413);
+    }
     if (!["read_bill", "resolve_item", "explain"].includes(task)) {
       return json({ error: "unknown task" }, 400);
     }

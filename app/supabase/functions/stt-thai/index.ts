@@ -5,6 +5,7 @@
 // and only accepts service-account auth, which the org policy blocks.
 // The audio is not stored.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
+import { guard } from "../_shared/guard.ts";
 
 const SPEECH_URL = "https://speech.googleapis.com/v1/speech:recognize";
 const TIMEOUT_MS = 9000;
@@ -22,6 +23,8 @@ const PRICE_PHRASES = [
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "stt-thai");
+  if ("reject" in caller) return caller.reject;
   const started = Date.now();
   try {
     const { audioBase64, encoding, sampleRateHertz, phrases } = await req.json();

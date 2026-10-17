@@ -18,7 +18,8 @@ class AccountRepository {
   SupabaseClient get _db => _client ?? Supabase.instance.client;
 
   String get _uid {
-    final id = _db.auth.currentUser?.id;
+    final user = _db.auth.currentUser;
+    final id = user == null || user.isAnonymous ? null : user.id;
     if (id == null) {
       throw const AuthFlowException(AuthFailure.unknown, 'not signed in');
     }

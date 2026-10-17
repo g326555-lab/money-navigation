@@ -1,11 +1,14 @@
 // Serves the latest cached ThaiRate payload. The user's precise location never
 // leaves the phone; nearby ranking is calculated locally from the cached feed.
 import { corsHeaders, json, requireSecret } from "../_shared/http.ts";
+import { guard } from "../_shared/guard.ts";
 
 const CACHE_MAX_AGE_MS = 30 * 60 * 1000;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "exchange-rates");
+  if ("reject" in caller) return caller.reject;
   try {
     const databaseUrl = requireSecret("SUPABASE_URL");
     // Read with the public anon key: the row is world-readable through RLS,

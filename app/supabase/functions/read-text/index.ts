@@ -3,6 +3,7 @@
 // four corners, so the app can straighten and rebuild rows exactly like
 // on-device OCR. The photo is not stored.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
+import { guard } from "../_shared/guard.ts";
 
 const VISION_URL = "https://vision.googleapis.com/v1/images:annotate";
 // Vision usually answers in 0.5-2 s, but 3 of 80 real receipt photos took
@@ -15,6 +16,8 @@ type Word = { symbols: { text: string; property?: { detectedBreak?: { type?: str
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "read-text");
+  if ("reject" in caller) return caller.reject;
   const started = Date.now();
   try {
     const { imageBase64 } = await req.json();

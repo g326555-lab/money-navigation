@@ -3,6 +3,7 @@
 // level). The field mask is strict: reviews would bill the call at the
 // Atmosphere SKU, so they are not requested.
 import { corsHeaders, fetchWithTimeout, json, requireSecret } from "../_shared/http.ts";
+import { guard } from "../_shared/guard.ts";
 import { paymentOf, validLanguage, validLatLng } from "../_shared/places.ts";
 
 const PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby";
@@ -25,6 +26,8 @@ const MAX_RESULTS = 10;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const caller = await guard(req, "places-market");
+  if ("reject" in caller) return caller.reject;
   try {
     const { lat, lng, types, withPayment, languageCode } = await req.json();
     const payment = withPayment === true;
