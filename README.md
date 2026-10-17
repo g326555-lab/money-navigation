@@ -38,7 +38,7 @@ I'm not a developer. I worked as a product planner, so I know how features shoul
   - A daily automatic re-check of online facts, with sources.
   - A live web price lookup for items not on the list.
   - A researched 3-day trip as the demo traveler's sample data.
-- **Real-person testing.** The agents tested on a real Galaxy Fold the way a person would: open from the icon, tap the real UI, and speak Thai through a speaker in quiet and noisy rooms. I printed the demo props and checked the results by hand.
+- **Real-person testing.** The agents tested on a real Galaxy Fold the way a person would: open from the icon, tap the real UI, and speak Thai through a speaker in quiet and noisy rooms. I prepared the demo props (ATM screen, card terminal, Thai bill) and checked every result by hand.
 - **Handoff.** When my AI usage ran out near the deadline, the coordinator wrote [`docs/HANDOFF.md`](docs/HANDOFF.md). A different AI tool (Codex) picked up from it and continued.
 
 What I took away: AI agents can write the code, but someone still has to own the product. That means clear rules, one point of coordination, and checking the result on a real phone instead of trusting "tests pass".
