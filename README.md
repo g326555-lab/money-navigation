@@ -6,6 +6,23 @@
 
 Built for **U-Hackathon 2026** (AI track, Bangkok, 15–16 Oct 2026).
 
+<p>
+<img src="pitch/assets/phone-home-demo.png" width="160" alt="Home: money kept on this trip">
+<img src="pitch/assets/phone-atm.png" width="160" alt="ATM scan: which button to press">
+<img src="pitch/assets/phone-market.png" width="160" alt="Market haggling by voice">
+<img src="pitch/assets/phone-assistant-warn.png" width="160" alt="Assistant: trap warnings near you">
+<img src="pitch/assets/phone-tokyo.png" width="160" alt="Thai traveler in Tokyo: terminal currency choice">
+</p>
+
+## How it was built
+
+One non-developer, about 25 hours, 180 commits. The builder directed a team of AI coding agents (Claude Code sessions with one coordinator, plus Codex) and checked every result by hand on a real Galaxy Fold. The working rules that kept the agents honest are in [`CLAUDE.md`](CLAUDE.md) and [`docs/BOARD.md`](docs/BOARD.md):
+
+- **No faking.** No hard-coded results. Demo data lives in one labelled file. Any figure from outside shows its source and date.
+- **Money math is pure, tested code.** 33 rule files in `lib/rules/` and 1,700+ tests; the demo numbers are test cases.
+- **AI output is checked, never trusted.** Bill readings must add up. Web prices count only if the quoted text appears word for word on the fetched page.
+- **Real-person device tests.** The tester opens the app from its icon, taps the real UI, and speaks Thai through a speaker in quiet and noisy rooms.
+
 ## The problem
 
 Travelers lose money in small, quiet ways every time they pay abroad. A Thai ATM asks "charge in your home currency?" and a tap adds about 5%. A card terminal in Japan offers THB or JPY and the wrong choice costs hundreds of baht. Exchange counters, restaurant bills (service charge on top, VAT inside) and market prices hide the same kind of trap. Most people never notice.
