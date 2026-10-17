@@ -14,14 +14,34 @@ Built for **U-Hackathon 2026** (AI track, Bangkok, 15–16 Oct 2026).
 <img src="pitch/assets/phone-tokyo.png" width="160" alt="Thai traveler in Tokyo: terminal currency choice">
 </p>
 
-## How it was built
+## How I built it
 
-One non-developer, about 25 hours, 180 commits. The builder directed a team of AI coding agents (Claude Code sessions with one coordinator, plus Codex) and checked every result by hand on a real Galaxy Fold. The working rules that kept the agents honest are in [`CLAUDE.md`](CLAUDE.md) and [`docs/BOARD.md`](docs/BOARD.md):
+I'm not a developer. I worked as a product planner, so I know how features should connect and where the logic belongs, but I don't write code myself. Every line of code here was written by AI coding agents. My job was the planner's job: decide what to build, set the rules, check every result, and say no when something was faked or wrong.
 
-- **No faking.** No hard-coded results. Demo data lives in one labelled file. Any figure from outside shows its source and date.
-- **Money math is pure, tested code.** 33 rule files in `lib/rules/` and 1,700+ tests; the demo numbers are test cases.
-- **AI output is checked, never trusted.** Bill readings must add up. Web prices count only if the quoted text appears word for word on the fetched page.
-- **Real-person device tests.** The tester opens the app from its icon, taps the real UI, and speaks Thai through a speaker in quiet and noisy rooms.
+**Before the event (planning only, no code):**
+- Researched the problem: ATM conversion fees, card-terminal currency choice, market prices, Thai bills. I collected real photos and sources.
+- Wrote the planning documents the agents would follow: the product overview, a design system ([`docs/DESIGN.md`](docs/DESIGN.md)), reference apps and an "avoid the AI look" checklist.
+- Wrote the working rules in [`CLAUDE.md`](CLAUDE.md), with the exact demo numbers as expected results.
+
+**During the 25 hours (180 commits):**
+- **One coordinator, many workers.** I talked to one AI session acting as project manager. It split the work across about eight parallel sessions (scan UI, voice haggling, home and assistant, AI and backend, sign-in, Part B rules, release, pitch). Each session owned its own folders.
+- **A shared board.** The sessions coordinated through [`docs/BOARD.md`](docs/BOARD.md), with lock files for builds and for the test phone. I added these rules after real collisions: agents overwrote each other's files, and two iOS builds broke an archive.
+- **Rules that keep the AI honest:**
+  - No hard-coded results. Demo data lives in one labelled file.
+  - Every outside figure shows its source and date.
+  - All money math is pure, tested code: 33 rule files and 1,700+ tests, with the demo numbers as test cases.
+  - AI output is checked, never trusted. A bill counts as verified only if the arithmetic adds up. A web price counts only if its quote appears word for word on the fetched page.
+- **Review loop per screen:** tests first → build → a fresh-eyes reviewer agent (PASS/FAIL) → fix → a polish pass → review again → commit.
+- **My decisions along the way:**
+  - Google Maps for the trip map.
+  - How the app knows it is the same shop: same name *and* within 100 m. Otherwise a 7-Eleven branch would count as a repeat visit.
+  - A daily automatic re-check of online facts, with sources.
+  - A live web price lookup for items not on the list.
+  - A researched 3-day trip as the demo traveler's sample data.
+- **Real-person testing.** The agents tested on a real Galaxy Fold the way a person would: open from the icon, tap the real UI, and speak Thai through a speaker in quiet and noisy rooms. I printed the demo props and checked the results by hand.
+- **Handoff.** When my AI usage ran out near the deadline, the coordinator wrote [`docs/HANDOFF.md`](docs/HANDOFF.md). A different AI tool (Codex) picked up from it and continued.
+
+What I took away: AI agents can write the code, but someone still has to own the product. That means clear rules, one point of coordination, and checking the result on a real phone instead of trusting "tests pass".
 
 ## The problem
 
