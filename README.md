@@ -146,6 +146,7 @@ flutter test
 
 ## Honest limitations
 
+- After the hackathon the paid Google Cloud APIs (Vision, Speech, Text-to-Speech, Places, Maps) were switched off to avoid charges. In the public builds, scans read on the phone, haggling with a typed price and the demo states still work; receipt reading, cloud voice, place lookups and map tiles do not, until they are switched back on.
 - Demo mode uses fixed rates and sample records, labelled *Sample*.
 - Voice recognition needs a network and degrades in loud places; one loud-market test misheard the item. A typed price is the fallback.
 - Receipt check: 22 of 31 real photos fully verified, none falsely verified; the rest are marked unverified.
