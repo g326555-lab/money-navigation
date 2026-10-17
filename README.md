@@ -16,7 +16,7 @@ Built for **U-Hackathon 2026** (AI track, Bangkok, 15–16 Oct 2026).
 
 ## How I built it
 
-I'm not a developer. I worked as a product planner, so I know how features should connect and where the logic belongs, but I don't write code myself. Every line of code here was written by AI coding agents. My job was the planner's job: decide what to build, set the rules, check every result, and say no when something was faked or wrong.
+My background is product planning, not engineering. I did this hackathon completely solo, from the first idea to the TestFlight build, using AI vibe coding: AI coding agents wrote the code while I ran the whole build. My planning experience told me how features should connect and where the logic belongs. I used it to set the direction and the rules, check every result on a real phone, and reject anything faked or wrong. Next time I plan to enter with a team.
 
 **Before the event (planning only, no code):**
 - Researched the problem: ATM conversion fees, card-terminal currency choice, market prices, Thai bills. I collected real photos and sources.
