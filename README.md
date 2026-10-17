@@ -1,6 +1,6 @@
 # Money Navigation – AI travel assistant
 
-**Try it:** [iPhone (TestFlight)](https://testflight.apple.com/join/N1jHDdtN) · [Android APK](https://github.com/g326555-lab/money-navigation/releases/tag/v1.0.0-7) · [Demo website](https://storage.googleapis.com/money-navigation-site/index.html) · [Pitch deck](https://drive.google.com/file/d/1ychfMfByIASrZP4x0RncA1AnccbObzLr/view?usp=sharing)
+**Watch:** [1-minute demo video](docs/media/money-navigation-demo.mp4) · **Try it:** [iPhone (TestFlight)](https://testflight.apple.com/join/N1jHDdtN) · [Android APK](https://github.com/g326555-lab/money-navigation/releases/tag/v1.0.0-7) · [Demo website](https://storage.googleapis.com/money-navigation-site/index.html) · [Pitch deck](https://drive.google.com/file/d/1ychfMfByIASrZP4x0RncA1AnccbObzLr/view?usp=sharing)
 
 > Maps tells you which way to go. Money Navigation tells you which way to pay.
 
