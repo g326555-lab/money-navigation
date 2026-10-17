@@ -25,7 +25,7 @@ My background is product planning, not engineering. I did this hackathon complet
 
 **During the 25 hours (180 commits):**
 - **One coordinator, many workers.** I talked to one AI session acting as project manager. It split the work across about eight parallel sessions (scan UI, voice haggling, home and assistant, AI and backend, sign-in, Part B rules, release, pitch). Each session owned its own folders.
-- **A shared board.** The sessions coordinated through [`docs/BOARD.md`](docs/BOARD.md), with lock files for builds and for the test phone. I added these rules after real collisions: agents overwrote each other's files, and two iOS builds broke an archive.
+- **A shared board.** The sessions coordinated through a shared work board, with lock files for builds and for the test phone. I added these rules after real collisions: agents overwrote each other's files, and two iOS builds broke an archive.
 - **Rules that keep the AI honest:**
   - No hard-coded results. Demo data lives in one labelled file.
   - Every outside figure shows its source and date.
@@ -39,7 +39,7 @@ My background is product planning, not engineering. I did this hackathon complet
   - A live web price lookup for items not on the list.
   - A researched 3-day trip as the demo traveler's sample data.
 - **Real-person testing.** The agents tested on a real Galaxy Fold the way a person would: open from the icon, tap the real UI, and speak Thai through a speaker in quiet and noisy rooms. I prepared the demo props (ATM screen, card terminal, Thai bill) and checked every result by hand.
-- **Handoff.** When my AI usage ran out near the deadline, the coordinator wrote [`docs/HANDOFF.md`](docs/HANDOFF.md). A different AI tool (Codex) picked up from it and continued.
+- **Handoff.** When my AI usage ran out near the deadline, the coordinator wrote a handoff document. A different AI tool (Codex) picked up from it and continued.
 
 What I took away: AI agents can write the code, but someone still has to own the product. That means clear rules, one point of coordination, and checking the result on a real phone instead of trusting "tests pass".
 
